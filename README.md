@@ -12,7 +12,7 @@ Tim pengembang
 - Raisa
 - Azizah
 
-Product Owner: Devi
+Product Owner: Azizah
 
 Scrum Master: Divana
 
