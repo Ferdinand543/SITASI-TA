@@ -22,15 +22,15 @@ RR Divana Widyacikha Kharisma	Scrum Master, Back-End Developer	085320305737	rdwk
 
 M. Iqbal Firdaus	System Analyst, Back-End Developer	0859109733223	mif.23@si.unjani.ac.id
 
-Devi Risvianti	Product Owner, Front-End Developer	0895346960283	dr.23@si.unjani.ac.id
+Devi Risvianti	Front-End Developer, Back-End Developer	0895346960283	dr.23@si.unjani.ac.id
 
 Caroline Alexandra Daniela G.	System Analyst, Back-End Developer	081311202421	cadg.23@si.unjani.ac.id
 
-Ferdinand Manuel Waladow	Back-End Developer	081222732224	fmw.23@si.unjani.ac.id 
+Ferdinand Manuel Waladow	Front-End Developer, Back-End Developer	081222732224	fmw.23@si.unjani.ac.id 
 
-Raisa Dastria Tiananda	Frond-End Developer	085315069471	rdt.23@si.unjani.ac.id
+Raisa Dastria Tiananda	Frond-End Developer, Back-End Developer	085315069471	rdt.23@si.unjani.ac.id
 
-Azizah Irbah Mumtaz Al-Ghani	UI/UX Designer, Front-End Developer	082127440877	aima.23@si.unjani.ac.id
+Azizah Irbah Mumtaz Al-Ghani	UI/UX Designer, Product Owner	082127440877	aima.23@si.unjani.ac.id
 
 TUJUAN SOCIAL CONTRACT DAN WOKRING AGREEMENT
 Dokumen ini disusun untuk menetapkan kesepakatan bersama dalam bentuk Social Contract dan Working Agreement sebagai pedoman kerja tim pada proyek Pengembangan Sistem Informasi Manajemen Tugas Akhir (SITASI-TA) Program Studi Sistem Informasi Universitas Jenderal Achmad Yani.
