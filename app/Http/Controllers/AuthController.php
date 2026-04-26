@@ -42,7 +42,8 @@ class AuthController extends Controller
 
         $role = strtolower(trim($user->role));
 
-        if ($role == 'dosen pembimbing' || $role == 'dosen penguji') {
+        // ← DIFIX, TAMBAH DOSEN REVIEWER DAN KOORDINATOR
+        if ($role == 'dosen pembimbing' || $role == 'dosen penguji' || $role == 'dosen reviewer' || $role == 'koordinator') {
             return redirect('/dashboard/dosen')->with('success', 'Login berhasil');
         }
 
@@ -69,7 +70,7 @@ class AuthController extends Controller
             ->first();
 
         if (!$user) {
-            return back()->with('error', 'Password Tidak Tersimpan'); // ← DIUBAH
+            return back()->with('error', 'Password Tidak Tersimpan');
         }
 
         DB::table('users')
