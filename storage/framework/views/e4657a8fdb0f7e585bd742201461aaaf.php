@@ -1,0 +1,31 @@
+<nav class="navbar navbar-light bg-white shadow-sm">
+    <div class="container d-flex align-items-center justify-content-between">
+
+        <!-- KIRI (LOGO) -->
+        <div class="d-flex align-items-center">
+            <img src="<?php echo e(asset('images/SI.jpeg')); ?>" width="35" class="me-2">
+            <strong>S1 - Sistem Informasi Unjani</strong>
+        </div>
+
+        <!-- TENGAH (SEARCH) -->
+        <div class="search-box mx-3">
+            <input type="text" placeholder="Search" class="search-input">
+            <i class="fa fa-search search-icon"></i>
+        </div>
+
+        <!-- KANAN (BUTTON) -->
+        <div class="d-flex align-items-center gap-2">
+
+            <?php if(session('user')): ?>
+            <span class="fw-bold">Halo, <?php echo e(session('user')->name); ?></span>
+
+            
+            <?php else: ?>
+            <a href="/login" class="btn btn-outline-dark btn-sm">Masuk</a>
+            <?php endif; ?>
+
+        </div>
+
+        
+    </div>
+</nav><?php /**PATH D:\sitasita2\sitasita\resources\views/partials/navbar.blade.php ENDPATH**/ ?>
