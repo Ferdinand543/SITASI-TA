@@ -34,15 +34,25 @@ class AuthController extends Controller
             return back()->with('error', 'Username tidak ditemukan');
         }
 
-        if (!Hash::check($password, $user->password)) {
-            return back()->with('error', 'Password salah');
+        // Cek apakah password di DB sudah bcrypt atau masih plain text
+        $isHashed = str_starts_with($user->password, '$2y$');
+
+        if ($isHashed) {
+            // Password sudah di-hash, pakai Hash::check
+            if (!Hash::check($password, $user->password)) {
+                return back()->with('error', 'Password salah');
+            }
+        } else {
+            // Password masih plain text
+            if ($password !== $user->password) {
+                return back()->with('error', 'Password salah');
+            }
         }
 
         session(['user' => $user]);
 
         $role = strtolower(trim($user->role));
 
-        // ← DIFIX, TAMBAH DOSEN REVIEWER DAN KOORDINATOR
         if ($role == 'dosen pembimbing' || $role == 'dosen penguji' || $role == 'dosen reviewer' || $role == 'koordinator') {
             return redirect('/dashboard/dosen')->with('success', 'Login berhasil');
         }
@@ -61,8 +71,10 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'nim_nid' => 'required',
-            'password' => 'required|min:2|same:confirm_password'
+            'nim_nid'          => 'required',
+            'old_password'     => 'required',
+            'password'         => 'required|min:6',
+            'confirm_password' => 'required'
         ]);
 
         $user = DB::table('users')
@@ -70,7 +82,24 @@ class AuthController extends Controller
             ->first();
 
         if (!$user) {
-            return back()->with('error', 'Password Tidak Tersimpan');
+            return back()->with('error', 'Username tidak ditemukan');
+        }
+
+        // Cek password lama, handle plain text dan bcrypt
+        $isHashed = str_starts_with($user->password, '$2y$');
+
+        if ($isHashed) {
+            if (!Hash::check($request->old_password, $user->password)) {
+                return back()->with('error', 'Password lama tidak sesuai');
+            }
+        } else {
+            if ($request->old_password !== $user->password) {
+                return back()->with('error', 'Password lama tidak sesuai');
+            }
+        }
+
+        if ($request->password !== $request->confirm_password) {
+            return back()->with('error', 'Password baru dan konfirmasi tidak sama');
         }
 
         DB::table('users')

@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Buat Password Baru - SITASITA</title>
+<title>Ganti Password - SITASITA</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
-
 body{
     font-family: Arial;
     background:#f5f5f5;
 }
-
 .container{
     width:380px;
     margin:90px auto;
@@ -23,34 +20,28 @@ body{
     text-align:center;
     box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
-
 .logo img{
     width:70px;
     margin-bottom:10px;
 }
-
 h1{
     font-size:18px;
     margin:0;
 }
-
 .subtitle{
     font-size:14px;
     color:#777;
     margin-bottom:25px;
 }
-
 .title{
     font-size:22px;
     font-weight:bold;
     margin-bottom:20px;
 }
-
 .input-group{
     position:relative;
-    margin-bottom:5px;
+    margin-bottom:12px;
 }
-
 .input-group input{
     width:100%;
     height:44px;
@@ -60,7 +51,6 @@ h1{
     font-size:14px;
     box-sizing:border-box;
 }
-
 .eye{
     position:absolute;
     right:12px;
@@ -70,14 +60,6 @@ h1{
     color:#666;
     display:none;
 }
-
-.error{
-    font-size:13px;
-    color:red;
-    text-align:left;
-    margin-bottom:10px;
-}
-
 button{
     width:100%;
     height:44px;
@@ -90,11 +72,9 @@ button{
     margin-top:10px;
     transition:transform 0.2s ease;
 }
-
 button:hover{
     transform:scale(1.05);
 }
-
 .back{
     display:block;
     margin-top:15px;
@@ -103,12 +83,10 @@ button:hover{
     text-decoration:none;
     text-align:left;
 }
-
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
 <div class="logo">
@@ -118,7 +96,7 @@ button:hover{
 <h1>SITASI - TA</h1>
 <div class="subtitle">Sistem Informasi Bimbingan Tugas Akhir</div>
 
-<div class="title">Buat Password Baru</div>
+<div class="title">Ganti Password</div>
 
 <form method="POST" action="/reset-password" onsubmit="return validateForm()">
 @csrf
@@ -126,33 +104,32 @@ button:hover{
 <div class="input-group">
 <input type="text" name="nim_nid" id="nim_nid" placeholder="Masukkan Username">
 </div>
-<div id="errorNim" class="error"></div>
 
 <div class="input-group">
-<input type="password" name="password" id="password" placeholder="Buat Password Baru" oninput="toggleEye('password','eye1')">
+<input type="password" name="old_password" id="old_password" placeholder="Password Lama" oninput="toggleEye('old_password','eye0')">
+<i id="eye0" class="fa-solid fa-eye eye" onclick="togglePassword('old_password', this)"></i>
+</div>
+
+<div class="input-group">
+<input type="password" name="password" id="password" placeholder="Password Baru" oninput="toggleEye('password','eye1')">
 <i id="eye1" class="fa-solid fa-eye eye" onclick="togglePassword('password', this)"></i>
 </div>
-<div id="errorPassword" class="error"></div>
 
 <div class="input-group">
-<input type="password" name="confirm_password" id="confirm_password" placeholder="Konfirmasi Password" oninput="toggleEye('confirm_password','eye2')">
+<input type="password" name="confirm_password" id="confirm_password" placeholder="Konfirmasi Password Baru" oninput="toggleEye('confirm_password','eye2')">
 <i id="eye2" class="fa-solid fa-eye eye" onclick="togglePassword('confirm_password', this)"></i>
 </div>
-<div id="errorConfirm" class="error"></div>
 
 <button type="submit">Simpan Password</button>
 
 <a class="back" href="/login">← Kembali ke Login</a>
 
 </form>
-
 </div>
 
 <script>
-
 function togglePassword(id, icon){
     const input = document.getElementById(id);
-
     if(input.type === "password"){
         input.type = "text";
         icon.classList.remove("fa-eye");
@@ -167,7 +144,6 @@ function togglePassword(id, icon){
 function toggleEye(inputId, eyeId){
     const input = document.getElementById(inputId);
     const eye = document.getElementById(eyeId);
-
     if(input.value.length > 0){
         eye.style.display = "block";
     }else{
@@ -176,44 +152,43 @@ function toggleEye(inputId, eyeId){
 }
 
 function validateForm(){
-
     const nim = document.getElementById("nim_nid").value;
+    const oldPassword = document.getElementById("old_password").value;
     const password = document.getElementById("password").value;
     const confirm = document.getElementById("confirm_password").value;
 
-    const errorNim = document.getElementById("errorNim");
-    const errorPassword = document.getElementById("errorPassword");
-    const errorConfirm = document.getElementById("errorConfirm");
-
-    errorNim.innerHTML = "";
-    errorPassword.innerHTML = "";
-    errorConfirm.innerHTML = "";
-
-    let valid = true;
-
     if(nim === ""){
-        errorNim.innerHTML = "Username wajib diisi.";
-        valid = false;
+        Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Username wajib diisi.', confirmButtonColor: '#f4b400' });
+        return false;
+    }
+
+    if(oldPassword === ""){
+        Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Password lama wajib diisi.', confirmButtonColor: '#f4b400' });
+        return false;
     }
 
     if(password === ""){
-        errorPassword.innerHTML = "Password wajib diisi.";
-        valid = false;
+        Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Password baru wajib diisi.', confirmButtonColor: '#f4b400' });
+        return false;
+    }
+
+    if(password.length < 6){
+        Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Password baru minimal 6 karakter.', confirmButtonColor: '#f4b400' });
+        return false;
     }
 
     if(confirm === ""){
-        errorConfirm.innerHTML = "Konfirmasi password wajib diisi.";
-        valid = false;
+        Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Konfirmasi password wajib diisi.', confirmButtonColor: '#f4b400' });
+        return false;
     }
 
-    if(password !== "" && confirm !== "" && password !== confirm){
-        errorConfirm.innerHTML = "Konfirmasi password harus sama dengan password.";
-        valid = false;
+    if(password !== confirm){
+        Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Password baru dan konfirmasi tidak sama.', confirmButtonColor: '#f4b400' });
+        return false;
     }
 
-    return valid;
+    return true;
 }
-
 </script>
 
 @if(session('success'))
@@ -241,7 +216,6 @@ Swal.fire({
 });
 </script>
 @endif
-
 
 </body>
 </html>
