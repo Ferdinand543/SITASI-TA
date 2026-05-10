@@ -19,7 +19,6 @@ class PengajuanController extends Controller
             if ($role === 'mahasiswa') {
                 return redirect('/mahasiswa')->with('error', 'Akses ditolak!');
             }
-
             return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
         }
 
@@ -58,15 +57,16 @@ class PengajuanController extends Controller
 
     public function prosesVerifikasi(Request $request, $id)
     {
+        // judul_disetujui nullable — boleh kosong kalau semua ditolak
         $request->validate([
-            'judul_disetujui' => 'required'
+            'judul_disetujui' => 'nullable'
         ]);
 
         $data = DB::table('pengajuan_judul')
             ->where('id', $id)
             ->first();
 
-        $judulDipilih = '';
+        $judulDipilih = null;
 
         if ($request->judul_disetujui == 1) {
             $judulDipilih = $data->judul_1;
@@ -80,15 +80,21 @@ class PengajuanController extends Controller
             $judulDipilih = $data->judul_3;
         }
 
+        // Kalau ada judul dipilih → disetujui, kalau tidak → ditolak
+        $status = $judulDipilih ? 'disetujui' : 'ditolak';
+
         DB::table('pengajuan_judul')
             ->where('id', $id)
             ->update([
-                'status' => 'disetujui',
+                'status'          => $status,
                 'judul_disetujui' => $judulDipilih,
-                'updated_at' => now()
+                'updated_at'      => now()
             ]);
 
-        return redirect('/pengajuan')
-            ->with('success', 'Judul berhasil diverifikasi');
+        $pesan = $judulDipilih
+            ? 'Judul berhasil disetujui'
+            : 'Semua judul berhasil ditolak';
+
+        return redirect('/pengajuan')->with('success', $pesan);
     }
 }

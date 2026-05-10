@@ -49,27 +49,38 @@
         </div>
     </div>
 
+    {{-- Tentukan status sekali aja biar ga berulang --}}
+    @php
+        $sudahDiverifikasi = strtolower($pengajuan->status) !== 'menunggu verifikasi';
+        $judulDisetujui    = $pengajuan->judul_disetujui;
+    @endphp
+
     <!-- JUDUL 1 -->
     <div class="judul-card">
         <div class="judul-left">
             <div class="judul-no">Judul 1</div>
             <div class="judul-main">{{ $pengajuan->judul_1 }}</div>
-
             <div class="row-info">
                 <span class="left">Topik Penelitian</span>
-                <span>Sistem Informasi</span>
+                <span>{{ $pengajuan->topik_1 ?? '-' }}</span>
             </div>
-
             <div class="row-info">
                 <span class="left">Mitra Penelitian</span>
-                <span>PT. Teknologi Nusantara</span>
+                <span>{{ $pengajuan->mitra_penelitian ?? '-' }}</span>
             </div>
         </div>
-
         <div class="judul-right" id="aksi1">
-            <button type="button" class="btn-setuju" onclick="setuju(1)">Setujui</button>
-            <button type="button" class="btn-tolak" onclick="tolak(1)">Tolak</button>
-            <i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(1)"></i>
+            @if($sudahDiverifikasi)
+                @if($judulDisetujui === $pengajuan->judul_1)
+                    <span class="badge-hasil badge-disetujui-hasil">✓ Disetujui</span>
+                @else
+                    <span class="badge-hasil badge-ditolak-hasil">✕ Ditolak</span>
+                @endif
+            @else
+                <button type="button" class="btn-setuju" onclick="setuju(1)">Setujui</button>
+                <button type="button" class="btn-tolak" onclick="tolak(1)">Tolak</button>
+                <i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(1)"></i>
+            @endif
         </div>
     </div>
 
@@ -78,22 +89,27 @@
         <div class="judul-left">
             <div class="judul-no">Judul 2</div>
             <div class="judul-main">{{ $pengajuan->judul_2 }}</div>
-
             <div class="row-info">
                 <span class="left">Topik Penelitian</span>
-                <span>Keamanan Data</span>
+                <span>{{ $pengajuan->topik_2 ?? '-' }}</span>
             </div>
-
             <div class="row-info">
                 <span class="left">Mitra Penelitian</span>
-                <span>CV. Solusi Digital</span>
+                <span>{{ $pengajuan->mitra_penelitian ?? '-' }}</span>
             </div>
         </div>
-
         <div class="judul-right" id="aksi2">
-            <button type="button" class="btn-setuju" onclick="setuju(2)">Setujui</button>
-            <button type="button" class="btn-tolak" onclick="tolak(2)">Tolak</button>
-            <i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(2)"></i>
+            @if($sudahDiverifikasi)
+                @if($judulDisetujui === $pengajuan->judul_2)
+                    <span class="badge-hasil badge-disetujui-hasil">✓ Disetujui</span>
+                @else
+                    <span class="badge-hasil badge-ditolak-hasil">✕ Ditolak</span>
+                @endif
+            @else
+                <button type="button" class="btn-setuju" onclick="setuju(2)">Setujui</button>
+                <button type="button" class="btn-tolak" onclick="tolak(2)">Tolak</button>
+                <i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(2)"></i>
+            @endif
         </div>
     </div>
 
@@ -102,22 +118,27 @@
         <div class="judul-left">
             <div class="judul-no">Judul 3</div>
             <div class="judul-main">{{ $pengajuan->judul_3 }}</div>
-
             <div class="row-info">
                 <span class="left">Topik Penelitian</span>
-                <span>Machine Learning</span>
+                <span>{{ $pengajuan->topik_3 ?? '-' }}</span>
             </div>
-
             <div class="row-info">
                 <span class="left">Mitra Penelitian</span>
-                <span>PT. Data Insight Indonesia</span>
+                <span>{{ $pengajuan->mitra_penelitian ?? '-' }}</span>
             </div>
         </div>
-
         <div class="judul-right" id="aksi3">
-            <button type="button" class="btn-setuju" onclick="setuju(3)">Setujui</button>
-            <button type="button" class="btn-tolak" onclick="tolak(3)">Tolak</button>
-            <i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(3)"></i>
+            @if($sudahDiverifikasi)
+                @if($judulDisetujui === $pengajuan->judul_3)
+                    <span class="badge-hasil badge-disetujui-hasil">✓ Disetujui</span>
+                @else
+                    <span class="badge-hasil badge-ditolak-hasil">✕ Ditolak</span>
+                @endif
+            @else
+                <button type="button" class="btn-setuju" onclick="setuju(3)">Setujui</button>
+                <button type="button" class="btn-tolak" onclick="tolak(3)">Tolak</button>
+                <i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(3)"></i>
+            @endif
         </div>
     </div>
 
@@ -126,7 +147,10 @@
     <!-- BUTTON -->
     <div class="footer-btn">
         <a href="/pengajuan" class="btn-kembali">Kembali</a>
-        <button type="button" class="btn-kirim" onclick="simpanData()">Kirim</button>
+        {{-- Tombol Kirim hanya muncul kalau belum diverifikasi --}}
+        @if(!$sudahDiverifikasi)
+            <button type="button" class="btn-kirim" onclick="simpanData()">Kirim</button>
+        @endif
     </div>
 
 </div>
@@ -141,10 +165,8 @@
         <div class="popup-title" id="popupTitle">Berhasil!</div>
         <div class="popup-text" id="popupText">Judul berhasil di setujui</div>
 
-        <!-- tombol OK -->
         <button class="popup-btn" id="popupOkBtn" onclick="closePopup()">OK</button>
 
-        <!-- tombol konfirmasi -->
         <div id="confirmArea" style="display:none; margin-top:20px;">
             <button class="popup-btn" onclick="lanjutkanAksi()">Ya</button>
             <button class="popup-btn" style="background:#999; margin-left:10px;" onclick="closePopup()">
@@ -168,7 +190,6 @@ let statusJudul = {
 };
 
 function showPopup(type,text){
-
     let icon = document.getElementById('popupIcon');
     let title = document.getElementById('popupTitle');
 
@@ -190,7 +211,6 @@ function showPopup(type,text){
 }
 
 function showConfirm(jenis,no){
-
     aksiDipilih = jenis;
     nomorDipilih = no;
 
@@ -202,16 +222,13 @@ function showConfirm(jenis,no){
     title.innerHTML = 'Konfirmasi';
 
     if(jenis == 'setuju'){
-        document.getElementById('popupText').innerHTML =
-        'Apakah anda yakin menyetujui judul ini?';
+        document.getElementById('popupText').innerHTML = 'Apakah anda yakin menyetujui judul ini?';
     }else{
-        document.getElementById('popupText').innerHTML =
-        'Apakah anda yakin menolak judul ini?';
+        document.getElementById('popupText').innerHTML = 'Apakah anda yakin menolak judul ini?';
     }
 
     document.getElementById('popupOkBtn').style.display = 'none';
     document.getElementById('confirmArea').style.display = 'block';
-
     document.getElementById('popupBg').style.display = 'flex';
 }
 
@@ -228,22 +245,12 @@ function tolak(no){
 }
 
 function lanjutkanAksi(){
-
     let no = nomorDipilih;
 
     if(aksiDipilih == 'setuju'){
-
-        let gagal = false;
-
-        if(gagal){
-            showPopup('error','Gagal memproses tindakan');
-            return;
-        }
-
         if(statusJudul[no] != 'setuju'){
             jumlahSetuju++;
         }
-
         statusJudul[no] = 'setuju';
 
         document.getElementById("aksi"+no).innerHTML =
@@ -254,18 +261,9 @@ function lanjutkanAksi(){
     }
 
     if(aksiDipilih == 'tolak'){
-
-        let gagal = false;
-
-        if(gagal){
-            showPopup('error','Gagal memproses tindakan');
-            return;
-        }
-
         if(statusJudul[no] == 'setuju'){
             jumlahSetuju--;
         }
-
         statusJudul[no] = 'tolak';
 
         document.getElementById("aksi"+no).innerHTML =
@@ -277,11 +275,9 @@ function lanjutkanAksi(){
 }
 
 function resetJudul(no){
-
     if(statusJudul[no] == 'setuju'){
         jumlahSetuju--;
     }
-
     statusJudul[no] = '';
 
     document.getElementById("aksi"+no).innerHTML =
@@ -291,14 +287,8 @@ function resetJudul(no){
 }
 
 function simpanData(){
-
     if(jumlahSetuju > 1){
         showPopup('error','Judul disetujui hanya boleh 1');
-        return;
-    }
-
-    if(jumlahSetuju == 0){
-        showPopup('error','Pilih 1 judul yang disetujui');
         return;
     }
 
@@ -314,9 +304,6 @@ function simpanData(){
 </script>
 
 <style>
-
-/* CSS TETAP SAMA PERSIS */
-
 body{
     background:#efefef;
 }
@@ -449,6 +436,24 @@ body{
     font-size:18px;
 }
 
+/* Badge hasil verifikasi */
+.badge-hasil{
+    padding:8px 18px;
+    border-radius:5px;
+    font-size:15px;
+    font-weight:600;
+}
+
+.badge-disetujui-hasil{
+    background:#8fdb9f;
+    color:#1a7a2e;
+}
+
+.badge-ditolak-hasil{
+    background:#f3a1a1;
+    color:#a81c1c;
+}
+
 .footer-btn{
     text-align:right;
     margin-top:25px;
@@ -534,7 +539,6 @@ body{
     padding:12px 35px;
     border-radius:6px;
 }
-
 </style>
 
 @endsection
