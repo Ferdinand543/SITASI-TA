@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PengajuanController;
 
 // ROOT
 Route::get('/', function () {
@@ -48,25 +49,8 @@ Route::get('/mahasiswa', function () {
     return view('mahasiswa.index');
 });
 
-// PENGAJUAN — hanya koordinator
-Route::get('/pengajuan', function () {
-    if (!session('user')) {
-        return redirect('/login')->with('error', 'Silakan login dulu!');
-    }
-
-    $role = strtolower(trim(session('user')->role));
-
-    if ($role !== 'koordinator') {
-        // Mahasiswa balik ke dashboard mahasiswa
-        if ($role === 'mahasiswa') {
-            return redirect('/mahasiswa')->with('error', 'Akses ditolak!');
-        }
-        // Dosen lain balik ke dashboard dosen
-        return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
-    }
-
-    return view('pengajuan.index');
-})->name('pengajuan');
+// PENGAJUAN — hanya koordinator, pakai PengajuanController
+Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan');
 
 // PROPOSAL
 Route::get('/proposal', function () {

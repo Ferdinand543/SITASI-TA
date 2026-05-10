@@ -4,21 +4,17 @@
 
 <!-- HERO -->
 <div class="hero-section mb-4">
-
     <div class="hero-content">
-
         <h2 class="fw-bold">Sistem Bimbingan Tugas Akhir Mahasiswa</h2>
         <h2 class="fw-bold">Sistem Informasi</h2>
-
         <p>
             SITASI-TA digunakan untuk membantu mahasiswa dalam mengelola tugas akhir,<br>
             mulai dari pengajuan judul, proses bimbingan TA1,<br>
             hingga pelaksanaan seminar dan sidang secara terstruktur.
         </p>
-
     </div>
-
 </div>
+
 <div class="d-flex justify-content-end">
     <div class="menu-bottom-wrapper">
         <a href="#" class="menu-bottom active">Beranda</a>
@@ -29,10 +25,9 @@
 
 <div class="container">
 
-    <!-- MENU -->
+    <!-- MENU ROW 1 -->
     <div class="row g-4 justify-content-center text-center mb-4">
 
-        <!-- CARD 1 -->
         <div class="col-md-3">
             <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
@@ -43,7 +38,6 @@
             </a>
         </div>
 
-        <!-- CARD 2 -->
         <div class="col-md-3">
             <a href="{{ session('user') ? route('proposal') : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
@@ -54,7 +48,6 @@
             </a>
         </div>
 
-        <!-- CARD 3 -->
         <div class="col-md-3">
             <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
@@ -65,7 +58,6 @@
             </a>
         </div>
 
-        <!-- CARD 4 -->
         <div class="col-md-3">
             <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
@@ -75,13 +67,12 @@
                 </div>
             </a>
         </div>
+
     </div>
 
+    <!-- MENU ROW 2 — justify-content-start biar nempel kiri sesuai mockup -->
+    <div class="row g-4 justify-content-start text-center">
 
-    <!-- ROW KE-2 -->
-    <div class="row g-4 justify-content-center text-center">
-
-        <!-- MAHASISWA -->
         <div class="col-md-3">
             <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
@@ -92,14 +83,14 @@
             </a>
         </div>
 
-        <!-- CARD JADWAL -->
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('pengajuan') : '/login' }}" style="text-decoration:none; color:inherit;">
+            <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/jadwal.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Jadwal</h6>
                     <p class="text-muted small mb-0">Pelaksanaan TA</p>
                 </div>
+            </a>
         </div>
 
     </div>
@@ -107,8 +98,6 @@
 </div>
 <br>
 
-<!-- STATUS -->
-<!-- STYLE -->
 <style>
     .menu-img {
         height: 140px;

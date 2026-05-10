@@ -8,7 +8,6 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         body {
@@ -217,8 +216,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-
 <body>
 
     @include('partials.navbar')
@@ -227,15 +224,17 @@
         @yield('content')
     </div>
 
-    @include('partials.footer')
+    {{-- Footer hanya muncul di halaman dashboard utama saja --}}
+    @if(request()->is('mahasiswa') || request()->is('dashboard/dosen') || request()->is('admin'))
+        @include('partials.footer')
+    @endif
 
-    <!-- 🔥 POPUP LOGIN BERHASIL -->
     @if(session('success'))
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             Swal.fire({
                 title: 'Berhasil!',
-               text: "{{ session('success') }}",
+                text: "{{ session('success') }}",
                 icon: 'success',
                 confirmButtonColor: '#f4b400',
                 confirmButtonText: 'OK'
