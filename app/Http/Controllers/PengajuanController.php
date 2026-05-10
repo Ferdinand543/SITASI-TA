@@ -19,6 +19,7 @@ class PengajuanController extends Controller
             if ($role === 'mahasiswa') {
                 return redirect('/mahasiswa')->with('error', 'Akses ditolak!');
             }
+
             return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
         }
 
@@ -39,5 +40,55 @@ class PengajuanController extends Controller
             ->get();
 
         return view('pengajuan.index', compact('pengajuans'));
+    }
+
+    public function verifikasi($id)
+    {
+        $pengajuan = DB::table('pengajuan_judul')
+            ->join('users', 'pengajuan_judul.nim_nid', '=', 'users.nim_nid')
+            ->select(
+                'pengajuan_judul.*',
+                'users.nama'
+            )
+            ->where('pengajuan_judul.id', $id)
+            ->first();
+
+        return view('pengajuan.verifikasi', compact('pengajuan'));
+    }
+
+    public function prosesVerifikasi(Request $request, $id)
+    {
+        $request->validate([
+            'judul_disetujui' => 'required'
+        ]);
+
+        $data = DB::table('pengajuan_judul')
+            ->where('id', $id)
+            ->first();
+
+        $judulDipilih = '';
+
+        if ($request->judul_disetujui == 1) {
+            $judulDipilih = $data->judul_1;
+        }
+
+        if ($request->judul_disetujui == 2) {
+            $judulDipilih = $data->judul_2;
+        }
+
+        if ($request->judul_disetujui == 3) {
+            $judulDipilih = $data->judul_3;
+        }
+
+        DB::table('pengajuan_judul')
+            ->where('id', $id)
+            ->update([
+                'status' => 'disetujui',
+                'judul_disetujui' => $judulDipilih,
+                'updated_at' => now()
+            ]);
+
+        return redirect('/pengajuan')
+            ->with('success', 'Judul berhasil diverifikasi');
     }
 }
