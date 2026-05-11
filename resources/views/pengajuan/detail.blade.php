@@ -320,6 +320,7 @@
 
         {{-- LIST JUDUL DARI DATABASE --}}
         @php
+
         $judulList = [
         [
         'label' => 'Judul 1',
@@ -337,35 +338,107 @@
         'topik' => $pengajuan->topik_3,
         ],
         ];
+
+        $statusUtama = strtolower($pengajuan->status);
+        $judulDisetujui = $pengajuan->judul_disetujui ?? null;
+
         @endphp
 
         <div class="judul-list-wrapper">
+
             @foreach($judulList as $item)
-            @php $st = strtolower($pengajuan->status); @endphp
+
+            @php
+
+            // DEFAULT
+            $statusCard = 'menunggu';
+
+            // JIKA SEMUA DITOLAK
+            if ($statusUtama === 'ditolak') {
+
+            $statusCard = 'ditolak';
+
+            }
+
+            // JIKA ADA YANG DISETUJUI
+            elseif ($statusUtama === 'disetujui') {
+
+            // HANYA 1 JUDUL YANG HIJAU
+            if ($item['judul'] === $judulDisetujui) {
+
+            $statusCard = 'disetujui';
+
+            } else {
+
+            // SISANYA MERAH
+            $statusCard = 'ditolak';
+            }
+            }
+
+            @endphp
+
             <div class="judul-card">
 
                 {{-- STATUS BADGE --}}
-                @if($st === 'disetujui')
-                <span class="badge-status-pill badge-disetujui">Disetujui</span>
-                @elseif($st === 'ditolak')
-                <span class="badge-status-pill badge-ditolak">Ditolak</span>
+                @if($statusCard === 'disetujui')
+
+                <span class="badge-status-pill badge-disetujui">
+                    Disetujui
+                </span>
+
+                @elseif($statusCard === 'ditolak')
+
+                <span class="badge-status-pill badge-ditolak">
+                    Ditolak
+                </span>
+
                 @else
-                <span class="badge-status-pill badge-menunggu">Menunggu Verifikasi</span>
+
+                <span class="badge-status-pill badge-menunggu">
+                    Menunggu Verifikasi
+                </span>
+
                 @endif
 
-                <div class="judul-label">{{ $item['label'] }}</div>
-                <div class="judul-title">{{ $item['judul'] }}</div>
 
+                {{-- LABEL --}}
+                <div class="judul-label">
+                    {{ $item['label'] }}
+                </div>
+
+
+                {{-- JUDUL --}}
+                <div class="judul-title">
+                    {{ $item['judul'] }}
+                </div>
+
+
+                {{-- DETAIL --}}
                 <div class="meta-row">
-                    <span class="meta-label">Topik Penelitian</span>
-                    <span class="meta-value">{{ $item['topik'] }}</span>
 
-                    <span class="meta-label">Mitra Penelitian</span>
-                    <span class="meta-value">{{ $pengajuan->mitra_penelitian ?? '-' }}</span>
+                    <span class="meta-label">
+                        Topik Penelitian
+                    </span>
+
+                    <span class="meta-value">
+                        {{ $item['topik'] }}
+                    </span>
+
+
+                    <span class="meta-label">
+                        Mitra Penelitian
+                    </span>
+
+                    <span class="meta-value">
+                        {{ $pengajuan->mitra_penelitian ?? '-' }}
+                    </span>
+
                 </div>
 
             </div>
+
             @endforeach
+
         </div>
 
     </div>
