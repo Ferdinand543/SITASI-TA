@@ -2,6 +2,12 @@
 
 @section('content')
 
+@php
+    $adaPengajuanBaru = \Illuminate\Support\Facades\DB::table('pengajuan_judul')
+        ->where('status', 'menunggu verifikasi')
+        ->exists();
+@endphp
+
 <!-- HERO -->
 <div class="hero-section mb-4">
     <div class="hero-content">
@@ -28,9 +34,16 @@
     <!-- MENU ROW 1 -->
     <div class="row g-4 justify-content-center text-center mb-4">
 
+        {{-- CARD PENGAJUAN JUDUL --}}
         <div class="col-md-3">
             <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
-                <div class="card shadow-sm h-100 border-0 p-3 menu-card">
+                <div class="card shadow-sm h-100 border-0 p-3 menu-card" style="position:relative;">
+
+                    {{-- BADGE MERAH kalau ada pengajuan menunggu verifikasi --}}
+                    @if($adaPengajuanBaru)
+                        <span class="badge-notif"></span>
+                    @endif
+
                     <img src="{{ asset('images/ta.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Pengajuan Judul</h6>
                     <p class="text-muted small mb-0">Kelola Judul Mahasiswa</p>
@@ -38,6 +51,7 @@
             </a>
         </div>
 
+        {{-- CARD PROPOSAL --}}
         <div class="col-md-3">
             <a href="{{ session('user') ? route('proposal') : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
@@ -48,6 +62,7 @@
             </a>
         </div>
 
+        {{-- CARD RIWAYAT BIMBINGAN --}}
         <div class="col-md-3">
             <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
@@ -58,6 +73,7 @@
             </a>
         </div>
 
+        {{-- CARD PENILAIAN --}}
         <div class="col-md-3">
             <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
@@ -70,9 +86,10 @@
 
     </div>
 
-    <!-- MENU ROW 2 — justify-content-start biar nempel kiri sesuai mockup -->
+    <!-- MENU ROW 2 -->
     <div class="row g-4 justify-content-start text-center">
 
+        {{-- CARD MAHASISWA --}}
         <div class="col-md-3">
             <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
@@ -83,6 +100,7 @@
             </a>
         </div>
 
+        {{-- CARD JADWAL --}}
         <div class="col-md-3">
             <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
@@ -113,6 +131,19 @@
     .menu-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Badge notifikasi merah di pojok kanan atas card */
+    .badge-notif {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 12px;
+        height: 12px;
+        background: red;
+        border-radius: 50%;
+        display: inline-block;
+        z-index: 1;
     }
 </style>
 
