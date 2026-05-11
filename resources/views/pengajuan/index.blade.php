@@ -181,9 +181,13 @@
 
 <style>
 .hero-section {
-    min-height: 160px !important;
-    padding: 30px 60px !important;
+    min-height: 220px !important;
+    padding: 40px 60px !important;
     justify-content: center !important;
+    background-image: url('/images/bg_ajukan.jpeg') !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
 }
 .hero-section .hero-content {
     width: 100% !important;

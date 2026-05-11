@@ -165,7 +165,7 @@
 
         <button class="popup-btn" id="popupOkBtn" onclick="closePopup()">OK</button>
 
-        <div id="confirmArea" style="display:none; margin-top:20px;">
+        <div id="confirmArea" style="display:none; margin-top:16px;">
             <button class="popup-btn" onclick="lanjutkanAksi()">Ya</button>
             <button class="popup-btn" style="background:#999; margin-left:10px;" onclick="closePopup()">Batal</button>
         </div>
@@ -340,19 +340,19 @@ body{ background:#efefef; }
 
 .popup-bg{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.35); display:none; justify-content:center; align-items:center; z-index:9999; }
 
-.popup-box{ width:520px; background:#fff; border-radius:8px; padding:45px; text-align:center; }
+.popup-box{ width:360px; background:#fff; border-radius:12px; padding:28px; text-align:center; }
 
-.popup-icon{ width:95px; height:95px; border-radius:50%; line-height:95px; font-size:50px; margin:auto; margin-bottom:25px; }
+.popup-icon{ width:60px; height:60px; border-radius:50%; line-height:55px; font-size:28px; margin:auto; margin-bottom:16px; }
 
-.success{ border:5px solid #7edc88; color:#7edc88; }
+.success{ border:4px solid #7edc88; color:#7edc88; }
 
-.error{ border:5px solid #ef7d7d; color:#ef7d7d; }
+.error{ border:4px solid #ef7d7d; color:#ef7d7d; }
 
-.popup-title{ font-size:52px; font-weight:700; margin-bottom:10px; }
+.popup-title{ font-size:22px; font-weight:700; margin-bottom:8px; }
 
-.popup-text{ font-size:26px; color:#555; margin-bottom:28px; }
+.popup-text{ font-size:14px; color:#555; margin-bottom:20px; }
 
-.popup-btn{ background:#f0b400; border:none; color:white; font-size:24px; padding:12px 35px; border-radius:6px; }
+.popup-btn{ background:#f0b400; border:none; color:white; font-size:14px; padding:9px 24px; border-radius:6px; cursor:pointer; }
 </style>
 
 @endsection
