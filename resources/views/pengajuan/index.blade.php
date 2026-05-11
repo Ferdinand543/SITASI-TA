@@ -100,7 +100,7 @@
                                 Verifikasi
                             </button>
                         @else
-                            <a href="{{ route('pengajuan.detail', $item->id) }}" class="btn btn-sm btn-outline-secondary">
+                            <a href="{{ route('pengajuan.verifikasi', $item->id) }}" class="btn btn-sm btn-outline-secondary">
                                 Detail
                             </a>
                         @endif
@@ -265,7 +265,7 @@ function filterTabel() {
 document.querySelectorAll('.btn-verifikasi').forEach(btn => {
     btn.addEventListener('click', function() {
         const id = this.getAttribute('data-id');
-        document.getElementById('btnTinjau').href = '/pengajuan/detail/' + id;
+        document.getElementById('btnTinjau').href = '/pengajuan/verifikasi/' + id;
         const modal = new bootstrap.Modal(document.getElementById('modalInfoVerifikasi'));
         modal.show();
     });

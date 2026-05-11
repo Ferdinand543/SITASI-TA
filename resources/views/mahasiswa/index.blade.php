@@ -37,7 +37,7 @@
     <div class="row g-4 justify-content-center">
         <!-- CARD 1 -->
         <div class="col-md-4 col-lg-3">
-            <a href="{{ session('user') ? route('pengajuan') : '/login' }}"
+            <a href="{{ session('user') ? route('pengajuan.mahasiswa') : '/login' }}"
                 style="text-decoration:none; color:inherit;">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card text-center">
                     <img src="{{ asset('images/ta.jpeg') }}" class="mb-3" style="height:150px; object-fit:contain;">
@@ -50,7 +50,7 @@
 
         <!-- CARD 2 -->
         <div class="col-md-4 col-lg-3">
-            <a href="{{ session('user') ? route('proposal') : '/login' }}" style="text-decoration:none; color:inherit;">
+            <a href="#" style="text-decoration:none; color:inherit;">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card text-center">
                     <img src="{{ asset('images/proposal.jpeg') }}" class="mb-3" style="height:150px; object-fit:contain;">
                     <h6 class="fw-bold">Upload Proposal</h6>
@@ -61,7 +61,7 @@
 
         <!-- CARD 3 -->
         <div class="col-md-4 col-lg-3">
-            <a href="{{ session('user') ? route('proposal') : '/login' }}" style="text-decoration:none; color:inherit;">
+            <a href="#" style="text-decoration:none; color:inherit;">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card text-center">
                     <img src="{{ asset('images/bimbingan.jpeg') }}" class="mb-3" style="height:150px; object-fit:contain;">
                     <h6 class="fw-bold">Bimbingan</h6>
@@ -72,7 +72,7 @@
 
         <!-- CARD 4 -->
         <div class="col-md-4 col-lg-3">
-            <a href="{{ session('user') ? route('proposal') : '/login' }}" style="text-decoration:none; color:inherit;">
+            <a href="#" style="text-decoration:none; color:inherit;">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card text-center">
                     <img src="{{ asset('images/jadwal.jpeg') }}" class="mb-3" style="height:150px; object-fit:contain;">
                     <h6 class="fw-bold">Jadwal</h6>
