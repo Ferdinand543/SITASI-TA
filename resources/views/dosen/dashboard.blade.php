@@ -53,7 +53,7 @@
 
         {{-- CARD PROPOSAL --}}
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('proposal') : '/login' }}" class="text-decoration-none text-dark">
+            <a href="{{ session('user') ? route('proposal.index') : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/proposal.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Proposal</h6>
@@ -133,7 +133,6 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
 
-    /* Badge notifikasi merah di pojok kanan atas card */
     .badge-notif {
         position: absolute;
         top: 10px;
