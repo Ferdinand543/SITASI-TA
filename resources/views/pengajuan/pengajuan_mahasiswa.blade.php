@@ -94,9 +94,6 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
 </div>
 
 <div class="container mt-4">
-    <br>
-    {{-- ── NAV MINI ──────────────────────────────────────────── --}}
-
 
     {{-- Tampilkan pesan sukses --}}
     @if(session('success'))
@@ -159,8 +156,20 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
                     <td>{{ $index + 1 }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d M Y') }}</td>
                     <td class="text-start">
+
+                        @if(strtolower($item->status) === 'disetujui')
+
+                        {{ \Illuminate\Support\Str::limit($item->judul_disetujui, 35) }}
+
+                        @else
+
                         {{ \Illuminate\Support\Str::limit($item->judul_1, 35) }}
-                        <br><small class="text-muted">+ 2 lainnya</small>
+
+                        <br>
+                        <small class="text-muted">+ 2 lainnya</small>
+
+                        @endif
+
                     </td>
                     <td>
                         @php $st = strtolower($item->status); @endphp
