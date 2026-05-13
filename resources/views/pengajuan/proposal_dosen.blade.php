@@ -48,7 +48,7 @@
             <div class="input-group" style="width:260px;">
                 <input type="text"
                        name="search"
-                       placeholder="Cari nama, NIM, Judul"
+                       placeholder="Cari nama, NIM, Judul, dan Dosen Pembimbing"
                        value="{{ request('search') }}"
                        class="form-control"
                        style="font-size:14px;">
