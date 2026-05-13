@@ -169,12 +169,33 @@
         border-radius: 20px;
         font-size: 0.9rem;
         text-decoration: none;
+        transition: 0.2s;
     }
-    
+
     .btn-kembali:hover {
-    background: #c8c8c8;
-    color: #111;
+        background: #c8c8c8;
+        color: #111;
+    }
+
+    .btn-simpan {
+    background: #4caf7d;
+    color: #fff !important;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
     transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    }
+
+    .btn-simpan:hover {
+    background: #3d9c6a;
+    color: #fff !important;
+    transform: translateX(3px);
     }
 
     .icon-user {
@@ -292,7 +313,6 @@
                 @elseif($s1 == 'ditolak')
                     <span class="badge-ditolak">Ditolak</span>
                 @else
-                    {{-- Badge klikable → ke form penetapan (dibuat temen lo) --}}
                     <a href="{{ url('/proposal/' . $proposal->id . '/tetapkan/1') }}"
                        class="badge-menunggu">
                         Menunggu Verifikasi
@@ -326,7 +346,6 @@
                 @elseif($s2 == 'ditolak')
                     <span class="badge-ditolak">Ditolak</span>
                 @else
-                    {{-- Badge klikable → ke form penetapan (dibuat temen lo) --}}
                     <a href="{{ url('/proposal/' . $proposal->id . '/tetapkan/2') }}"
                        class="badge-menunggu">
                         Menunggu Verifikasi
@@ -400,9 +419,15 @@
     </div>
 
     {{-- FOOTER --}}
-    <div class="footer-btn">
-        <a href="/proposal" class="btn-kembali">Kembali</a>
-    </div>
+<div class="footer-btn">
+    <a href="/proposal" class="btn-kembali">Kembali</a>
+    <a href="#" 
+       style="background:#4caf7d; color:#000 !important; border:none; padding:10px 24px; border-radius:20px; font-size:0.9rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:6px;"
+       onmouseover="this.style.background='#3d9c6a'; this.style.transform='translateX(3px)'"
+       onmouseout="this.style.background='#4caf7d'; this.style.transform='translateX(0)'">
+        Simpan dan lanjutkan ke reviewer →
+    </a>
+</div>
 
 </div>
 
