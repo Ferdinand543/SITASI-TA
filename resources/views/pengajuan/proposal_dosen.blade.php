@@ -158,16 +158,22 @@
                         @endif
                     </td>
 
+                    {{-- AKSI: belum verifikasi = Verifikasi aja, udah = Detail aja --}}
                     <td>
                         <div class="d-flex justify-content-center gap-2 flex-wrap">
-                            <a href="{{ url('/proposal/' . $p->id) }}"
-                               class="btn btn-sm btn-outline-secondary">
-                                Detail
-                            </a>
                             @if(str_contains($status, 'menunggu'))
+                                {{-- BELUM DIVERIFIKASI: tombol Verifikasi aja --}}
                                 <a href="{{ url('/proposal/' . $p->id . '/verifikasi') }}"
-                                   class="btn btn-sm btn-warning text-white fw-bold">
+                                   class="btn btn-sm btn-warning fw-bold"
+                                   style="color:#000; border-radius:8px; min-width:80px;">
                                     Verifikasi
+                                </a>
+                            @else
+                                {{-- SUDAH DIVERIFIKASI: tombol Detail aja --}}
+                                <a href="{{ url('/proposal/' . $p->id) }}"
+                                   class="btn btn-sm btn-outline-secondary"
+                                   style="border-radius:8px; min-width:70px;">
+                                    Detail
                                 </a>
                             @endif
                         </div>

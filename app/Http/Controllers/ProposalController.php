@@ -28,28 +28,24 @@ class ProposalController extends Controller
         $query = DB::table('proposal')
             ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
 
-            // Usulan Pembimbing 1
             ->leftJoin('usulan_pembimbing as up1', function ($join) {
                 $join->on('up1.proposal_id', '=', 'proposal.id')
                      ->where('up1.urutan', '=', 1);
             })
             ->leftJoin('users as du1', 'up1.nim_nid_dosen', '=', 'du1.nim_nid')
 
-            // Usulan Pembimbing 2
             ->leftJoin('usulan_pembimbing as up2', function ($join) {
                 $join->on('up2.proposal_id', '=', 'proposal.id')
                      ->where('up2.urutan', '=', 2);
             })
             ->leftJoin('users as du2', 'up2.nim_nid_dosen', '=', 'du2.nim_nid')
 
-            // Dosen Pembimbing Tetap 1
             ->leftJoin('dosen_pembimbing as dp1', function ($join) {
                 $join->on('dp1.proposal_id', '=', 'proposal.id')
                      ->where('dp1.urutan', '=', 1);
             })
             ->leftJoin('users as dd1', 'dp1.nim_nid_dosen', '=', 'dd1.nim_nid')
 
-            // Dosen Pembimbing Tetap 2
             ->leftJoin('dosen_pembimbing as dp2', function ($join) {
                 $join->on('dp2.proposal_id', '=', 'proposal.id')
                      ->where('dp2.urutan', '=', 2);
@@ -208,6 +204,19 @@ class ProposalController extends Controller
             })
             ->leftJoin('users as du2', 'up2.nim_nid_dosen', '=', 'du2.nim_nid')
 
+            // Dosen pembimbing tetap (kalau udah ditetapkan sebelumnya)
+            ->leftJoin('dosen_pembimbing as dp1', function ($join) {
+                $join->on('dp1.proposal_id', '=', 'proposal.id')
+                     ->where('dp1.urutan', '=', 1);
+            })
+            ->leftJoin('users as dd1', 'dp1.nim_nid_dosen', '=', 'dd1.nim_nid')
+
+            ->leftJoin('dosen_pembimbing as dp2', function ($join) {
+                $join->on('dp2.proposal_id', '=', 'proposal.id')
+                     ->where('dp2.urutan', '=', 2);
+            })
+            ->leftJoin('users as dd2', 'dp2.nim_nid_dosen', '=', 'dd2.nim_nid')
+
             ->select([
                 'proposal.id',
                 'proposal.nim_nid',
@@ -217,11 +226,27 @@ class ProposalController extends Controller
                 'proposal.tanggal_pengajuan',
                 'proposal.status',
 
+                // Usulan pembimbing 1
                 'du1.nama as usulan_dosen1_nama',
                 'du1.nim_nid as usulan_dosen1_nidn',
+                'up1.status as usulan_dosen1_status',
+                'up1.tanggal_usulan as usulan_dosen1_tanggal',
 
+                // Usulan pembimbing 2
                 'du2.nama as usulan_dosen2_nama',
                 'du2.nim_nid as usulan_dosen2_nidn',
+                'up2.status as usulan_dosen2_status',
+                'up2.tanggal_usulan as usulan_dosen2_tanggal',
+
+                // Dosen pembimbing tetap 1
+                'dd1.nama as dosen1_nama',
+                'dd1.nim_nid as dosen1_nidn',
+                'dp1.tanggal_penetapan as dosen1_tanggal',
+
+                // Dosen pembimbing tetap 2
+                'dd2.nama as dosen2_nama',
+                'dd2.nim_nid as dosen2_nidn',
+                'dp2.tanggal_penetapan as dosen2_tanggal',
             ])
             ->where('proposal.id', $id)
             ->first();
@@ -231,8 +256,9 @@ class ProposalController extends Controller
         }
 
         // Ambil semua dosen untuk dropdown
+        // Sesuai role lo sekarang masih pakai role lama
         $dosenList = DB::table('users')
-            ->whereIn('role', ['dosen pembimbing', 'dosen penguji', 'dosen reviewer'])
+            ->whereIn('role', ['dosen pembimbing', 'dosen penguji', 'dosen reviewer', 'koordinator'])
             ->select('nim_nid', 'nama')
             ->get();
 
@@ -258,21 +284,21 @@ class ProposalController extends Controller
 
         // Insert dosen pembimbing 1
         DB::table('dosen_pembimbing')->insert([
-            'proposal_id'      => $id,
-            'nim_nid_dosen'    => $request->dosen_pembimbing_1,
-            'urutan'           => 1,
+            'proposal_id'       => $id,
+            'nim_nid_dosen'     => $request->dosen_pembimbing_1,
+            'urutan'            => 1,
             'tanggal_penetapan' => now()->toDateString(),
         ]);
 
         // Insert dosen pembimbing 2
         DB::table('dosen_pembimbing')->insert([
-            'proposal_id'      => $id,
-            'nim_nid_dosen'    => $request->dosen_pembimbing_2,
-            'urutan'           => 2,
+            'proposal_id'       => $id,
+            'nim_nid_dosen'     => $request->dosen_pembimbing_2,
+            'urutan'            => 2,
             'tanggal_penetapan' => now()->toDateString(),
         ]);
 
-        // Update status usulan pembimbing
+        // Update status usulan — yang dipilih jadi disetujui
         DB::table('usulan_pembimbing')
             ->where('proposal_id', $id)
             ->where('nim_nid_dosen', $request->dosen_pembimbing_1)
@@ -282,6 +308,15 @@ class ProposalController extends Controller
             ->where('proposal_id', $id)
             ->where('nim_nid_dosen', $request->dosen_pembimbing_2)
             ->update(['status' => 'disetujui']);
+
+        // Yang tidak dipilih jadi ditolak
+        DB::table('usulan_pembimbing')
+            ->where('proposal_id', $id)
+            ->whereNotIn('nim_nid_dosen', [
+                $request->dosen_pembimbing_1,
+                $request->dosen_pembimbing_2
+            ])
+            ->update(['status' => 'ditolak']);
 
         // Update status proposal
         DB::table('proposal')
