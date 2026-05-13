@@ -51,14 +51,14 @@
     <div class="table-responsive">
         <table class="table table-bordered align-middle text-center" id="tabelPengajuan">
             <thead>
-                <tr style="background:#f4b400; color:white;">
-                    <th>No.</th>
-                    <th>NIM</th>
-                    <th>Nama</th>
-                    <th>Judul yang diajukan mahasiswa</th>
-                    <th>Tanggal Pengajuan</th>
-                    <th>Status</th>
-                    <th>Detail</th>
+                <tr>
+                    <th style="background-color:#f4b400 !important; color:#000 !important; border:1px solid #000 !important;">No.</th>
+                    <th style="background-color:#f4b400 !important; color:#000 !important; border:1px solid #000 !important;">NIM</th>
+                    <th style="background-color:#f4b400 !important; color:#000 !important; border:1px solid #000 !important;">Nama</th>
+                    <th style="background-color:#f4b400 !important; color:#000 !important; border:1px solid #000 !important;">Judul yang diajukan mahasiswa</th>
+                    <th style="background-color:#f4b400 !important; color:#000 !important; border:1px solid #000 !important;">Tanggal Pengajuan</th>
+                    <th style="background-color:#f4b400 !important; color:#000 !important; border:1px solid #000 !important;">Status</th>
+                    <th style="background-color:#f4b400 !important; color:#000 !important; border:1px solid #000 !important;">Detail</th>
                 </tr>
             </thead>
             <tbody id="tabelBody">
@@ -221,14 +221,12 @@
     font-size: 14px;
     transition: 0.2s;
 }
-.sub-menu:hover {
-    background: #f7d27c;
-    color: #000;
-}
-.sub-menu.active {
-    background: #f7d27c;
-    color: #000;
-    font-weight: 500;
+.sub-menu:hover { background: #f7d27c; color: #000; }
+.sub-menu.active { background: #f7d27c; color: #000; font-weight: 500; }
+
+{{-- TAMBAHAN: border hitam semua cell --}}
+.table td, .table th {
+    border: 1px solid #000 !important;
 }
 </style>
 

@@ -71,20 +71,20 @@
     {{-- TABEL --}}
     <div class="table-responsive">
         <table class="table table-bordered align-middle text-center"
-               style="min-width:1400px; font-size:14px;">
+               style="min-width:1400px; font-size:14px; border: 1px solid #000 !important;">
 
             <thead>
-                <tr style="background:#f4b400; color:white;">
-                    <th class="align-middle" style="width:50px;">No.</th>
-                    <th class="align-middle">Tanggal</th>
-                    <th class="align-middle">NIM</th>
-                    <th class="align-middle">Nama</th>
-                    <th class="align-middle">Judul</th>
-                    <th class="align-middle">Proposal</th>
-                    <th class="align-middle">Pembimbing 1</th>
-                    <th class="align-middle">Pembimbing 2</th>
-                    <th class="align-middle">Status</th>
-                    <th class="align-middle">Detail</th>
+                <tr>
+                    <th class="align-middle" style="width:50px; background-color:#f4b400 !important; color:#000 !important; border: 1px solid #000 !important;">No.</th>
+                    <th class="align-middle" style="background-color:#f4b400 !important; color:#000 !important; border: 1px solid #000 !important;">Tanggal</th>
+                    <th class="align-middle" style="background-color:#f4b400 !important; color:#000 !important; border: 1px solid #000 !important;">NIM</th>
+                    <th class="align-middle" style="background-color:#f4b400 !important; color:#000 !important; border: 1px solid #000 !important;">Nama</th>
+                    <th class="align-middle" style="background-color:#f4b400 !important; color:#000 !important; border: 1px solid #000 !important;">Judul</th>
+                    <th class="align-middle" style="background-color:#f4b400 !important; color:#000 !important; border: 1px solid #000 !important;">Proposal</th>
+                    <th class="align-middle" style="background-color:#f4b400 !important; color:#000 !important; border: 1px solid #000 !important;">Pembimbing 1</th>
+                    <th class="align-middle" style="background-color:#f4b400 !important; color:#000 !important; border: 1px solid #000 !important;">Pembimbing 2</th>
+                    <th class="align-middle" style="background-color:#f4b400 !important; color:#000 !important; border: 1px solid #000 !important;">Status</th>
+                    <th class="align-middle" style="background-color:#f4b400 !important; color:#000 !important; border: 1px solid #000 !important;">Detail</th>
                 </tr>
             </thead>
 
@@ -158,18 +158,15 @@
                         @endif
                     </td>
 
-                    {{-- AKSI: belum verifikasi = Verifikasi aja, udah = Detail aja --}}
                     <td>
                         <div class="d-flex justify-content-center gap-2 flex-wrap">
                             @if(str_contains($status, 'menunggu'))
-                                {{-- BELUM DIVERIFIKASI: tombol Verifikasi aja --}}
                                 <a href="{{ url('/proposal/' . $p->id . '/verifikasi') }}"
                                    class="btn btn-sm btn-warning fw-bold"
                                    style="color:#000; border-radius:8px; min-width:80px;">
                                     Verifikasi
                                 </a>
                             @else
-                                {{-- SUDAH DIVERIFIKASI: tombol Detail aja --}}
                                 <a href="{{ url('/proposal/' . $p->id) }}"
                                    class="btn btn-sm btn-outline-secondary"
                                    style="border-radius:8px; min-width:70px;">
@@ -232,6 +229,9 @@
 }
 .sub-menu:hover { background: #f7d27c; color: #000; }
 .sub-menu.active { background: #f7d27c; color: #000; font-weight: 500; }
+.table td, .table th {
+    border: 1px solid #000 !important;
+}
 </style>
 
 @endsection
