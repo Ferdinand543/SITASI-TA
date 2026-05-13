@@ -178,24 +178,24 @@
     }
 
     .btn-simpan {
-    background: #4caf7d;
-    color: #fff !important;
-    border: none;
-    padding: 10px 24px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+        background: #4caf7d;
+        color: #fff !important;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .btn-simpan:hover {
-    background: #3d9c6a;
-    color: #fff !important;
-    transform: translateX(3px);
+        background: #3d9c6a;
+        color: #fff !important;
+        transform: translateX(3px);
     }
 
     .icon-user {
@@ -220,6 +220,21 @@
     <div class="page-title">Verifikasi dan Tetapkan Dosen Pembimbing Mahasiswa</div>
     <div class="page-sub">Kelola verifikasi dan penetapan dosen pembimbing tugas akhir mahasiswa.</div>
 
+    {{-- ALERT SUCCESS / ERROR --}}
+    @if(session('success'))
+        <div style="background:#d4edda; color:#28a745; border:1px solid #b7dfbb;
+                    border-radius:10px; padding:12px 16px; margin-bottom:16px; font-size:0.9rem;">
+            <i class="fa fa-check-circle me-1"></i> {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div style="background:#f8d7da; color:#dc3545; border:1px solid #f1aeb5;
+                    border-radius:10px; padding:12px 16px; margin-bottom:16px; font-size:0.9rem;">
+            <i class="fa fa-times-circle me-1"></i> {{ session('error') }}
+        </div>
+    @endif
+
     {{-- INFO GRID --}}
     <div class="info-grid">
 
@@ -241,6 +256,7 @@
         <div class="info-box">
             <div class="lbl"><i class="fa fa-clock"></i> Status</div>
             @php $st = strtolower(trim($proposal->status)); @endphp
+
             <div class="val {{ str_contains($st, 'menunggu') ? 'menunggu' : ($st == 'selesai' ? 'selesai' : 'ditolak') }}">
                 {{ ucwords(str_replace('_', ' ', $proposal->status)) }}
             </div>
@@ -255,12 +271,15 @@
         {{-- Judul --}}
         <div class="info-box">
             <div class="lbl">Judul</div>
-            <div class="val" style="font-size:0.95rem;">{{ $proposal->judul }}</div>
+            <div class="val" style="font-size:0.95rem;">
+                {{ $proposal->judul }}
+            </div>
         </div>
 
         {{-- Proposal --}}
         <div class="info-box">
             <div class="lbl">Proposal</div>
+
             @if($proposal->file_proposal)
                 <div class="proposal-box mt-2">
                     <div>
@@ -268,17 +287,23 @@
                             <i class="fa fa-file-pdf text-danger me-1"></i>
                             {{ basename($proposal->file_proposal) }}
                         </div>
+
                         <div class="file-meta">
-                            Diunggah pada {{ \Carbon\Carbon::parse($proposal->tanggal_pengajuan)->translatedFormat('d M') }}
+                            Diunggah pada
+                            {{ \Carbon\Carbon::parse($proposal->tanggal_pengajuan)->translatedFormat('d M') }}
                         </div>
                     </div>
+
                     <a href="{{ asset('storage/' . $proposal->file_proposal) }}"
-                       target="_blank" class="text-dark">
+                       target="_blank"
+                       class="text-dark">
                         <i class="fa fa-download"></i>
                     </a>
                 </div>
             @else
-                <div class="val text-muted" style="font-size:0.9rem;">Belum ada file proposal</div>
+                <div class="val text-muted" style="font-size:0.9rem;">
+                    Belum ada file proposal
+                </div>
             @endif
         </div>
 
@@ -286,149 +311,629 @@
 
     {{-- USULAN PEMBIMBING --}}
     <div class="section-title">Usulan Pembimbing</div>
-    <div class="section-sub">Daftar dosen yang Anda ajukan</div>
+    <div class="section-sub">Daftar dosen yang diusulkan mahasiswa</div>
 
     <div class="dosen-grid">
 
         {{-- Usulan 1 --}}
         <div class="dosen-card">
+
             <div class="dosen-label">Usulan Pembimbing 1</div>
+
             @if($proposal->usulan_dosen1_nama)
+
                 <div style="display:flex; align-items:center; margin-bottom:4px;">
-                    <span class="icon-user"><i class="fa fa-user"></i></span>
+                    <span class="icon-user">
+                        <i class="fa fa-user"></i>
+                    </span>
+
                     <div>
-                        <div class="dosen-nama">{{ $proposal->usulan_dosen1_nama }}</div>
-                        <div class="dosen-nidn">NIDN. {{ $proposal->usulan_dosen1_nidn }}</div>
+                        <div class="dosen-nama">
+                            {{ $proposal->usulan_dosen1_nama }}
+                        </div>
+
+                        <div class="dosen-nidn">
+                            NIDN. {{ $proposal->usulan_dosen1_nidn }}
+                        </div>
                     </div>
                 </div>
+
                 <div class="dosen-tanggal mb-2">
                     Diusulkan pada<br>
+
                     {{ $proposal->usulan_dosen1_tanggal
                         ? \Carbon\Carbon::parse($proposal->usulan_dosen1_tanggal)->translatedFormat('d M Y')
                         : '-' }}
                 </div>
-                @php $s1 = strtolower($proposal->usulan_dosen1_status ?? 'menunggu'); @endphp
+
+                @php
+                    $s1 = strtolower($proposal->usulan_dosen1_status ?? 'menunggu');
+                @endphp
+
                 @if($s1 == 'disetujui')
+
                     <span class="badge-disetujui">Disetujui</span>
+
                 @elseif($s1 == 'ditolak')
+
                     <span class="badge-ditolak">Ditolak</span>
+
                 @else
-                    <a href="{{ url('/proposal/' . $proposal->id . '/tetapkan/1') }}"
-                       class="badge-menunggu">
+
+                    <button type="button"
+                            class="badge-menunggu"
+                            onclick="bukaModal(
+                                1,
+                                '{{ addslashes($proposal->usulan_dosen1_nama) }}',
+                                '{{ $proposal->usulan_dosen1_nidn }}',
+                                '{{ $proposal->nim_nid }}',
+                                '{{ addslashes($proposal->nama) }}'
+                            )">
+
                         Menunggu Verifikasi
-                    </a>
+                    </button>
+
                 @endif
+
             @else
+
                 <span class="text-muted">-</span>
+
             @endif
+
         </div>
 
         {{-- Usulan 2 --}}
         <div class="dosen-card">
+
             <div class="dosen-label">Usulan Pembimbing 2</div>
+
             @if($proposal->usulan_dosen2_nama)
+
                 <div style="display:flex; align-items:center; margin-bottom:4px;">
-                    <span class="icon-user"><i class="fa fa-user"></i></span>
+                    <span class="icon-user">
+                        <i class="fa fa-user"></i>
+                    </span>
+
                     <div>
-                        <div class="dosen-nama">{{ $proposal->usulan_dosen2_nama }}</div>
-                        <div class="dosen-nidn">NIDN. {{ $proposal->usulan_dosen2_nidn }}</div>
+                        <div class="dosen-nama">
+                            {{ $proposal->usulan_dosen2_nama }}
+                        </div>
+
+                        <div class="dosen-nidn">
+                            NIDN. {{ $proposal->usulan_dosen2_nidn }}
+                        </div>
                     </div>
                 </div>
+
                 <div class="dosen-tanggal mb-2">
                     Diusulkan pada<br>
+
                     {{ $proposal->usulan_dosen2_tanggal
                         ? \Carbon\Carbon::parse($proposal->usulan_dosen2_tanggal)->translatedFormat('d M Y')
                         : '-' }}
                 </div>
-                @php $s2 = strtolower($proposal->usulan_dosen2_status ?? 'menunggu'); @endphp
+
+                @php
+                    $s2 = strtolower($proposal->usulan_dosen2_status ?? 'menunggu');
+                @endphp
+
                 @if($s2 == 'disetujui')
+
                     <span class="badge-disetujui">Disetujui</span>
+
                 @elseif($s2 == 'ditolak')
+
                     <span class="badge-ditolak">Ditolak</span>
+
                 @else
-                    <a href="{{ url('/proposal/' . $proposal->id . '/tetapkan/2') }}"
-                       class="badge-menunggu">
+
+                    <button type="button"
+                            class="badge-menunggu"
+                            onclick="bukaModal(
+                                2,
+                                '{{ addslashes($proposal->usulan_dosen2_nama) }}',
+                                '{{ $proposal->usulan_dosen2_nidn }}',
+                                '{{ $proposal->nim_nid }}',
+                                '{{ addslashes($proposal->nama) }}'
+                            )">
+
                         Menunggu Verifikasi
-                    </a>
+                    </button>
+
                 @endif
+
             @else
+
                 <span class="text-muted">-</span>
+
             @endif
+
         </div>
 
     </div>
 
-    {{-- DOSEN PEMBIMBING (PENETAPAN) --}}
+    {{-- DOSEN PEMBIMBING --}}
     <div class="section-title">Dosen Pembimbing</div>
-    <div class="section-sub">Dosen Pembimbing yang telah ditetapkan untuk Tugas Akhir Anda</div>
+
+    <div class="section-sub">
+        Dosen Pembimbing yang telah ditetapkan untuk Tugas Akhir ini
+    </div>
 
     <div class="dosen-grid">
 
         {{-- Pembimbing 1 --}}
         <div class="dosen-card">
+
             <div class="dosen-label">Pembimbing 1</div>
+
             @if($proposal->dosen1_nama)
+
                 <div style="display:flex; align-items:center; margin-bottom:4px;">
-                    <span class="icon-user"><i class="fa fa-user"></i></span>
+                    <span class="icon-user">
+                        <i class="fa fa-user"></i>
+                    </span>
+
                     <div>
-                        <div class="dosen-nama">{{ $proposal->dosen1_nama }}</div>
-                        <div class="dosen-nidn">NIDN. {{ $proposal->dosen1_nidn }}</div>
+                        <div class="dosen-nama">
+                            {{ $proposal->dosen1_nama }}
+                        </div>
+
+                        <div class="dosen-nidn">
+                            NIDN. {{ $proposal->dosen1_nidn }}
+                        </div>
                     </div>
                 </div>
+
                 <div class="dosen-tanggal">
                     Ditetapkan pada<br>
+
                     {{ $proposal->dosen1_tanggal
                         ? \Carbon\Carbon::parse($proposal->dosen1_tanggal)->translatedFormat('d M Y')
                         : '-' }}
                 </div>
+
             @else
+
                 <div style="display:flex; align-items:center; margin-bottom:8px;">
-                    <span class="icon-user"><i class="fa fa-user"></i></span>
-                    <span class="text-muted" style="font-size:0.9rem;">[Menunggu verifikasi]</span>
+                    <span class="icon-user">
+                        <i class="fa fa-user"></i>
+                    </span>
+
+                    <span class="text-muted" style="font-size:0.9rem;">
+                        [Menunggu verifikasi]
+                    </span>
                 </div>
-                <div class="dosen-tanggal">Ditetapkan pada<br>-</div>
+
+                <div class="dosen-tanggal">
+                    Ditetapkan pada<br>-
+                </div>
+
             @endif
+
         </div>
 
         {{-- Pembimbing 2 --}}
         <div class="dosen-card">
+
             <div class="dosen-label">Pembimbing 2</div>
+
             @if($proposal->dosen2_nama)
+
                 <div style="display:flex; align-items:center; margin-bottom:4px;">
-                    <span class="icon-user"><i class="fa fa-user"></i></span>
+                    <span class="icon-user">
+                        <i class="fa fa-user"></i>
+                    </span>
+
                     <div>
-                        <div class="dosen-nama">{{ $proposal->dosen2_nama }}</div>
-                        <div class="dosen-nidn">NIDN. {{ $proposal->dosen2_nidn }}</div>
+                        <div class="dosen-nama">
+                            {{ $proposal->dosen2_nama }}
+                        </div>
+
+                        <div class="dosen-nidn">
+                            NIDN. {{ $proposal->dosen2_nidn }}
+                        </div>
                     </div>
                 </div>
+
                 <div class="dosen-tanggal">
                     Ditetapkan pada<br>
+
                     {{ $proposal->dosen2_tanggal
                         ? \Carbon\Carbon::parse($proposal->dosen2_tanggal)->translatedFormat('d M Y')
                         : '-' }}
                 </div>
+
             @else
+
                 <div style="display:flex; align-items:center; margin-bottom:8px;">
-                    <span class="icon-user"><i class="fa fa-user"></i></span>
-                    <span class="text-muted" style="font-size:0.9rem;">[Menunggu verifikasi]</span>
+                    <span class="icon-user">
+                        <i class="fa fa-user"></i>
+                    </span>
+
+                    <span class="text-muted" style="font-size:0.9rem;">
+                        [Menunggu verifikasi]
+                    </span>
                 </div>
-                <div class="dosen-tanggal">Ditetapkan pada<br>-</div>
+
+                <div class="dosen-tanggal">
+                    Ditetapkan pada<br>-
+                </div>
+
             @endif
+
         </div>
 
     </div>
 
     {{-- FOOTER --}}
-<div class="footer-btn">
-    <a href="/proposal" class="btn-kembali">Kembali</a>
-    <a href="#" 
-       style="background:#4caf7d; color:#000 !important; border:none; padding:10px 24px; border-radius:20px; font-size:0.9rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:6px;"
-       onmouseover="this.style.background='#3d9c6a'; this.style.transform='translateX(3px)'"
-       onmouseout="this.style.background='#4caf7d'; this.style.transform='translateX(0)'">
+    <div class="footer-btn">
+
+        <a href="/proposal" class="btn-kembali">
+            Kembali
+        </a>
+
+        <form action="{{ url('/proposal/' . $proposal->id . '/lanjutkan') }}"
+      method="POST">
+
+    @csrf
+
+    <button type="submit"
+            style="background:#4caf7d;
+                   color:#fff;
+                   border:none;
+                   padding:10px 24px;
+                   border-radius:20px;
+                   font-size:0.9rem;
+                   font-weight:600;
+                   cursor:pointer;
+                   transition:0.2s;
+                   display:inline-flex;
+                   align-items:center;
+                   gap:6px;"
+            onmouseover="this.style.background='#3d9c6a'; this.style.transform='translateX(3px)'"
+            onmouseout="this.style.background='#4caf7d'; this.style.transform='translateX(0)'">
+
         Simpan dan lanjutkan ke reviewer →
-    </a>
-</div>
+    </button>
+
+</form>
+
+    </div>
 
 </div>
+
+{{-- ===================================================== --}}
+{{-- MODAL VERIFIKASI                                     --}}
+{{-- ===================================================== --}}
+<div id="modalVerifikasi"
+     style="display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.45);
+            z-index:9999;
+            align-items:center;
+            justify-content:center;">
+
+    <div style="background:#fff;
+                border-radius:16px;
+                padding:32px 28px 24px;
+                width:100%;
+                max-width:420px;
+                box-shadow:0 8px 32px rgba(0,0,0,0.18);
+                margin:0 16px;">
+
+        {{-- JUDUL --}}
+        <div style="text-align:center;
+                    font-size:1.2rem;
+                    font-weight:800;
+                    color:#111;
+                    margin-bottom:6px;
+                    line-height:1.3;">
+
+            Form Penetapan Dosen<br>
+            Pembimbing <span id="modalUrutanLabel">1</span> TA
+        </div>
+
+        <div style="text-align:center;
+                    font-size:0.82rem;
+                    color:#888;
+                    margin-bottom:24px;">
+
+            Lengkapi data berikut untuk menetapkan dosen
+            pembimbing tugas akhir mahasiswa.
+        </div>
+
+        {{-- FORM ACC --}}
+        <form id="formAcc" method="POST" action="">
+            @csrf
+
+            <input type="hidden" name="aksi" value="acc">
+
+            {{-- NIM --}}
+            <div style="margin-bottom:14px;">
+
+                <label style="font-size:0.82rem;
+                              color:#444;
+                              display:block;
+                              margin-bottom:4px;">
+
+                    NIM
+                </label>
+
+                <input type="text"
+                       id="modalNim"
+                       readonly
+                       style="width:100%;
+                              padding:9px 12px;
+                              border-radius:8px;
+                              border:1px solid #ddd;
+                              font-size:0.9rem;
+                              background:#f9f9f9;
+                              color:#555;
+                              box-sizing:border-box;">
+            </div>
+
+            {{-- NAMA --}}
+            <div style="margin-bottom:14px;">
+
+                <label style="font-size:0.82rem;
+                              color:#444;
+                              display:block;
+                              margin-bottom:4px;">
+
+                    Nama
+                </label>
+
+                <input type="text"
+                       id="modalNama"
+                       readonly
+                       style="width:100%;
+                              padding:9px 12px;
+                              border-radius:8px;
+                              border:1px solid #ddd;
+                              font-size:0.9rem;
+                              background:#f9f9f9;
+                              color:#555;
+                              box-sizing:border-box;">
+            </div>
+
+            {{-- USULAN --}}
+            <div style="margin-bottom:20px;">
+
+                <label style="font-size:0.82rem;
+                              color:#444;
+                              display:block;
+                              margin-bottom:4px;">
+
+                    Usulan Pembimbing
+                    <span id="modalUrutanLabel2">1</span>
+                </label>
+
+                <div style="display:flex;
+                            align-items:center;
+                            gap:8px;">
+
+                    <input type="text"
+                           id="modalUsulanDosen"
+                           readonly
+                           style="flex:1;
+                                  padding:9px 12px;
+                                  border-radius:8px;
+                                  border:1px solid #ddd;
+                                  font-size:0.9rem;
+                                  background:#f9f9f9;
+                                  color:#555;
+                                  box-sizing:border-box;">
+
+                    {{-- ACC --}}
+                    <button type="submit"
+                            style="width:32px;
+                                   height:32px;
+                                   border-radius:50%;
+                                   border:none;
+                                   background:#e8f5e9;
+                                   color:#28a745;
+                                   font-size:1rem;
+                                   cursor:pointer;
+                                   display:flex;
+                                   align-items:center;
+                                   justify-content:center;
+                                   flex-shrink:0;">
+
+                        ✓
+                    </button>
+
+                    {{-- TOLAK --}}
+                    <button type="button"
+                            onclick="tampilkanDropdown()"
+                            style="width:32px;
+                                   height:32px;
+                                   border-radius:50%;
+                                   border:none;
+                                   background:#fdecea;
+                                   color:#dc3545;
+                                   font-size:1rem;
+                                   cursor:pointer;
+                                   display:flex;
+                                   align-items:center;
+                                   justify-content:center;
+                                   flex-shrink:0;">
+
+                        ✗
+                    </button>
+
+                </div>
+            </div>
+
+            {{-- FOOTER --}}
+            <div id="footerAcc"
+                 style="display:flex;
+                        justify-content:flex-end;
+                        gap:10px;">
+
+                <button type="button"
+                        onclick="tutupModal()"
+                        style="padding:9px 22px;
+                               border-radius:20px;
+                               border:1px solid #ddd;
+                               background:#fff;
+                               color:#555;
+                               font-size:0.9rem;
+                               cursor:pointer;">
+
+                    Kembali
+                </button>
+
+            </div>
+
+        </form>
+
+        {{-- SECTION TOLAK --}}
+        <div id="sectionTolak" style="display:none;">
+
+            <form id="formTolak" method="POST" action="">
+                @csrf
+
+                <input type="hidden" name="aksi" value="tolak">
+
+                <div style="margin-bottom:14px;">
+
+                    <label style="font-size:0.82rem;
+                                  color:#444;
+                                  display:block;
+                                  margin-bottom:4px;">
+
+                        Pembimbing
+                        <span id="modalUrutanLabel3">1</span>
+                    </label>
+
+                    <select name="dosen_pengganti"
+                            style="width:100%;
+                                   padding:9px 12px;
+                                   border-radius:8px;
+                                   border:1px solid #ddd;
+                                   font-size:0.9rem;
+                                   background:#fff;
+                                   box-sizing:border-box;">
+
+                        <option value="">-- Pilih Dosen --</option>
+
+                        @foreach($dosenList as $d)
+
+                            {{-- ====================================== --}}
+                            {{-- FILTER DOSEN YANG SUDAH JADI PEMBIMBING --}}
+                            {{-- ====================================== --}}
+                            @if(
+                                $d->nim_nid != $proposal->dosen1_nidn &&
+                                $d->nim_nid != $proposal->dosen2_nidn
+                            )
+
+                                <option value="{{ $d->nim_nid }}">
+                                    {{ $d->nim_nid }} - {{ $d->nama }}
+                                </option>
+
+                            @endif
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                <div style="display:flex;
+                            justify-content:flex-end;
+                            gap:10px;">
+
+                    <button type="button"
+                            onclick="sembunyikanDropdown()"
+                            style="padding:9px 22px;
+                                   border-radius:20px;
+                                   border:1px solid #ddd;
+                                   background:#fff;
+                                   color:#555;
+                                   font-size:0.9rem;
+                                   cursor:pointer;">
+
+                        Kembali
+                    </button>
+
+                    <button type="submit"
+                            style="padding:9px 22px;
+                                   border-radius:20px;
+                                   border:none;
+                                   background:#f4b400;
+                                   color:#000;
+                                   font-size:0.9rem;
+                                   font-weight:700;
+                                   cursor:pointer;">
+
+                        Kirim
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+function bukaModal(urutan, nama, nidn, nimMhs, namaMhs) {
+
+    // Label urutan
+    document.getElementById('modalUrutanLabel').innerText  = urutan;
+    document.getElementById('modalUrutanLabel2').innerText = urutan;
+    document.getElementById('modalUrutanLabel3').innerText = urutan;
+
+    // Isi field
+    document.getElementById('modalNim').value         = nimMhs;
+    document.getElementById('modalNama').value        = namaMhs;
+    document.getElementById('modalUsulanDosen').value = nidn + ' - ' + nama;
+
+    // Action form
+    var baseUrl = "{{ url('/proposal/' . $proposal->id . '/tetapkan') }}/" + urutan;
+
+    document.getElementById('formAcc').action   = baseUrl;
+    document.getElementById('formTolak').action = baseUrl;
+
+    // Reset tampilan
+    sembunyikanDropdown();
+
+    // Tampilkan modal
+    document.getElementById('modalVerifikasi').style.display = 'flex';
+}
+
+function tampilkanDropdown() {
+
+    document.getElementById('footerAcc').style.display = 'none';
+
+    document.getElementById('sectionTolak').style.display = 'block';
+}
+
+function sembunyikanDropdown() {
+
+    document.getElementById('footerAcc').style.display = 'flex';
+
+    document.getElementById('sectionTolak').style.display = 'none';
+}
+
+function tutupModal() {
+
+    document.getElementById('modalVerifikasi').style.display = 'none';
+}
+
+// Klik luar modal = tutup
+document.getElementById('modalVerifikasi')
+.addEventListener('click', function(e) {
+
+    if (e.target === this) {
+
+        tutupModal();
+    }
+});
+
+</script>
 
 @endsection
