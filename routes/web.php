@@ -113,7 +113,6 @@ Route::post(
     [ProposalController::class, 'prosesVerifikasi']
 )->name('proposal.prosesVerifikasi');
 
-// ↓↓↓ TAMBAHAN BARU ↓↓↓
 Route::post(
     '/proposal/{id}/tetapkan/{urutan}',
     [ProposalController::class, 'tetapkanUsulan']
@@ -123,3 +122,8 @@ Route::post(
     '/proposal/{id}/lanjutkan',
     [ProposalController::class, 'lanjutkanKeReviewer']
 )->name('proposal.lanjutkan');
+
+Route::post(
+    '/proposal/{id}/ubah-pembimbing/{urutan}',
+    [ProposalController::class, 'ubahPembimbing']
+)->name('proposal.ubahPembimbing');

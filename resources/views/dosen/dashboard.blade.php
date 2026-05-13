@@ -6,6 +6,10 @@
     $adaPengajuanBaru = \Illuminate\Support\Facades\DB::table('pengajuan_judul')
         ->where('status', 'menunggu verifikasi')
         ->exists();
+
+    $adaProposalBaru = \Illuminate\Support\Facades\DB::table('proposal')
+        ->where('status', 'menunggu_verifikasi')
+        ->exists();
 @endphp
 
 <!-- HERO -->
@@ -39,7 +43,6 @@
             <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card" style="position:relative;">
 
-                    {{-- BADGE MERAH kalau ada pengajuan menunggu verifikasi --}}
                     @if($adaPengajuanBaru)
                         <span class="badge-notif"></span>
                     @endif
@@ -54,7 +57,12 @@
         {{-- CARD PROPOSAL --}}
         <div class="col-md-3">
             <a href="{{ session('user') ? route('proposal.index') : '/login' }}" class="text-decoration-none text-dark">
-                <div class="card shadow-sm h-100 border-0 p-3 menu-card">
+                <div class="card shadow-sm h-100 border-0 p-3 menu-card" style="position:relative;">
+
+                    @if($adaProposalBaru)
+                        <span class="badge-notif"></span>
+                    @endif
+
                     <img src="{{ asset('images/proposal.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Proposal</h6>
                     <p class="text-muted small mb-0">Kelola Proposal Mahasiswa</p>
