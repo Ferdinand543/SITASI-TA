@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PengajuanMahasiswaController;
 use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\ReviewerController;
 
 // ROOT
 Route::get('/', function () {
@@ -127,3 +128,24 @@ Route::post(
     '/proposal/{id}/ubah-pembimbing/{urutan}',
     [ProposalController::class, 'ubahPembimbing']
 )->name('proposal.ubahPembimbing');
+
+
+// =====================================================
+// PROPOSAL TA-1 — DOSEN REVIEWER
+// =====================================================
+
+Route::get(
+    '/reviewer/proposal',
+    [ReviewerController::class, 'index']
+)->name('reviewer.proposal');
+
+Route::post(
+    '/reviewer/proposal/{id}/review',
+    [ReviewerController::class, 'simpanReview']
+)->name('reviewer.simpanReview');
+
+// ← TAMBAHAN: halaman detail hasil review
+Route::get(
+    '/reviewer/proposal/{id}/detail',
+    [ReviewerController::class, 'detail']
+)->name('reviewer.proposal.detail');

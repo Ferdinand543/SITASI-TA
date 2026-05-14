@@ -10,6 +10,21 @@
     $adaProposalBaru = \Illuminate\Support\Facades\DB::table('proposal')
         ->where('status', 'menunggu_verifikasi')
         ->exists();
+
+    // Badge untuk dosen reviewer
+    $adaProposalBelumDireview = false;
+    if (strtolower(trim(session('user')->role ?? '')) === 'dosen reviewer') {
+        $nimReviewer = session('user')->nim_nid;
+        $adaProposalBelumDireview = \Illuminate\Support\Facades\DB::table('proposal')
+            ->where('proposal.status', 'selesai')
+            ->whereNotExists(function ($query) use ($nimReviewer) {
+                $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                      ->from('tinjauan_proposal')
+                      ->whereColumn('tinjauan_proposal.proposal_id', 'proposal.id')
+                      ->where('tinjauan_proposal.nim_nid_reviewer', $nimReviewer);
+            })
+            ->exists();
+    }
 @endphp
 
 <!-- HERO -->
@@ -22,14 +37,6 @@
             mulai dari pengajuan judul, proses bimbingan TA1,<br>
             hingga pelaksanaan seminar dan sidang secara terstruktur.
         </p>
-    </div>
-</div>
-
-<div class="d-flex justify-content-end">
-    <div class="menu-bottom-wrapper">
-        <a href="#" class="menu-bottom active">Beranda</a>
-        <a href="#" class="menu-bottom">Informasi</a>
-        <a href="#" class="menu-bottom">Panduan TA</a>
     </div>
 </div>
 
@@ -56,10 +63,20 @@
 
         {{-- CARD PROPOSAL --}}
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('proposal.index') : '/login' }}" class="text-decoration-none text-dark">
+            <a href="{{ session('user') 
+                ? (strtolower(trim(session('user')->role)) === 'dosen reviewer' 
+                    ? route('reviewer.proposal') 
+                    : route('proposal.index')) 
+                : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card" style="position:relative;">
 
-                    @if($adaProposalBaru)
+                    {{-- Badge untuk koordinator (bukan dosen reviewer) --}}
+                    @if($adaProposalBaru && strtolower(trim(session('user')->role ?? '')) !== 'dosen reviewer')
+                        <span class="badge-notif"></span>
+                    @endif
+
+                    {{-- Badge untuk dosen reviewer --}}
+                    @if($adaProposalBelumDireview)
                         <span class="badge-notif"></span>
                     @endif
 
