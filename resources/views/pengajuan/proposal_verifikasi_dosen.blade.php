@@ -314,6 +314,106 @@
     #btnLanjutkan.hidden {
         display: none !important;
     }
+
+    /* ============================================================
+       CUSTOM POPUP (gaya foto: ikon besar, judul bold, tombol)
+       ============================================================ */
+    .popup-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 99999;
+        align-items: center;
+        justify-content: center;
+    }
+    .popup-overlay.active {
+        display: flex;
+    }
+    .popup-box {
+        background: #fff;
+        border-radius: 20px;
+        padding: 40px 32px 32px;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 16px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+        text-align: center;
+    }
+    .popup-icon-wrap {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        font-size: 2.2rem;
+    }
+    .popup-icon-wrap.success {
+        background: #e8f5e9;
+        border: 3px solid #66bb6a;
+        color: #28a745;
+    }
+    .popup-icon-wrap.error {
+        background: #fdecea;
+        border: 3px solid #ef9a9a;
+        color: #dc3545;
+    }
+    .popup-icon-wrap.confirm {
+        background: #fff8e1;
+        border: 3px solid #fdd835;
+        color: #f9a825;
+    }
+    .popup-icon-wrap.warning {
+        background: #fdecea;
+        border: 3px solid #ef9a9a;
+        color: #dc3545;
+    }
+    .popup-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #222;
+        margin-bottom: 10px;
+    }
+    .popup-msg {
+        font-size: 0.92rem;
+        color: #555;
+        margin-bottom: 28px;
+        line-height: 1.5;
+    }
+    .popup-btn-row {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+    .popup-btn {
+        padding: 11px 32px;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        transition: 0.2s;
+    }
+    .popup-btn.ok {
+        background: #f4b400;
+        color: #000;
+        min-width: 120px;
+    }
+    .popup-btn.ok:hover { background: #e0a800; }
+    .popup-btn.kirim {
+        background: #f4b400;
+        color: #000;
+        min-width: 100px;
+    }
+    .popup-btn.kirim:hover { background: #e0a800; }
+    .popup-btn.batal {
+        background: #e0e0e0;
+        color: #333;
+        min-width: 100px;
+    }
+    .popup-btn.batal:hover { background: #c8c8c8; }
 </style>
 
 <div class="wrapper">
@@ -594,23 +694,24 @@
 
         {{--
             Tombol "Simpan dan lanjutkan ke reviewer":
-            - Kalau status SELESAI → disembunyikan by default (class hidden)
-            - Kalau status MENUNGGU_VERIFIKASI → langsung tampil
-            - Saat koor klik "Ubah Pembimbing" → JS hapus class hidden → tombol muncul lagi
+            Tidak submit langsung — intercept dulu dengan konfirmasi popup
         --}}
-        <form action="{{ url('/proposal/' . $proposal->id . '/lanjutkan') }}" method="POST">
+        <button id="btnLanjutkan"
+                type="button"
+                class="{{ $isSelesai ? 'hidden' : '' }}"
+                style="background:#4caf7d; color:#fff; border:none;
+                       padding:10px 24px; border-radius:20px; font-size:0.9rem;
+                       font-weight:600; cursor:pointer; transition:background 0.2s, transform 0.2s;
+                       display:inline-flex; align-items:center; gap:6px;"
+                onmouseover="this.style.background='#3d9c6a'; this.style.transform='translateX(3px)'"
+                onmouseout="this.style.background='#4caf7d'; this.style.transform='translateX(0)'"
+                onclick="handleLanjutkan()">
+            Simpan dan lanjutkan ke reviewer →
+        </button>
+
+        {{-- Form tersembunyi, di-submit via JS setelah konfirmasi --}}
+        <form id="formLanjutkan" action="{{ url('/proposal/' . $proposal->id . '/lanjutkan') }}" method="POST" style="display:none;">
             @csrf
-            <button id="btnLanjutkan"
-                    type="submit"
-                    class="{{ $isSelesai ? 'hidden' : '' }}"
-                    style="background:#4caf7d; color:#fff; border:none;
-                           padding:10px 24px; border-radius:20px; font-size:0.9rem;
-                           font-weight:600; cursor:pointer; transition:background 0.2s, transform 0.2s;
-                           display:inline-flex; align-items:center; gap:6px;"
-                    onmouseover="this.style.background='#3d9c6a'; this.style.transform='translateX(3px)'"
-                    onmouseout="this.style.background='#4caf7d'; this.style.transform='translateX(0)'">
-                Simpan dan lanjutkan ke reviewer →
-            </button>
         </form>
     </div>
 
@@ -651,7 +752,9 @@
                 <div style="display:flex; align-items:center; gap:8px;">
                     <input type="text" id="modalUsulanDosen" readonly class="form-input" style="flex:1;">
 
-                    <button type="submit"
+                    {{-- ✓ Setujui → intercept dengan konfirmasi popup --}}
+                    <button type="button"
+                            onclick="konfirmasiAcc()"
                             style="width:32px; height:32px; border-radius:50%; border:none;
                                    background:#e8f5e9; color:#28a745; font-size:1rem;
                                    cursor:pointer; display:flex; align-items:center;
@@ -659,6 +762,7 @@
                         ✓
                     </button>
 
+                    {{-- ✗ Tolak → tampilkan dropdown --}}
                     <button type="button"
                             onclick="tampilkanDropdown()"
                             style="width:32px; height:32px; border-radius:50%; border:none;
@@ -696,7 +800,8 @@
 
                 <div style="display:flex; justify-content:flex-end; gap:10px;">
                     <button type="button" onclick="sembunyikanDropdown()" class="btn-modal-batal">Kembali</button>
-                    <button type="submit" class="btn-modal-simpan">Kirim</button>
+                    {{-- Tolak → intercept dengan konfirmasi popup --}}
+                    <button type="button" onclick="konfirmasiTolak()" class="btn-modal-simpan">Kirim</button>
                 </div>
             </form>
         </div>
@@ -734,7 +839,8 @@
 
             <div class="modal-footer">
                 <button type="button" onclick="tutupModalUbah()" class="btn-modal-batal">Batal</button>
-                <button type="submit" class="btn-modal-simpan">Simpan</button>
+                {{-- Ubah pembimbing → intercept dengan konfirmasi popup --}}
+                <button type="button" onclick="konfirmasiUbah()" class="btn-modal-simpan">Simpan</button>
             </div>
 
         </form>
@@ -743,23 +849,204 @@
 </div>
 
 {{-- ============================================================ --}}
+{{-- POPUP CUSTOM (gaya foto: ikon besar, judul bold, tombol)     --}}
+{{-- ============================================================ --}}
+
+{{-- 1. Popup Konfirmasi Lanjutkan ke Reviewer --}}
+<div id="popupLanjutkan" class="popup-overlay">
+    <div class="popup-box">
+        <div class="popup-icon-wrap confirm">❓</div>
+        <div class="popup-title">Konfirmasi</div>
+        <div class="popup-msg">Apakah Anda yakin ingin meneruskan proposal ini ke reviewer?</div>
+        <div class="popup-btn-row">
+            <button class="popup-btn batal" onclick="tutupPopup('popupLanjutkan')">Batal</button>
+            <button class="popup-btn kirim" onclick="submitLanjutkan()">Kirim</button>
+        </div>
+    </div>
+</div>
+
+{{-- 2. Popup Validasi Dosen Belum Lengkap --}}
+<div id="popupDosenKurang" class="popup-overlay">
+    <div class="popup-box">
+        <div class="popup-icon-wrap warning">✕</div>
+        <div class="popup-title">Gagal!</div>
+        <div class="popup-msg" id="popupDosenKurangMsg">Dosen Pembimbing 1 dan 2 wajib diisi sebelum melanjutkan ke reviewer.</div>
+        <div class="popup-btn-row">
+            <button class="popup-btn ok" onclick="tutupPopup('popupDosenKurang')">OK</button>
+        </div>
+    </div>
+</div>
+
+{{-- 3. Popup Berhasil Lanjutkan --}}
+<div id="popupLanjutkanBerhasil" class="popup-overlay">
+    <div class="popup-box">
+        <div class="popup-icon-wrap success">✓</div>
+        <div class="popup-title">Berhasil!</div>
+        <div class="popup-msg">Proposal Berhasil Diteruskan ke Reviewer.</div>
+        <div class="popup-btn-row">
+            <button class="popup-btn ok" onclick="window.location.href='/proposal'">OK</button>
+        </div>
+    </div>
+</div>
+
+{{-- 4. Popup Gagal Lanjutkan --}}
+<div id="popupLanjutkanGagal" class="popup-overlay">
+    <div class="popup-box">
+        <div class="popup-icon-wrap error">✕</div>
+        <div class="popup-title">Gagal!</div>
+        <div class="popup-msg">Gagal Mengirimkan ke Reviewer. Silakan coba lagi.</div>
+        <div class="popup-btn-row">
+            <button class="popup-btn ok" onclick="tutupPopup('popupLanjutkanGagal')">OK</button>
+        </div>
+    </div>
+</div>
+
+{{-- 5. Popup Konfirmasi Setujui Usulan Dosen --}}
+<div id="popupKonfirmasiAcc" class="popup-overlay">
+    <div class="popup-box">
+        <div class="popup-icon-wrap confirm">❓</div>
+        <div class="popup-title">Konfirmasi</div>
+        <div class="popup-msg">Apakah Anda yakin ingin menyetujui usulan dosen pembimbing ini?</div>
+        <div class="popup-btn-row">
+            <button class="popup-btn batal" onclick="tutupPopup('popupKonfirmasiAcc')">Batal</button>
+            <button class="popup-btn kirim" onclick="submitAcc()">Konfirmasi</button>
+        </div>
+    </div>
+</div>
+
+{{-- 6. Popup Konfirmasi Tolak Usulan Dosen --}}
+<div id="popupKonfirmasiTolak" class="popup-overlay">
+    <div class="popup-box">
+        <div class="popup-icon-wrap confirm">❓</div>
+        <div class="popup-title">Konfirmasi</div>
+        <div class="popup-msg">Apakah Anda yakin ingin menolak usulan dosen pembimbing ini dan memilih pengganti?</div>
+        <div class="popup-btn-row">
+            <button class="popup-btn batal" onclick="tutupPopup('popupKonfirmasiTolak')">Batal</button>
+            <button class="popup-btn kirim" onclick="submitTolak()">Konfirmasi</button>
+        </div>
+    </div>
+</div>
+
+{{-- 7. Popup Berhasil Simpan Pembimbing (acc/tolak/ubah) --}}
+<div id="popupPembimbingBerhasil" class="popup-overlay">
+    <div class="popup-box">
+        <div class="popup-icon-wrap success">✓</div>
+        <div class="popup-title">Berhasil!</div>
+        <div class="popup-msg">Penentuan Dosen Pembimbing Berhasil Disimpan.</div>
+        <div class="popup-btn-row">
+            <button class="popup-btn ok" onclick="window.location.reload()">OK</button>
+        </div>
+    </div>
+</div>
+
+{{-- 8. Popup Gagal Simpan Pembimbing --}}
+<div id="popupPembimbingGagal" class="popup-overlay">
+    <div class="popup-box">
+        <div class="popup-icon-wrap error">✕</div>
+        <div class="popup-title">Gagal!</div>
+        <div class="popup-msg">Gagal menyimpan data dosen pembimbing. Silakan coba lagi.</div>
+        <div class="popup-btn-row">
+            <button class="popup-btn ok" onclick="tutupPopup('popupPembimbingGagal')">OK</button>
+        </div>
+    </div>
+</div>
+
+{{-- 9. Popup Konfirmasi Ubah Pembimbing --}}
+<div id="popupKonfirmasiUbah" class="popup-overlay">
+    <div class="popup-box">
+        <div class="popup-icon-wrap confirm">❓</div>
+        <div class="popup-title">Konfirmasi</div>
+        <div class="popup-msg">Apakah Anda yakin ingin mengubah dosen pembimbing ini?</div>
+        <div class="popup-btn-row">
+            <button class="popup-btn batal" onclick="tutupPopup('popupKonfirmasiUbah')">Batal</button>
+            <button class="popup-btn kirim" onclick="submitUbah()">Konfirmasi</button>
+        </div>
+    </div>
+</div>
+
+{{-- ============================================================ --}}
 {{-- DATA DOSEN — Di-encode ke JS dari PHP/Blade                  --}}
 {{-- ============================================================ --}}
 <script>
     const semuaDosen = @json($dosenList);
+    const dosen1NamaServer = @json($proposal->dosen1_nama);
+    const dosen2NamaServer = @json($proposal->dosen2_nama);
 </script>
 
 <script>
 
 // ============================================================
+// HELPER POPUP
+// ============================================================
+function bukaPopup(id) {
+    document.getElementById(id).classList.add('active');
+}
+function tutupPopup(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+// ============================================================
 // HELPER — tampilkan tombol "Simpan dan lanjutkan"
-// Dipanggil setiap kali koordinator membuka modal Ubah Pembimbing
 // ============================================================
 function tampilkanBtnLanjutkan() {
     var btn = document.getElementById('btnLanjutkan');
-    if (btn) {
-        btn.classList.remove('hidden');
+    if (btn) btn.classList.remove('hidden');
+}
+
+// ============================================================
+// TOMBOL "Simpan dan lanjutkan ke reviewer"
+// Step 1: validasi dosen 1 & 2 terisi
+// Step 2: tampilkan konfirmasi popup
+// ============================================================
+function handleLanjutkan() {
+    // Cek dosen 1 dan dosen 2 terisi (dari server-side data)
+    var d1 = dosen1NamaServer;
+    var d2 = dosen2NamaServer;
+
+    if (!d1 && !d2) {
+        document.getElementById('popupDosenKurangMsg').innerText =
+            'Dosen Pembimbing 1 dan 2 wajib diisi sebelum melanjutkan ke reviewer.';
+        bukaPopup('popupDosenKurang');
+        return;
     }
+    if (!d1) {
+        document.getElementById('popupDosenKurangMsg').innerText =
+            'Dosen Pembimbing 1 wajib diisi sebelum melanjutkan ke reviewer.';
+        bukaPopup('popupDosenKurang');
+        return;
+    }
+    if (!d2) {
+        document.getElementById('popupDosenKurangMsg').innerText =
+            'Dosen Pembimbing 2 wajib diisi sebelum melanjutkan ke reviewer.';
+        bukaPopup('popupDosenKurang');
+        return;
+    }
+
+    // Semua sudah terisi → tampilkan konfirmasi
+    bukaPopup('popupLanjutkan');
+}
+
+function submitLanjutkan() {
+    tutupPopup('popupLanjutkan');
+
+    var form = document.getElementById('formLanjutkan');
+    var formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(res) {
+        if (res.ok) {
+            bukaPopup('popupLanjutkanBerhasil');
+        } else {
+            bukaPopup('popupLanjutkanGagal');
+        }
+    })
+    .catch(function() {
+        bukaPopup('popupLanjutkanGagal');
+    });
 }
 
 // ============================================================
@@ -799,6 +1086,69 @@ document.getElementById('modalVerifikasi').addEventListener('click', function(e)
     if (e.target === this) tutupModal();
 });
 
+// Intercept tombol ✓ (Setujui usulan)
+function konfirmasiAcc() {
+    bukaPopup('popupKonfirmasiAcc');
+}
+
+function submitAcc() {
+    tutupPopup('popupKonfirmasiAcc');
+    tutupModal();
+
+    var form = document.getElementById('formAcc');
+    var formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(res) {
+        if (res.ok) {
+            bukaPopup('popupPembimbingBerhasil');
+        } else {
+            bukaPopup('popupPembimbingGagal');
+        }
+    })
+    .catch(function() {
+        bukaPopup('popupPembimbingGagal');
+    });
+}
+
+// Intercept tombol Kirim pada form tolak
+function konfirmasiTolak() {
+    var select = document.querySelector('#formTolak select[name="dosen_pengganti"]');
+    if (!select || !select.value) {
+        // Tidak ada dosen dipilih, jangan lanjut
+        return;
+    }
+    bukaPopup('popupKonfirmasiTolak');
+}
+
+function submitTolak() {
+    tutupPopup('popupKonfirmasiTolak');
+    tutupModal();
+
+    var form = document.getElementById('formTolak');
+    var formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(res) {
+        if (res.ok) {
+            bukaPopup('popupPembimbingBerhasil');
+        } else {
+            bukaPopup('popupPembimbingGagal');
+        }
+    })
+    .catch(function() {
+        bukaPopup('popupPembimbingGagal');
+    });
+}
+
 // ============================================================
 // MODAL UBAH PEMBIMBING
 // ============================================================
@@ -826,7 +1176,7 @@ function bukaModalUbah(btn) {
         select.appendChild(opt);
     });
 
-    // ✅ KEY FIX: Munculkan tombol "Simpan dan lanjutkan" saat modal ubah dibuka
+    // Munculkan tombol "Simpan dan lanjutkan" saat modal ubah dibuka
     tampilkanBtnLanjutkan();
 
     document.getElementById('modalUbah').style.display = 'flex';
@@ -839,6 +1189,39 @@ function tutupModalUbah() {
 document.getElementById('modalUbah').addEventListener('click', function(e) {
     if (e.target === this) tutupModalUbah();
 });
+
+// Intercept tombol Simpan pada ubah pembimbing
+function konfirmasiUbah() {
+    var select = document.getElementById('ubahDosenBaru');
+    if (!select || !select.value) {
+        return;
+    }
+    bukaPopup('popupKonfirmasiUbah');
+}
+
+function submitUbah() {
+    tutupPopup('popupKonfirmasiUbah');
+    tutupModalUbah();
+
+    var form = document.getElementById('formUbah');
+    var formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(res) {
+        if (res.ok) {
+            bukaPopup('popupPembimbingBerhasil');
+        } else {
+            bukaPopup('popupPembimbingGagal');
+        }
+    })
+    .catch(function() {
+        bukaPopup('popupPembimbingGagal');
+    });
+}
 
 </script>
 

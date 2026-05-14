@@ -40,9 +40,6 @@
                 <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>
                     Selesai
                 </option>
-                <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>
-                    Ditolak
-                </option>
             </select>
 
             <div class="input-group" style="width:260px;">
