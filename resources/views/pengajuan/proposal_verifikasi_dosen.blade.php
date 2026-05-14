@@ -306,6 +306,14 @@
     }
 
     .btn-modal-simpan:hover { background: #e0a800; }
+
+    /* Tombol lanjutkan — animasi fade-in saat muncul */
+    #btnLanjutkan {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    #btnLanjutkan.hidden {
+        display: none !important;
+    }
 </style>
 
 <div class="wrapper">
@@ -494,14 +502,13 @@
             <div class="dosen-label">Pembimbing 1</div>
 
             @if($proposal->dosen1_nama)
-
                 <button type="button"
                         class="btn-ubah"
-                        onclick="bukaModalUbah(
-                            1,
-                            '{{ addslashes($proposal->dosen1_nama) }}',
-                            '{{ $proposal->dosen1_nidn }}'
-                        )">
+                        data-urutan="1"
+                        data-nama="{{ addslashes($proposal->dosen1_nama) }}"
+                        data-nidn="{{ $proposal->dosen1_nidn }}"
+                        data-nidn-lain="{{ $proposal->dosen2_nidn }}"
+                        onclick="bukaModalUbah(this)">
                     ✏ Ubah Pembimbing
                 </button>
 
@@ -536,14 +543,13 @@
             <div class="dosen-label">Pembimbing 2</div>
 
             @if($proposal->dosen2_nama)
-
                 <button type="button"
                         class="btn-ubah"
-                        onclick="bukaModalUbah(
-                            2,
-                            '{{ addslashes($proposal->dosen2_nama) }}',
-                            '{{ $proposal->dosen2_nidn }}'
-                        )">
+                        data-urutan="2"
+                        data-nama="{{ addslashes($proposal->dosen2_nama) }}"
+                        data-nidn="{{ $proposal->dosen2_nidn }}"
+                        data-nidn-lain="{{ $proposal->dosen1_nidn }}"
+                        onclick="bukaModalUbah(this)">
                     ✏ Ubah Pembimbing
                 </button>
 
@@ -575,16 +581,31 @@
 
     </div>
 
-    {{-- FOOTER --}}
+    {{-- ============================================================ --}}
+    {{-- FOOTER                                                        --}}
+    {{-- ============================================================ --}}
+
+    @php
+        $isSelesai = strtolower(trim($proposal->status)) === 'selesai';
+    @endphp
+
     <div class="footer-btn">
         <a href="/proposal" class="btn-kembali">Kembali</a>
 
+        {{--
+            Tombol "Simpan dan lanjutkan ke reviewer":
+            - Kalau status SELESAI → disembunyikan by default (class hidden)
+            - Kalau status MENUNGGU_VERIFIKASI → langsung tampil
+            - Saat koor klik "Ubah Pembimbing" → JS hapus class hidden → tombol muncul lagi
+        --}}
         <form action="{{ url('/proposal/' . $proposal->id . '/lanjutkan') }}" method="POST">
             @csrf
-            <button type="submit"
+            <button id="btnLanjutkan"
+                    type="submit"
+                    class="{{ $isSelesai ? 'hidden' : '' }}"
                     style="background:#4caf7d; color:#fff; border:none;
                            padding:10px 24px; border-radius:20px; font-size:0.9rem;
-                           font-weight:600; cursor:pointer; transition:0.2s;
+                           font-weight:600; cursor:pointer; transition:background 0.2s, transform 0.2s;
                            display:inline-flex; align-items:center; gap:6px;"
                     onmouseover="this.style.background='#3d9c6a'; this.style.transform='translateX(3px)'"
                     onmouseout="this.style.background='#4caf7d'; this.style.transform='translateX(0)'">
@@ -708,9 +729,6 @@
                 <label class="form-label">Ganti Dengan</label>
                 <select name="dosen_baru" class="form-select" id="ubahDosenBaru">
                     <option value="">-- Pilih Dosen --</option>
-                    @foreach($dosenList as $d)
-                        <option value="{{ $d->nim_nid }}">{{ $d->nim_nid }} - {{ $d->nama }}</option>
-                    @endforeach
                 </select>
             </div>
 
@@ -724,7 +742,25 @@
     </div>
 </div>
 
+{{-- ============================================================ --}}
+{{-- DATA DOSEN — Di-encode ke JS dari PHP/Blade                  --}}
+{{-- ============================================================ --}}
 <script>
+    const semuaDosen = @json($dosenList);
+</script>
+
+<script>
+
+// ============================================================
+// HELPER — tampilkan tombol "Simpan dan lanjutkan"
+// Dipanggil setiap kali koordinator membuka modal Ubah Pembimbing
+// ============================================================
+function tampilkanBtnLanjutkan() {
+    var btn = document.getElementById('btnLanjutkan');
+    if (btn) {
+        btn.classList.remove('hidden');
+    }
+}
 
 // ============================================================
 // MODAL VERIFIKASI USULAN
@@ -766,13 +802,32 @@ document.getElementById('modalVerifikasi').addEventListener('click', function(e)
 // ============================================================
 // MODAL UBAH PEMBIMBING
 // ============================================================
-function bukaModalUbah(urutan, nama, nidn) {
+function bukaModalUbah(btn) {
+    var urutan   = btn.getAttribute('data-urutan');
+    var nama     = btn.getAttribute('data-nama');
+    var nidn     = btn.getAttribute('data-nidn');
+    var nidnLain = btn.getAttribute('data-nidn-lain');
+
     document.getElementById('ubahUrutanLabel').innerText = urutan;
     document.getElementById('ubahDosenSekarang').value   = nidn + ' - ' + nama;
-    document.getElementById('ubahDosenBaru').value       = '';
 
     var url = "{{ url('/proposal/' . $proposal->id . '/ubah-pembimbing') }}/" + urutan;
     document.getElementById('formUbah').action = url;
+
+    // Build dropdown, exclude dosen di posisi lain
+    var select = document.getElementById('ubahDosenBaru');
+    select.innerHTML = '<option value="">-- Pilih Dosen --</option>';
+
+    semuaDosen.forEach(function(d) {
+        if (d.nim_nid === nidnLain) return;
+        var opt = document.createElement('option');
+        opt.value       = d.nim_nid;
+        opt.textContent = d.nim_nid + ' - ' + d.nama;
+        select.appendChild(opt);
+    });
+
+    // ✅ KEY FIX: Munculkan tombol "Simpan dan lanjutkan" saat modal ubah dibuka
+    tampilkanBtnLanjutkan();
 
     document.getElementById('modalUbah').style.display = 'flex';
 }
