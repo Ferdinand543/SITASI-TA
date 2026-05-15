@@ -30,7 +30,7 @@
     <div class="row g-4 justify-content-center text-center mb-4">
 
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
+            <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/kelola_mhs.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Mahasiswa</h6>
@@ -40,7 +40,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('proposal') : '/login' }}" class="text-decoration-none text-dark">
+            <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/mahasiswa.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Dosen</h6>
@@ -75,7 +75,7 @@
     <div class="row g-4 justify-content-center text-center">
 
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
+            <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/ta.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Pengajuan Judul</h6>
@@ -85,7 +85,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
+            <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/proposal.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Proposal</h6>
@@ -95,7 +95,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
+            <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/bimbingan.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Riwayat Bimbingan</h6>
@@ -105,7 +105,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
+            <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/absen.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Presensi Audiens</h6>

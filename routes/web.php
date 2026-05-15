@@ -2,6 +2,22 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminMahasiswaController;
+use Illuminate\Http\Request;
+use App\Http\Controllers\AdminDosenController;
+
+// logout
+Route::post('/logout', function (Request $request) {
+
+    $request->session()->forget('user');
+
+    $request->session()->invalidate();
+
+    $request->session()->regenerateToken();
+
+    return redirect('/login');
+
+})->name('logout');
 
 // ROOT
 Route::get('/', function () {
@@ -64,3 +80,31 @@ Route::get('/proposal', function () {
     }
     return view('pengajuan.proposal');
 })->name('proposal');
+
+Route::resource(
+    'admin/mahasiswa',
+    AdminMahasiswaController::class
+);
+
+// daftar Mahasiswa
+Route::get('/admin/mahasiswa', [AdminMahasiswaController::class, 'index'])
+    ->name('mahasiswa.index');
+
+Route::post('/admin/mahasiswa/store', [AdminMahasiswaController::class, 'store'])
+    ->name('mahasiswa.store');
+
+Route::get('/admin/mahasiswa/{id}/edit', [AdminMahasiswaController::class, 'edit'])
+    ->name('mahasiswa.edit');
+
+Route::put('/admin/mahasiswa/{id}', [AdminMahasiswaController::class, 'update'])
+    ->name('mahasiswa.update');
+
+Route::delete('/admin/mahasiswa/{id}', [AdminMahasiswaController::class, 'destroy'])
+    ->name('mahasiswa.destroy');
+
+// Daftar Dosen
+Route::get('/admin/dosen', [AdminDosenController::class, 'index'])
+    ->name('dosen.index');
+
+Route::post('/admin/dosen/store', [AdminDosenController::class, 'store'])
+    ->name('dosen.store');

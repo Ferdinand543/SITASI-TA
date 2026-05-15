@@ -34,7 +34,7 @@
 
         <!-- CARD 1 -->
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
+            <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/ta.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Pengajuan Judul</h6>
@@ -45,7 +45,7 @@
 
         <!-- CARD 2 -->
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('proposal') : '/login' }}" class="text-decoration-none text-dark">
+            <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/proposal.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Proposal</h6>
@@ -83,7 +83,7 @@
 
         <!-- MAHASISWA -->
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('pengajuan') : '/login' }}" class="text-decoration-none text-dark">
+            <a href="{{ session('user') ? '#' : '/login' }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/mahasiswa.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Mahasiswa</h6>
@@ -94,7 +94,7 @@
 
         <!-- CARD JADWAL -->
         <div class="col-md-3">
-            <a href="{{ session('user') ? route('pengajuan') : '/login' }}" style="text-decoration:none; color:inherit;">
+            <a href="{{ session('user') ? '#' : '/login' }}" style="text-decoration:none; color:inherit;">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/jadwal.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Jadwal</h6>

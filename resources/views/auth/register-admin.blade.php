@@ -168,7 +168,7 @@ body {
 
 <div class="header">
     <div class="logo">
-        <img src="{{ asset('images/logo si.jpeg') }}">
+        <img src="{{ asset('logo.png') }}">
     </div>
     <div class="app-title">SITASI - TA</div>
     <div class="app-subtitle">Sistem Informasi Bimbingan Tugas Akhir</div>

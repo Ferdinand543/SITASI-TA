@@ -90,9 +90,16 @@ class AuthController extends Controller
 {
     // VALIDASI
     $request->validate([
-        'username' => 'required|unique:users,name',
+        'username' => 'required',
         'email' => 'required|email',
-        'password' => 'required|confirmed'
+        'password' => 'required|confirmed|min:8',
+    ], [
+        'username.required' => 'Username wajib diisi.',
+        'email.required' => 'Email wajib diisi.',
+        'email.email' => 'Format email tidak valid.',
+        'password.required' => 'Password wajib diisi.',
+        'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        'password.min' => 'Password minimal 8 karakter.',
     ]);
 
     // SIMPAN DATA

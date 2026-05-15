@@ -177,7 +177,7 @@ function toggleEye(inputId, eyeId){
 
 function validateForm(){
 
-    const nim = document.getElementById("nim_nid").value;
+    const nim = document.getElementById("name").value;
     const password = document.getElementById("password").value;
     const confirm = document.getElementById("confirm_password").value;
 

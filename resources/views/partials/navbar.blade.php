@@ -19,6 +19,13 @@
             @if(session('user'))
             <span class="fw-bold">Halo, {{ session('user')->name }}</span>
 
+            <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        Logout
+                    </button>
+            </form>
             
             @else
             <a href="/login" class="btn btn-outline-dark btn-sm">Masuk</a>
