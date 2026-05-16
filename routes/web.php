@@ -42,6 +42,9 @@ Route::get('/admin', function () {
     return view('admin.admin');
 });
 
+// PROFIL ADMIN — TAMBAHAN
+Route::get('/admin/profil', [AuthController::class, 'profilAdmin'])->name('admin.profil');
+
 
 // ================= MAHASISWA =================
 Route::get('/mahasiswa', function () {
@@ -144,7 +147,6 @@ Route::post(
     [ReviewerController::class, 'simpanReview']
 )->name('reviewer.simpanReview');
 
-// ← TAMBAHAN: halaman detail hasil review
 Route::get(
     '/reviewer/proposal/{id}/detail',
     [ReviewerController::class, 'detail']

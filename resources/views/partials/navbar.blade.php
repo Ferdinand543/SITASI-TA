@@ -90,8 +90,8 @@
             <i class="fa-regular fa-calendar"></i> Jadwal
         </a>
 
-        <a href="#" class="sidebar-link">
-            <i class="fa-regular fa-user"></i> Profil
+        <a href="{{ route('admin.profil') }}" class="sidebar-link {{ request()->is('admin/profil') ? 'active' : '' }}">
+    <i class="fa-regular fa-user"></i> Profil
         </a>
     </nav>
 

@@ -38,12 +38,10 @@ class AuthController extends Controller
         $isHashed = str_starts_with($user->password, '$2y$');
 
         if ($isHashed) {
-            // Password sudah di-hash, pakai Hash::check
             if (!Hash::check($password, $user->password)) {
                 return back()->with('error', 'Password salah');
             }
         } else {
-            // Password masih plain text
             if ($password !== $user->password) {
                 return back()->with('error', 'Password salah');
             }
@@ -85,7 +83,6 @@ class AuthController extends Controller
             return back()->with('error', 'Username tidak ditemukan');
         }
 
-        // Cek password lama, handle plain text dan bcrypt
         $isHashed = str_starts_with($user->password, '$2y$');
 
         if ($isHashed) {
@@ -109,5 +106,26 @@ class AuthController extends Controller
             ]);
 
         return back()->with('success', 'Password berhasil diubah');
+    }
+
+    // =====================================================
+    // PROFIL ADMIN
+    // =====================================================
+    public function profilAdmin()
+    {
+        // Belum login → tendang ke login
+        if (!session('user')) return redirect('/login');
+
+        $user = session('user');
+
+        // Bukan admin → tendang ke login, ga boleh akses
+        if (strtolower(trim($user->role)) !== 'admin') {
+            return redirect('/login')->with('error', 'Akses ditolak');
+        }
+
+        // Ambil data fresh dari DB biar selalu up to date
+        $user = DB::table('users')->where('nim_nid', $user->nim_nid)->first();
+
+        return view('dosen.profil_admin_tu', compact('user'));
     }
 }
