@@ -95,7 +95,19 @@ class ReviewerController extends Controller
 
         $proposals = $query->orderBy('proposal.tanggal_pengajuan', 'asc')->get();
 
-        return view('pengajuan.proposal_reviewer', compact('proposals'));
+        // =====================================================
+        // STATISTIK — dihitung dari data yang sudah difilter
+        // =====================================================
+        $totalProposal = $proposals->count();
+        $totalMenunggu = $proposals->filter(fn($p) => is_null($p->tinjauan_id))->count();
+        $totalSelesai  = $proposals->filter(fn($p) => !is_null($p->tinjauan_id))->count();
+
+        return view('pengajuan.proposal_reviewer', compact(
+            'proposals',
+            'totalProposal',
+            'totalMenunggu',
+            'totalSelesai'
+        ));
     }
 
     // =====================================================

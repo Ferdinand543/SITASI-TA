@@ -11,6 +11,44 @@
     </div>
 </div>
 
+{{-- ============================================================
+     STATS CARD — Total, Menunggu, Selesai
+     ============================================================ --}}
+<div class="stats-row">
+    <div class="stats-card">
+        <div class="stats-icon-wrap stats-blue">
+            <i class="fa fa-file-lines"></i>
+        </div>
+        <div class="stats-divider"></div>
+        <div class="stats-info">
+            <div class="stats-number">{{ $totalProposal }}</div>
+            <div class="stats-label">Total proposal mahasiswa</div>
+        </div>
+    </div>
+
+    <div class="stats-card">
+        <div class="stats-icon-wrap stats-yellow">
+            <i class="fa fa-clock"></i>
+        </div>
+        <div class="stats-divider"></div>
+        <div class="stats-info">
+            <div class="stats-number">{{ $totalMenunggu }}</div>
+            <div class="stats-label">Proposal belum direview</div>
+        </div>
+    </div>
+
+    <div class="stats-card">
+        <div class="stats-icon-wrap stats-green">
+            <i class="fa fa-circle-check"></i>
+        </div>
+        <div class="stats-divider"></div>
+        <div class="stats-info">
+            <div class="stats-number">{{ $totalSelesai }}</div>
+            <div class="stats-label">Proposal selesai direview</div>
+        </div>
+    </div>
+</div>
+
 <div class="container-fluid px-4">
 
     {{-- ALERT --}}
@@ -124,7 +162,7 @@
 
                     <td>
                         @if($sudahReview)
-                            <span class="badge-reviewer badge-selesai">SELESAI</span>
+                            <span class="badge-reviewer badge-selesai">SUDAH<br>DIREVIEW</span>
                         @else
                             <span class="badge-reviewer badge-menunggu">MENUNGGU<br>REVIEW</span>
                         @endif
@@ -154,26 +192,36 @@
                         @endif
                     </td>
                 </tr>
+
                 @empty
+                {{-- EMPTY STATE --}}
                 <tr id="rowEmpty">
                     <td colspan="9" class="td-empty">
-                        <i class="fa fa-inbox me-2"></i>
-                        Data tidak ditemukan
+                        <img src="{{ asset('images/no_content.jpeg') }}"
+                             alt="Tidak ada data"
+                             class="empty-img">
+                        <div class="empty-title">Belum Ada Proposal</div>
+                        <div class="empty-sub">Belum ada proposal yang perlu ditinjau saat ini.</div>
                     </td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
 
-        <div id="msgKosong" style="display:none; text-align:center; padding:40px; color:#999; font-size:0.9rem;">
-            <i class="fa fa-inbox me-2"></i> Data tidak ditemukan
+        {{-- EMPTY STATE: tidak ada data setelah difilter --}}
+        <div id="msgKosong" style="display:none;" class="empty-filter-wrap">
+            <img src="{{ asset('images/no_content.jpeg') }}"
+                 alt="Tidak ada data"
+                 class="empty-img">
+            <div class="empty-title">Data Tidak Ditemukan</div>
+            <div class="empty-sub">Coba ubah kata kunci pencarian atau reset filter.</div>
         </div>
     </div>
 
 </div>
 
 {{-- ============================================================
-     MODAL REVIEW — Desain Baru
+     MODAL REVIEW
      ============================================================ --}}
 <div id="modalReview" class="modal-overlay">
     <div class="modal-box-new">
@@ -199,7 +247,7 @@
             </div>
         </div>
 
-        {{-- Tanggal Review — otomatis hari ini, tidak bisa diubah --}}
+        {{-- Tanggal Review --}}
         <div class="mnew-field mb14">
             <label class="mnew-lbl">Tanggal Review</label>
             <div class="mnew-date-wrap">
@@ -263,7 +311,7 @@
                           placeholder="Tuliskan hasil review proposal mahasiswa..."></textarea>
             </div>
 
-            {{-- File Upload Drag & Drop --}}
+            {{-- File Upload --}}
             <div class="mnew-field mb14">
                 <label class="mnew-lbl">File Tinjauan Proposal (Upload)</label>
                 <div class="mnew-upload-area" id="uploadArea" onclick="document.getElementById('reviewFile').click()">
@@ -352,6 +400,27 @@
 
 <style>
 /* ============================================================
+   CSS VARIABLES — sesuai Figma
+   ============================================================ */
+:root {
+    --navy:        #111C2D;   /* teks utama */
+    --brown-dark:  #4D4632;   /* teks sekunder / tombol secondary */
+    --gold:        #735C00;   /* aksen emas / tombol primary */
+    --blue-dark:   #1E40AF;   /* ikon stats biru */
+    --blue-bg:     #DBEAFE;   /* background ikon biru */
+    --blue-light:  #F0F3FF;   /* background badge menunggu */
+    --blue-badge:  #DBEAFE;   /* background badge menunggu */
+    --blue-text:   #1E40AF;   /* teks badge menunggu */
+    --green-dark:  #065F46;   /* teks badge selesai */
+    --green-mid:   #10B981;   /* ikon stats hijau */
+    --green-bg:    #D1FAE5;   /* background ikon hijau / badge selesai */
+    --border:      #E5DFD0;
+    --border-soft: #F0EBE0;
+    --bg-input:    #F7F5F0;
+    --bg-table:    #F9F9FF;   /* background tabel */
+}
+
+/* ============================================================
    HERO
    ============================================================ */
 .hero-section {
@@ -365,9 +434,71 @@
     background-repeat: no-repeat;
     border-radius: 16px;
 }
-.hero-content h2 { font-size: 2rem; color: #111C2D; margin-bottom: 6px; }
-.hero-content p  { color: #4D4632; font-size: 0.95rem; }
+.hero-content h2 { font-size: 2rem; color: var(--navy); margin-bottom: 6px; }
+.hero-content p  { color: var(--brown-dark); font-size: 0.95rem; }
 
+/* ============================================================
+   STATS ROW
+   ============================================================ */
+.stats-row {
+    display: flex;
+    gap: 0;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    margin: 0 0 20px 0;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(17,28,45,0.06);
+}
+.stats-card {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 28px;
+    border-right: 1.5px solid var(--border-soft);
+}
+.stats-card:last-child { border-right: none; }
+
+.stats-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+/* --- stats-blue: ikon file (Total) → biru navy #1E40AF bg #DBEAFE --- */
+.stats-blue  { background: var(--blue-bg);  color: var(--blue-dark); }
+
+/* --- stats-yellow: ikon clock (Menunggu) → tetap kuning/amber sesuai Figma --- */
+.stats-yellow { background: #FEF3C7; color: #D97706; }
+
+/* --- stats-green: ikon checklist (Selesai) → hijau #10B981 bg #D1FAE5 --- */
+.stats-green { background: var(--green-bg); color: var(--green-mid); }
+
+.stats-divider {
+    width: 3px;
+    height: 40px;
+    border-radius: 4px;
+    background: var(--border);
+    flex-shrink: 0;
+}
+.stats-number {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+.stats-label {
+    font-size: 0.8rem;
+    color: var(--brown-dark);
+    font-weight: 500;
+}
 
 /* ============================================================
    FILTER
@@ -391,9 +522,9 @@
     font-size: 0.88rem;
     background: #fff;
     box-sizing: border-box;
-    color: #111C2D;
+    color: var(--navy);
 }
-.filter-search input:focus { outline: none; border-color: #735C00; }
+.filter-search input:focus { outline: none; border-color: var(--gold); }
 .filter-search-icon {
     position: absolute;
     left: 12px;
@@ -410,10 +541,10 @@
     font-size: 0.88rem;
     background: #fff;
     height: 40px;
-    color: #111C2D;
+    color: var(--navy);
 }
 .filter-select-wrap select:focus,
-.filter-date-wrap input:focus { outline: none; border-color: #735C00; }
+.filter-date-wrap input:focus { outline: none; border-color: var(--gold); }
 .filter-select-wrap select { min-width: 160px; }
 .filter-date-wrap input    { min-width: 150px; }
 .btn-reset {
@@ -425,15 +556,15 @@
     border-radius: 10px;
     background: #fff;
     font-size: 0.88rem;
-    color: #4D4632;
+    color: var(--brown-dark);
     cursor: pointer;
     white-space: nowrap;
     transition: 0.2s;
 }
-.btn-reset:hover { background: #FEF3C7; border-color: #735C00; }
+.btn-reset:hover { background: #FEF3C7; border-color: var(--gold); }
 
 /* ============================================================
-   TABLE
+   TABLE — background F9F9FF sesuai Figma
    ============================================================ */
 .table-wrapper { overflow-x: auto; }
 .tbl-reviewer {
@@ -444,14 +575,16 @@
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(77,70,50,0.07);
+    box-shadow: 0 2px 8px rgba(17,28,45,0.07);
 }
+
+/* Header tabel: kuning muda sesuai Figma */
 .tbl-reviewer thead tr { background: #FEF3C7; }
 .tbl-reviewer th {
     padding: 13px 14px;
     text-align: center;
     font-weight: 700;
-    color: #111C2D;
+    color: var(--navy);
     font-size: 0.83rem;
     border-bottom: 2px solid #D1C6AB;
     white-space: nowrap;
@@ -460,17 +593,18 @@
     padding: 14px;
     text-align: center;
     vertical-align: middle;
-    border-bottom: 1px solid #f0ebe0;
+    border-bottom: 1px solid var(--border-soft);
     color: #333;
 }
-.tbl-reviewer tbody tr:hover { background: #FFFBEE; }
-.td-nama    { font-weight: 600; white-space: nowrap; color: #111C2D; }
+/* Row hover: biru sangat muda sesuai Figma */
+.tbl-reviewer tbody tr:hover { background: var(--bg-table); }
+
+.td-nama    { font-weight: 600; white-space: nowrap; color: var(--navy); }
 .td-judul   { text-align: left; }
-.td-catatan { text-align: left; color: #6C5700; font-size: 0.83rem; }
-.td-empty   { padding: 50px !important; color: #aaa; font-size: 0.9rem; text-align: center; }
+.td-catatan { text-align: left; color: var(--brown-dark); font-size: 0.83rem; }
 
 /* ============================================================
-   BADGE STATUS
+   BADGE STATUS — DIFIX sesuai Figma
    ============================================================ */
 .badge-reviewer {
     display: inline-block;
@@ -482,8 +616,41 @@
     line-height: 1.4;
     text-align: center;
 }
-.badge-selesai  { background: #DCFCE7; color: #166534; border: 1px solid #bbf7d0; }
-.badge-menunggu { background: #FEF3C7; color: #92400E; border: 1px solid #fde68a; }
+
+/* SUDAH DIREVIEW → hijau: bg #D1FAE5, border #10B981, text #065F46 */
+.badge-selesai {
+    background: var(--green-bg);
+    color: var(--green-dark);
+    border: 1px solid #10B981;
+}
+
+/* MENUNGGU REVIEW → biru: bg #DBEAFE, border #1E40AF, text #1E40AF */
+.badge-menunggu {
+    background: var(--blue-badge);
+    color: var(--blue-text);
+    border: 1px solid #93C5FD;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.td-empty {
+    padding: 48px 20px !important;
+    text-align: center;
+    background: #fff;
+}
+.empty-filter-wrap {
+    text-align: center;
+    padding: 48px 20px;
+    background: #fff;
+    border: 1.5px solid var(--border-soft);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 2px 8px rgba(77,70,50,0.07);
+}
+.empty-img   { width: 160px; opacity: 0.9; display: block; margin: 0 auto 14px; }
+.empty-title { font-size: 0.97rem; font-weight: 700; color: var(--brown-dark); margin-bottom: 5px; }
+.empty-sub   { font-size: 0.82rem; color: #aaa; }
 
 /* ============================================================
    FILE LINK
@@ -520,20 +687,24 @@
     text-decoration: none;
     text-align: center;
 }
-.btn-review { background: #735C00; color: #fff; }
-.btn-review:hover { background: #4D4632; }
-.btn-detail { background: #fff; color: #4D4632; border: 1px solid #D1C6AB; }
-.btn-detail:hover { background: #FEF3C7; border-color: #735C00; color: #735C00; }
+
+/* Tombol Review → emas #735C00 sesuai Figma */
+.btn-review { background: var(--gold); color: #fff; }
+.btn-review:hover { background: var(--brown-dark); }
+
+/* Tombol Detail → putih outline */
+.btn-detail { background: #fff; color: var(--brown-dark); border: 1px solid #D1C6AB; }
+.btn-detail:hover { background: #FEF3C7; border-color: var(--gold); color: var(--gold); }
 
 /* ============================================================
    ALERT
    ============================================================ */
 .alert-custom { padding: 12px 16px; border-radius: 10px; font-size: 0.9rem; }
-.alert-success-custom { background: #DCFCE7; color: #166534; border: 1px solid #bbf7d0; }
+.alert-success-custom { background: var(--green-bg); color: var(--green-dark); border: 1px solid #10B981; }
 .alert-error-custom   { background: #fdecea; color: #92400E; border: 1px solid #f1aeb5; }
 
 /* ============================================================
-   MODAL OVERLAY (shared)
+   MODAL OVERLAY
    ============================================================ */
 .modal-overlay {
     display: none;
@@ -545,10 +716,6 @@
     justify-content: center;
     padding: 20px;
 }
-
-/* ============================================================
-   MODAL BOX — BARU (untuk Review)
-   ============================================================ */
 .modal-box-new {
     background: #fff;
     border-radius: 20px;
@@ -559,287 +726,112 @@
     max-height: 92vh;
     overflow-y: auto;
 }
-
-/* Header */
 .mnew-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 22px;
 }
-.mnew-title {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: #111C2D;
-    margin-bottom: 4px;
-}
-.mnew-sub {
-    font-size: 0.8rem;
-    color: #6C5700;
-    line-height: 1.4;
-    max-width: 380px;
-}
+.mnew-title { font-size: 1.15rem; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+.mnew-sub   { font-size: 0.8rem; color: var(--gold); line-height: 1.4; max-width: 380px; }
 .mnew-close {
-    background: none;
-    border: none;
-    font-size: 1.1rem;
-    color: #888;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: 0.2s;
-    flex-shrink: 0;
+    background: none; border: none; font-size: 1.1rem; color: #888;
+    cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: 0.2s; flex-shrink: 0;
 }
-.mnew-close:hover { background: #f0ebe0; color: #333; }
-
-/* Row 2 kolom */
-.mnew-row2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 14px;
-}
-
-/* Field */
+.mnew-close:hover { background: var(--border-soft); color: #333; }
+.mnew-row2  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
 .mnew-field { display: flex; flex-direction: column; }
 .mb14 { margin-bottom: 14px; }
-
-/* Label */
-.mnew-lbl {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #4D4632;
-    margin-bottom: 5px;
-}
-
-/* Input */
+.mnew-lbl   { font-size: 0.82rem; font-weight: 600; color: var(--brown-dark); margin-bottom: 5px; }
 .mnew-inp {
     padding: 10px 13px;
-    border: 1.5px solid #E5DFD0;
+    border: 1.5px solid var(--border);
     border-radius: 10px;
     font-size: 0.88rem;
-    color: #111C2D;
-    background: #F7F5F0;
+    color: var(--navy);
+    background: var(--bg-input);
     font-family: inherit;
     box-sizing: border-box;
     width: 100%;
     transition: 0.18s;
 }
-.mnew-inp:not([readonly]):focus {
-    outline: none;
-    border-color: #735C00;
-    background: #fff;
-}
+.mnew-inp:not([readonly]):focus { outline: none; border-color: var(--gold); background: #fff; }
 .mnew-inp[readonly] { cursor: default; color: #555; }
-
-/* Textarea judul */
-.mnew-textarea-judul {
-    resize: none;
-    line-height: 1.5;
-    min-height: 60px;
-}
-
-/* Textarea catatan */
-.mnew-textarea-catatan {
-    resize: vertical;
-    min-height: 100px;
-    line-height: 1.5;
-}
-
-/* Date wrap */
-.mnew-date-wrap { position: relative; }
-.mnew-date-icon {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #aaa;
-    pointer-events: none;
-    font-size: 0.88rem;
-}
-
-/* Tanggal readonly — tidak bisa diklik sama sekali */
-.mnew-date-readonly {
-    pointer-events: none;
-    cursor: default;
-    background: #F7F5F0 !important;
-    color: #555 !important;
-    padding-right: 36px;
-}
-
-/* Dokumen proposal box */
-.mnew-doc-box {
-    border: 1.5px solid #E5DFD0;
-    border-radius: 10px;
-    background: #F7F5F0;
-    padding: 12px 14px;
-}
-.mnew-doc-inner {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+.mnew-textarea-judul   { resize: none; line-height: 1.5; min-height: 60px; }
+.mnew-textarea-catatan { resize: vertical; min-height: 100px; line-height: 1.5; }
+.mnew-date-wrap  { position: relative; }
+.mnew-date-icon  { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #aaa; pointer-events: none; font-size: 0.88rem; }
+.mnew-date-readonly { pointer-events: none; cursor: default; background: var(--bg-input) !important; color: #555 !important; padding-right: 36px; }
+.mnew-doc-box    { border: 1.5px solid var(--border); border-radius: 10px; background: var(--bg-input); padding: 12px 14px; }
+.mnew-doc-inner  { display: flex; align-items: center; gap: 12px; }
 .mnew-doc-icon-wrap {
-    width: 38px;
-    height: 38px;
-    background: #fff;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #E5DFD0;
-    flex-shrink: 0;
+    width: 38px; height: 38px; background: #fff; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border); flex-shrink: 0;
 }
-.mnew-doc-info { flex: 1; }
-.mnew-doc-name { font-size: 0.88rem; font-weight: 600; color: #111C2D; }
-.mnew-doc-size { font-size: 0.76rem; color: #888; }
+.mnew-doc-info   { flex: 1; }
+.mnew-doc-name   { font-size: 0.88rem; font-weight: 600; color: var(--navy); }
+.mnew-doc-size   { font-size: 0.76rem; color: #888; }
 .mnew-preview-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 14px;
-    border-radius: 8px;
-    border: 1.5px solid #D1C6AB;
-    background: #fff;
-    color: #4D4632;
-    font-size: 0.82rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.2s;
-    white-space: nowrap;
-    flex-shrink: 0;
+    display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px;
+    border-radius: 8px; border: 1.5px solid #D1C6AB; background: #fff;
+    color: var(--brown-dark); font-size: 0.82rem; font-weight: 600; text-decoration: none;
+    transition: 0.2s; white-space: nowrap; flex-shrink: 0;
 }
-.mnew-preview-btn:hover { background: #FEF3C7; border-color: #735C00; color: #735C00; }
-
-/* Upload area */
+.mnew-preview-btn:hover { background: #FEF3C7; border-color: var(--gold); color: var(--gold); }
 .mnew-upload-area {
-    border: 2px dashed #D1C6AB;
-    border-radius: 12px;
-    background: #FAFAF8;
-    padding: 28px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.2s;
-    min-height: 110px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 2px dashed #D1C6AB; border-radius: 12px; background: #FAFAF8;
+    padding: 28px 20px; text-align: center; cursor: pointer; transition: 0.2s;
+    min-height: 110px; display: flex; align-items: center; justify-content: center;
 }
-.mnew-upload-area:hover { border-color: #735C00; background: #FEF3C7; }
-.mnew-upload-area.dragover { border-color: #735C00; background: #FEF3C7; }
+.mnew-upload-area:hover       { border-color: var(--gold); background: #FEF3C7; }
+.mnew-upload-area.dragover    { border-color: var(--gold); background: #FEF3C7; }
 .mnew-upload-icon-wrap {
-    width: 48px;
-    height: 48px;
-    background: #FEF3C7;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
+    width: 48px; height: 48px; background: #FEF3C7; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;
 }
-.mnew-upload-text {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: #111C2D;
-    margin-bottom: 4px;
-}
-.mnew-upload-sub {
-    font-size: 0.78rem;
-    color: #888;
-}
-
-/* Footer tombol */
-.mnew-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 8px;
-}
+.mnew-upload-text { font-size: 0.88rem; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+.mnew-upload-sub  { font-size: 0.78rem; color: #888; }
+.mnew-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
 .mnew-btn-kembali {
-    padding: 10px 24px;
-    border-radius: 10px;
-    border: 1.5px solid #D1C6AB;
-    background: #fff;
-    color: #4D4632;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
+    padding: 10px 24px; border-radius: 10px; border: 1.5px solid #D1C6AB;
+    background: #fff; color: var(--brown-dark); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s;
 }
-.mnew-btn-kembali:hover { background: #FEF3C7; border-color: #735C00; }
+.mnew-btn-kembali:hover { background: #FEF3C7; border-color: var(--gold); }
 .mnew-btn-kirim {
-    padding: 10px 28px;
-    border-radius: 10px;
-    border: none;
-    background: #735C00;
-    color: #fff;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    padding: 10px 28px; border-radius: 10px; border: none; background: var(--gold);
+    color: #fff; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: 0.2s;
+    display: inline-flex; align-items: center; gap: 6px;
 }
-.mnew-btn-kirim:hover { background: #4D4632; }
+.mnew-btn-kirim:hover { background: var(--brown-dark); }
 
 /* ============================================================
    POPUP CUSTOM
    ============================================================ */
-.popup-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(17,28,45,0.45);
-    z-index: 99999;
-    align-items: center;
-    justify-content: center;
-}
+.popup-overlay { display: none; position: fixed; inset: 0; background: rgba(17,28,45,0.45); z-index: 99999; align-items: center; justify-content: center; }
 .popup-overlay.active { display: flex; }
-.popup-box {
-    background: #fff;
-    border-radius: 20px;
-    padding: 40px 32px 32px;
-    width: 100%;
-    max-width: 380px;
-    margin: 0 16px;
-    box-shadow: 0 12px 40px rgba(17,28,45,0.18);
-    text-align: center;
-}
-.popup-icon-wrap {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 18px;
-    font-size: 2rem;
-}
-.popup-icon-wrap.success { background: #DCFCE7; border: 3px solid #86efac; color: #166534; }
-.popup-icon-wrap.error   { background: #fdecea; border: 3px solid #fca5a5; color: #92400E; }
-.popup-icon-wrap.confirm { background: #FEF3C7; border: 3px solid #FFE083; color: #735C00; }
-.popup-icon-wrap.warning { background: #FEF3C7; border: 3px solid #fde68a; color: #92400E; }
-.popup-title { font-size: 1.4rem; font-weight: 800; color: #111C2D; margin-bottom: 8px; }
-.popup-msg   { font-size: 0.9rem; color: #4D4632; margin-bottom: 24px; line-height: 1.5; }
+.popup-box { background: #fff; border-radius: 20px; padding: 40px 32px 32px; width: 100%; max-width: 380px; margin: 0 16px; box-shadow: 0 12px 40px rgba(17,28,45,0.18); text-align: center; }
+.popup-icon-wrap { width: 72px; height: 72px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 18px; font-size: 2rem; }
+.popup-icon-wrap.success { background: var(--green-bg);  border: 3px solid #10B981; color: var(--green-dark); }
+.popup-icon-wrap.error   { background: #fdecea;           border: 3px solid #fca5a5; color: #92400E; }
+.popup-icon-wrap.confirm { background: #FEF3C7;           border: 3px solid #FFE083; color: var(--gold); }
+.popup-icon-wrap.warning { background: #FEF3C7;           border: 3px solid #fde68a; color: #92400E; }
+.popup-title { font-size: 1.4rem; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+.popup-msg   { font-size: 0.9rem; color: var(--brown-dark); margin-bottom: 24px; line-height: 1.5; }
 .popup-btn-row { display: flex; gap: 12px; justify-content: center; }
-.popup-btn {
-    padding: 10px 28px;
-    border-radius: 10px;
-    font-size: 0.92rem;
-    font-weight: 700;
-    cursor: pointer;
-    border: none;
-    transition: 0.2s;
-    min-width: 90px;
-}
-.popup-btn.ok, .popup-btn.kirim { background: #735C00; color: #fff; }
-.popup-btn.ok:hover, .popup-btn.kirim:hover { background: #4D4632; }
-.popup-btn.batal { background: #D1C6AB; color: #111C2D; }
+.popup-btn { padding: 10px 28px; border-radius: 10px; font-size: 0.92rem; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; min-width: 90px; }
+.popup-btn.ok, .popup-btn.kirim { background: var(--gold); color: #fff; }
+.popup-btn.ok:hover, .popup-btn.kirim:hover { background: var(--brown-dark); }
+.popup-btn.batal { background: #D1C6AB; color: var(--navy); }
 .popup-btn.batal:hover { background: #c4b89a; }
 
-/* Responsive */
-@media (max-width: 600px) {
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 640px) {
+    .stats-row { flex-direction: column; }
+    .stats-card { border-right: none; border-bottom: 1.5px solid var(--border-soft); }
+    .stats-card:last-child { border-bottom: none; }
     .mnew-row2 { grid-template-columns: 1fr; }
     .modal-box-new { padding: 20px 16px; }
 }
@@ -903,50 +895,44 @@ function bukaPopup(id)  { document.getElementById(id).classList.add('active'); }
 function tutupPopup(id) { document.getElementById(id).classList.remove('active'); }
 
 // ============================================================
-// MODAL REVIEW — BARU
+// MODAL REVIEW
 // ============================================================
 var _reviewProposalId = null;
 
 function bukaModalReview(nama, nim, judul, proposalId, fileProposal, dsn1, dsn2) {
     _reviewProposalId = proposalId;
 
-    document.getElementById('reviewNim').value    = nim;
-    document.getElementById('reviewNama').value   = nama;
-    document.getElementById('reviewJudul').value  = judul;
-    document.getElementById('reviewDsn1').value   = dsn1 || '-';
-    document.getElementById('reviewDsn2').value   = dsn2 || '-';
+    document.getElementById('reviewNim').value     = nim;
+    document.getElementById('reviewNama').value    = nama;
+    document.getElementById('reviewJudul').value   = judul;
+    document.getElementById('reviewDsn1').value    = dsn1 || '-';
+    document.getElementById('reviewDsn2').value    = dsn2 || '-';
     document.getElementById('reviewCatatan').value = '';
     document.getElementById('reviewFile').value    = '';
     document.getElementById('charCount').textContent = 'Maksimal 200 karakter';
 
-    // Set tanggal hari ini — format dd/mm/yyyy supaya keliatan rapi
     var today = new Date();
     var yyyy  = today.getFullYear();
     var mm    = String(today.getMonth() + 1).padStart(2, '0');
     var dd    = String(today.getDate()).padStart(2, '0');
     document.getElementById('reviewTanggal').value = dd + '/' + mm + '/' + yyyy;
 
-    // Dokumen proposal
     if (fileProposal) {
         var namaFile = fileProposal.split('/').pop();
         document.getElementById('reviewDocName').textContent = namaFile;
         document.getElementById('reviewDocSize').textContent = '';
         document.getElementById('reviewDocLink').href = '/storage/' + fileProposal;
         document.getElementById('reviewDocLink').style.display = '';
-        document.getElementById('reviewDocBox').style.display = 'block';
+        document.getElementById('reviewDocBox').style.display  = 'block';
     } else {
-        document.getElementById('reviewDocName').textContent = 'Tidak ada file';
-        document.getElementById('reviewDocLink').href = '#';
+        document.getElementById('reviewDocName').textContent   = 'Tidak ada file';
+        document.getElementById('reviewDocLink').href          = '#';
         document.getElementById('reviewDocLink').style.display = 'none';
     }
 
-    // Reset upload area
     document.getElementById('uploadPlaceholder').style.display = 'block';
     document.getElementById('uploadPreview').style.display     = 'none';
-
-    // Set action form
     document.getElementById('formReview').action = '/reviewer/proposal/' + proposalId + '/review';
-
     document.getElementById('modalReview').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
@@ -956,19 +942,16 @@ function tutupModalReview() {
     document.body.style.overflow = '';
 }
 
-// Tutup modal kalau klik overlay
 document.getElementById('modalReview').addEventListener('click', function(e) {
     if (e.target === this) tutupModalReview();
 });
 
-// Hitung karakter catatan
 document.getElementById('reviewCatatan').addEventListener('input', function() {
     var sisa = 200 - this.value.length;
     document.getElementById('charCount').textContent = sisa + ' karakter tersisa';
     document.getElementById('charCount').style.color = sisa < 20 ? '#c0392b' : '#888';
 });
 
-// Drag & drop upload
 var uploadArea = document.getElementById('uploadArea');
 uploadArea.addEventListener('dragover', function(e) {
     e.preventDefault();
@@ -991,9 +974,9 @@ function onFileSelected(input) {
     if (input.files && input.files[0]) {
         var namaFile = input.files[0].name;
         document.getElementById('uploadFileName').textContent = namaFile;
-        document.getElementById('uploadPlaceholder').style.display = 'none';
-        document.getElementById('uploadPreview').style.display     = 'flex';
-        document.getElementById('uploadPreview').style.alignItems  = 'center';
+        document.getElementById('uploadPlaceholder').style.display    = 'none';
+        document.getElementById('uploadPreview').style.display        = 'flex';
+        document.getElementById('uploadPreview').style.alignItems     = 'center';
         document.getElementById('uploadPreview').style.justifyContent = 'center';
     }
 }
