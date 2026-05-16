@@ -53,7 +53,7 @@ class AuthController extends Controller
 
         $role = strtolower(trim($user->role));
 
-        if ($role == 'dosen pembimbing' || $role == 'dosen penguji' || $role == 'dosen reviewer' || $role == 'koordinator') {
+        if ($role == 'dosen') {
             return redirect('/dashboard/dosen')->with('success', 'Login berhasil');
         }
 

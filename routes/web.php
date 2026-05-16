@@ -1,125 +1,114 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PengajuanMahasiswaController;
+use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\ProposalMahasiswaController;
+use App\Http\Controllers\ReviewerController;
+use App\Http\Controllers\PanduanTAController;
 
 // ROOT
-Route::get('/', function () {
-    return redirect('/login');
-});
+Route::get('/', fn() => redirect('/login'));
 
-// LOGIN
-Route::get('/login', [AuthController::class, 'showLogin']);
-Route::post('/login', [AuthController::class, 'login']);
-
-// LOGOUT
+// AUTH
+Route::get('/login',          [AuthController::class, 'showLogin']);
+Route::post('/login',         [AuthController::class, 'login']);
 Route::get('/logout', function () {
     session()->forget('user');
-
-    return redirect('/login')
-        ->with('success', 'Berhasil logout');
+    return redirect('/login')->with('success', 'Berhasil logout');
 });
-
-// FORGOT PASSWORD
-Route::get('/forgot-password', function () {
-    return view('auth.forgotpass');
-});
-
+Route::get('/forgot-password', fn() => view('auth.forgotpass'));
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 
-// ================= DOSEN =================
+// =====================================================
+// DASHBOARD
+// =====================================================
+
 Route::get('/dashboard/dosen', function () {
-
-    if (!session('user')) {
-        return redirect('/login');
-    }
-
+    if (!session('user')) return redirect('/login');
     return view('dosen.dashboard');
 });
 
-
-// ================= ADMIN =================
 Route::get('/admin', function () {
-
-    if (!session('user')) {
-        return redirect('/login');
-    }
-
+    if (!session('user')) return redirect('/login');
     return view('admin.admin');
 });
 
-
-// ================= MAHASISWA =================
 Route::get('/mahasiswa', function () {
+    if (!session('user')) return redirect('/login');
 
-    if (!session('user')) {
-        return redirect('/login');
-    }
+    $user = session('user');
+    $nim  = $user->nim_nid;
 
-    return view('mahasiswa.index');
+    $totalPengajuan = DB::table('pengajuan_judul')->where('nim_nid', $nim)->count();
+    $totalProposal  = DB::table('proposal')->where('nim_nid', $nim)->count();
+    $totalBimbingan = 0;
+
+    return view('mahasiswa.index', compact(
+        'totalPengajuan',
+        'totalProposal',
+        'totalBimbingan'
+    ));
 });
 
 
 // =====================================================
-// PENGAJUAN MAHASISWA
+// PANDUAN TA
 // =====================================================
 
-// HALAMAN PENGAJUAN
-Route::get(
-    '/pengajuan-mahasiswa',
-    [PengajuanMahasiswaController::class, 'index']
-)->name('pengajuan.mahasiswa');
-
-
-// SIMPAN PENGAJUAN
-Route::post(
-    '/pengajuan/store',
-    [PengajuanMahasiswaController::class, 'store']
-)->name('pengajuan.store');
-
-
-// DETAIL PENGAJUAN
-Route::get(
-    '/pengajuan/detail/{id}',
-    [PengajuanMahasiswaController::class, 'detail']
-)->name('pengajuan.detail');
+Route::get('/panduan-ta/mahasiswa',     [PanduanTAController::class, 'mahasiswa'])->name('panduan-ta.mahasiswa');
+Route::get('/panduan-ta/dosen',         [PanduanTAController::class, 'dosen'])->name('panduan-ta.dosen');
+Route::get('/panduan-ta/download/{id}', [PanduanTAController::class, 'download'])->name('panduan-ta.download');
 
 
 // =====================================================
-// DOSEN / KOORDINATOR
+// PENGAJUAN JUDUL — MAHASISWA
 // =====================================================
 
-// HALAMAN VERIFIKASI
-Route::get(
-    '/pengajuan',
-    [PengajuanController::class, 'index']
-)->name('pengajuan');
+Route::get('/pengajuan-mahasiswa',   [PengajuanMahasiswaController::class, 'index'])->name('pengajuan.mahasiswa');
+Route::post('/pengajuan/store',      [PengajuanMahasiswaController::class, 'store'])->name('pengajuan.store');
+Route::get('/pengajuan/detail/{id}', [PengajuanMahasiswaController::class, 'detail'])->name('pengajuan.detail');
 
 
-// DETAIL VERIFIKASI
-Route::get(
-    '/pengajuan/verifikasi/{id}',
-    [PengajuanController::class, 'verifikasi']
-)->name('pengajuan.verifikasi');
+// =====================================================
+// PENGAJUAN JUDUL — KOORDINATOR/DOSEN
+// =====================================================
+
+Route::get('/pengajuan',                 [PengajuanController::class, 'index'])->name('pengajuan');
+Route::get('/pengajuan/verifikasi/{id}', [PengajuanController::class, 'verifikasi'])->name('pengajuan.verifikasi');
+Route::post('/pengajuan/proses/{id}',    [PengajuanController::class, 'prosesVerifikasi'])->name('pengajuan.proses');
 
 
-// PROSES VERIFIKASI
-Route::post(
-    '/pengajuan/proses/{id}',
-    [PengajuanController::class, 'prosesVerifikasi']
-)->name('pengajuan.proses');
+// =====================================================
+// PROPOSAL TA-1 — MAHASISWA (taruh di atas semua {id}!)
+// =====================================================
+
+Route::get('/proposal/mahasiswa',        [ProposalMahasiswaController::class, 'index'])->name('proposal.mahasiswa');
+Route::post('/proposal/mahasiswa/store', [ProposalMahasiswaController::class, 'store'])->name('proposal.store');
+Route::get('/proposal/mahasiswa/{id}',   [ProposalMahasiswaController::class, 'detail'])->name('proposal.mahasiswa.detail');
 
 
-// ================= PROPOSAL =================
-Route::get('/proposal', function () {
+// =====================================================
+// PROPOSAL TA-1 — KOORDINATOR
+// =====================================================
 
-    if (!session('user')) {
-        return redirect('/login');
-    }
+Route::get('/proposal',                                    [ProposalController::class, 'index'])->name('proposal.index');
+Route::get('/proposal/{id}/verifikasi',                    [ProposalController::class, 'verifikasi'])->name('proposal.verifikasi');
+Route::post('/proposal/{id}/verifikasi',                   [ProposalController::class, 'prosesVerifikasi'])->name('proposal.prosesVerifikasi');
+Route::post('/proposal/{id}/tetapkan/{urutan}',            [ProposalController::class, 'tetapkanUsulan'])->name('proposal.tetapkan');
+Route::post('/proposal/{id}/lanjutkan',                    [ProposalController::class, 'lanjutkanKeReviewer'])->name('proposal.lanjutkan');
+Route::post('/proposal/{id}/ubah-pembimbing/{urutan}',     [ProposalController::class, 'ubahPembimbing'])->name('proposal.ubahPembimbing');
+Route::get('/proposal/{id}',                               [ProposalController::class, 'detail'])->name('proposal.detail');
 
-    return view('pengajuan.proposal');
 
-})->name('proposal');
+// =====================================================
+// PROPOSAL TA-1 — DOSEN REVIEWER
+// =====================================================
+
+Route::get('/reviewer/proposal',              [ReviewerController::class, 'index'])->name('reviewer.proposal');
+Route::post('/reviewer/proposal/{id}/review', [ReviewerController::class, 'simpanReview'])->name('reviewer.simpanReview');
+Route::get('/reviewer/proposal/{id}/detail',  [ReviewerController::class, 'detail'])->name('reviewer.proposal.detail');

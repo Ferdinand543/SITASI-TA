@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -8,151 +8,304 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --primary: #FACC15;
+            --primary-dark: #d4a00e;
+            --neutral: #1E293B;
+            --sidebar-bg: #ffffff;
+            --sidebar-width: 220px;
+            --topbar-height: 56px;
+            --tertiary: #FFFDF5;
+            --text-muted-custom: #6b7280;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
+            font-family: 'Hanken Grotesk', sans-serif;
             background: #f5f6fa;
+            color: #735C00;
+            margin: 0;
+            padding: 0;
         }
 
-        .hero {
-            background: linear-gradient(to right, #ffffff, #f9d976);
-            padding: 40px;
-            border-radius: 12px;
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            overflow-y: auto;
+            border-right: 1px solid #e5e7eb;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s ease, width 0.3s ease;
         }
 
-        .hero-section {
-            position: relative;
-            background: url('/images/bg.jpeg') no-repeat right center;
-            background-size: 55%;
-            border-radius: 20px;
-            padding: 70px 60px;
-            min-height: 320px;
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-brand {
+            padding: 18px 20px 14px 20px;
+            border-bottom: 1px solid #f1f5f9;
             display: flex;
             align-items: center;
-            background-color: #f8f9fa;
+            justify-content: space-between;
         }
 
-        .menu-wrapper {
-            display: flex;
-            background: #f9f9f9;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-top: 20px;
+        .sidebar-brand .brand-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            letter-spacing: -0.3px;
         }
 
-        .menu-item {
+        .sidebar-brand .brand-subtitle {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            margin-top: 1px;
+        }
+
+        .sidebar-nav {
+            padding: 16px 12px;
             flex: 1;
-            text-align: center;
-            padding: 30px 20px;
         }
 
-        .menu-item:not(:last-child) {
-            border-right: 1px dashed #ccc;
+        .nav-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 0 8px;
+            margin: 14px 0 6px 0;
         }
 
-        .menu-item img {
-            max-height: 140px;
-            width: auto;
-            object-fit: contain;
-            margin-bottom: 20px;
-        }
-
-        .menu-item h5 {
-            font-weight: 600;
-        }
-
-        .menu-item p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .menu-item:hover {
-            background: #ffffff;
-            transition: 0.3s;
-        }
-
-        .footer {
-            background: #4b4453;
-            color: white;
-            padding: 30px;
-        }
-
-        .menu-bottom-wrapper {
+        .sidebar-link {
             display: flex;
-            gap: 20px;
-            background: #f1f1f1;
-            padding: 12px 20px;
-            border-radius: 30px;
-            width: fit-content;
-            margin-top: -20px;
-        }
-
-        .menu-bottom {
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: #735C00;
             text-decoration: none;
-            color: #555;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: 0.2s;
+            margin-bottom: 4px;
+            white-space: nowrap;
         }
 
-        .menu-bottom.active {
-            background: #f7d27c;
-            color: #000;
-            font-weight: 500;
+        .sidebar-link i {
+            width: 16px;
+            font-size: 0.85rem;
+            text-align: center;
+            flex-shrink: 0;
+            color: #735C00;
         }
 
-        .search-box {
-            position: relative;
-            width: 600px;
+        .sidebar-link:hover {
+            background: #FFE083;
+            color: #735C00;
+            text-decoration: none;
         }
 
-        .search-input {
-            width: 100%;
-            padding: 8px 35px 8px 15px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            outline: none;
-            background: #f5f5f5;
+        .sidebar-link:hover i {
+            color: #735C00;
         }
 
-        .search-input:focus {
-            border-color: #999;
+        .sidebar-link.active {
+            background: #FFE083;
+            color: #735C00;
+            font-weight: 700;
         }
 
-        .search-icon {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 14px;
-            color: #666;
+        .sidebar-link.active i {
+            color: #735C00;
         }
 
-        .social-icons {
+        .sidebar-footer {
+            padding: 14px 12px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .sidebar-footer .sidebar-link {
+            color: #dc2626;
+        }
+
+        .sidebar-footer .sidebar-link i {
+            color: #dc2626;
+        }
+
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--topbar-height);
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
             display: flex;
-            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 999;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            transition: left 0.3s ease;
         }
 
-        .social-icons a {
-            color: white;
-            font-size: 18px;
-            transition: 0.3s;
+        body.sidebar-collapsed .topbar {
+            left: 0;
         }
 
-        .social-icons a:hover {
-            color: #f7d27c;
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .pengajuan-card {
-            border-radius: 20px;
-            padding: 40px;
-            border: 1px solid #ccc;
-        }
-
-        .btn-ajukan {
-            padding: 10px 30px;
+        .btn-hamburger {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f3f4f6;
             border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #735C00;
+            font-size: 1rem;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+
+        .btn-hamburger:hover {
+            background: #FFE083;
+            color: #735C00;
+        }
+
+        .topbar-logo-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--tertiary);
+            border-radius: 10px;
+            padding: 5px 12px;
+        }
+
+        .topbar-logo-badge img {
+            width: 25px;
+            height: 25px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .topbar-logo-badge span {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--neutral);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .topbar-user .user-info {
+            text-align: right;
+            line-height: 1.05;
+        }
+
+        .topbar-user .user-nim {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .topbar-user .user-role {
+            font-size: 0.7rem;
+            color: #374151;
             font-weight: 500;
+        }
+
+        .topbar-user .user-avatar {
+            width: auto;
+            height: auto;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+            font-size: 1.2rem;
+            padding: 0;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            padding-top: var(--topbar-height);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        body.sidebar-collapsed .main-wrapper {
+            margin-left: 0;
+        }
+
+        .main-content {
+            padding: 24px;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0) !important;
+            }
+
+            .topbar {
+                left: 0 !important;
+            }
+
+            .main-wrapper {
+                margin-left: 0 !important;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
         }
 
         .badge-status {
@@ -161,35 +314,20 @@
             font-size: 13px;
         }
 
-        .approved {
-            background: #c8e6c9;
-            color: #2e7d32;
-        }
-
-        .rejected {
-            background: #ffcdd2;
-            color: #c62828;
-        }
-
-        .pending {
-            background: #ffe082;
-            color: #8d6e00;
-        }
+        .approved { background: #c8e6c9; color: #2e7d32; }
+        .rejected { background: #ffcdd2; color: #c62828; }
+        .pending  { background: #ffe082; color: #8d6e00; }
 
         .modal-content {
             border-radius: 15px;
             padding: 10px;
         }
 
-        .modal-body label {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
+        .modal-body label { font-size: 14px; font-weight: 500; }
         .modal-body input,
-        .modal-body textarea {
-            border-radius: 8px;
-        }
+        .modal-body textarea { border-radius: 8px; }
+
+        .is-invalid { border: 2px solid #dc3545 !important; }
 
         .form-header-box {
             background: #f1f1f1;
@@ -198,45 +336,378 @@
             display: inline-block;
             min-width: 400px;
         }
-
-        .form-header-box h3 {
-            margin-bottom: 5px;
-        }
-
-        .form-header-box p {
-            font-size: 14px;
-        }
-
-        .is-invalid {
-            border: 2px solid #dc3545 !important;
-        }
     </style>
 </head>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <body>
 
-    @include('partials.navbar')
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-    <div class="container mt-4">
-        @yield('content')
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-brand">
+            <div>
+                <div class="brand-title">SITASI-TA</div>
+                <div class="brand-subtitle">Sistem Pengelolaan TA</div>
+            </div>
+            <button class="btn-hamburger" id="sidebarToggle" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            @php
+                $role = session('user')->role ?? '';
+
+                if ($role == 'mahasiswa') {
+                    $dashboardUrl = url('mahasiswa');
+                    $isActive = request()->is('mahasiswa');
+                } elseif ($role == 'dosen') {
+                    $dashboardUrl = url('dashboard/dosen');
+                    $isActive = request()->is('dashboard/dosen');
+                } elseif ($role == 'admin') {
+                    $dashboardUrl = url('admin');
+                    $isActive = request()->is('admin');
+                } elseif ($role == 'koordinator') {
+                    $dashboardUrl = url('koordinator');
+                    $isActive = request()->is('koordinator');
+                } else {
+                    $dashboardUrl = url('/');
+                    $isActive = false;
+                }
+            @endphp
+
+            <a href="{{ $dashboardUrl }}" class="sidebar-link {{ $isActive ? 'active' : '' }}">
+                <i class="fa-solid fa-house"></i>
+                Dashboard
+            </a>
+
+            {{-- ══════════ MAHASISWA ══════════ --}}
+            @if($role === 'mahasiswa')
+
+                <div class="nav-label">Tugas Akhir</div>
+
+                <a href="{{ session('user') ? route('pengajuan.mahasiswa') : '/login' }}"
+                    class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                    Pengajuan Judul
+                </a>
+
+                <a href="{{ route('proposal.mahasiswa') }}"
+                    class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-arrow-up"></i>
+                    Proposal
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-comments"></i>
+                    Riwayat Bimbingan
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-rectangle-list"></i>
+                    Daftar Seminar
+                </a>
+
+                <div class="nav-label">Akademik</div>
+
+                <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-star"></i>
+                    Nilai
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    Jadwal
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('dosen-pembimbing*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    Dosen Pembimbing
+                </a>
+
+                <a href="{{ url('/panduan-ta/mahasiswa') }}"
+                    class="sidebar-link {{ request()->is('panduan-ta*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-book-open"></i>
+                    Panduan TA
+                </a>
+
+            @endif
+
+            {{-- ══════════ DOSEN ══════════ --}}
+            @if($role === 'dosen')
+
+                <div class="nav-label">Tugas Akhir</div>
+
+                <a href="{{ route('pengajuan') }}"
+                    class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                    Pengajuan Judul
+                </a>
+
+                <a href="{{ route('proposal.index') }}" class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-arrow-up"></i>
+                    Upload Proposal
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-comments"></i>
+                    Riwayat Bimbingan
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-rectangle-list"></i>
+                    Daftar Seminar
+                </a>
+
+                <div class="nav-label">Akademik</div>
+
+                <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-star"></i>
+                    Nilai
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    Jadwal
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('dosen-pembimbing*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    Dosen Pembimbing
+                </a>
+
+                <a href="{{ url('/panduan-ta/dosen') }}"
+                    class="sidebar-link {{ request()->is('panduan-ta*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-book-open"></i>
+                    Panduan TA
+                </a>
+
+            @endif
+
+            {{-- ══════════ KOORDINATOR ══════════ --}}
+            @if($role === 'koordinator')
+
+                <div class="nav-label">Tugas Akhir</div>
+
+                <a href="#" class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                    Pengajuan Judul
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-arrow-up"></i>
+                    Upload Proposal
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-comments"></i>
+                    Riwayat Bimbingan
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-rectangle-list"></i>
+                    Daftar Seminar
+                </a>
+
+                <div class="nav-label">Akademik</div>
+
+                <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-star"></i>
+                    Nilai
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    Jadwal
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('dosen-pembimbing*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    Dosen Pembimbing
+                </a>
+
+            @endif
+
+            {{-- ══════════ ADMIN ══════════ --}}
+            @if($role === 'admin')
+
+                <div class="nav-label">Tugas Akhir</div>
+
+                <a href="#" class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                    Pengajuan Judul
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-arrow-up"></i>
+                    Upload Proposal
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-comments"></i>
+                    Riwayat Bimbingan
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-rectangle-list"></i>
+                    Daftar Seminar
+                </a>
+
+                <div class="nav-label">Akademik</div>
+
+                <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-star"></i>
+                    Nilai
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    Jadwal
+                </a>
+
+                <a href="#" class="sidebar-link {{ request()->is('dosen-pembimbing*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    Dosen Pembimbing
+                </a>
+
+            @endif
+
+            <a href="#" class="sidebar-link {{ request()->is('profil*') ? 'active' : '' }}">
+                <i class="fa-solid fa-circle-user"></i>
+                Profil
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/logout" class="sidebar-link">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <button class="btn-hamburger" id="topbarToggle" onclick="toggleSidebar()" style="display:none;">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="topbar-logo-badge">
+                <img src="{{ asset('images/SI.jpeg') }}" alt="Logo SI">
+                <span>S1 – Sistem Informasi Unjani</span>
+            </div>
+
+        </div>
+
+        <div class="topbar-right">
+
+            @if(session('user'))
+            <div class="topbar-user">
+                <div class="user-info">
+                    <div class="user-nim">{{ session('user')->nim_nid }}</div>
+                    <div class="user-role">{{ ucfirst(session('user')->role) }}</div>
+                </div>
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user" style="font-size:0.9rem;"></i>
+                </div>
+            </div>
+            @else
+            <a href="/login" class="btn btn-sm btn-outline-dark"
+                style="border-radius:8px;font-size:0.8rem;font-weight:600;">
+                Masuk
+            </a>
+            @endif
+
+        </div>
+
+    </header>
+
+    <div class="main-wrapper" id="mainWrapper">
+        <div class="main-content">
+            @yield('content')
+        </div>
     </div>
 
-    {{-- Footer hanya muncul di halaman dashboard utama saja --}}
-    @if(request()->is('mahasiswa') || request()->is('dashboard/dosen') || request()->is('admin'))
-        @include('partials.footer')
-    @endif
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const topbarToggle = document.getElementById('topbarToggle');
+        const isMobile = () => window.innerWidth <= 768;
+
+        function updateTopbarToggle() {
+            if (!isMobile()) {
+                topbarToggle.style.display = document.body.classList.contains('sidebar-collapsed') ? 'flex' : 'none';
+            } else {
+                topbarToggle.style.display = 'none';
+            }
+        }
+
+        function toggleSidebar() {
+            if (isMobile()) {
+                const isOpen = sidebar.classList.contains('open');
+                if (isOpen) {
+                    closeSidebar();
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                }
+            } else {
+                const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+                if (isCollapsed) {
+                    document.body.classList.remove('sidebar-collapsed');
+                    sidebar.classList.remove('collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'false');
+                } else {
+                    document.body.classList.add('sidebar-collapsed');
+                    sidebar.classList.add('collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'true');
+                }
+                updateTopbarToggle();
+            }
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!isMobile()) {
+                const collapsed = localStorage.getItem('sidebarCollapsed');
+                if (collapsed === 'true') {
+                    document.body.classList.add('sidebar-collapsed');
+                    sidebar.classList.add('collapsed');
+                }
+                updateTopbarToggle();
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            if (!isMobile()) {
+                overlay.classList.remove('show');
+                sidebar.classList.remove('open');
+            }
+            updateTopbarToggle();
+        });
+    </script>
 
     @if(session('success'))
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             Swal.fire({
                 title: 'Berhasil!',
                 text: "{{ session('success') }}",
                 icon: 'success',
-                confirmButtonColor: '#f4b400',
+                confirmButtonColor: '#FACC15',
                 confirmButtonText: 'OK'
             });
         });

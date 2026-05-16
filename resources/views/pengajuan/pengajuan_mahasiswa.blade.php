@@ -83,16 +83,6 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
 </svg>';
 @endphp
 
-<!-- SUB-MENU -->
-<div class="container">
-    <div style="display:flex; gap:8px; padding:10px 0 14px 0;">
-        <a href="/dashboard/mahasiswa" class="sub-menu">Beranda</a>
-        <a href="#" class="sub-menu">Aktivitas</a>
-        <a href="#" class="sub-menu">Dosen Pembimbing</a>
-        <a href="#" class="sub-menu">Panduan TA</a>
-    </div>
-</div>
-
 <div class="container mt-4">
 
     {{-- Tampilkan pesan sukses --}}
@@ -152,7 +142,7 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
 
                 @forelse($pengajuanList as $index => $item)
                 <tr data-status="{{ strtolower($item->status) }}"
-                    data-search="{{ strtolower($item->judul_1 . ' ' . $item->nim_nid) }}">
+                    data-search="{{ strtolower($item->judul_1 . ' ' . $item->judul_2 . ' ' . $item->judul_3 . ' ' . $item->judul_disetujui . ' ' . $item->nim_nid) }}">
                     <td>{{ $index + 1 }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d M Y') }}</td>
                     <td class="text-start">
@@ -353,7 +343,6 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
                 const rowSearch = (row.dataset.search || "").toLowerCase();
 
                 if (row.dataset.status) {
-                    // cocokkan "menunggu" dengan "menunggu verifikasi"
                     const statusMatch = !status || rowStatus.includes(status);
                     const searchMatch = !keyword || rowSearch.includes(keyword);
                     const ok = statusMatch && searchMatch;
@@ -395,7 +384,7 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
             });
         });
 
-        // ── Validasi sebelum submit ──
+        // ── Validasi & Loading saat submit ──
         const formTA = document.getElementById("formPengajuanTA");
         const alertBox = document.getElementById("errorAlertTA");
         const wajibTA = ["ta_nim", "ta_nama", "ta_tanggal", "ta_topik1", "ta_judul1",
@@ -415,13 +404,20 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
             });
 
             if (!isValid) {
-                e.preventDefault(); // cegah submit kalau tidak valid
+                e.preventDefault();
                 alertBox.classList.remove("d-none");
                 return;
             }
 
             alertBox.classList.add("d-none");
-            // biarkan form submit normal ke Laravel
+
+            // ── LOADING SAAT SUBMIT ──
+            const btnSubmit = document.querySelector('button[form="formPengajuanTA"]');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `
+                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                Sedang memproses...
+            `;
         });
 
     });

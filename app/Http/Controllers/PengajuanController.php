@@ -9,19 +9,41 @@ class PengajuanController extends Controller
 {
     public function index()
     {
+        // =========================
+        // CEK LOGIN
+        // =========================
         if (!session('user')) {
-            return redirect('/login')->with('error', 'Silakan login dulu!');
+            return redirect('/login')
+                ->with('error', 'Silakan login dulu!');
         }
 
-        $role = strtolower(trim(session('user')->role));
+        $user = session('user');
 
-        if ($role !== 'koordinator') {
-            if ($role === 'mahasiswa') {
-                return redirect('/mahasiswa')->with('error', 'Akses ditolak!');
+        // =========================
+        // CEK APAKAH KOORDINATOR
+        // =========================
+        $koordinator = DB::table('dosen_roles')
+            ->where('nim_nid', $user->nim_nid)
+            ->where('role_dosen', 'koordinator')
+            ->exists();
+
+        // =========================
+        // JIKA BUKAN KOORDINATOR
+        // =========================
+        if (!$koordinator) {
+
+            if ($user->role == 'mahasiswa') {
+                return redirect('/mahasiswa')
+                    ->with('error', 'Akses ditolak!');
             }
-            return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
+
+            return redirect('/dashboard/dosen')
+                ->with('error', 'Akses ditolak!');
         }
 
+        // =========================
+        // AMBIL DATA PENGAJUAN
+        // =========================
         $pengajuans = DB::table('pengajuan_judul')
             ->join('users', 'pengajuan_judul.nim_nid', '=', 'users.nim_nid')
             ->select(
@@ -43,6 +65,32 @@ class PengajuanController extends Controller
 
     public function verifikasi($id)
     {
+        // =========================
+        // CEK LOGIN
+        // =========================
+        if (!session('user')) {
+            return redirect('/login')
+                ->with('error', 'Silakan login dulu!');
+        }
+
+        $user = session('user');
+
+        // =========================
+        // CEK KOORDINATOR
+        // =========================
+        $koordinator = DB::table('dosen_roles')
+            ->where('nim_nid', $user->nim_nid)
+            ->where('role_dosen', 'koordinator')
+            ->exists();
+
+        if (!$koordinator) {
+            return redirect('/dashboard/dosen')
+                ->with('error', 'Akses ditolak!');
+        }
+
+        // =========================
+        // AMBIL DATA PENGAJUAN
+        // =========================
         $pengajuan = DB::table('pengajuan_judul')
             ->join('users', 'pengajuan_judul.nim_nid', '=', 'users.nim_nid')
             ->select(
@@ -57,17 +105,48 @@ class PengajuanController extends Controller
 
     public function prosesVerifikasi(Request $request, $id)
     {
-        // judul_disetujui nullable — boleh kosong kalau semua ditolak
+        // =========================
+        // CEK LOGIN
+        // =========================
+        if (!session('user')) {
+            return redirect('/login')
+                ->with('error', 'Silakan login dulu!');
+        }
+
+        $user = session('user');
+
+        // =========================
+        // CEK KOORDINATOR
+        // =========================
+        $koordinator = DB::table('dosen_roles')
+            ->where('nim_nid', $user->nim_nid)
+            ->where('role_dosen', 'koordinator')
+            ->exists();
+
+        if (!$koordinator) {
+            return redirect('/dashboard/dosen')
+                ->with('error', 'Akses ditolak!');
+        }
+
+        // =========================
+        // VALIDASI
+        // =========================
         $request->validate([
             'judul_disetujui' => 'nullable'
         ]);
 
+        // =========================
+        // AMBIL DATA
+        // =========================
         $data = DB::table('pengajuan_judul')
             ->where('id', $id)
             ->first();
 
         $judulDipilih = null;
 
+        // =========================
+        // PILIH JUDUL
+        // =========================
         if ($request->judul_disetujui == 1) {
             $judulDipilih = $data->judul_1;
         }
@@ -80,21 +159,32 @@ class PengajuanController extends Controller
             $judulDipilih = $data->judul_3;
         }
 
-        // Kalau ada judul dipilih → disetujui, kalau tidak → ditolak
-        $status = $judulDipilih ? 'disetujui' : 'ditolak';
+        // =========================
+        // STATUS
+        // =========================
+        $status = $judulDipilih
+            ? 'disetujui'
+            : 'ditolak';
 
+        // =========================
+        // UPDATE DATA
+        // =========================
         DB::table('pengajuan_judul')
             ->where('id', $id)
             ->update([
-                'status'          => $status,
-                'judul_disetujui' => $judulDipilih,
-                'updated_at'      => now()
+                'status'           => $status,
+                'judul_disetujui'  => $judulDipilih,
+                'updated_at'       => now()
             ]);
 
+        // =========================
+        // PESAN
+        // =========================
         $pesan = $judulDipilih
             ? 'Judul berhasil disetujui'
             : 'Semua judul berhasil ditolak';
 
-        return redirect('/pengajuan')->with('success', $pesan);
+        return redirect('/pengajuan')
+            ->with('success', $pesan);
     }
 }

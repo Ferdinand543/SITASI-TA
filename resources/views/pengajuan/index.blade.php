@@ -2,14 +2,6 @@
 
 @section('content')
 
-<!-- SUB-MENU -->
-<div class="container">
-    <div style="display:flex; gap:8px; padding:10px 0 14px 0;">
-        <a href="/dashboard/dosen" class="sub-menu">Beranda</a>
-        <a href="#" class="sub-menu">Informasi</a>
-        <a href="#" class="sub-menu">Panduan TA</a>
-    </div>
-</div>
 
 <!-- HERO -->
 <div class="hero-section mb-4">
