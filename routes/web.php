@@ -57,6 +57,22 @@ Route::get('/mahasiswa', function () {
 
 
 // =====================================================
+// PROFIL
+// =====================================================
+
+// Profil Admin
+Route::get('/admin/profil', [AuthController::class, 'profilAdmin'])->name('admin.profil');
+
+// Profil Mahasiswa
+Route::get('/mahasiswa/profil',       [AuthController::class, 'profilMahasiswa'])->name('mahasiswa.profil');
+Route::post('/mahasiswa/profil/foto', [AuthController::class, 'uploadFotoMahasiswa'])->name('mahasiswa.profil.foto');
+
+// Profil Dosen
+Route::get('/dosen/profil',       [AuthController::class, 'profilDosen'])->name('dosen.profil');
+Route::post('/dosen/profil/foto', [AuthController::class, 'uploadFotoDosen'])->name('dosen.profil.foto');
+
+
+// =====================================================
 // PANDUAN TA
 // =====================================================
 
@@ -96,13 +112,13 @@ Route::get('/proposal/mahasiswa/{id}',   [ProposalMahasiswaController::class, 'd
 // PROPOSAL TA-1 — KOORDINATOR
 // =====================================================
 
-Route::get('/proposal',                                    [ProposalController::class, 'index'])->name('proposal.index');
-Route::get('/proposal/{id}/verifikasi',                    [ProposalController::class, 'verifikasi'])->name('proposal.verifikasi');
-Route::post('/proposal/{id}/verifikasi',                   [ProposalController::class, 'prosesVerifikasi'])->name('proposal.prosesVerifikasi');
-Route::post('/proposal/{id}/tetapkan/{urutan}',            [ProposalController::class, 'tetapkanUsulan'])->name('proposal.tetapkan');
-Route::post('/proposal/{id}/lanjutkan',                    [ProposalController::class, 'lanjutkanKeReviewer'])->name('proposal.lanjutkan');
-Route::post('/proposal/{id}/ubah-pembimbing/{urutan}',     [ProposalController::class, 'ubahPembimbing'])->name('proposal.ubahPembimbing');
-Route::get('/proposal/{id}',                               [ProposalController::class, 'detail'])->name('proposal.detail');
+Route::get('/proposal',                                [ProposalController::class, 'index'])->name('proposal.index');
+Route::get('/proposal/{id}/verifikasi',                [ProposalController::class, 'verifikasi'])->name('proposal.verifikasi');
+Route::post('/proposal/{id}/verifikasi',               [ProposalController::class, 'prosesVerifikasi'])->name('proposal.prosesVerifikasi');
+Route::post('/proposal/{id}/tetapkan/{urutan}',        [ProposalController::class, 'tetapkanUsulan'])->name('proposal.tetapkan');
+Route::post('/proposal/{id}/lanjutkan',                [ProposalController::class, 'lanjutkanKeReviewer'])->name('proposal.lanjutkan');
+Route::post('/proposal/{id}/ubah-pembimbing/{urutan}', [ProposalController::class, 'ubahPembimbing'])->name('proposal.ubahPembimbing');
+Route::get('/proposal/{id}',                           [ProposalController::class, 'detail'])->name('proposal.detail');
 
 
 // =====================================================

@@ -314,15 +314,20 @@ class ProposalController extends Controller
             'tanggal_penetapan' => now()->toDateString(),
         ]);
 
+        // FIX: Hanya update STATUS saja, TIDAK update tanggal_usulan
         DB::table('usulan_pembimbing')
             ->where('proposal_id', $id)
             ->where('nim_nid_dosen', $request->dosen_pembimbing_1)
-            ->update(['status' => 'disetujui']);
+            ->update([
+                'status' => 'disetujui',
+            ]);
 
         DB::table('usulan_pembimbing')
             ->where('proposal_id', $id)
             ->where('nim_nid_dosen', $request->dosen_pembimbing_2)
-            ->update(['status' => 'disetujui']);
+            ->update([
+                'status' => 'disetujui',
+            ]);
 
         DB::table('usulan_pembimbing')
             ->where('proposal_id', $id)
@@ -330,7 +335,9 @@ class ProposalController extends Controller
                 $request->dosen_pembimbing_1,
                 $request->dosen_pembimbing_2
             ])
-            ->update(['status' => 'ditolak']);
+            ->update([
+                'status' => 'ditolak',
+            ]);
 
         DB::table('proposal')
             ->where('id', $id)
@@ -367,10 +374,13 @@ class ProposalController extends Controller
                 return redirect()->back()->with('error', 'Usulan tidak ditemukan!');
             }
 
+            // FIX: Hanya update STATUS saja, TIDAK update tanggal_usulan
             DB::table('usulan_pembimbing')
                 ->where('proposal_id', $id)
                 ->where('urutan', $urutan)
-                ->update(['status' => 'disetujui']);
+                ->update([
+                    'status' => 'disetujui',
+                ]);
 
             DB::table('dosen_pembimbing')
                 ->where('proposal_id', $id)
@@ -392,10 +402,13 @@ class ProposalController extends Controller
                 'dosen_pengganti.required' => 'Pilih dosen pengganti terlebih dahulu!',
             ]);
 
+            // FIX: Hanya update STATUS saja, TIDAK update tanggal_usulan
             DB::table('usulan_pembimbing')
                 ->where('proposal_id', $id)
                 ->where('urutan', $urutan)
-                ->update(['status' => 'ditolak']);
+                ->update([
+                    'status' => 'ditolak',
+                ]);
 
             DB::table('dosen_pembimbing')
                 ->where('proposal_id', $id)
@@ -425,7 +438,7 @@ class ProposalController extends Controller
     }
 
     // =====================================================
-    // LANJUTKAN KE REVIEWER  ← DIPERBAIKI DI SINI
+    // LANJUTKAN KE REVIEWER
     // =====================================================
     public function lanjutkanKeReviewer(Request $request, $id)
     {
@@ -447,7 +460,7 @@ class ProposalController extends Controller
         DB::table('proposal')
             ->where('id', $id)
             ->update([
-                'status'     => 'menunggu_review', // ← DIPERBAIKI: sebelumnya 'selesai'
+                'status'     => 'menunggu_review',
                 'updated_at' => now(),
             ]);
 

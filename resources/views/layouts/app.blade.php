@@ -435,31 +435,65 @@
 
             @endif
 
-            {{-- ══════════ DOSEN ══════════ --}}
+            {{-- ══════════ DOSEN (dengan cek role_dosen dari dosen_roles) ══════════ --}}
             @if($role === 'dosen')
+
+                @php
+                    $nimSesi      = session('user')->nim_nid;
+                    $rolesDb      = DB::table('dosen_roles')
+                                      ->where('nim_nid', $nimSesi)
+                                      ->pluck('role_dosen')
+                                      ->toArray();
+                    $isKoor       = in_array('koordinator', $rolesDb);
+                    $isReviewer   = in_array('reviewer',    $rolesDb);
+                    $isPembimbing = in_array('pembimbing',  $rolesDb);
+                    $isPenguji    = in_array('penguji',     $rolesDb);
+                @endphp
 
                 <div class="nav-label">Tugas Akhir</div>
 
+                {{-- Pengajuan Judul: hanya koordinator --}}
+                @if($isKoor)
                 <a href="{{ route('pengajuan') }}"
                     class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
                     <i class="fa-solid fa-file-circle-plus"></i>
                     Pengajuan Judul
                 </a>
+                @endif
 
-                <a href="{{ route('proposal.index') }}" class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
+                {{-- Verifikasi Proposal: hanya koordinator --}}
+                @if($isKoor)
+                <a href="{{ route('proposal.index') }}"
+                    class="sidebar-link {{ request()->is('proposal*') && !request()->is('reviewer*') ? 'active' : '' }}">
                     <i class="fa-solid fa-file-arrow-up"></i>
-                    Upload Proposal
+                    Verifikasi Proposal
                 </a>
+                @endif
 
+                {{-- Review Proposal: hanya reviewer --}}
+                @if($isReviewer)
+                <a href="{{ route('reviewer.proposal') }}"
+                    class="sidebar-link {{ request()->is('reviewer*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Review Proposal
+                </a>
+                @endif
+
+                {{-- Riwayat Bimbingan: hanya pembimbing --}}
+                @if($isPembimbing)
                 <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
                     <i class="fa-solid fa-comments"></i>
                     Riwayat Bimbingan
                 </a>
+                @endif
 
+                {{-- Daftar Seminar: penguji --}}
+                @if($isPenguji)
                 <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
                     <i class="fa-solid fa-rectangle-list"></i>
                     Daftar Seminar
                 </a>
+                @endif
 
                 <div class="nav-label">Akademik</div>
 
@@ -574,7 +608,17 @@
 
             @endif
 
-            <a href="#" class="sidebar-link {{ request()->is('profil*') ? 'active' : '' }}">
+            {{-- ══ PROFIL — otomatis sesuai role ══ --}}
+            @php
+                $profilUrl = match($role) {
+                    'mahasiswa' => route('mahasiswa.profil'),
+                    'admin'     => route('admin.profil'),
+                    'dosen'     => route('dosen.profil'),
+                    default     => '#',
+                };
+            @endphp
+            <a href="{{ $profilUrl }}"
+               class="sidebar-link {{ request()->is('mahasiswa/profil*') || request()->is('admin/profil*') || request()->is('dosen/profil*') ? 'active' : '' }}">
                 <i class="fa-solid fa-circle-user"></i>
                 Profil
             </a>

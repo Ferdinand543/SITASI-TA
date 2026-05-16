@@ -34,16 +34,13 @@ class AuthController extends Controller
             return back()->with('error', 'Username tidak ditemukan');
         }
 
-        // Cek apakah password di DB sudah bcrypt atau masih plain text
         $isHashed = str_starts_with($user->password, '$2y$');
 
         if ($isHashed) {
-            // Password sudah di-hash, pakai Hash::check
             if (!Hash::check($password, $user->password)) {
                 return back()->with('error', 'Password salah');
             }
         } else {
-            // Password masih plain text
             if ($password !== $user->password) {
                 return back()->with('error', 'Password salah');
             }
@@ -85,7 +82,6 @@ class AuthController extends Controller
             return back()->with('error', 'Username tidak ditemukan');
         }
 
-        // Cek password lama, handle plain text dan bcrypt
         $isHashed = str_starts_with($user->password, '$2y$');
 
         if ($isHashed) {
@@ -109,5 +105,141 @@ class AuthController extends Controller
             ]);
 
         return back()->with('success', 'Password berhasil diubah');
+    }
+
+    // =====================================================
+    // PROFIL ADMIN
+    // =====================================================
+    public function profilAdmin()
+    {
+        if (!session('user')) return redirect('/login');
+
+        $user = session('user');
+
+        if (strtolower(trim($user->role)) !== 'admin') {
+            return redirect('/login')->with('error', 'Akses ditolak');
+        }
+
+        $user = DB::table('users')->where('nim_nid', $user->nim_nid)->first();
+
+        return view('dosen.profil_admin_tu', compact('user'));
+    }
+
+    // =====================================================
+    // PROFIL MAHASISWA
+    // =====================================================
+    public function profilMahasiswa()
+    {
+        if (!session('user')) return redirect('/login');
+
+        $user = session('user');
+
+        if (strtolower(trim($user->role)) !== 'mahasiswa') {
+            return redirect('/login')->with('error', 'Akses ditolak');
+        }
+
+        // Ambil data fresh dari DB
+        $user = DB::table('users')->where('nim_nid', $user->nim_nid)->first();
+
+        return view('mahasiswa.profil_mahasiswa_tu', compact('user'));
+    }
+
+    // =====================================================
+    // UPLOAD FOTO MAHASISWA
+    // =====================================================
+    public function uploadFotoMahasiswa(Request $request)
+    {
+        if (!session('user')) return redirect('/login');
+
+        $request->validate([
+            'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ], [
+            'foto.required' => 'Pilih foto terlebih dahulu',
+            'foto.image'    => 'File harus berupa gambar',
+            'foto.mimes'    => 'Format foto harus JPG atau PNG',
+            'foto.max'      => 'Ukuran foto maksimal 2MB',
+        ]);
+
+        $nim      = session('user')->nim_nid;
+        $file     = $request->file('foto');
+        $namaFile = 'foto_' . $nim . '.' . $file->getClientOriginalExtension();
+        $path     = $file->storeAs('foto_profil', $namaFile, 'public');
+
+        DB::table('users')
+            ->where('nim_nid', $nim)
+            ->update(['foto' => $path]);
+
+        // Update session juga biar langsung keliatan
+        $userBaru = DB::table('users')->where('nim_nid', $nim)->first();
+        session(['user' => $userBaru]);
+
+        return back()->with('success', 'Foto profil berhasil diperbarui!');
+    }
+
+    // =====================================================
+    // PROFIL DOSEN
+    // =====================================================
+    public function profilDosen()
+    {
+        if (!session('user')) return redirect('/login');
+
+        $user = session('user');
+
+        if (strtolower(trim($user->role)) !== 'dosen') {
+            return redirect('/login')->with('error', 'Akses ditolak');
+        }
+
+        // Ambil data fresh dari DB
+        $user = DB::table('users')->where('nim_nid', $user->nim_nid)->first();
+
+        // Ambil semua role dosen dari tabel dosen_roles
+        $rolesRaw = DB::table('dosen_roles')
+            ->where('nim_nid', $user->nim_nid)
+            ->pluck('role_dosen')
+            ->toArray();
+
+        // Mapping nama role jadi lebih rapi
+        $roleLabels = [
+            'reviewer'   => 'Reviewer',
+            'pembimbing' => 'Dosen Pembimbing',
+            'penguji'    => 'Dosen Penguji',
+            'koordinator'=> 'Koordinator',
+        ];
+
+        $roles = array_map(fn($r) => $roleLabels[$r] ?? ucfirst($r), $rolesRaw);
+
+        return view('dosen.profil_dosen_tu', compact('user', 'roles'));
+    }
+
+    // =====================================================
+    // UPLOAD FOTO DOSEN
+    // =====================================================
+    public function uploadFotoDosen(Request $request)
+    {
+        if (!session('user')) return redirect('/login');
+
+        $request->validate([
+            'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ], [
+            'foto.required' => 'Pilih foto terlebih dahulu',
+            'foto.image'    => 'File harus berupa gambar',
+            'foto.mimes'    => 'Format foto harus JPG atau PNG',
+            'foto.max'      => 'Ukuran foto maksimal 2MB',
+        ]);
+
+        $nid      = session('user')->nim_nid;
+        $file     = $request->file('foto');
+        $namaFile = 'foto_' . $nid . '.' . $file->getClientOriginalExtension();
+        $path     = $file->storeAs('foto_profil', $namaFile, 'public');
+
+        DB::table('users')
+            ->where('nim_nid', $nid)
+            ->update(['foto' => $path]);
+
+        // Update session juga biar langsung keliatan
+        $userBaru = DB::table('users')->where('nim_nid', $nid)->first();
+        session(['user' => $userBaru]);
+
+        return back()->with('success', 'Foto profil berhasil diperbarui!');
     }
 }
