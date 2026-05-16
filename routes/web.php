@@ -149,3 +149,22 @@ Route::get(
     '/reviewer/proposal/{id}/detail',
     [ReviewerController::class, 'detail']
 )->name('reviewer.proposal.detail');
+
+use App\Http\Controllers\RiwayatBimbinganController;
+
+// =====================================================
+// RIWAYAT BIMBINGAN — DOSEN
+// =====================================================
+
+Route::get('/dosen/riwayat-bimbingan', [RiwayatBimbinganController::class, 'index'])
+    ->name('dosen.riwayat-bimbingan.index');
+
+Route::get('/dosen/riwayat-bimbingan/mahasiswa', [RiwayatBimbinganController::class, 'mahasiswa'])
+    ->name('dosen.riwayat-bimbingan.mahasiswa');
+
+Route::get('/dosen/riwayat-bimbingan/detail/{nim}', [RiwayatBimbinganController::class, 'detail'])
+    ->name('dosen.riwayat-bimbingan.detail');
+
+// ← TAMBAH INI
+Route::get('/dosen/riwayat-bimbingan/proposal/{id}/lihat', [RiwayatBimbinganController::class, 'tandaiDilihat'])
+    ->name('dosen.proposal.lihat');
