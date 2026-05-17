@@ -7,6 +7,9 @@
         ->where('nim_nid', session('user')->nim_nid)
         ->pluck('role_dosen')
         ->toArray();
+
+    $isKoor     = in_array('koordinator', $subRoles);
+    $isReviewer = in_array('reviewer',    $subRoles);
 @endphp
 
 <!-- HERO -->
@@ -15,13 +18,13 @@
         <h2 class="fw-bold">Pengajuan Proposal TA-1</h2>
         <p>Tinjau Proposal Tugas Akhir Mahasiswa dan Berikan Hasil Review</p>
         <div class="hero-btn-row">
-            @if(in_array('koordinator', $subRoles))
+            @if($isKoor)
             <a href="{{ url('/proposal') }}" class="btn-hero-white">
                 <i class="fa fa-user-check"></i>
                 Penetapan Dosen Pembimbing
             </a>
             @endif
-            @if(in_array('reviewer', $subRoles))
+            @if($isReviewer)
             <a href="{{ route('reviewer.proposal') }}" class="btn-hero-yellow">
                 <i class="fa fa-file-circle-check"></i>
                 Review Proposal
@@ -174,19 +177,41 @@
                     </td>
                 </tr>
                 @empty
+                {{-- Belum ada data dari DB sama sekali → inbox icon --}}
                 <tr id="rowEmpty">
-                    <td colspan="9" class="td-empty">
-                        <div class="empty-title">Belum Ada Proposal</div>
-                        <div class="empty-sub">Belum ada proposal yang perlu ditinjau saat ini.</div>
+                    <td colspan="9" style="padding: 60px 20px; text-align: center; border: none;">
+                        <div style="display:inline-flex; flex-direction:column; align-items:center; gap:12px;">
+                            <div style="width:64px; height:64px; background:#f1f5f9; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                                <i class="fa fa-inbox" style="font-size:1.8rem; color:#94a3b8;"></i>
+                            </div>
+                            <div style="font-size:0.95rem; font-weight:700; color:#475569;">Belum ada data</div>
+                            <div style="font-size:0.82rem; color:#94a3b8;">Data akan muncul setelah proses dilakukan.</div>
+                        </div>
                     </td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
-        <div id="msgKosong" style="display:none;" class="empty-filter-wrap">
-            <div class="empty-title">Data Tidak Ditemukan</div>
-            <div class="empty-sub">Coba ubah kata kunci pencarian atau reset filter.</div>
+
+        {{-- Filter/search tidak nemu hasil → magnifier icon --}}
+        <div id="msgKosong" style="display:none;">
+            <table class="tbl-reviewer">
+                <tbody>
+                    <tr>
+                        <td colspan="9" style="padding: 60px 20px; text-align: center; border: none;">
+                            <div style="display:inline-flex; flex-direction:column; align-items:center; gap:12px;">
+                                <div style="width:64px; height:64px; background:#f1f5f9; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                                    <i class="fa fa-magnifying-glass" style="font-size:1.8rem; color:#94a3b8;"></i>
+                                </div>
+                                <div style="font-size:0.95rem; font-weight:700; color:#475569;">Data tidak ditemukan</div>
+                                <div style="font-size:0.82rem; color:#94a3b8;">Coba gunakan kata kunci atau filter yang berbeda.</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+
     </div>
 
 </div>
@@ -398,7 +423,6 @@
     gap: 16px;
     margin: 0 0 20px 0;
 }
-
 .stats-card {
     background: #fff;
     border: 1.5px solid var(--border);
@@ -410,12 +434,10 @@
     box-shadow: 0 2px 8px rgba(17,28,45,0.06);
     transition: 0.2s;
 }
-
 .stats-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(17,28,45,0.1);
 }
-
 .stats-icon-wrap {
     width: 48px; height: 48px;
     border-radius: 12px;
@@ -425,7 +447,6 @@
 .stats-blue   { background: var(--blue-bg);  color: var(--blue-dark); }
 .stats-yellow { background: #FEF3C7; color: #D97706; }
 .stats-green  { background: var(--green-bg); color: var(--green-mid); }
-
 .stats-number { font-size: 1.6rem; font-weight: 800; color: var(--navy); line-height: 1; margin-bottom: 4px; }
 .stats-label  { font-size: 0.8rem; color: var(--brown-dark); font-weight: 500; }
 
@@ -440,7 +461,6 @@
 }
 .filter-search input:focus { outline: none; border-color: var(--gold); }
 .filter-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 0.85rem; }
-
 .filter-select-wrap select,
 .filter-date-wrap input {
     padding: 10px 12px; border: 1px solid #D1C6AB;
@@ -451,7 +471,6 @@
 .filter-date-wrap input:focus { outline: none; border-color: var(--gold); }
 .filter-select-wrap select { min-width: 160px; }
 .filter-date-wrap input    { min-width: 150px; }
-
 .btn-reset {
     display: flex; align-items: center; gap: 6px;
     padding: 9px 16px; border: 1px solid #D1C6AB;
@@ -493,16 +512,6 @@
 }
 .badge-selesai  { background: var(--green-bg); color: var(--green-dark); border: 1px solid #10B981; }
 .badge-menunggu { background: var(--blue-badge); color: var(--blue-text); border: 1px solid #93C5FD; }
-
-/* ── EMPTY ── */
-.td-empty { padding: 48px 20px !important; text-align: center; background: #fff; }
-.empty-filter-wrap {
-    text-align: center; padding: 48px 20px; background: #fff;
-    border: 1.5px solid var(--border-soft); border-top: none;
-    border-radius: 0 0 12px 12px;
-}
-.empty-title { font-size: 0.97rem; font-weight: 700; color: var(--brown-dark); margin-bottom: 5px; }
-.empty-sub   { font-size: 0.82rem; color: #aaa; }
 
 /* ── FILE ── */
 .btn-file {
@@ -620,6 +629,7 @@ const inputStatus  = document.getElementById('inputStatus');
 const inputTanggal = document.getElementById('inputTanggal');
 const tblBody      = document.getElementById('tblBody');
 const msgKosong    = document.getElementById('msgKosong');
+const tblReviewer  = document.getElementById('tblReviewer');
 
 function applyFilter() {
     const search  = inputSearch.value.toLowerCase().trim();
@@ -641,7 +651,14 @@ function applyFilter() {
 
     const rowEmpty = document.getElementById('rowEmpty');
     if (rowEmpty) rowEmpty.style.display = 'none';
-    msgKosong.style.display = visible === 0 ? 'block' : 'none';
+
+    if (visible === 0 && rows.length > 0) {
+        tblReviewer.style.display = 'none';
+        msgKosong.style.display   = 'block';
+    } else {
+        tblReviewer.style.display = '';
+        msgKosong.style.display   = 'none';
+    }
 }
 
 inputSearch.addEventListener('input', applyFilter);

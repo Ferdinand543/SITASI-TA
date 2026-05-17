@@ -60,6 +60,30 @@
         color: #000;
         font-weight: 500;
     }
+
+    /* ── EMPTY STATE ── */
+    .empty-state-wrap {
+        padding: 60px 20px;
+        text-align: center;
+    }
+    .empty-state-inner {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+    .empty-state-icon {
+        width: 64px;
+        height: 64px;
+        background: #f1f5f9;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .empty-state-icon i { font-size: 1.8rem; color: #94a3b8; }
+    .empty-state-title { font-size: 0.95rem; font-weight: 700; color: #475569; }
+    .empty-state-sub   { font-size: 0.82rem; color: #94a3b8; }
 </style>
 
 @php
@@ -127,7 +151,8 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
         </button>
     </div>
 
-    <div class="card p-3 border-0 shadow-sm" style="border-radius:12px;">
+    {{-- TABLE --}}
+    <div class="card p-3 border-0 shadow-sm" style="border-radius:12px;" id="tableCard">
         <table class="table table-bordered align-middle text-center mb-0" id="tabelPengajuan">
             <thead>
                 <tr>
@@ -138,7 +163,7 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
                     <th style="background:#FFC107;color:#000;border-color:#000;">Detail</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tabelBody">
 
                 @forelse($pengajuanList as $index => $item)
                 <tr data-status="{{ strtolower($item->status) }}"
@@ -146,20 +171,13 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
                     <td>{{ $index + 1 }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d M Y') }}</td>
                     <td class="text-start">
-
                         @if(strtolower($item->status) === 'disetujui')
-
-                        {{ \Illuminate\Support\Str::limit($item->judul_disetujui, 35) }}
-
+                            {{ \Illuminate\Support\Str::limit($item->judul_disetujui, 35) }}
                         @else
-
-                        {{ \Illuminate\Support\Str::limit($item->judul_1, 35) }}
-
-                        <br>
-                        <small class="text-muted">+ 2 lainnya</small>
-
+                            {{ \Illuminate\Support\Str::limit($item->judul_1, 35) }}
+                            <br>
+                            <small class="text-muted">+ 2 lainnya</small>
                         @endif
-
                     </td>
                     <td>
                         @php $st = strtolower($item->status); @endphp
@@ -181,14 +199,39 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
                 </tr>
 
                 @empty
-                <tr>
-                    <td colspan="5" class="text-center text-muted py-3">Belum ada pengajuan.</td>
+                {{-- DB kosong total → inbox icon --}}
+                <tr id="rowKosongDefault">
+                    <td colspan="5">
+                        <div class="empty-state-wrap">
+                            <div class="empty-state-inner">
+                                <div class="empty-state-icon">
+                                    <i class="fa fa-inbox"></i>
+                                </div>
+                                <div class="empty-state-title">Belum ada data</div>
+                                <div class="empty-state-sub">Data akan muncul setelah proses dilakukan.</div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
                 @endforelse
 
             </tbody>
         </table>
-        <div id="noResult" class="text-center text-muted py-3 d-none">Tidak ada data yang sesuai filter.</div>
+    </div>
+
+    {{-- Filter/search tidak nemu hasil → magnifier icon --}}
+    <div id="noSearchResult" style="display:none;">
+        <div class="card border-0 shadow-sm" style="border-radius:12px;">
+            <div class="empty-state-wrap">
+                <div class="empty-state-inner">
+                    <div class="empty-state-icon">
+                        <i class="fa fa-magnifying-glass"></i>
+                    </div>
+                    <div class="empty-state-title">Data tidak ditemukan</div>
+                    <div class="empty-state-sub">Coba gunakan kata kunci atau filter yang berbeda.</div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -257,7 +300,6 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
                     Semua field wajib diisi, Mitra Penelitian Opsional!
                 </div>
 
-                {{-- Form pakai action ke route store --}}
                 <form id="formPengajuanTA" action="{{ route('pengajuan.store') }}" method="POST">
                     @csrf
                     <div class="mb-3">
@@ -327,40 +369,49 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
     document.addEventListener("DOMContentLoaded", function() {
 
         // ── Filter & Search ──
-        const filterStatus = document.getElementById("filterStatus");
-        const searchInput = document.getElementById("searchInput");
-        const btnReset = document.getElementById("btnResetFilter");
-        const noResult = document.getElementById("noResult");
-        const rows = document.querySelectorAll("#tabelPengajuan tbody tr");
+        const filterStatus   = document.getElementById("filterStatus");
+        const searchInput    = document.getElementById("searchInput");
+        const btnReset       = document.getElementById("btnResetFilter");
+        const tableCard      = document.getElementById("tableCard");
+        const noSearchResult = document.getElementById("noSearchResult");
+        const tabelBody      = document.getElementById("tabelBody");
 
         function applyFilter() {
-            const status = filterStatus.value.toLowerCase();
+            const status  = filterStatus.value.toLowerCase();
             const keyword = searchInput.value.toLowerCase().trim();
-            let visible = 0;
+            const rows    = tabelBody.querySelectorAll("tr[data-status]");
+            let visible   = 0;
 
             rows.forEach(row => {
                 const rowStatus = (row.dataset.status || "").toLowerCase();
                 const rowSearch = (row.dataset.search || "").toLowerCase();
-
-                if (row.dataset.status) {
-                    const statusMatch = !status || rowStatus.includes(status);
-                    const searchMatch = !keyword || rowSearch.includes(keyword);
-                    const ok = statusMatch && searchMatch;
-                    row.style.display = ok ? "" : "none";
-                    if (ok) visible++;
-                } else {
-                    row.style.display = (!status && !keyword) ? "" : "none";
-                }
+                const statusMatch = !status || rowStatus.includes(status);
+                const searchMatch = !keyword || rowSearch.includes(keyword);
+                const ok = statusMatch && searchMatch;
+                row.style.display = ok ? "" : "none";
+                if (ok) visible++;
             });
 
-            noResult.classList.toggle("d-none", visible > 0 || (!status && !keyword));
+            // Sembunyikan row default kosong kalau ada data asli
+            const rowDefault = document.getElementById("rowKosongDefault");
+            if (rowDefault) rowDefault.style.display = "none";
+
+            if (visible === 0 && rows.length > 0) {
+                // Ada data tapi filter ga nemu → magnifier
+                tableCard.style.display      = "none";
+                noSearchResult.style.display = "block";
+            } else {
+                // Nemu data atau DB emang kosong → tabel normal
+                tableCard.style.display      = "";
+                noSearchResult.style.display = "none";
+            }
         }
 
         filterStatus.addEventListener("change", applyFilter);
         searchInput.addEventListener("input", applyFilter);
         btnReset.addEventListener("click", function() {
             filterStatus.value = "";
-            searchInput.value = "";
+            searchInput.value  = "";
             applyFilter();
         });
 
@@ -385,11 +436,10 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
         });
 
         // ── Validasi & Loading saat submit ──
-        const formTA = document.getElementById("formPengajuanTA");
+        const formTA   = document.getElementById("formPengajuanTA");
         const alertBox = document.getElementById("errorAlertTA");
-        const wajibTA = ["ta_nim", "ta_nama", "ta_tanggal", "ta_topik1", "ta_judul1",
-            "ta_topik2", "ta_judul2", "ta_topik3", "ta_judul3"
-        ];
+        const wajibTA  = ["ta_nim", "ta_nama", "ta_tanggal", "ta_topik1", "ta_judul1",
+                          "ta_topik2", "ta_judul2", "ta_topik3", "ta_judul3"];
 
         formTA.addEventListener("submit", function(e) {
             let isValid = true;
@@ -411,7 +461,6 @@ $iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fil
 
             alertBox.classList.add("d-none");
 
-            // ── LOADING SAAT SUBMIT ──
             const btnSubmit = document.querySelector('button[form="formPengajuanTA"]');
             btnSubmit.disabled = true;
             btnSubmit.innerHTML = `

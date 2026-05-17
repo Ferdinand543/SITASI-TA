@@ -103,6 +103,11 @@
             transition: 0.2s;
             margin-bottom: 4px;
             white-space: nowrap;
+            border: none;
+            background: none;
+            width: 100%;
+            cursor: pointer;
+            text-align: left;
         }
 
         .sidebar-link i {
@@ -131,6 +136,21 @@
 
         .sidebar-link.active i {
             color: #735C00;
+        }
+
+        /* ── LOCKED MENU ITEM ── */
+        .sidebar-link-locked {
+            opacity: 0.4;
+            filter: grayscale(60%);
+            cursor: pointer;
+        }
+        .sidebar-link-locked:hover {
+            background: #fee2e2 !important;
+            color: #dc2626 !important;
+            opacity: 0.7;
+        }
+        .sidebar-link-locked:hover i {
+            color: #dc2626 !important;
         }
 
         .sidebar-footer {
@@ -343,6 +363,32 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
+    {{-- POPUP AKSES DITOLAK (global, dipakai sidebar locked) --}}
+    <div id="popupSidebarDenied" style="
+        display:none; position:fixed; inset:0;
+        background:rgba(0,0,0,0.45); z-index:99999;
+        align-items:center; justify-content:center;">
+        <div style="
+            background:#fff; border-radius:20px;
+            padding:40px 32px 32px; max-width:360px;
+            width:90%; text-align:center;
+            box-shadow:0 12px 40px rgba(0,0,0,0.2);">
+            <div style="
+                width:64px; height:64px; border-radius:50%;
+                background:#fdecea; border:3px solid #fca5a5;
+                display:inline-flex; align-items:center; justify-content:center;
+                margin-bottom:16px; font-size:1.6rem; color:#dc2626;">
+                <i class="fa fa-lock"></i>
+            </div>
+            <div style="font-size:1.2rem; font-weight:800; color:#111; margin-bottom:8px;">Akses Ditolak</div>
+            <div id="popupSidebarMsg" style="font-size:0.88rem; color:#555; margin-bottom:22px; line-height:1.5;"></div>
+            <button onclick="document.getElementById('popupSidebarDenied').style.display='none'" style="
+                padding:10px 32px; border-radius:10px; border:none;
+                background:#FACC15; color:#333; font-size:0.92rem;
+                font-weight:700; cursor:pointer;">OK</button>
+        </div>
+    </div>
+
     <aside class="sidebar" id="sidebar">
 
         <div class="sidebar-brand">
@@ -380,7 +426,7 @@
 
             <a href="{{ $dashboardUrl }}" class="sidebar-link {{ $isActive ? 'active' : '' }}">
                 <i class="fa-solid fa-house"></i>
-                Dashboard
+                @if($role === 'dosen') Beranda @else Dashboard @endif
             </a>
 
             {{-- ══════════ MAHASISWA ══════════ --}}
@@ -397,7 +443,7 @@
                 <a href="{{ route('proposal.mahasiswa') }}"
                     class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
                     <i class="fa-solid fa-file-arrow-up"></i>
-                    Proposal
+                    Upload Proposal
                 </a>
 
                 <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
@@ -422,10 +468,7 @@
                     Jadwal
                 </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('dosen-pembimbing*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    Dosen Pembimbing
-                </a>
+                
 
                 <a href="{{ url('/panduan-ta/mahasiswa') }}"
                     class="sidebar-link {{ request()->is('panduan-ta*') ? 'active' : '' }}">
@@ -435,7 +478,7 @@
 
             @endif
 
-            {{-- ══════════ DOSEN (dengan cek role_dosen dari dosen_roles) ══════════ --}}
+            {{-- ══════════ DOSEN ══════════ --}}
             @if($role === 'dosen')
 
                 @php
@@ -452,64 +495,74 @@
 
                 <div class="nav-label">Tugas Akhir</div>
 
-                {{-- Pengajuan Judul: hanya koordinator --}}
+                {{-- ── Pengajuan Judul ── --}}
                 @if($isKoor)
-                <a href="{{ route('pengajuan') }}"
-                    class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-circle-plus"></i>
-                    Pengajuan Judul
-                </a>
+                    <a href="{{ route('pengajuan') }}"
+                       class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-file-circle-plus"></i>
+                        Pengajuan Judul
+                    </a>
+                @else
+                    <button class="sidebar-link sidebar-link-locked"
+                            onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator.')">
+                        <i class="fa-solid fa-file-circle-plus"></i>
+                        Pengajuan Judul
+                    </button>
                 @endif
 
-                {{-- Verifikasi Proposal: hanya koordinator --}}
+                {{-- ── Proposal (nama sama, URL beda tergantung role) ── --}}
                 @if($isKoor)
-                <a href="{{ route('proposal.index') }}"
-                    class="sidebar-link {{ request()->is('proposal*') && !request()->is('reviewer*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-arrow-up"></i>
-                    Verifikasi Proposal
-                </a>
+                    <a href="{{ route('proposal.index') }}"
+                       class="sidebar-link {{ request()->is('proposal*') && !request()->is('reviewer*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-file-arrow-up"></i>
+                        Proposal
+                    </a>
+                @elseif($isReviewer)
+                    <a href="{{ route('reviewer.proposal') }}"
+                       class="sidebar-link {{ request()->is('reviewer*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-file-arrow-up"></i>
+                        Proposal
+                    </a>
+                @else
+                    <button class="sidebar-link sidebar-link-locked"
+                            onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator atau Reviewer.')">
+                        <i class="fa-solid fa-file-arrow-up"></i>
+                        Proposal
+                    </button>
                 @endif
 
-                {{-- Review Proposal: hanya reviewer --}}
-                @if($isReviewer)
-                <a href="{{ route('reviewer.proposal') }}"
-                    class="sidebar-link {{ request()->is('reviewer*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    Review Proposal
-                </a>
-                @endif
-
-                {{-- Riwayat Bimbingan: hanya pembimbing --}}
+                {{-- ── Riwayat Bimbingan ── --}}
                 @if($isPembimbing)
-                <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-comments"></i>
-                    Riwayat Bimbingan
-                </a>
-                @endif
-
-                {{-- Daftar Seminar: penguji --}}
-                @if($isPenguji)
-                <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-rectangle-list"></i>
-                    Daftar Seminar
-                </a>
+                    <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-comments"></i>
+                        Riwayat Bimbingan
+                    </a>
+                @else
+                    <button class="sidebar-link sidebar-link-locked"
+                            onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Pembimbing.')">
+                        <i class="fa-solid fa-comments"></i>
+                        Riwayat Bimbingan
+                    </button>
                 @endif
 
                 <div class="nav-label">Akademik</div>
 
-                <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-star"></i>
-                    Nilai
-                </a>
+                @if($isPembimbing || $isPenguji)
+                    <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-star"></i>
+                        Nilai
+                    </a>
+                @else
+                    <button class="sidebar-link sidebar-link-locked"
+                            onclick="showSidebarDenied('Akses Ditolak. Halaman ini khusus untuk Dosen Pembimbing dan Dosen Penguji.')">
+                        <i class="fa-solid fa-star"></i>
+                        Nilai
+                    </button>
+                @endif
 
                 <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
                     <i class="fa-solid fa-calendar-days"></i>
                     Jadwal
-                </a>
-
-                <a href="#" class="sidebar-link {{ request()->is('dosen-pembimbing*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    Dosen Pembimbing
                 </a>
 
                 <a href="{{ url('/panduan-ta/dosen') }}"
@@ -722,6 +775,11 @@
         function closeSidebar() {
             sidebar.classList.remove('open');
             overlay.classList.remove('show');
+        }
+
+        function showSidebarDenied(msg) {
+            document.getElementById('popupSidebarMsg').innerText = msg;
+            document.getElementById('popupSidebarDenied').style.display = 'flex';
         }
 
         document.addEventListener('DOMContentLoaded', function() {

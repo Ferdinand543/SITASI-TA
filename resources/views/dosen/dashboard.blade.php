@@ -112,7 +112,7 @@
 
         {{-- CARD PENILAIAN --}}
         <div class="col-md-3">
-            @if($isPenguji)
+            @if($isPenguji || $isPembimbing)
                 <a href="{{ $penilaianUrl }}" class="text-decoration-none text-dark">
                     <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                         <img src="{{ asset('images/penilaian.jpeg') }}" class="menu-img mb-3">
@@ -121,8 +121,8 @@
                     </div>
                 </a>
             @else
-                <div style="cursor:pointer;" onclick="showAccessDenied('Akses Ditolak. Halaman ini khusus untuk Dosen Pembimbing dan Dosen Penguji.')">
-                    <div class="card shadow-sm h-100 border-0 p-3 menu-card menu-card-disabled">
+                <div style="cursor:pointer;" onclick="showAccessDenied('Akses Ditolak. Halaman ini khusus untuk Dosen Penguji dan Dosen Pembimbing.')">
+                    <div class="card shadow-sm h-100 border-0 p-3 menu-card menu-card-disabled" style="position:relative;">
                         <div class="lock-icon"><i class="fa fa-lock"></i></div>
                         <img src="{{ asset('images/penilaian.jpeg') }}" class="menu-img mb-3">
                         <h6 class="fw-bold">Penilaian</h6>
@@ -159,26 +159,15 @@
             @endif
         </div>
 
-        {{-- CARD JADWAL --}}
+        {{-- CARD JADWAL — semua dosen bisa akses --}}
         <div class="col-md-3">
-            @if($isKoor)
-                <a href="#" class="text-decoration-none text-dark">
-                    <div class="card shadow-sm h-100 border-0 p-3 menu-card">
-                        <img src="{{ asset('images/jadwal.jpeg') }}" class="menu-img mb-3">
-                        <h6 class="fw-bold">Jadwal</h6>
-                        <p class="text-muted small mb-0">Pelaksanaan TA</p>
-                    </div>
-                </a>
-            @else
-                <div style="cursor:pointer;" onclick="showAccessDenied('Akses Ditolak. Halaman ini khusus untuk Dosen Koordinator.')">
-                    <div class="card shadow-sm h-100 border-0 p-3 menu-card menu-card-disabled">
-                        <div class="lock-icon"><i class="fa fa-lock"></i></div>
-                        <img src="{{ asset('images/jadwal.jpeg') }}" class="menu-img mb-3">
-                        <h6 class="fw-bold">Jadwal</h6>
-                        <p class="text-muted small mb-0">Pelaksanaan TA</p>
-                    </div>
+            <a href="#" class="text-decoration-none text-dark">
+                <div class="card shadow-sm h-100 border-0 p-3 menu-card">
+                    <img src="{{ asset('images/jadwal.jpeg') }}" class="menu-img mb-3">
+                    <h6 class="fw-bold">Jadwal</h6>
+                    <p class="text-muted small mb-0">Pelaksanaan TA</p>
                 </div>
-            @endif
+            </a>
         </div>
 
     </div>
@@ -243,7 +232,6 @@
         transform: translateY(-5px);
         box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     }
-    /* Card disabled: greyed out, no hover effect */
     .menu-card-disabled {
         opacity: 0.45;
         filter: grayscale(60%);
@@ -252,7 +240,6 @@
         transform: none !important;
         box-shadow: none !important;
     }
-    /* Lock icon di pojok kanan atas */
     .lock-icon {
         position: absolute;
         top: 10px;

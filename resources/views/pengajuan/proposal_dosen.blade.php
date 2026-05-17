@@ -2,6 +2,15 @@
 
 @section('content')
 
+@php
+    $nimSesi    = session('user')->nim_nid;
+    $rolesDb    = \Illuminate\Support\Facades\DB::table('dosen_roles')
+                    ->where('nim_nid', $nimSesi)
+                    ->pluck('role_dosen')
+                    ->toArray();
+    $isReviewer = in_array('reviewer', $rolesDb);
+@endphp
+
 <style>
     .page-wrap { padding: 0 0 48px; }
 
@@ -49,21 +58,33 @@
     .stat-num   { font-size: 1.8rem; font-weight: 800; color: #111; line-height: 1; margin-bottom: 4px; }
     .stat-label { font-size: 0.74rem; color: #64748b; font-weight: 500; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.04em; }
 
-    .filter-bar  { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    /* ── FILTER BAR ── */
+    .filter-bar  { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
     .search-wrap { position: relative; flex: 1; min-width: 240px; }
     .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #aaa; pointer-events: none; }
-    .search-wrap input { width: 100%; padding: 10px 12px 10px 36px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 0.85rem; background: #fff; outline: none; transition: border-color 0.15s; }
+    .search-wrap input {
+        width: 100%; padding: 10px 12px 10px 36px;
+        border: 1px solid #e5e7eb; border-radius: 10px;
+        font-size: 0.85rem; background: #fff; outline: none;
+        transition: border-color 0.15s; box-sizing: border-box;
+    }
     .search-wrap input:focus { border-color: #FACC15; box-shadow: 0 0 0 3px rgba(250,204,21,0.15); }
     .filter-right { display: flex; gap: 10px; align-items: center; }
     .filter-select {
         padding: 10px 32px 10px 12px; border-radius: 10px; border: 1px solid #e5e7eb;
         background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='%23888' d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right 10px center;
-        font-size: 0.85rem; color: #333; cursor: pointer; outline: none; -webkit-appearance: none; appearance: none; min-width: 180px;
+        font-size: 0.85rem; color: #333; cursor: pointer; outline: none;
+        -webkit-appearance: none; appearance: none; min-width: 200px; height: 42px;
     }
     .filter-select:focus { border-color: #FACC15; }
-    .btn-reset { padding: 10px 16px; border-radius: 10px; border: 1px solid #e5e7eb; background: #fff; color: #666; font-size: 0.84rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; transition: 0.15s; }
+    .btn-reset {
+        padding: 10px 16px; border-radius: 10px; border: 1px solid #e5e7eb;
+        background: #fff; color: #666; font-size: 0.84rem; cursor: pointer;
+        display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; transition: 0.15s;
+    }
     .btn-reset:hover { background: #f5f5f5; }
 
+    /* ── TABLE ── */
     .table-card { background: #fff; border-radius: 16px; border: 1px solid #f0f0f0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow-x: auto; }
     .tbl { width: 100%; border-collapse: collapse; min-width: 1200px; }
     .tbl thead tr { background: #fafafa; border-bottom: 1px solid #f0f0f0; }
@@ -92,9 +113,20 @@
     .btn-detail { background: #fff; color: #475569; border: 1px solid #e2e8f0; border-radius: 8px; padding: 7px 16px; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: 0.15s; white-space: nowrap; }
     .btn-detail:hover { background: #f8fafc; border-color: #FACC15; color: #333; }
 
-    .no-data { text-align: center; padding: 48px 20px; color: #94a3b8; }
-    .no-data svg { margin-bottom: 12px; }
-    .no-data p { font-size: 0.88rem; margin: 0; }
+    /* ── EMPTY STATES ── */
+    .empty-state-wrap {
+        padding: 60px 20px; text-align: center;
+    }
+    .empty-state-inner {
+        display: inline-flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .empty-state-icon {
+        width: 64px; height: 64px; background: #f1f5f9; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .empty-state-icon i { font-size: 1.8rem; color: #94a3b8; }
+    .empty-state-title { font-size: 0.95rem; font-weight: 700; color: #475569; }
+    .empty-state-sub   { font-size: 0.82rem; color: #94a3b8; }
 </style>
 
 <div class="container-fluid px-4 page-wrap">
@@ -111,12 +143,14 @@
                     </svg>
                     Penetapan Dosen Pembimbing
                 </a>
+                @if($isReviewer)
                 <a href="{{ route('reviewer.proposal') }}" class="btn-hero-outline">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
                     </svg>
                     Review Proposal
                 </a>
+                @endif
             </div>
         </div>
     </div>
@@ -165,37 +199,34 @@
         </div>
     </div>
 
-    {{-- FILTER --}}
-    <form method="GET" action="{{ url('/proposal') }}">
-        <div class="filter-bar mb-4">
-            <div class="search-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
-                </svg>
-                <input type="text" name="search" id="searchInput"
-                    placeholder="Masukkan NIM, nama, atau kata kunci judul..."
-                    value="{{ request('search') }}">
-            </div>
-            <div class="filter-right">
-                <select name="status" class="filter-select" onchange="this.form.submit()">
-                    <option value="">Semua Status</option>
-                    <option value="menunggu_verifikasi" {{ request('status') == 'menunggu_verifikasi' ? 'selected' : '' }}>Menunggu Verifikasi</option>
-                    <option value="selesai"             {{ request('status') == 'selesai'             ? 'selected' : '' }}>Selesai</option>
-                </select>
-                <button type="button" class="btn-reset" onclick="window.location.href='{{ url('/proposal') }}'">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
-                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
-                    </svg>
-                    Reset Filter
-                </button>
-            </div>
+    {{-- FILTER (client-side, bukan form submit) --}}
+    <div class="filter-bar mb-4">
+        <div class="search-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
+            </svg>
+            <input type="text" id="searchInput" placeholder="Masukkan NIM, nama, atau kata kunci judul...">
         </div>
-    </form>
+        <div class="filter-right">
+            <select id="filterStatus" class="filter-select">
+                <option value="">Semua Status</option>
+                <option value="menunggu_verifikasi">Menunggu Verifikasi</option>
+                <option value="selesai">Selesai</option>
+                <option value="ditolak">Ditolak</option>
+            </select>
+            <button type="button" class="btn-reset" onclick="resetFilter()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                </svg>
+                Reset Filter
+            </button>
+        </div>
+    </div>
 
     {{-- TABLE --}}
-    <div class="table-card">
-        <table class="tbl">
+    <div class="table-card" id="tableCard">
+        <table class="tbl" id="mainTable">
             <thead>
                 <tr>
                     <th class="center" style="width:48px;">No.</th>
@@ -210,10 +241,13 @@
                     <th class="center">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tabelBody">
                 @forelse($proposals as $i => $p)
                 @php $status = strtolower(trim($p->status)); @endphp
-                <tr>
+                <tr
+                    data-status="{{ $status }}"
+                    data-search="{{ strtolower($p->nim_nid . ' ' . $p->nama . ' ' . $p->judul) }}"
+                >
                     <td class="center" style="color:#94a3b8; font-weight:600;">{{ $i + 1 }}</td>
                     <td style="white-space:nowrap;">{{ \Carbon\Carbon::parse($p->tanggal_pengajuan)->format('d M Y') }}</td>
                     <td style="font-family:monospace; font-size:0.82rem;">{{ $p->nim_nid }}</td>
@@ -265,7 +299,6 @@
                         @if($status === 'menunggu_verifikasi')
                             <span class="status-pill sp-menunggu-verifikasi">Menunggu Verifikasi</span>
                         @elseif($status === 'menunggu_review' || $status === 'selesai')
-                            {{-- ← FIX: menunggu_review tampil sebagai Selesai di view koordinator --}}
                             <span class="status-pill sp-selesai">Selesai</span>
                         @elseif($status === 'ditolak')
                             <span class="status-pill sp-ditolak">Ditolak</span>
@@ -294,13 +327,17 @@
                     </td>
                 </tr>
                 @empty
-                <tr>
+                {{-- DB kosong total → inbox --}}
+                <tr id="rowKosongDefault">
                     <td colspan="10">
-                        <div class="no-data">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#e2e8f0" viewBox="0 0 16 16">
-                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
-                            </svg>
-                            <p>Belum ada pengajuan proposal</p>
+                        <div class="empty-state-wrap">
+                            <div class="empty-state-inner">
+                                <div class="empty-state-icon">
+                                    <i class="fa fa-inbox"></i>
+                                </div>
+                                <div class="empty-state-title">Belum ada data</div>
+                                <div class="empty-state-sub">Data akan muncul setelah proses dilakukan.</div>
+                            </div>
                         </div>
                     </td>
                 </tr>
@@ -309,14 +346,80 @@
         </table>
     </div>
 
+    {{-- Filter/search tidak nemu hasil → magnifier --}}
+    <div id="noSearchResult" style="display:none;">
+        <div class="table-card">
+            <div class="empty-state-wrap">
+                <div class="empty-state-inner">
+                    <div class="empty-state-icon">
+                        <i class="fa fa-magnifying-glass"></i>
+                    </div>
+                    <div class="empty-state-title">Data tidak ditemukan</div>
+                    <div class="empty-state-sub">Coba gunakan kata kunci atau filter yang berbeda.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
-    let timeout = null;
-    document.getElementById('searchInput').addEventListener('input', function() {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => { this.form.submit(); }, 500);
-    });
+    const searchInput    = document.getElementById('searchInput');
+    const filterStatus   = document.getElementById('filterStatus');
+    const tabelBody      = document.getElementById('tabelBody');
+    const tableCard      = document.getElementById('tableCard');
+    const noSearchResult = document.getElementById('noSearchResult');
+
+    function applyFilter() {
+        const search = searchInput.value.toLowerCase().trim();
+        const status = filterStatus.value.toLowerCase();
+        const rows   = tabelBody.querySelectorAll('tr[data-status]');
+        let visible  = 0;
+
+        rows.forEach(function(row) {
+            const rowSearch = (row.getAttribute('data-search') || '').toLowerCase();
+            const rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
+
+            // Status "selesai" juga cocok dengan "menunggu_review"
+            let statusCocok = false;
+            if (!status) {
+                statusCocok = true;
+            } else if (status === 'selesai') {
+                statusCocok = (rowStatus === 'selesai' || rowStatus === 'menunggu_review');
+            } else {
+                statusCocok = (rowStatus === status);
+            }
+
+            const searchCocok = !search || rowSearch.includes(search);
+            const tampil      = statusCocok && searchCocok;
+
+            row.style.display = tampil ? '' : 'none';
+            if (tampil) visible++;
+        });
+
+        // Sembunyikan row default kosong kalau ada data asli
+        const rowDefault = document.getElementById('rowKosongDefault');
+        if (rowDefault) rowDefault.style.display = 'none';
+
+        if (visible === 0 && rows.length > 0) {
+            // Ada data di DB tapi filter ga nemu → magnifier
+            tableCard.style.display      = 'none';
+            noSearchResult.style.display = 'block';
+        } else {
+            // Nemu data atau emang DB kosong → tampilkan tabel normal
+            tableCard.style.display      = '';
+            noSearchResult.style.display = 'none';
+        }
+    }
+
+    searchInput.addEventListener('input',    applyFilter);
+    filterStatus.addEventListener('change',  applyFilter);
+
+    function resetFilter() {
+        searchInput.value  = '';
+        filterStatus.value = '';
+        applyFilter();
+    }
 </script>
 
 @endsection

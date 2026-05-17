@@ -272,6 +272,30 @@
 
     .btn-detail:hover { background: #FFF8E1; border-color: #FFC107; color: #7a4f00; }
 
+    /* ── EMPTY STATE ── */
+    .empty-state-wrap {
+        padding: 60px 20px;
+        text-align: center;
+    }
+    .empty-state-inner {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+    .empty-state-icon {
+        width: 64px;
+        height: 64px;
+        background: #f1f5f9;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .empty-state-icon i { font-size: 1.8rem; color: #94a3b8; }
+    .empty-state-title { font-size: 0.95rem; font-weight: 700; color: #475569; }
+    .empty-state-sub   { font-size: 0.82rem; color: #94a3b8; }
+
     /* MODAL */
     .modal-content { border-radius: 20px; border: 0; }
     .modal-label {
@@ -434,7 +458,7 @@
     </div>
 
     {{-- TABLE --}}
-    <div class="table-card">
+    <div class="table-card" id="tableCard">
         <table id="tabelProposal">
             <thead>
                 <tr>
@@ -448,7 +472,7 @@
                     <th>Detail</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tabelBody">
                 @forelse($proposalList as $index => $item)
                 @php
                     $st = strtolower($item->status);
@@ -530,22 +554,37 @@
                     </td>
                 </tr>
                 @empty
-                <tr>
+                {{-- DB kosong total → inbox icon --}}
+                <tr id="rowKosongDefault">
                     <td colspan="8">
-                        <div style="text-align:center;padding:3rem 1rem;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#d0d0d0" viewBox="0 0 16 16" style="margin-bottom:12px;">
-                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
-                            </svg>
-                            <div style="font-weight:700;font-size:0.95rem;color:#555;margin-bottom:4px;">Belum ada data</div>
-                            <div style="font-size:0.82rem;color:#aaa;">Data akan muncul setelah proses dilakukan.</div>
+                        <div class="empty-state-wrap">
+                            <div class="empty-state-inner">
+                                <div class="empty-state-icon">
+                                    <i class="fa fa-inbox"></i>
+                                </div>
+                                <div class="empty-state-title">Belum ada data</div>
+                                <div class="empty-state-sub">Data akan muncul setelah proses dilakukan.</div>
+                            </div>
                         </div>
                     </td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
-        <div id="noResult" class="d-none" style="text-align:center;padding:2rem;color:#bbb;font-size:0.88rem;">
-            Tidak ada data yang sesuai filter.
+    </div>
+
+    {{-- Filter/search tidak nemu hasil → magnifier icon --}}
+    <div id="noSearchResult" style="display:none;">
+        <div class="table-card">
+            <div class="empty-state-wrap">
+                <div class="empty-state-inner">
+                    <div class="empty-state-icon">
+                        <i class="fa fa-magnifying-glass"></i>
+                    </div>
+                    <div class="empty-state-title">Data tidak ditemukan</div>
+                    <div class="empty-state-sub">Coba gunakan kata kunci atau filter yang berbeda.</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -657,32 +696,40 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    // ── FILTER ──
-    const filterStatus = document.getElementById("filterStatus");
-    const searchInput  = document.getElementById("searchInput");
-    const btnReset     = document.getElementById("btnReset");
-    const noResult     = document.getElementById("noResult");
-    const rows         = document.querySelectorAll("#tabelProposal tbody tr");
+    const filterStatus   = document.getElementById("filterStatus");
+    const searchInput    = document.getElementById("searchInput");
+    const btnReset       = document.getElementById("btnReset");
+    const tableCard      = document.getElementById("tableCard");
+    const noSearchResult = document.getElementById("noSearchResult");
+    const tabelBody      = document.getElementById("tabelBody");
 
     function applyFilter() {
         const status  = filterStatus.value.toLowerCase();
         const keyword = searchInput.value.toLowerCase().trim();
+        const rows    = tabelBody.querySelectorAll("tr[data-status]");
         let visible   = 0;
 
         rows.forEach(row => {
             const rowStatus = (row.dataset.status || "").toLowerCase();
             const rowSearch = (row.dataset.search || "").toLowerCase();
-
-            if (row.dataset.status !== undefined) {
-                const ok = (!status || rowStatus === status) && (!keyword || rowSearch.includes(keyword));
-                row.style.display = ok ? "" : "none";
-                if (ok) visible++;
-            } else {
-                row.style.display = (!status && !keyword) ? "" : "none";
-            }
+            const ok = (!status || rowStatus === status) && (!keyword || rowSearch.includes(keyword));
+            row.style.display = ok ? "" : "none";
+            if (ok) visible++;
         });
 
-        noResult.classList.toggle("d-none", visible > 0 || (!status && !keyword));
+        // Sembunyikan row default kosong kalau ada data asli
+        const rowDefault = document.getElementById("rowKosongDefault");
+        if (rowDefault) rowDefault.style.display = "none";
+
+        if (visible === 0 && rows.length > 0) {
+            // Ada data tapi filter ga nemu → magnifier
+            tableCard.style.display      = "none";
+            noSearchResult.style.display = "block";
+        } else {
+            // Nemu data atau DB emang kosong → tabel normal
+            tableCard.style.display      = "";
+            noSearchResult.style.display = "none";
+        }
     }
 
     filterStatus.addEventListener("change", applyFilter);

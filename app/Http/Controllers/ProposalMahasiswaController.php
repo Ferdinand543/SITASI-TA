@@ -27,9 +27,13 @@ class ProposalMahasiswaController extends Controller
             ->latest()
             ->get();
 
+        // Hanya ambil dosen yang punya role 'pembimbing' di tabel dosen_roles
         $dosenList = \DB::table('users')
-            ->where('role', 'like', 'dosen%')
-            ->orderBy('nama')
+            ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
+            ->where('dosen_roles.role_dosen', 'pembimbing')
+            ->orderBy('users.nama')
+            ->select('users.nim_nid', 'users.nama')
+            ->distinct()
             ->get();
 
         return view('pengajuan.proposal_mahasiswa', compact('proposalList', 'dosenList'));

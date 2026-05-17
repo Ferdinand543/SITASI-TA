@@ -22,6 +22,20 @@ class ProposalController extends Controller
     }
 
     // =====================================================
+    // HELPER: ambil dosen yang punya role pembimbing saja
+    // =====================================================
+    private function getDosenPembimbingList()
+    {
+        return DB::table('users')
+            ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
+            ->where('users.role', 'dosen')
+            ->where('dosen_roles.role_dosen', 'pembimbing')
+            ->select('users.nim_nid', 'users.nama')
+            ->distinct()
+            ->get();
+    }
+
+    // =====================================================
     // INDEX
     // =====================================================
     public function index(Request $request)
@@ -192,10 +206,8 @@ class ProposalController extends Controller
             return redirect('/proposal')->with('error', 'Data tidak ditemukan!');
         }
 
-        $dosenList = DB::table('users')
-            ->where('role', 'dosen')
-            ->select('nim_nid', 'nama')
-            ->get();
+        // Hanya tampilkan dosen yang punya role pembimbing
+        $dosenList = $this->getDosenPembimbingList();
 
         return view('pengajuan.proposal_verifikasi_dosen', compact('proposal', 'dosenList'));
     }
@@ -273,10 +285,8 @@ class ProposalController extends Controller
             return redirect('/proposal')->with('error', 'Data tidak ditemukan!');
         }
 
-        $dosenList = DB::table('users')
-            ->where('role', 'dosen')
-            ->select('nim_nid', 'nama')
-            ->get();
+        // Hanya tampilkan dosen yang punya role pembimbing
+        $dosenList = $this->getDosenPembimbingList();
 
         return view('pengajuan.proposal_verifikasi_dosen', compact('proposal', 'dosenList'));
     }
@@ -314,20 +324,15 @@ class ProposalController extends Controller
             'tanggal_penetapan' => now()->toDateString(),
         ]);
 
-        // FIX: Hanya update STATUS saja, TIDAK update tanggal_usulan
         DB::table('usulan_pembimbing')
             ->where('proposal_id', $id)
             ->where('nim_nid_dosen', $request->dosen_pembimbing_1)
-            ->update([
-                'status' => 'disetujui',
-            ]);
+            ->update(['status' => 'disetujui']);
 
         DB::table('usulan_pembimbing')
             ->where('proposal_id', $id)
             ->where('nim_nid_dosen', $request->dosen_pembimbing_2)
-            ->update([
-                'status' => 'disetujui',
-            ]);
+            ->update(['status' => 'disetujui']);
 
         DB::table('usulan_pembimbing')
             ->where('proposal_id', $id)
@@ -335,9 +340,7 @@ class ProposalController extends Controller
                 $request->dosen_pembimbing_1,
                 $request->dosen_pembimbing_2
             ])
-            ->update([
-                'status' => 'ditolak',
-            ]);
+            ->update(['status' => 'ditolak']);
 
         DB::table('proposal')
             ->where('id', $id)
@@ -374,13 +377,10 @@ class ProposalController extends Controller
                 return redirect()->back()->with('error', 'Usulan tidak ditemukan!');
             }
 
-            // FIX: Hanya update STATUS saja, TIDAK update tanggal_usulan
             DB::table('usulan_pembimbing')
                 ->where('proposal_id', $id)
                 ->where('urutan', $urutan)
-                ->update([
-                    'status' => 'disetujui',
-                ]);
+                ->update(['status' => 'disetujui']);
 
             DB::table('dosen_pembimbing')
                 ->where('proposal_id', $id)
@@ -402,13 +402,10 @@ class ProposalController extends Controller
                 'dosen_pengganti.required' => 'Pilih dosen pengganti terlebih dahulu!',
             ]);
 
-            // FIX: Hanya update STATUS saja, TIDAK update tanggal_usulan
             DB::table('usulan_pembimbing')
                 ->where('proposal_id', $id)
                 ->where('urutan', $urutan)
-                ->update([
-                    'status' => 'ditolak',
-                ]);
+                ->update(['status' => 'ditolak']);
 
             DB::table('dosen_pembimbing')
                 ->where('proposal_id', $id)

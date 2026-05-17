@@ -99,10 +99,16 @@
                     </td>
                 </tr>
                 @empty
-                <tr>
-                    <td colspan="7" class="text-center text-muted py-4">
-                        <i class="fa fa-inbox me-2"></i>
-                        Belum ada pengajuan judul
+                {{-- Belum ada data dari DB sama sekali → inbox icon --}}
+                <tr id="rowKosongDefault">
+                    <td colspan="7" style="padding: 60px 20px; text-align: center; border: none;">
+                        <div style="display:inline-flex; flex-direction:column; align-items:center; gap:12px;">
+                            <div style="width:64px; height:64px; background:#f1f5f9; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                                <i class="fa fa-inbox" style="font-size:1.8rem; color:#94a3b8;"></i>
+                            </div>
+                            <div style="font-size:0.95rem; font-weight:700; color:#475569;">Belum ada data</div>
+                            <div style="font-size:0.82rem; color:#94a3b8;">Data akan muncul setelah proses dilakukan.</div>
+                        </div>
                     </td>
                 </tr>
                 @endforelse
@@ -111,9 +117,23 @@
         </table>
     </div>
 
-    <div id="pesanKosong" class="text-center text-muted py-4 d-none">
-        <i class="fa fa-inbox me-2"></i>
-        Data tidak ditemukan
+    {{-- Filter/search tidak nemu hasil → magnifier icon --}}
+    <div id="pesanKosong" class="d-none">
+        <table class="table table-bordered text-center">
+            <tbody>
+                <tr>
+                    <td colspan="7" style="padding: 60px 20px; text-align: center; border: none;">
+                        <div style="display:inline-flex; flex-direction:column; align-items:center; gap:12px;">
+                            <div style="width:64px; height:64px; background:#f1f5f9; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                                <i class="fa fa-magnifying-glass" style="font-size:1.8rem; color:#94a3b8;"></i>
+                            </div>
+                            <div style="font-size:0.95rem; font-weight:700; color:#475569;">Data tidak ditemukan</div>
+                            <div style="font-size:0.82rem; color:#94a3b8;">Coba gunakan kata kunci atau filter yang berbeda.</div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
 </div>
@@ -255,7 +275,16 @@ function filterTabel() {
         }
     });
 
-    document.getElementById('pesanKosong').classList.toggle('d-none', adaData);
+    const tabel   = document.getElementById('tabelPengajuan');
+    const pesanEl = document.getElementById('pesanKosong');
+
+    if (!adaData && rows.length > 0) {
+        tabel.classList.add('d-none');
+        pesanEl.classList.remove('d-none');
+    } else {
+        tabel.classList.remove('d-none');
+        pesanEl.classList.add('d-none');
+    }
 }
 
 document.querySelectorAll('.btn-verifikasi').forEach(btn => {
