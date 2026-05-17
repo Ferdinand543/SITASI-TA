@@ -9,6 +9,7 @@ use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ProposalMahasiswaController;
 use App\Http\Controllers\ReviewerController;
 use App\Http\Controllers\PanduanTAController;
+use App\Http\Controllers\MahasiswaDosenController;
 
 // ROOT
 Route::get('/', fn() => redirect('/login'));
@@ -128,3 +129,10 @@ Route::get('/proposal/{id}',                           [ProposalController::clas
 Route::get('/reviewer/proposal',              [ReviewerController::class, 'index'])->name('reviewer.proposal');
 Route::post('/reviewer/proposal/{id}/review', [ReviewerController::class, 'simpanReview'])->name('reviewer.simpanReview');
 Route::get('/reviewer/proposal/{id}/detail',  [ReviewerController::class, 'detail'])->name('reviewer.proposal.detail');
+
+
+// =====================================================
+// DATA MAHASISWA — DOSEN
+// =====================================================
+
+Route::get('/dosen/mahasiswa', [MahasiswaDosenController::class, 'index'])->name('dosen.mahasiswa');
