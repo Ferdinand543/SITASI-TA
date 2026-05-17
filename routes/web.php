@@ -128,3 +128,6 @@ Route::get('/proposal/{id}',                           [ProposalController::clas
 Route::get('/reviewer/proposal',              [ReviewerController::class, 'index'])->name('reviewer.proposal');
 Route::post('/reviewer/proposal/{id}/review', [ReviewerController::class, 'simpanReview'])->name('reviewer.simpanReview');
 Route::get('/reviewer/proposal/{id}/detail',  [ReviewerController::class, 'detail'])->name('reviewer.proposal.detail');
+
+use App\Http\Controllers\JadwalController;
+Route::get('/jadwal/dosen', [JadwalController::class, 'index'])->name('jadwal.dosen');

@@ -162,7 +162,7 @@
         {{-- CARD JADWAL --}}
         <div class="col-md-3">
             @if($isKoor)
-                <a href="#" class="text-decoration-none text-dark">
+                <a href="{{ route('jadwal.dosen') }}" class="text-decoration-none text-dark">
                     <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                         <img src="{{ asset('images/jadwal.jpeg') }}" class="menu-img mb-3">
                         <h6 class="fw-bold">Jadwal</h6>

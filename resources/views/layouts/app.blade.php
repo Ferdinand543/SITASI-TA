@@ -417,7 +417,7 @@
                     Nilai
                 </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                <a href="{{ route('jadwal.dosen') }}" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
                     <i class="fa-solid fa-calendar-days"></i>
                     Jadwal
                 </a>
@@ -502,7 +502,7 @@
                     Nilai
                 </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                <a href="{{ route('jadwal.dosen') }}" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
                     <i class="fa-solid fa-calendar-days"></i>
                     Jadwal
                 </a>
@@ -552,7 +552,7 @@
                     Nilai
                 </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                <a href="{{ route('jadwal.dosen') }}" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
                     <i class="fa-solid fa-calendar-days"></i>
                     Jadwal
                 </a>
@@ -596,7 +596,7 @@
                     Nilai
                 </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                <a href="{{ route('jadwal.dosen') }}" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
                     <i class="fa-solid fa-calendar-days"></i>
                     Jadwal
                 </a>
