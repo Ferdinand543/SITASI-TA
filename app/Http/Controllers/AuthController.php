@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -65,6 +67,9 @@ class AuthController extends Controller
         return back()->with('error', 'Role tidak dikenali');
     }
 
+    // =====================================================
+    // GANTI PASSWORD (dari halaman forgotpass — pakai password lama)
+    // =====================================================
     public function resetPassword(Request $request)
     {
         $request->validate([
@@ -108,6 +113,91 @@ class AuthController extends Controller
     }
 
     // =====================================================
+    // FORGOT PASSWORD — KIRIM EMAIL
+    // =====================================================
+    public function sendResetLink(Request $request)
+    {
+        $request->validate(['email' => 'required|email'], [
+            'email.required' => 'Email wajib diisi',
+            'email.email'    => 'Format email tidak valid',
+        ]);
+
+        $user = DB::table('users')->where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->with('error', 'Email tidak ditemukan');
+        }
+
+        $token = Str::random(64);
+
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $request->email],
+            ['token' => $token, 'created_at' => now()]
+        );
+
+        Mail::send(
+            'emails.reset_password',
+            ['token' => $token, 'user' => $user],
+            function ($mail) use ($request) {
+                $mail->to($request->email)
+                     ->subject('Reset Password - SITASI-TA');
+            }
+        );
+
+        return back()->with('success', 'Link reset password sudah dikirim ke email lo!');
+    }
+
+    // =====================================================
+    // FORGOT PASSWORD — TAMPILKAN FORM RESET BARU
+    // =====================================================
+    public function showResetForm($token)
+    {
+        $record = DB::table('password_reset_tokens')
+            ->where('token', $token)
+            ->first();
+
+        if (!$record) {
+            return redirect('/forgot-password')->with('error', 'Token tidak valid atau sudah kadaluarsa');
+        }
+
+        return view('auth.reset_password', ['token' => $token, 'email' => $record->email]);
+    }
+
+    // =====================================================
+    // FORGOT PASSWORD — SIMPAN PASSWORD BARU (via email token)
+    // =====================================================
+    public function doResetPassword(Request $request)
+    {
+        $request->validate([
+            'token'            => 'required',
+            'email'            => 'required|email',
+            'password'         => 'required|min:6',
+            'confirm_password' => 'required',
+        ]);
+
+        if ($request->password !== $request->confirm_password) {
+            return back()->with('error', 'Password baru dan konfirmasi tidak sama');
+        }
+
+        $record = DB::table('password_reset_tokens')
+            ->where('token', $request->token)
+            ->where('email', $request->email)
+            ->first();
+
+        if (!$record) {
+            return back()->with('error', 'Token tidak valid atau sudah kadaluarsa');
+        }
+
+        DB::table('users')
+            ->where('email', $request->email)
+            ->update(['password' => Hash::make($request->password)]);
+
+        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
+        return redirect('/reset-success');
+    }
+
+    // =====================================================
     // PROFIL ADMIN
     // =====================================================
     public function profilAdmin()
@@ -138,7 +228,6 @@ class AuthController extends Controller
             return redirect('/login')->with('error', 'Akses ditolak');
         }
 
-        // Ambil data fresh dari DB
         $user = DB::table('users')->where('nim_nid', $user->nim_nid)->first();
 
         return view('mahasiswa.profil_mahasiswa_tu', compact('user'));
@@ -169,7 +258,6 @@ class AuthController extends Controller
             ->where('nim_nid', $nim)
             ->update(['foto' => $path]);
 
-        // Update session juga biar langsung keliatan
         $userBaru = DB::table('users')->where('nim_nid', $nim)->first();
         session(['user' => $userBaru]);
 
@@ -189,21 +277,18 @@ class AuthController extends Controller
             return redirect('/login')->with('error', 'Akses ditolak');
         }
 
-        // Ambil data fresh dari DB
         $user = DB::table('users')->where('nim_nid', $user->nim_nid)->first();
 
-        // Ambil semua role dosen dari tabel dosen_roles
         $rolesRaw = DB::table('dosen_roles')
             ->where('nim_nid', $user->nim_nid)
             ->pluck('role_dosen')
             ->toArray();
 
-        // Mapping nama role jadi lebih rapi
         $roleLabels = [
-            'reviewer'   => 'Reviewer',
-            'pembimbing' => 'Dosen Pembimbing',
-            'penguji'    => 'Dosen Penguji',
-            'koordinator'=> 'Koordinator',
+            'reviewer'    => 'Reviewer',
+            'pembimbing'  => 'Dosen Pembimbing',
+            'penguji'     => 'Dosen Penguji',
+            'koordinator' => 'Koordinator',
         ];
 
         $roles = array_map(fn($r) => $roleLabels[$r] ?? ucfirst($r), $rolesRaw);
@@ -236,7 +321,6 @@ class AuthController extends Controller
             ->where('nim_nid', $nid)
             ->update(['foto' => $path]);
 
-        // Update session juga biar langsung keliatan
         $userBaru = DB::table('users')->where('nim_nid', $nid)->first();
         session(['user' => $userBaru]);
 

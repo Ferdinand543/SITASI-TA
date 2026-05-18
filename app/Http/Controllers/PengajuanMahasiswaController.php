@@ -15,7 +15,6 @@ class PengajuanMahasiswaController extends Controller
 
         $nim = session('user')->nim_nid;
 
-        // Tandai sudah dibaca — simpan jumlah yg direspon saat ini
         $totalDirespon = PengajuanJudul::where('nim_nid', $nim)
             ->whereIn('status', ['disetujui', 'ditolak'])
             ->count();
@@ -36,22 +35,26 @@ class PengajuanMahasiswaController extends Controller
             'tanggal_pengajuan' => 'required|date',
             'topik_1'           => 'required|string|max:255',
             'judul_1'           => 'required|string|max:255',
+            'mitra_1'           => 'nullable|string|max:255',
             'topik_2'           => 'required|string|max:255',
             'judul_2'           => 'required|string|max:255',
+            'mitra_2'           => 'nullable|string|max:255',
             'topik_3'           => 'required|string|max:255',
             'judul_3'           => 'required|string|max:255',
-            'mitra_penelitian'  => 'nullable|string|max:255',
+            'mitra_3'           => 'nullable|string|max:255',
         ]);
 
         PengajuanJudul::create([
             'nim_nid'           => session('user')->nim_nid,
             'topik_1'           => $request->topik_1,
             'judul_1'           => $request->judul_1,
+            'mitra_1'           => $request->mitra_1,
             'topik_2'           => $request->topik_2,
             'judul_2'           => $request->judul_2,
+            'mitra_2'           => $request->mitra_2,
             'topik_3'           => $request->topik_3,
             'judul_3'           => $request->judul_3,
-            'mitra_penelitian'  => $request->mitra_penelitian,
+            'mitra_3'           => $request->mitra_3,
             'tanggal_pengajuan' => $request->tanggal_pengajuan,
             'status'            => 'menunggu verifikasi',
         ]);
@@ -67,7 +70,6 @@ class PengajuanMahasiswaController extends Controller
 
         $nim = session('user')->nim_nid;
 
-        // Tandai sudah dibaca
         $totalDirespon = PengajuanJudul::where('nim_nid', $nim)
             ->whereIn('status', ['disetujui', 'ditolak'])
             ->count();

@@ -3,155 +3,155 @@
 @section('content')
 
 <form action="{{ route('pengajuan.proses', $pengajuan->id) }}" method="POST" id="formVerifikasi">
-@csrf
+    @csrf
 
-<div class="wrapper-page">
+    <div class="wrapper-page">
 
-    <!-- TITLE -->
-    <h1 class="page-title">
-        Tinjau dan Verifikasi Judul TA-1 Mahasiswa
-    </h1>
+        <!-- TITLE -->
+        <h1 class="page-title">
+            Tinjau dan Verifikasi Judul TA-1 Mahasiswa
+        </h1>
 
-    <p class="page-subtitle">
-        Informasi detail pengajuan judul tugas akhir yang telah diajukan.
-    </p>
+        <p class="page-subtitle">
+            Informasi detail pengajuan judul tugas akhir yang telah diajukan.
+        </p>
 
-    <!-- IDENTITAS -->
-    <div class="top-grid">
+        <!-- IDENTITAS -->
+        <div class="top-grid">
 
-        <div class="mini-box">
-            <div class="mini-label">NIM</div>
-            <div class="mini-value">{{ $pengajuan->nim_nid }}</div>
-        </div>
-
-        <div class="mini-box">
-            <div class="mini-label">Nama</div>
-            <div class="mini-value">{{ $pengajuan->nama }}</div>
-        </div>
-
-        <div class="mini-box">
-            <div class="mini-label">
-                <i class="fa fa-calendar me-1"></i>
-                Tanggal Pengajuan
+            <div class="mini-box">
+                <div class="mini-label">NIM</div>
+                <div class="mini-value">{{ $pengajuan->nim_nid }}</div>
             </div>
-            <div class="mini-value">
-                {{ \Carbon\Carbon::parse($pengajuan->tanggal_pengajuan)->translatedFormat('d M Y') }}
+
+            <div class="mini-box">
+                <div class="mini-label">Nama</div>
+                <div class="mini-value">{{ $pengajuan->nama }}</div>
+            </div>
+
+            <div class="mini-box">
+                <div class="mini-label">
+                    <i class="fa fa-calendar me-1"></i>
+                    Tanggal Pengajuan
+                </div>
+                <div class="mini-value">
+                    {{ \Carbon\Carbon::parse($pengajuan->tanggal_pengajuan)->translatedFormat('d M Y') }}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- USULAN -->
+        <div class="usulan-box">
+            <div class="usulan-title">Usulan Judul</div>
+            <div class="usulan-sub">
+                Berikut adalah 3 usulan judul yang diajukan
             </div>
         </div>
 
-    </div>
-
-    <!-- USULAN -->
-    <div class="usulan-box">
-        <div class="usulan-title">Usulan Judul</div>
-        <div class="usulan-sub">
-            Berikut adalah 3 usulan judul yang diajukan
-        </div>
-    </div>
-
-    @php
+        @php
         $sudahDiverifikasi = strtolower($pengajuan->status) !== 'menunggu verifikasi';
-        $judulDisetujui    = $pengajuan->judul_disetujui;
-    @endphp
+        $judulDisetujui = $pengajuan->judul_disetujui;
+        @endphp
 
-    <!-- JUDUL 1 -->
-    <div class="judul-card">
-        <div class="judul-left">
-            <div class="judul-no">Judul 1</div>
-            <div class="judul-main">{{ $pengajuan->judul_1 }}</div>
-            <div class="row-info">
-                <span class="left">Topik Penelitian</span>
-                <span>{{ $pengajuan->topik_1 ?? '-' }}</span>
+        <!-- JUDUL 1 -->
+        <div class="judul-card">
+            <div class="judul-left">
+                <div class="judul-no">Judul 1</div>
+                <div class="judul-main">{{ $pengajuan->judul_1 }}</div>
+                <div class="row-info">
+                    <span class="left">Topik Penelitian</span>
+                    <span>{{ $pengajuan->topik_1 ?? '-' }}</span>
+                </div>
+                <div class="row-info">
+                    <span class="left">Mitra Penelitian</span>
+                    <span>{{ $pengajuan->mitra_1 ?? '-' }}</span>
+                </div>
             </div>
-            <div class="row-info">
-                <span class="left">Mitra Penelitian</span>
-                <span>{{ $pengajuan->mitra_penelitian ?? '-' }}</span>
-            </div>
-        </div>
-        <div class="judul-right" id="aksi1">
-            @if($sudahDiverifikasi)
+            <div class="judul-right" id="aksi1">
+                @if($sudahDiverifikasi)
                 @if($judulDisetujui === $pengajuan->judul_1)
-                    <span class="badge-hasil badge-disetujui-hasil">✓ Disetujui</span>
+                <span class="badge-hasil badge-disetujui-hasil">✓ Disetujui</span>
                 @else
-                    <span class="badge-hasil badge-ditolak-hasil">✕ Ditolak</span>
+                <span class="badge-hasil badge-ditolak-hasil">✕ Ditolak</span>
                 @endif
-            @else
+                @else
                 <button type="button" class="btn-setuju" onclick="setuju(1)">Setujui</button>
                 <button type="button" class="btn-tolak" onclick="tolak(1)">Tolak</button>
                 <i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(1)"></i>
-            @endif
-        </div>
-    </div>
-
-    <!-- JUDUL 2 -->
-    <div class="judul-card">
-        <div class="judul-left">
-            <div class="judul-no">Judul 2</div>
-            <div class="judul-main">{{ $pengajuan->judul_2 }}</div>
-            <div class="row-info">
-                <span class="left">Topik Penelitian</span>
-                <span>{{ $pengajuan->topik_2 ?? '-' }}</span>
-            </div>
-            <div class="row-info">
-                <span class="left">Mitra Penelitian</span>
-                <span>{{ $pengajuan->mitra_penelitian ?? '-' }}</span>
-            </div>
-        </div>
-        <div class="judul-right" id="aksi2">
-            @if($sudahDiverifikasi)
-                @if($judulDisetujui === $pengajuan->judul_2)
-                    <span class="badge-hasil badge-disetujui-hasil">✓ Disetujui</span>
-                @else
-                    <span class="badge-hasil badge-ditolak-hasil">✕ Ditolak</span>
                 @endif
-            @else
+            </div>
+        </div>
+
+        <!-- JUDUL 2 -->
+        <div class="judul-card">
+            <div class="judul-left">
+                <div class="judul-no">Judul 2</div>
+                <div class="judul-main">{{ $pengajuan->judul_2 }}</div>
+                <div class="row-info">
+                    <span class="left">Topik Penelitian</span>
+                    <span>{{ $pengajuan->topik_2 ?? '-' }}</span>
+                </div>
+                <div class="row-info">
+                    <span class="left">Mitra Penelitian</span>
+                    <span>{{ $pengajuan->mitra_3 ?? '-' }}</span>
+                </div>
+            </div>
+            <div class="judul-right" id="aksi2">
+                @if($sudahDiverifikasi)
+                @if($judulDisetujui === $pengajuan->judul_2)
+                <span class="badge-hasil badge-disetujui-hasil">✓ Disetujui</span>
+                @else
+                <span class="badge-hasil badge-ditolak-hasil">✕ Ditolak</span>
+                @endif
+                @else
                 <button type="button" class="btn-setuju" onclick="setuju(2)">Setujui</button>
                 <button type="button" class="btn-tolak" onclick="tolak(2)">Tolak</button>
                 <i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(2)"></i>
-            @endif
-        </div>
-    </div>
-
-    <!-- JUDUL 3 -->
-    <div class="judul-card">
-        <div class="judul-left">
-            <div class="judul-no">Judul 3</div>
-            <div class="judul-main">{{ $pengajuan->judul_3 }}</div>
-            <div class="row-info">
-                <span class="left">Topik Penelitian</span>
-                <span>{{ $pengajuan->topik_3 ?? '-' }}</span>
-            </div>
-            <div class="row-info">
-                <span class="left">Mitra Penelitian</span>
-                <span>{{ $pengajuan->mitra_penelitian ?? '-' }}</span>
-            </div>
-        </div>
-        <div class="judul-right" id="aksi3">
-            @if($sudahDiverifikasi)
-                @if($judulDisetujui === $pengajuan->judul_3)
-                    <span class="badge-hasil badge-disetujui-hasil">✓ Disetujui</span>
-                @else
-                    <span class="badge-hasil badge-ditolak-hasil">✕ Ditolak</span>
                 @endif
-            @else
+            </div>
+        </div>
+
+        <!-- JUDUL 3 -->
+        <div class="judul-card">
+            <div class="judul-left">
+                <div class="judul-no">Judul 3</div>
+                <div class="judul-main">{{ $pengajuan->judul_3 }}</div>
+                <div class="row-info">
+                    <span class="left">Topik Penelitian</span>
+                    <span>{{ $pengajuan->topik_3 ?? '-' }}</span>
+                </div>
+                <div class="row-info">
+                    <span class="left">Mitra Penelitian</span>
+                    <span>{{ $pengajuan->mitra_2 ?? '-' }}</span>
+                </div>
+            </div>
+            <div class="judul-right" id="aksi3">
+                @if($sudahDiverifikasi)
+                @if($judulDisetujui === $pengajuan->judul_3)
+                <span class="badge-hasil badge-disetujui-hasil">✓ Disetujui</span>
+                @else
+                <span class="badge-hasil badge-ditolak-hasil">✕ Ditolak</span>
+                @endif
+                @else
                 <button type="button" class="btn-setuju" onclick="setuju(3)">Setujui</button>
                 <button type="button" class="btn-tolak" onclick="tolak(3)">Tolak</button>
                 <i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(3)"></i>
+                @endif
+            </div>
+        </div>
+
+        <input type="hidden" name="judul_disetujui" id="judul_disetujui">
+
+        <!-- BUTTON -->
+        <div class="footer-btn">
+            <a href="/pengajuan" class="btn-kembali">Kembali</a>
+            @if(!$sudahDiverifikasi)
+            <button type="button" class="btn-kirim" onclick="simpanData()">Kirim</button>
             @endif
         </div>
+
     </div>
-
-    <input type="hidden" name="judul_disetujui" id="judul_disetujui">
-
-    <!-- BUTTON -->
-    <div class="footer-btn">
-        <a href="/pengajuan" class="btn-kembali">Kembali</a>
-        @if(!$sudahDiverifikasi)
-            <button type="button" class="btn-kirim" onclick="simpanData()">Kirim</button>
-        @endif
-    </div>
-
-</div>
 
 </form>
 
@@ -174,185 +174,361 @@
 </div>
 
 <script>
+    let aksiDipilih = null;
+    let nomorDipilih = null;
 
-let aksiDipilih  = null;
-let nomorDipilih = null;
+    let statusJudul = {
+        1: '',
+        2: '',
+        3: ''
+    };
 
-let statusJudul = { 1: '', 2: '', 3: '' };
+    function showPopup(type, text) {
+        let icon = document.getElementById('popupIcon');
+        let title = document.getElementById('popupTitle');
 
-function showPopup(type, text){
-    let icon  = document.getElementById('popupIcon');
-    let title = document.getElementById('popupTitle');
+        document.getElementById('popupOkBtn').style.display = 'inline-block';
+        document.getElementById('confirmArea').style.display = 'none';
 
-    document.getElementById('popupOkBtn').style.display  = 'inline-block';
-    document.getElementById('confirmArea').style.display = 'none';
+        if (type == 'success') {
+            icon.innerHTML = '✓';
+            icon.className = 'popup-icon success';
+            title.innerHTML = 'Berhasil!';
+        } else {
+            icon.innerHTML = '✕';
+            icon.className = 'popup-icon error';
+            title.innerHTML = 'Gagal!';
+        }
 
-    if(type == 'success'){
-        icon.innerHTML  = '✓';
-        icon.className  = 'popup-icon success';
-        title.innerHTML = 'Berhasil!';
-    }else{
-        icon.innerHTML  = '✕';
-        icon.className  = 'popup-icon error';
-        title.innerHTML = 'Gagal!';
+        document.getElementById('popupText').innerHTML = text;
+        document.getElementById('popupBg').style.display = 'flex';
     }
 
-    document.getElementById('popupText').innerHTML  = text;
-    document.getElementById('popupBg').style.display = 'flex';
-}
+    function showConfirm(jenis, no) {
+        aksiDipilih = jenis;
+        nomorDipilih = no;
 
-function showConfirm(jenis, no){
-    aksiDipilih  = jenis;
-    nomorDipilih = no;
+        let icon = document.getElementById('popupIcon');
+        let title = document.getElementById('popupTitle');
 
-    let icon  = document.getElementById('popupIcon');
-    let title = document.getElementById('popupTitle');
+        icon.innerHTML = '?';
+        icon.className = 'popup-icon success';
+        title.innerHTML = 'Konfirmasi';
 
-    icon.innerHTML  = '?';
-    icon.className  = 'popup-icon success';
-    title.innerHTML = 'Konfirmasi';
+        document.getElementById('popupText').innerHTML =
+            jenis == 'setuju' ?
+            'Apakah anda yakin menyetujui judul ini?' :
+            'Apakah anda yakin menolak judul ini?';
 
-    document.getElementById('popupText').innerHTML =
-        jenis == 'setuju'
-            ? 'Apakah anda yakin menyetujui judul ini?'
-            : 'Apakah anda yakin menolak judul ini?';
-
-    document.getElementById('popupOkBtn').style.display  = 'none';
-    document.getElementById('confirmArea').style.display = 'block';
-    document.getElementById('popupBg').style.display      = 'flex';
-}
-
-function closePopup(){
-    document.getElementById('popupBg').style.display = 'none';
-}
-
-function setuju(no){ showConfirm('setuju', no); }
-function tolak(no){  showConfirm('tolak',  no); }
-
-function lanjutkanAksi(){
-    let no = nomorDipilih;
-
-    if(aksiDipilih == 'setuju'){
-        statusJudul[no] = 'setuju';
-        document.getElementById("aksi"+no).innerHTML =
-            '<button type="button" class="btn-setuju" disabled>Disetujui</button>' +
-            '<i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul('+no+')"></i>';
-        showPopup('success', 'Judul berhasil dipilih');
+        document.getElementById('popupOkBtn').style.display = 'none';
+        document.getElementById('confirmArea').style.display = 'block';
+        document.getElementById('popupBg').style.display = 'flex';
     }
 
-    if(aksiDipilih == 'tolak'){
-        statusJudul[no] = 'tolak';
-        document.getElementById("aksi"+no).innerHTML =
-            '<button type="button" class="btn-tolak" disabled>Ditolak</button>' +
-            '<i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul('+no+')"></i>';
-        showPopup('success', 'Judul berhasil ditolak');
-    }
-}
-
-function resetJudul(no){
-    statusJudul[no] = '';
-    document.getElementById("aksi"+no).innerHTML =
-        '<button type="button" class="btn-setuju" onclick="setuju('+no+')">Setujui</button>' +
-        '<button type="button" class="btn-tolak"  onclick="tolak('+no+')">Tolak</button>' +
-        '<i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul('+no+')"></i>';
-}
-
-function simpanData(){
-    let jumlahSetuju = 0;
-    let judulDipilih = '';
-    let masihKosong  = false;
-
-    for(let i = 1; i <= 3; i++){
-        if(statusJudul[i] == '')      masihKosong = true;
-        if(statusJudul[i] == 'setuju'){ jumlahSetuju++; judulDipilih = i; }
+    function closePopup() {
+        document.getElementById('popupBg').style.display = 'none';
     }
 
-    if(masihKosong){
-        showPopup('error', 'Semua judul harus diberi keputusan');
-        return;
+    function setuju(no) {
+        showConfirm('setuju', no);
     }
 
-    if(jumlahSetuju > 1){
-        showPopup('error', 'Hanya boleh 1 judul yang disetujui');
-        return;
+    function tolak(no) {
+        showConfirm('tolak', no);
     }
 
-    document.getElementById('judul_disetujui').value = judulDipilih;
-    document.getElementById('formVerifikasi').submit();
-}
+    function lanjutkanAksi() {
+        let no = nomorDipilih;
 
+        if (aksiDipilih == 'setuju') {
+            statusJudul[no] = 'setuju';
+            document.getElementById("aksi" + no).innerHTML =
+                '<button type="button" class="btn-setuju" disabled>Disetujui</button>' +
+                '<i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(' + no + ')"></i>';
+            showPopup('success', 'Judul berhasil dipilih');
+        }
+
+        if (aksiDipilih == 'tolak') {
+            statusJudul[no] = 'tolak';
+            document.getElementById("aksi" + no).innerHTML =
+                '<button type="button" class="btn-tolak" disabled>Ditolak</button>' +
+                '<i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(' + no + ')"></i>';
+            showPopup('success', 'Judul berhasil ditolak');
+        }
+    }
+
+    function resetJudul(no) {
+        statusJudul[no] = '';
+        document.getElementById("aksi" + no).innerHTML =
+            '<button type="button" class="btn-setuju" onclick="setuju(' + no + ')">Setujui</button>' +
+            '<button type="button" class="btn-tolak"  onclick="tolak(' + no + ')">Tolak</button>' +
+            '<i class="fa fa-rotate-right text-secondary reset-icon" onclick="resetJudul(' + no + ')"></i>';
+    }
+
+    function simpanData() {
+        let jumlahSetuju = 0;
+        let judulDipilih = '';
+        let masihKosong = false;
+
+        for (let i = 1; i <= 3; i++) {
+            if (statusJudul[i] == '') masihKosong = true;
+            if (statusJudul[i] == 'setuju') {
+                jumlahSetuju++;
+                judulDipilih = i;
+            }
+        }
+
+        if (masihKosong) {
+            showPopup('error', 'Semua judul harus diberi keputusan');
+            return;
+        }
+
+        if (jumlahSetuju > 1) {
+            showPopup('error', 'Hanya boleh 1 judul yang disetujui');
+            return;
+        }
+
+        document.getElementById('judul_disetujui').value = judulDipilih;
+        document.getElementById('formVerifikasi').submit();
+    }
 </script>
 
 <style>
-body{ background:#efefef; }
+    body {
+        background: #efefef;
+    }
 
-.wrapper-page{ width:100%; max-width:1400px; margin:auto; padding:35px 45px; }
+    .wrapper-page {
+        width: 100%;
+        max-width: 1400px;
+        margin: auto;
+        padding: 35px 45px;
+    }
 
-.page-title{ font-size:42px; font-weight:700; margin-bottom:5px; }
+    .page-title {
+        font-size: 42px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
 
-.page-subtitle{ font-size:18px; color:#777; margin-bottom:28px; }
+    .page-subtitle {
+        font-size: 18px;
+        color: #777;
+        margin-bottom: 28px;
+    }
 
-.top-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }
+    .top-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 18px;
+    }
 
-.mini-box{ background:white; border:1px solid #d8d8d8; padding:18px; min-height:95px; }
+    .mini-box {
+        background: white;
+        border: 1px solid #d8d8d8;
+        padding: 18px;
+        min-height: 95px;
+    }
 
-.mini-label{ font-size:16px; font-weight:600; margin-bottom:8px; }
+    .mini-label {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
 
-.mini-value{ font-size:18px; }
+    .mini-value {
+        font-size: 18px;
+    }
 
-.usulan-box{ background:white; border:1px solid #d8d8d8; padding:16px; margin-bottom:14px; }
+    .usulan-box {
+        background: white;
+        border: 1px solid #d8d8d8;
+        padding: 16px;
+        margin-bottom: 14px;
+    }
 
-.usulan-title{ font-size:18px; font-weight:700; }
+    .usulan-title {
+        font-size: 18px;
+        font-weight: 700;
+    }
 
-.usulan-sub{ font-size:15px; color:#777; }
+    .usulan-sub {
+        font-size: 15px;
+        color: #777;
+    }
 
-.judul-card{ background:white; border:1px solid #d8d8d8; padding:18px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; }
+    .judul-card {
+        background: white;
+        border: 1px solid #d8d8d8;
+        padding: 18px;
+        margin-bottom: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-.judul-left{ width:78%; }
+    .judul-left {
+        width: 78%;
+    }
 
-.judul-no{ font-size:15px; color:#666; margin-bottom:5px; }
+    .judul-no {
+        font-size: 15px;
+        color: #666;
+        margin-bottom: 5px;
+    }
 
-.judul-main{ font-size:22px; font-weight:700; margin-bottom:10px; }
+    .judul-main {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
 
-.row-info{ display:flex; font-size:16px; color:#8a8a8a; margin-bottom:3px; }
+    .row-info {
+        display: flex;
+        font-size: 16px;
+        color: #8a8a8a;
+        margin-bottom: 3px;
+    }
 
-.left{ width:180px; }
+    .left {
+        width: 180px;
+    }
 
-.judul-right{ width:22%; display:flex; justify-content:flex-end; align-items:center; gap:10px; }
+    .judul-right {
+        width: 22%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+    }
 
-.btn-setuju{ border:none; background:#8fdb9f; padding:8px 18px; border-radius:5px; font-size:15px; font-weight:600; }
+    .btn-setuju {
+        border: none;
+        background: #8fdb9f;
+        padding: 8px 18px;
+        border-radius: 5px;
+        font-size: 15px;
+        font-weight: 600;
+    }
 
-.btn-tolak{ border:none; background:#f3a1a1; padding:8px 18px; border-radius:5px; font-size:15px; font-weight:600; }
+    .btn-tolak {
+        border: none;
+        background: #f3a1a1;
+        padding: 8px 18px;
+        border-radius: 5px;
+        font-size: 15px;
+        font-weight: 600;
+    }
 
-.reset-icon{ cursor:pointer; font-size:18px; }
+    .reset-icon {
+        cursor: pointer;
+        font-size: 18px;
+    }
 
-.badge-hasil{ padding:8px 18px; border-radius:5px; font-size:15px; font-weight:600; }
+    .badge-hasil {
+        padding: 8px 18px;
+        border-radius: 5px;
+        font-size: 15px;
+        font-weight: 600;
+    }
 
-.badge-disetujui-hasil{ background:#8fdb9f; color:#1a7a2e; }
+    .badge-disetujui-hasil {
+        background: #8fdb9f;
+        color: #1a7a2e;
+    }
 
-.badge-ditolak-hasil{ background:#f3a1a1; color:#a81c1c; }
+    .badge-ditolak-hasil {
+        background: #f3a1a1;
+        color: #a81c1c;
+    }
 
-.footer-btn{ text-align:right; margin-top:25px; }
+    .footer-btn {
+        text-align: right;
+        margin-top: 25px;
+    }
 
-.btn-kembali{ background:#bcbcbc; color:black; text-decoration:none; padding:9px 18px; border-radius:20px; font-size:15px; margin-right:10px; }
+    .btn-kembali {
+        background: #bcbcbc;
+        color: black;
+        text-decoration: none;
+        padding: 9px 18px;
+        border-radius: 20px;
+        font-size: 15px;
+        margin-right: 10px;
+    }
 
-.btn-kirim{ border:none; background:#f0c93d; padding:9px 22px; border-radius:20px; font-size:15px; font-weight:700; }
+    .btn-kirim {
+        border: none;
+        background: #f0c93d;
+        padding: 9px 22px;
+        border-radius: 20px;
+        font-size: 15px;
+        font-weight: 700;
+    }
 
-.popup-bg{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.35); display:none; justify-content:center; align-items:center; z-index:9999; }
+    .popup-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.35);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
 
-.popup-box{ width:360px; background:#fff; border-radius:12px; padding:28px; text-align:center; }
+    .popup-box {
+        width: 360px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 28px;
+        text-align: center;
+    }
 
-.popup-icon{ width:60px; height:60px; border-radius:50%; line-height:55px; font-size:28px; margin:auto; margin-bottom:16px; }
+    .popup-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        line-height: 55px;
+        font-size: 28px;
+        margin: auto;
+        margin-bottom: 16px;
+    }
 
-.success{ border:4px solid #7edc88; color:#7edc88; }
+    .success {
+        border: 4px solid #7edc88;
+        color: #7edc88;
+    }
 
-.error{ border:4px solid #ef7d7d; color:#ef7d7d; }
+    .error {
+        border: 4px solid #ef7d7d;
+        color: #ef7d7d;
+    }
 
-.popup-title{ font-size:22px; font-weight:700; margin-bottom:8px; }
+    .popup-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
 
-.popup-text{ font-size:14px; color:#555; margin-bottom:20px; }
+    .popup-text {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 20px;
+    }
 
-.popup-btn{ background:#f0b400; border:none; color:white; font-size:14px; padding:9px 24px; border-radius:6px; cursor:pointer; }
+    .popup-btn {
+        background: #f0b400;
+        border: none;
+        color: white;
+        font-size: 14px;
+        padding: 9px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
 </style>
 
 @endsection
