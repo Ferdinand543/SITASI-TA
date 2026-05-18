@@ -3,445 +3,362 @@
 @section('content')
 
 <style>
-    body {
-        background: #f4f6f9;
+    :root {
+        --gold: #C9A227;
+        --gold-light: #FEF9EC;
+        --gold-border: #F5D97A;
+        --neutral: #1E293B;
+        --muted: #6B7280;
+        --border: #E5E7EB;
+        --white: #ffffff;
+        --bg: #F5F6FA;
+        --radius: 16px;
     }
 
-    .detail-wrapper {
-        max-width: 950px;
-        margin: auto;
+    body { background: var(--bg); }
+
+    .detail-wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 28px 20px 48px;
     }
 
+    /* ── BACK ── */
     .back-link {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: #fff;
-        color: #222;
-        text-decoration: none;
-        padding: 11px 18px;
-        border-radius: 14px;
-        font-size: 0.92rem;
+        text-decoration: none !important;
+        color: #B86A00 !important;
         font-weight: 600;
-        border: 1px solid #ececec;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-        transition: all .2s ease;
-        margin-bottom: 22px;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
     }
 
-    .back-link:hover {
-        transform: translateY(-2px);
-        background: #FFC107;
-        color: #000;
-    }
+    .back-link i { font-size: 1rem; line-height: 1; }
+    .back-link:hover { color: #C9A227 !important; }
 
-    .info-card {
-        background: #fff;
-        border-radius: 24px;
-        padding: 30px;
-        border: 1px solid #ececec;
-        box-shadow:
-            0 4px 14px rgba(0, 0, 0, 0.05),
-            0 1px 3px rgba(0, 0, 0, 0.04);
-        margin-bottom: 24px;
-    }
-
+    /* ── PAGE TITLE ── */
     .page-title {
-        font-size: 1.9rem;
+        font-size: 1.7rem;
         font-weight: 800;
-        color: #111;
-        margin-bottom: 6px;
-    }
-
-    .page-subtitle {
-        font-size: 0.93rem;
-        color: #777;
-    }
-
-    .info-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 18px;
-        margin-top: 24px;
-    }
-
-    .info-box {
-        border: 1px solid #ececec;
-        border-radius: 18px;
-        padding: 18px;
-        background: #fafafa;
-        display: flex;
-        align-items: flex-start;
-        gap: 14px;
-    }
-
-    .info-box .label {
-        font-size: 0.82rem;
-        color: #888;
+        color: var(--neutral);
         margin-bottom: 4px;
     }
 
-    .info-box .value {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #111;
+    .page-sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 28px;
     }
 
-    .value.menunggu {
-        color: #B8860B;
-    }
-
-    .value.disetujui {
-        color: #28a745;
-    }
-
-    .value.ditolak {
-        color: #dc3545;
-    }
-
-    .usulan-header {
-        background: #fff;
-        border-radius: 20px;
-        padding: 18px 22px;
-        border: 1px solid #ececec;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
-        margin-bottom: 20px;
-    }
-
-    .usulan-header .title {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #111;
-        margin-bottom: 2px;
-    }
-
-    .usulan-header .sub {
-        color: #888;
-        font-size: 0.84rem;
-    }
-
-    .judul-list-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-    }
-
-    .judul-card {
-        background: #fff;
-        border-radius: 22px;
-        padding: 24px;
-        border: 1px solid #ececec;
-        box-shadow:
-            0 4px 14px rgba(0, 0, 0, 0.05),
-            0 1px 3px rgba(0, 0, 0, 0.04);
-        position: relative;
-        transition: all .2s ease;
-    }
-
-    .judul-card:hover {
-        transform: translateY(-3px);
-        box-shadow:
-            0 10px 24px rgba(0, 0, 0, 0.08),
-            0 3px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .judul-label {
-        font-size: 0.8rem;
-        color: #999;
-        margin-bottom: 7px;
-    }
-
-    .judul-title {
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: #111;
-        line-height: 1.5;
-        margin-bottom: 20px;
-        padding-right: 170px;
-    }
-
-    .meta-row {
+    /* ── INFO GRID ── */
+    .info-grid {
         display: grid;
-        grid-template-columns: 170px 1fr;
-        gap: 10px 18px;
-        font-size: 0.9rem;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 28px;
     }
 
-    .meta-label {
-        color: #888;
+    .info-box {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        position: relative;
+        overflow: hidden;
     }
 
-    .meta-value {
-        color: #222;
+    .info-box::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--gold-border);
+        border-radius: 4px 0 0 4px;
+    }
+
+    .info-icon {
+        width: 36px;
+        height: 36px;
+        background: var(--gold-light);
+        border: 1.5px solid var(--gold-border);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .info-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 4px;
+    }
+
+    .info-value {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--neutral);
+    }
+
+    /* Status badge inline */
+    .status-inline {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 99px;
+        font-size: 12px;
         font-weight: 600;
     }
 
-    .badge-status-pill {
+    .s-menunggu { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
+    .s-disetujui { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+    .s-ditolak { background: #FFF1F2; color: #E11D48; border: 1px solid #FECDD3; }
+
+    /* ── JUDUL CARDS ── */
+    .judul-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px 24px 20px;
+        margin-bottom: 16px;
+        position: relative;
+        overflow: hidden;
+        transition: box-shadow .2s;
+    }
+
+    .judul-card:hover {
+        box-shadow: 0 6px 20px rgba(0,0,0,.07);
+    }
+
+    .judul-card::before {
+        content: '';
         position: absolute;
-        top: 22px;
-        right: 22px;
-        padding: 8px 16px;
-        border-radius: 30px;
-        font-size: 0.78rem;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--gold-border);
+        border-radius: 4px 0 0 4px;
+    }
+
+    .judul-card.card-disetujui::before { background: #86EFAC; }
+    .judul-card.card-ditolak::before   { background: #FCA5A5; }
+    .judul-card.card-menunggu::before  { background: var(--gold-border); }
+
+    .judul-card-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+    .judul-nomor {
+        font-size: 13.5px;
         font-weight: 700;
+        color: var(--neutral);
     }
 
-    .badge-menunggu {
-        background: #fff3cd;
-        color: #856404;
-        border: 1px solid #ffe082;
+    .judul-nama {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--gold);
+        margin-bottom: 18px;
+        line-height: 1.5;
     }
 
-    .badge-disetujui {
-        background: #d4edda;
-        color: #28a745;
-        border: 1px solid #b7dfbb;
+    .judul-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 24px;
     }
 
-    .badge-ditolak {
-        background: #f8d7da;
-        color: #dc3545;
-        border: 1px solid #f1aeb5;
+    .meta-item-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--muted);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
     }
 
-    @media(max-width:768px) {
-        .info-row {
-            grid-template-columns: 1fr;
-        }
+    .meta-item-value {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--neutral);
+    }
 
-        .judul-title {
-            padding-right: 0;
-        }
-
-        .badge-status-pill {
-            position: static;
-            display: inline-block;
-            margin-bottom: 14px;
-        }
-
-        .meta-row {
-            grid-template-columns: 1fr;
-        }
-
-        .info-card {
-            padding: 22px;
-        }
-
-        .page-title {
-            font-size: 1.5rem;
-        }
+    @media (max-width: 640px) {
+        .info-grid { grid-template-columns: 1fr; }
+        .judul-meta { grid-template-columns: 1fr; }
+        .page-title { font-size: 1.35rem; }
     }
 </style>
 
-<div class="container py-4">
-    <div class="detail-wrapper">
+<div class="detail-wrap">
 
-        {{-- TOP HEADER CARD --}}
-        <div class="info-card">
+    {{-- BACK --}}
+    <a href="{{ url()->previous() }}" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        Kembali
+    </a>
 
-            <a href="{{ url()->previous() }}" class="back-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+    {{-- TITLE --}}
+    <div class="page-title">Detail Pengajuan Judul</div>
+    <div class="page-sub">Informasi detail pengajuan judul tugas akhir yang telah diajukan.</div>
+
+    {{-- INFO GRID --}}
+    <div class="info-grid">
+
+        {{-- Tanggal --}}
+        <div class="info-box">
+            <div class="info-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="none"
+                    viewBox="0 0 24 24" stroke="#C9A227" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
                 </svg>
-                Kembali
-            </a>
-
+            </div>
             <div>
-                <h2 class="page-title">Detail Pengajuan Judul TA-1</h2>
-                <p class="page-subtitle mb-0">Informasi lengkap mengenai pengajuan judul tugas akhir mahasiswa.</p>
-            </div>
-
-            <div class="info-row">
-
-                {{-- TANGGAL --}}
-                <div class="info-box">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#555" viewBox="0 0 16 16" style="margin-top:2px;flex-shrink:0;">
-                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
-                    </svg>
-                    <div>
-                        <div class="label">Tanggal Pengajuan</div>
-                        <div class="value">
-                            {{ \Carbon\Carbon::parse($pengajuan->tanggal_pengajuan)->translatedFormat('d M Y') }}
-                        </div>
-                    </div>
+                <div class="info-label">Tanggal Pengajuan</div>
+                <div class="info-value">
+                    {{ \Carbon\Carbon::parse($pengajuan->tanggal_pengajuan)->translatedFormat('d M Y') }}
                 </div>
-
-                {{-- NIM --}}
-                <div class="info-box">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#555" viewBox="0 0 16 16" style="margin-top:2px;flex-shrink:0;">
-                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
-                    </svg>
-                    <div>
-                        <div class="label">NIM Mahasiswa</div>
-                        <div class="value">{{ $pengajuan->nim_nid }}</div>
-                    </div>
-                </div>
-
-                {{-- STATUS --}}
-                <div class="info-box">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#555" viewBox="0 0 16 16" style="margin-top:2px;flex-shrink:0;">
-                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
-                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
-                    </svg>
-                    <div>
-                        <div class="label">Status Pengajuan</div>
-                        @php $st = strtolower($pengajuan->status); @endphp
-                        @if($st === 'disetujui')
-                        <div class="value disetujui">Disetujui</div>
-                        @elseif($st === 'ditolak')
-                        <div class="value ditolak">Ditolak</div>
-                        @else
-                        <div class="value menunggu">Menunggu Verifikasi</div>
-                        @endif
-                    </div>
-                </div>
-
-                {{-- MITRA --}}
-                <div class="info-box">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#555" viewBox="0 0 16 16" style="margin-top:2px;flex-shrink:0;">
-                        <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                        <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z" />
-                        <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" />
-                    </svg>
-                    <div>
-                        <span class="meta-label">Nama Mahasiswa</span><br>
-                        <span class="meta-value">{{ session('user')->nama ?? '-' }}</span>
-                    </div>
-                </div>
-
             </div>
         </div>
 
-        {{-- HEADER USULAN --}}
-        <div class="usulan-header">
-            <div class="title">Usulan Judul</div>
-            <div class="sub">Berikut adalah 3 usulan judul yang diajukan</div>
+        {{-- NIM --}}
+        <div class="info-box">
+            <div class="info-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="none"
+                    viewBox="0 0 24 24" stroke="#C9A227" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="info-label">NIM</div>
+                <div class="info-value">{{ $pengajuan->nim_nid }}</div>
+            </div>
         </div>
 
-        {{-- LIST JUDUL DARI DATABASE --}}
-        @php
-
-        $judulList = [
-        [
-        'label' => 'Judul 1',
-        'judul' => $pengajuan->judul_1,
-        'topik' => $pengajuan->topik_1,
-        ],
-        [
-        'label' => 'Judul 2',
-        'judul' => $pengajuan->judul_2,
-        'topik' => $pengajuan->topik_2,
-        ],
-        [
-        'label' => 'Judul 3',
-        'judul' => $pengajuan->judul_3,
-        'topik' => $pengajuan->topik_3,
-        ],
-        ];
-
-        $statusUtama = strtolower($pengajuan->status);
-        $judulDisetujui = $pengajuan->judul_disetujui ?? null;
-
-        @endphp
-
-        <div class="judul-list-wrapper">
-
-            @foreach($judulList as $item)
-
-            @php
-
-            // DEFAULT
-            $statusCard = 'menunggu';
-
-            // JIKA SEMUA DITOLAK
-            if ($statusUtama === 'ditolak') {
-
-            $statusCard = 'ditolak';
-
-            }
-
-            // JIKA ADA YANG DISETUJUI
-            elseif ($statusUtama === 'disetujui') {
-
-            // HANYA 1 JUDUL YANG HIJAU
-            if ($item['judul'] === $judulDisetujui) {
-
-            $statusCard = 'disetujui';
-
-            } else {
-
-            // SISANYA MERAH
-            $statusCard = 'ditolak';
-            }
-            }
-
-            @endphp
-
-            <div class="judul-card">
-
-                {{-- STATUS BADGE --}}
-                @if($statusCard === 'disetujui')
-
-                <span class="badge-status-pill badge-disetujui">
-                    Disetujui
-                </span>
-
-                @elseif($statusCard === 'ditolak')
-
-                <span class="badge-status-pill badge-ditolak">
-                    Ditolak
-                </span>
-
+        {{-- Status --}}
+        <div class="info-box">
+            <div class="info-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="none"
+                    viewBox="0 0 24 24" stroke="#C9A227" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="info-label">Status Keseluruhan</div>
+                @php $st = strtolower($pengajuan->status); @endphp
+                @if($st === 'disetujui')
+                    <span class="status-inline s-disetujui">Disetujui</span>
+                @elseif($st === 'ditolak')
+                    <span class="status-inline s-ditolak">Ditolak</span>
                 @else
-
-                <span class="badge-status-pill badge-menunggu">
-                    Menunggu Verifikasi
-                </span>
-
+                    <span class="status-inline s-menunggu">Menunggu verifikasi</span>
                 @endif
-
-
-                {{-- LABEL --}}
-                <div class="judul-label">
-                    {{ $item['label'] }}
-                </div>
-
-
-                {{-- JUDUL --}}
-                <div class="judul-title">
-                    {{ $item['judul'] }}
-                </div>
-
-
-                {{-- DETAIL --}}
-                <div class="meta-row">
-
-                    <span class="meta-label">
-                        Topik Penelitian
-                    </span>
-
-                    <span class="meta-value">
-                        {{ $item['topik'] }}
-                    </span>
-
-
-                    <span class="meta-label">
-                        Mitra Penelitian
-                    </span>
-
-                    <span class="meta-value">
-                        {{ $pengajuan->mitra_penelitian ?? '-' }}
-                    </span>
-
-                </div>
-
             </div>
+        </div>
 
-            @endforeach
-
+        {{-- Mahasiswa --}}
+        <div class="info-box">
+            <div class="info-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="none"
+                    viewBox="0 0 24 24" stroke="#C9A227" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="info-label">Mahasiswa</div>
+                <div class="info-value">{{ session('user')->nama ?? session('user')->name ?? '-' }}</div>
+            </div>
         </div>
 
     </div>
+
+    {{-- JUDUL CARDS --}}
+    @php
+        $judulList = [
+            ['nomor' => 1, 'judul' => $pengajuan->judul_1, 'topik' => $pengajuan->topik_1, 'mitra' => $pengajuan->mitra_1 ?? null],
+            ['nomor' => 2, 'judul' => $pengajuan->judul_2, 'topik' => $pengajuan->topik_2, 'mitra' => $pengajuan->mitra_2 ?? null],
+            ['nomor' => 3, 'judul' => $pengajuan->judul_3, 'topik' => $pengajuan->topik_3, 'mitra' => $pengajuan->mitra_3 ?? null],
+        ];
+
+        $statusUtama    = strtolower($pengajuan->status);
+        $judulDisetujui = $pengajuan->judul_disetujui ?? null;
+    @endphp
+
+    @foreach($judulList as $item)
+        @php
+            if ($statusUtama === 'ditolak') {
+                $statusCard = 'ditolak';
+            } elseif ($statusUtama === 'disetujui') {
+                $statusCard = ($item['judul'] === $judulDisetujui) ? 'disetujui' : 'ditolak';
+            } else {
+                $statusCard = 'menunggu';
+            }
+        @endphp
+
+        <div class="judul-card card-{{ $statusCard }}">
+            <div class="judul-card-head">
+                <div class="judul-nomor">Usulan Judul {{ $item['nomor'] }}</div>
+                @if($statusCard === 'disetujui')
+                    <span class="status-inline s-disetujui">Disetujui</span>
+                @elseif($statusCard === 'ditolak')
+                    <span class="status-inline s-ditolak">Ditolak</span>
+                @else
+                    <span class="status-inline s-menunggu">Menunggu Verifikasi</span>
+                @endif
+            </div>
+
+            <div class="judul-nama">{{ $item['judul'] }}</div>
+
+            <div class="judul-meta">
+                <div>
+                    <div class="meta-item-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        Bidang Minat (Topic)
+                    </div>
+                    <div class="meta-item-value">{{ $item['topik'] ?? '-' }}</div>
+                </div>
+                <div>
+                    <div class="meta-item-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        Instansi/Mitra
+                    </div>
+                    <div class="meta-item-value">{{ $item['mitra'] ?? '-' }}</div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
 </div>
 
 @endsection

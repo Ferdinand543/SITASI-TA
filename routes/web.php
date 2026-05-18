@@ -9,6 +9,9 @@ use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ProposalMahasiswaController;
 use App\Http\Controllers\ReviewerController;
 use App\Http\Controllers\PanduanTAController;
+use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\BimbinganController;
+use App\Http\Controllers\DosenBimbinganController;
 use App\Http\Controllers\MahasiswaDosenController;
 
 // ROOT
@@ -47,7 +50,7 @@ Route::get('/mahasiswa', function () {
 
     $totalPengajuan = DB::table('pengajuan_judul')->where('nim_nid', $nim)->count();
     $totalProposal  = DB::table('proposal')->where('nim_nid', $nim)->count();
-    $totalBimbingan = 0;
+    $totalBimbingan = DB::table('bimbingan')->where('nim_nid', $nim)->count();
 
     return view('mahasiswa.index', compact(
         'totalPengajuan',
@@ -129,6 +132,39 @@ Route::get('/proposal/{id}',                           [ProposalController::clas
 Route::get('/reviewer/proposal',              [ReviewerController::class, 'index'])->name('reviewer.proposal');
 Route::post('/reviewer/proposal/{id}/review', [ReviewerController::class, 'simpanReview'])->name('reviewer.simpanReview');
 Route::get('/reviewer/proposal/{id}/detail',  [ReviewerController::class, 'detail'])->name('reviewer.proposal.detail');
+
+
+// =====================================================
+// JADWAL
+// =====================================================
+
+Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
+
+
+// =====================================================
+// RIWAYAT BIMBINGAN — DOSEN
+// =====================================================
+
+Route::get('/dosen/bimbingan', [DosenBimbinganController::class, 'index'])
+    ->name('dosen.bimbingan.index');
+
+Route::put('/dosen/bimbingan/proposal/{id}/status', [DosenBimbinganController::class, 'updateStatusProposal'])
+    ->name('dosen.bimbingan.proposal.status');
+
+Route::get('/dosen/bimbingan/mahasiswa/{nim}', [DosenBimbinganController::class, 'detailMahasiswa'])
+    ->name('dosen.bimbingan.detail');
+
+Route::get('/dosen/proposal/{id}/lihat', [DosenBimbinganController::class, 'lihatProposal'])
+    ->name('dosen.proposal.lihat');
+
+
+// =====================================================
+// BIMBINGAN — MAHASISWA
+// =====================================================
+
+Route::get('/bimbingan',           [BimbinganController::class, 'index'])->name('bimbingan.index');
+Route::post('/bimbingan/store',    [BimbinganController::class, 'store'])->name('bimbingan.store');
+Route::post('/bimbingan/proposal', [BimbinganController::class, 'storeProposal'])->name('bimbingan.proposal.store');
 
 
 // =====================================================

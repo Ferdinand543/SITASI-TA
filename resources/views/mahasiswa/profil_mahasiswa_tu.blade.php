@@ -44,9 +44,6 @@
                         <div class="avatar-placeholder" id="avatarPlaceholder">
                             <i class="fa fa-user"></i>
                         </div>
-                        <img src="" alt="Foto Profil"
-                             class="avatar-img" id="avatarImg"
-                             style="{{ empty($user->foto) ? 'display:none;' : '' }}">
                     @endif
 
                     {{-- Tombol kamera --}}

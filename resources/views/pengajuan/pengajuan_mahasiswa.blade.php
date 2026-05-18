@@ -3,473 +3,786 @@
 @section('content')
 
 <style>
-    #cardAjukan {
-        background-image: url("{{ asset('images/bg_ajukan.jpeg') }}");
+    /* ── ROOT ── */
+    :root {
+        --gold: #C9A227;
+        --gold-light: #FEF9EC;
+        --gold-border: #F5D97A;
+        --gold-btn: #FFE083;
+        --neutral: #1E293B;
+        --muted: #6B7280;
+        --border: #E5E7EB;
+        --white: #ffffff;
+        --bg: #F5F6FA;
+        --radius: 16px;
+    }
+
+    body { background: var(--bg); }
+
+    /* ── HERO ── */
+    .pj-hero {
+        background-image: url('{{ asset("images/bg_ajukan.jpeg") }}');
         background-size: cover;
         background-position: center;
-        min-height: 160px;
-        border-radius: 12px;
+        border-radius: 20px;
+        padding: 44px 48px;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
     }
 
-    #tabelPengajuan,
-    #tabelPengajuan th,
-    #tabelPengajuan td {
-        border-color: #000 !important;
+    .pj-hero-body { position: relative; z-index: 2; }
+
+    .pj-hero h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #735C00;
+        margin-bottom: 20px;
+        line-height: 1.2;
     }
 
-    .link-detail {
-        background: #F5E6B8;
-        color: #B86A00;
-        font-weight: 700;
-        font-size: 0.95rem;
-        text-decoration: none;
-        padding: 10px 18px;
-        border-radius: 14px;
+    .btn-ajukan {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        transition: all 0.2s ease;
+        background: var(--gold-btn);
+        color: var(--neutral);
         border: none;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-        min-width: 190px;
-        justify-content: center;
-    }
-
-    .link-detail:hover {
-        background: #efd89a;
-        color: #9c5800;
-        transform: translateY(-1px);
-    }
-
-    .sub-menu {
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        cursor: pointer;
         text-decoration: none;
-        color: #555;
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 14px;
-        transition: 0.2s;
+        transition: .2s;
     }
 
-    .sub-menu:hover {
-        background: #f7d27c;
-        color: #000;
+    .btn-ajukan:hover {
+        background: #d2bf75;
+        color: var(--neutral);
     }
 
-    .sub-menu.active {
-        background: #f7d27c;
-        color: #000;
-        font-weight: 500;
-    }
-
-    /* ── EMPTY STATE ── */
-    .empty-state-wrap {
-        padding: 60px 20px;
-        text-align: center;
-    }
-    .empty-state-inner {
-        display: inline-flex;
-        flex-direction: column;
+    /* ── FILTER ROW ── */
+    .filter-row {
+        display: flex;
         align-items: center;
         gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
     }
-    .empty-state-icon {
-        width: 64px;
-        height: 64px;
-        background: #f1f5f9;
+
+    .filter-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--neutral);
+        white-space: nowrap;
+    }
+
+    .search-wrap {
+        position: relative;
+        flex: 1;
+        max-width: 420px;
+    }
+
+    .search-wrap svg {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        pointer-events: none;
+    }
+
+    .pj-search {
+        width: 100%;
+        padding: 9px 12px 9px 36px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-size: 13px;
+        background: #fff;
+        outline: none;
+        transition: border .2s;
+        font-family: inherit;
+        color: var(--neutral);
+    }
+
+    .pj-search:focus { border-color: var(--gold); }
+
+    .pj-select {
+        padding: 9px 14px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-size: 13px;
+        background: #fff;
+        outline: none;
+        cursor: pointer;
+        font-family: inherit;
+        color: var(--neutral);
+        min-width: 150px;
+        transition: border .2s;
+    }
+
+    .pj-select:focus { border-color: var(--gold); }
+
+    .btn-reset-filter {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--muted);
+        cursor: pointer;
+        font-family: inherit;
+        transition: .2s;
+        white-space: nowrap;
+    }
+
+    .btn-reset-filter:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+    }
+
+    /* ── TABLE CARD ── */
+    .tabel-wrap {
+        background: #fff;
+        border-radius: var(--radius);
+        box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead th {
+        padding: 13px 18px;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--gold);
+        background: #fff;
+        border-bottom: 1.5px solid var(--border);
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    thead th:first-child,
+    thead th:nth-child(2) { color: var(--gold); }
+
+    tbody tr {
+        border-bottom: 1px solid #F3F4F6;
+        transition: background .15s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #FAFBFF; }
+
+    tbody td {
+        padding: 14px 18px;
+        font-size: 13px;
+        color: var(--neutral);
+        vertical-align: middle;
+    }
+
+    .usulan-title {
+        font-weight: 600;
+        color: var(--neutral);
+        font-size: 13.5px;
+    }
+
+    .usulan-more {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* Status badges */
+    .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 14px;
+        border-radius: 99px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-disetujui  { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+    .badge-menunggu   { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
+    .badge-ditolak    { background: #FFF1F2; color: #E11D48; border: 1px solid #FECDD3; }
+    .badge-default    { background: #F3F4F6; color: #6B7280; border: 1px solid #E5E7EB; }
+
+    /* Detail button */
+    .btn-detail {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 18px;
+        border: 1.5px solid var(--border);
+        border-radius: 99px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--neutral);
+        background: #fff;
+        text-decoration: none;
+        transition: .2s;
+        white-space: nowrap;
+    }
+
+    .btn-detail:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+        background: var(--gold-light);
+    }
+
+    .empty-td {
+        text-align: center;
+        padding: 52px;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    /* ── MODAL ── */
+    .pj-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.45);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .pj-modal-overlay.show { display: flex; }
+
+    .pj-modal {
+        background: #fff;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 520px;
+        max-height: 92vh;
+        overflow-y: auto;
+        box-shadow: 0 24px 64px rgba(0,0,0,.18);
+        animation: pjIn .25s ease;
+    }
+
+    @keyframes pjIn {
+        from { transform: scale(.95) translateY(12px); opacity: 0; }
+        to   { transform: scale(1)   translateY(0);    opacity: 1; }
+    }
+
+    .pj-modal-head {
+        padding: 28px 28px 0;
+        position: relative;
+    }
+
+    .pj-modal-head h2 {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--neutral);
+        margin-bottom: 4px;
+    }
+
+    .pj-modal-head p {
+        font-size: 13px;
+        color: var(--muted);
+        margin: 0 0 22px;
+    }
+
+    .btn-modal-close {
+        position: absolute;
+        top: 20px;
+        right: 22px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
+        border: none;
+        background: #F3F4F6;
+        font-size: 17px;
+        cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
+        color: var(--muted);
+        transition: .2s;
+        line-height: 1;
     }
-    .empty-state-icon i { font-size: 1.8rem; color: #94a3b8; }
-    .empty-state-title { font-size: 0.95rem; font-weight: 700; color: #475569; }
-    .empty-state-sub   { font-size: 0.82rem; color: #94a3b8; }
+
+    .btn-modal-close:hover { background: #E5E7EB; color: var(--neutral); }
+
+    .pj-modal-body { padding: 0 28px 20px; }
+
+    /* Info box inside modal */
+    .info-box {
+        background: #FFFBEB;
+        border: 1.5px solid #FDE68A;
+        border-radius: 12px;
+        padding: 16px 18px;
+        margin-bottom: 22px;
+    }
+
+    .info-box-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #92400E;
+        margin-bottom: 10px;
+    }
+
+    .info-box ul {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 12.5px;
+        color: #92400E;
+        line-height: 1.7;
+    }
+
+    /* Form fields */
+    .pj-form-group { margin-bottom: 14px; }
+
+    .pj-form-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        margin-bottom: 5px;
+    }
+
+    .pj-form-control {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--neutral);
+        background: #FAFAFA;
+        outline: none;
+        transition: border .2s;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+
+    .pj-form-control:focus  { border-color: var(--gold); background: #fff; }
+    .pj-form-control[readonly] { color: var(--muted); cursor: not-allowed; }
+    .pj-form-control.is-invalid { border-color: #E11D48; }
+
+    .form-row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .form-row-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+    }
+
+    .usulan-section-title {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--neutral);
+        margin-bottom: 10px;
+        margin-top: 18px;
+    }
+
+    .divider {
+        border: none;
+        border-top: 1px dashed var(--gold-border);
+        margin: 18px 0;
+    }
+
+    /* Modal footer */
+    .pj-modal-foot {
+        padding: 16px 28px 24px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn-kembali {
+        padding: 10px 24px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--muted);
+        cursor: pointer;
+        font-family: inherit;
+        transition: .2s;
+    }
+
+    .btn-kembali:hover { border-color: #D1D5DB; background: #F9FAFB; }
+
+    .btn-simpan-form {
+        padding: 10px 24px;
+        border: none;
+        border-radius: 10px;
+        background: var(--gold-btn);
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--neutral);
+        cursor: pointer;
+        font-family: inherit;
+        transition: .2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-simpan-form:hover { background: #d2bf75; }
+    .btn-simpan-form:disabled { opacity: .7; cursor: not-allowed; }
+
+    #noResult {
+        text-align: center;
+        padding: 40px;
+        color: var(--muted);
+        font-size: 14px;
+    }
 </style>
 
-@php
-$iconEye = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16" style="vertical-align:-2px;margin-right:4px;">
-    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-</svg>';
+<div style="padding: 4px 0;">
 
-$iconReset = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="vertical-align:-2px;margin-right:3px;">
-    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
-    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
-</svg>';
-
-$iconSearch = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
-</svg>';
-
-$iconCheck = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#FFC107" viewBox="0 0 16 16" style="flex-shrink:0; margin-top:1px;">
-    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" />
-</svg>';
-@endphp
-
-<div class="container mt-4">
-
-    {{-- Tampilkan pesan sukses --}}
-    @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    @endif
-
-    <div id="cardAjukan" class="card pengajuan-card mb-4 overflow-hidden border-0">
-        <div class="card-body d-flex flex-column align-items-center justify-content-center text-center py-4">
-            <h3 class="fw-bold mb-1">Pengajuan Judul TA-1</h3>
-            <p class="text-muted mb-3">Ajukan Judul Tugas Akhir Anda</p>
-            <button class="btn btn-warning px-4 fw-semibold" style="border-radius:8px;"
-                data-bs-toggle="modal" data-bs-target="#modalInfo">
+    {{-- HERO --}}
+    <div class="pj-hero">
+        <div class="pj-hero-body">
+            <h1>Pengajuan Judul Tugas Akhir</h1>
+            <button class="btn-ajukan" onclick="bukaModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+                </svg>
                 Ajukan Judul
             </button>
         </div>
     </div>
 
-    <div class="d-flex justify-content-end align-items-center gap-2 mb-3 flex-wrap">
-        <select id="filterStatus" class="form-select form-select-sm"
-            style="width:auto; min-width:155px; border-radius:8px;">
+    {{-- FILTER ROW --}}
+    <div class="filter-row">
+        <span class="filter-label">Cari</span>
+        <div class="search-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input type="text" class="pj-search" id="searchInput"
+                placeholder="Cari nama, NIM, atau judul...">
+        </div>
+
+        <span class="filter-label">Status</span>
+        <select class="pj-select" id="filterStatus">
             <option value="">Semua Status</option>
             <option value="disetujui">Disetujui</option>
-            <option value="menunggu verifikasi">Menunggu</option>
+            <option value="menunggu verifikasi">Menunggu Verifikasi</option>
             <option value="ditolak">Ditolak</option>
         </select>
 
-        <div class="input-group input-group-sm" style="width:auto;">
-            <input type="text" id="searchInput" class="form-control"
-                placeholder="Cari Judul" style="border-radius:8px 0 0 8px;">
-            <span class="input-group-text" style="border-radius:0 8px 8px 0; background:#fff;">
-                {!! $iconSearch !!}
-            </span>
-        </div>
-
-        <button class="btn btn-sm btn-outline-secondary d-flex align-items-center"
-            id="btnResetFilter" style="border-radius:8px; gap:4px;">
-            {!! $iconReset !!} Reset filter
+        <button class="btn-reset-filter" id="btnResetFilter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/>
+            </svg>
+            Reset Filter
         </button>
     </div>
 
     {{-- TABLE --}}
-    <div class="card p-3 border-0 shadow-sm" style="border-radius:12px;" id="tableCard">
-        <table class="table table-bordered align-middle text-center mb-0" id="tabelPengajuan">
+    <div class="tabel-wrap">
+        <table id="tabelPengajuan">
             <thead>
                 <tr>
-                    <th style="background:#FFC107;color:#000;border-color:#000;">No.</th>
-                    <th style="background:#FFC107;color:#000;border-color:#000;">Tanggal Pengajuan</th>
-                    <th style="background:#FFC107;color:#000;border-color:#000;">Usulan Judul</th>
-                    <th style="background:#FFC107;color:#000;border-color:#000;">Status</th>
-                    <th style="background:#FFC107;color:#000;border-color:#000;">Detail</th>
+                    <th>No.</th>
+                    <th>Tanggal Pengajuan</th>
+                    <th>Usulan Judul</th>
+                    <th>Status</th>
+                    <th>Detail</th>
                 </tr>
             </thead>
-            <tbody id="tabelBody">
-
+            <tbody>
                 @forelse($pengajuanList as $index => $item)
                 <tr data-status="{{ strtolower($item->status) }}"
-                    data-search="{{ strtolower($item->judul_1 . ' ' . $item->judul_2 . ' ' . $item->judul_3 . ' ' . $item->judul_disetujui . ' ' . $item->nim_nid) }}">
+                    data-search="{{ strtolower($item->judul_1 . ' ' . $item->judul_2 . ' ' . $item->judul_3 . ' ' . ($item->judul_disetujui ?? '') . ' ' . $item->nim_nid) }}">
                     <td>{{ $index + 1 }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d M Y') }}</td>
-                    <td class="text-start">
+                    <td>
                         @if(strtolower($item->status) === 'disetujui')
-                            {{ \Illuminate\Support\Str::limit($item->judul_disetujui, 35) }}
+                            <div class="usulan-title">{{ \Illuminate\Support\Str::limit($item->judul_disetujui, 50) }}</div>
                         @else
-                            {{ \Illuminate\Support\Str::limit($item->judul_1, 35) }}
-                            <br>
-                            <small class="text-muted">+ 2 lainnya</small>
+                            <div class="usulan-title">{{ \Illuminate\Support\Str::limit($item->judul_1, 50) }}</div>
+                            <div class="usulan-more">+2 lainnya</div>
                         @endif
                     </td>
                     <td>
                         @php $st = strtolower($item->status); @endphp
                         @if($st === 'disetujui')
-                        <span class="badge rounded-pill px-3 py-2" style="background:#d4edda;color:#28a745;border:1px solid #b7dfbb;">Disetujui</span>
+                            <span class="badge-status badge-disetujui">Disetujui</span>
                         @elseif(str_contains($st, 'menunggu'))
-                        <span class="badge rounded-pill px-3 py-2" style="background:#fff3cd;color:#856404;border:1px solid #ffd96a;">Menunggu</span>
+                            <span class="badge-status badge-menunggu">Menunggu Verifikasi</span>
                         @elseif($st === 'ditolak')
-                        <span class="badge rounded-pill px-3 py-2" style="background:#f8d7da;color:#dc3545;border:1px solid #f1aeb5;">Ditolak</span>
+                            <span class="badge-status badge-ditolak">Ditolak</span>
                         @else
-                        <span class="badge rounded-pill px-3 py-2 bg-secondary">{{ $item->status }}</span>
+                            <span class="badge-status badge-default">{{ $item->status }}</span>
                         @endif
                     </td>
                     <td>
-                        <a href="{{ route('pengajuan.detail', $item->id) }}" class="link-detail">
-                            {!! $iconEye !!} Lihat Pengajuan
+                        <a href="{{ route('pengajuan.detail', $item->id) }}" class="btn-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                            </svg>
+                            Lihat Pengajuan
                         </a>
                     </td>
                 </tr>
-
                 @empty
-                {{-- DB kosong total → inbox icon --}}
-                <tr id="rowKosongDefault">
-                    <td colspan="5">
-                        <div class="empty-state-wrap">
-                            <div class="empty-state-inner">
-                                <div class="empty-state-icon">
-                                    <i class="fa fa-inbox"></i>
-                                </div>
-                                <div class="empty-state-title">Belum ada data</div>
-                                <div class="empty-state-sub">Data akan muncul setelah proses dilakukan.</div>
-                            </div>
-                        </div>
+                <tr>
+                    <td colspan="5" class="empty-td">
+                        <div style="font-size:32px;margin-bottom:8px;">📋</div>
+                        Belum ada pengajuan judul
                     </td>
                 </tr>
                 @endforelse
-
             </tbody>
         </table>
-    </div>
-
-    {{-- Filter/search tidak nemu hasil → magnifier icon --}}
-    <div id="noSearchResult" style="display:none;">
-        <div class="card border-0 shadow-sm" style="border-radius:12px;">
-            <div class="empty-state-wrap">
-                <div class="empty-state-inner">
-                    <div class="empty-state-icon">
-                        <i class="fa fa-magnifying-glass"></i>
-                    </div>
-                    <div class="empty-state-title">Data tidak ditemukan</div>
-                    <div class="empty-state-sub">Coba gunakan kata kunci atau filter yang berbeda.</div>
-                </div>
-            </div>
+        <div id="noResult" style="display:none;">
+            <div style="font-size:28px;margin-bottom:8px;">🔍</div>
+            Tidak ada data yang sesuai filter.
         </div>
     </div>
 
 </div>
 
+{{-- ══════════════════════════════════════════
+     MODAL FORM PENGAJUAN
+══════════════════════════════════════════ --}}
+<div class="pj-modal-overlay" id="modalOverlay" onclick="tutupModalLuar(event)">
+    <div class="pj-modal">
+        <div class="pj-modal-head">
+            <button class="btn-modal-close" onclick="tutupModal()">×</button>
+            <h2>Form Pengajuan Judul TA</h2>
+            <p>Lengkapi data pengajuan judul tugas akhir mahasiswa</p>
+        </div>
 
-{{-- ── MODAL 1: Info Pengajuan ── --}}
-<div class="modal fade" id="modalInfo" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius:16px; border:0; padding: 28px 24px 20px;">
+        <div class="pj-modal-body">
 
-            <h2 class="fw-bold mb-1" style="font-size:1.6rem;">Pengajuan Judul TA</h2>
-            <p class="text-muted mb-4" style="font-size:0.93rem;">
-                Ajukan judul tugas akhir sesuai minat dan topik penelitianmu.
-            </p>
-
-            <div class="mb-4 p-3" style="border:1.5px solid #ddd; border-radius:12px;">
-                <p class="fw-bold mb-3 text-center" style="font-size:0.95rem;">Informasi Pengajuan</p>
-
-                <div class="d-flex gap-2 mb-3 align-items-center">
-                    {!! $iconCheck !!}
-                    <span style="font-size:0.88rem;">Mahasiswa wajib mengajukan 3 judul Tugas Akhir</span>
+            {{-- Info box --}}
+            <div class="info-box">
+                <div class="info-box-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
+                        viewBox="0 0 24 24" stroke="#D97706" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
+                    </svg>
+                    Informasi Penting
                 </div>
-                <div class="d-flex gap-2 mb-3">
-                    {!! $iconCheck !!}
-                    <span style="font-size:0.88rem;">Judul pertama merupakan judul yang paling kamu inginkan untuk diteliti</span>
-                </div>
-                <div class="d-flex gap-2 mb-3">
-                    {!! $iconCheck !!}
-                    <span style="font-size:0.88rem;">Topik setiap judul boleh sama maupun berbeda</span>
-                </div>
-                <div class="d-flex gap-2">
-                    {!! $iconCheck !!}
-                    <span style="font-size:0.88rem;">Pastikan judul yang diajukan jelas, spesifik, dan relevan dengan bidang penelitian</span>
-                </div>
+                <ul>
+                    <li>Mahasiswa wajib mengajukan tiga usulan judul Tugas Akhir sebagai alternatif pertimbangan dalam proses verifikasi.</li>
+                    <li>Usulan judul pertama merupakan pilihan utama atau topik yang paling diminati untuk diteliti.</li>
+                    <li>Setiap usulan judul dapat memiliki topik penelitian yang sama maupun berbeda sesuai minat dan bidang keilmuan mahasiswa.</li>
+                    <li>Pastikan seluruh data yang diajukan telah sesuai sebelum melanjutkan proses pengajuan judul Tugas Akhir.</li>
+                </ul>
             </div>
 
-            <button class="btn btn-warning w-100 fw-bold py-2 mb-2" style="border-radius:10px; font-size:1rem;"
-                id="btnLanjutKeForm">
-                Silahkan ajukan judul
+            <div id="errorAlertTA" style="display:none; background:#FFF1F2; border:1px solid #FECDD3; border-radius:8px; padding:10px 14px; font-size:13px; color:#E11D48; margin-bottom:14px;">
+                Semua field wajib diisi. Mitra Penelitian bersifat opsional.
+            </div>
+
+            <form id="formPengajuanTA" action="{{ route('pengajuan.store') }}" method="POST">
+                @csrf
+
+                {{-- NIM & Nama --}}
+                <div class="form-row-2" style="margin-bottom:14px;">
+                    <div class="pj-form-group" style="margin:0;">
+                        <label class="pj-form-label">Nomor Induk Mahasiswa (NIM)</label>
+                        <input type="text" name="nim_nid" id="ta_nim" class="pj-form-control"
+                            value="{{ session('user')->nim_nid ?? '' }}" readonly>
+                    </div>
+                    <div class="pj-form-group" style="margin:0;">
+                        <label class="pj-form-label">Nama Lengkap</label>
+                        <input type="text" name="nama" id="ta_nama" class="pj-form-control"
+                            value="{{ session('user')->nama ?? session('user')->name ?? '' }}" readonly>
+                    </div>
+                </div>
+
+                {{-- Tanggal --}}
+                <div class="pj-form-group">
+                    <label class="pj-form-label">Tanggal</label>
+                    <input type="date" name="tanggal_pengajuan" id="ta_tanggal" class="pj-form-control">
+                </div>
+
+                <hr class="divider">
+
+                {{-- Usulan Judul 1 --}}
+                <div class="usulan-section-title">Usulan Judul 1</div>
+                <div class="pj-form-group">
+                    <label class="pj-form-label">Judul Penelitian</label>
+                    <input type="text" name="judul_1" id="ta_judul1" class="pj-form-control"
+                        placeholder="Masukkan judul penelitian pertama...">
+                </div>
+                <div class="form-row-2" style="margin-bottom:14px;">
+                    <div>
+                        <label class="pj-form-label">Topik Penelitian</label>
+                        <input type="text" name="topik_1" id="ta_topik1" class="pj-form-control"
+                            placeholder="Contoh: Cyber Security">
+                    </div>
+                    <div>
+                        <label class="pj-form-label">Mitra Penelitian <span style="color:#9CA3AF;font-weight:400;">(Opsional)</span></label>
+                        <input type="text" name="mitra_1" class="pj-form-control"
+                            placeholder="Opsional">
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                {{-- Usulan Judul 2 --}}
+                <div class="usulan-section-title">Usulan Judul 2</div>
+                <div class="pj-form-group">
+                    <label class="pj-form-label">Judul Penelitian</label>
+                    <input type="text" name="judul_2" id="ta_judul2" class="pj-form-control"
+                        placeholder="Masukkan judul penelitian kedua...">
+                </div>
+                <div class="form-row-2" style="margin-bottom:14px;">
+                    <div>
+                        <label class="pj-form-label">Topik Penelitian</label>
+                        <input type="text" name="topik_2" id="ta_topik2" class="pj-form-control"
+                            placeholder="Contoh: Cyber Security">
+                    </div>
+                    <div>
+                        <label class="pj-form-label">Mitra Penelitian <span style="color:#9CA3AF;font-weight:400;">(Opsional)</span></label>
+                        <input type="text" name="mitra_2" class="pj-form-control"
+                            placeholder="Opsional">
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                {{-- Usulan Judul 3 --}}
+                <div class="usulan-section-title">Usulan Judul 3</div>
+                <div class="pj-form-group">
+                    <label class="pj-form-label">Judul Penelitian</label>
+                    <input type="text" name="judul_3" id="ta_judul3" class="pj-form-control"
+                        placeholder="Masukkan judul penelitian ketiga...">
+                </div>
+                <div class="form-row-2" style="margin-bottom:4px;">
+                    <div>
+                        <label class="pj-form-label">Topik Penelitian</label>
+                        <input type="text" name="topik_3" id="ta_topik3" class="pj-form-control"
+                            placeholder="Contoh: Mobile DevOps">
+                    </div>
+                    <div>
+                        <label class="pj-form-label">Mitra Penelitian <span style="color:#9CA3AF;font-weight:400;">(Opsional)</span></label>
+                        <input type="text" name="mitra_3" class="pj-form-control"
+                            placeholder="Opsional">
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="pj-modal-foot">
+            <button type="button" class="btn-kembali" onclick="tutupModal()">Kembali</button>
+            <button type="submit" form="formPengajuanTA" class="btn-simpan-form" id="btnAjukan">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+                </svg>
+                Ajukan Judul
             </button>
-
-            <div class="text-center">
-                <a href="#" class="text-muted" style="font-size:0.88rem; text-decoration:none;"
-                    data-bs-dismiss="modal">Kembali</a>
-            </div>
-
         </div>
     </div>
 </div>
-
-
-{{-- ── MODAL 2: Form Pengajuan (scrollable) ── --}}
-<div class="modal fade" id="modalFormTA" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content" style="border-radius:16px; border:0;">
-
-            <div class="modal-header border-0 px-4 pt-4 pb-2">
-                <div>
-                    <h2 class="fw-bold mb-1" style="font-size:1.5rem;">Form Pengajuan Judul TA</h2>
-                    <p class="text-muted mb-0" style="font-size:0.88rem;">Lengkapi data berikut untuk mengajukan judul TA</p>
-                </div>
-            </div>
-
-            <div class="modal-body px-4 pt-2 pb-2">
-                <div id="errorAlertTA" class="alert alert-danger d-none">
-                    Semua field wajib diisi, Mitra Penelitian Opsional!
-                </div>
-
-                <form id="formPengajuanTA" action="{{ route('pengajuan.store') }}" method="POST">
-                    @csrf
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:0.88rem;">NIM</label>
-                        <input type="text" name="nim_nid" id="ta_nim" class="form-control" style="border-radius:8px;">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:0.88rem;">Nama</label>
-                        <input type="text" name="nama" id="ta_nama" class="form-control" style="border-radius:8px;">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:0.88rem;">Tanggal Pengajuan</label>
-                        <input type="date" name="tanggal_pengajuan" id="ta_tanggal" class="form-control" style="border-radius:8px;">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:0.88rem;">Topik Penelitian 1</label>
-                        <input type="text" name="topik_1" id="ta_topik1" class="form-control" style="border-radius:8px;">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:0.88rem;">Judul 1</label>
-                        <input type="text" name="judul_1" id="ta_judul1" class="form-control" style="border-radius:8px;">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:0.88rem;">Topik Penelitian 2</label>
-                        <input type="text" name="topik_2" id="ta_topik2" class="form-control" style="border-radius:8px;">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:0.88rem;">Judul 2</label>
-                        <input type="text" name="judul_2" id="ta_judul2" class="form-control" style="border-radius:8px;">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:0.88rem;">Topik Penelitian 3</label>
-                        <input type="text" name="topik_3" id="ta_topik3" class="form-control" style="border-radius:8px;">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size:0.88rem;">Judul 3</label>
-                        <input type="text" name="judul_3" id="ta_judul3" class="form-control" style="border-radius:8px;">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold" style="font-size:0.88rem;">
-                            Mitra Penelitian <span class="text-muted fw-normal">(Opsional)</span>
-                        </label>
-                        <input type="text" name="mitra_penelitian" id="ta_mitra" class="form-control" style="border-radius:8px;">
-                    </div>
-                </form>
-            </div>
-
-            <div class="modal-footer border-0 px-4 pb-4 pt-2">
-                <div class="d-flex gap-2 w-100">
-                    <button type="button" class="btn btn-outline-secondary w-50 fw-semibold py-2"
-                        style="border-radius:10px;" id="btnKembaliKeInfo">
-                        Kembali
-                    </button>
-                    <button type="submit" form="formPengajuanTA" class="btn btn-warning w-50 fw-bold py-2"
-                        style="border-radius:10px;">
-                        Ajukan Judul
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    // ── Modal ──
+    function bukaModal() {
+        document.getElementById('modalOverlay').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
 
-        // ── Filter & Search ──
-        const filterStatus   = document.getElementById("filterStatus");
-        const searchInput    = document.getElementById("searchInput");
-        const btnReset       = document.getElementById("btnResetFilter");
-        const tableCard      = document.getElementById("tableCard");
-        const noSearchResult = document.getElementById("noSearchResult");
-        const tabelBody      = document.getElementById("tabelBody");
+    function tutupModal() {
+        document.getElementById('modalOverlay').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    function tutupModalLuar(e) {
+        if (e.target === document.getElementById('modalOverlay')) tutupModal();
+    }
+
+    // ── Filter & Search ──
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const searchInput  = document.getElementById('searchInput');
+        const filterStatus = document.getElementById('filterStatus');
+        const btnReset     = document.getElementById('btnResetFilter');
+        const noResult     = document.getElementById('noResult');
+        const rows         = document.querySelectorAll('#tabelPengajuan tbody tr');
 
         function applyFilter() {
-            const status  = filterStatus.value.toLowerCase();
-            const keyword = searchInput.value.toLowerCase().trim();
-            const rows    = tabelBody.querySelectorAll("tr[data-status]");
-            let visible   = 0;
+            const q      = searchInput.value.toLowerCase().trim();
+            const status = filterStatus.value.toLowerCase();
+            let visible  = 0;
 
             rows.forEach(row => {
-                const rowStatus = (row.dataset.status || "").toLowerCase();
-                const rowSearch = (row.dataset.search || "").toLowerCase();
-                const statusMatch = !status || rowStatus.includes(status);
-                const searchMatch = !keyword || rowSearch.includes(keyword);
-                const ok = statusMatch && searchMatch;
-                row.style.display = ok ? "" : "none";
+                if (!row.dataset.status) { row.style.display = (!q && !status) ? '' : 'none'; return; }
+                const matchSearch  = !q      || (row.dataset.search  || '').includes(q);
+                const matchStatus  = !status || (row.dataset.status  || '').includes(status);
+                const ok = matchSearch && matchStatus;
+                row.style.display = ok ? '' : 'none';
                 if (ok) visible++;
             });
 
-            // Sembunyikan row default kosong kalau ada data asli
-            const rowDefault = document.getElementById("rowKosongDefault");
-            if (rowDefault) rowDefault.style.display = "none";
-
-            if (visible === 0 && rows.length > 0) {
-                // Ada data tapi filter ga nemu → magnifier
-                tableCard.style.display      = "none";
-                noSearchResult.style.display = "block";
-            } else {
-                // Nemu data atau DB emang kosong → tabel normal
-                tableCard.style.display      = "";
-                noSearchResult.style.display = "none";
-            }
+            noResult.style.display = (visible === 0 && (q || status)) ? 'block' : 'none';
         }
 
-        filterStatus.addEventListener("change", applyFilter);
-        searchInput.addEventListener("input", applyFilter);
-        btnReset.addEventListener("click", function() {
-            filterStatus.value = "";
-            searchInput.value  = "";
+        searchInput.addEventListener('input',   applyFilter);
+        filterStatus.addEventListener('change', applyFilter);
+        btnReset.addEventListener('click', function () {
+            searchInput.value  = '';
+            filterStatus.value = '';
             applyFilter();
         });
 
-        // ── Modal Info → Modal Form ──
-        document.getElementById("btnLanjutKeForm").addEventListener("click", function() {
-            const modalInfo = bootstrap.Modal.getInstance(document.getElementById("modalInfo"));
-            modalInfo.hide();
-            document.getElementById("modalInfo").addEventListener("hidden.bs.modal", function handler() {
-                new bootstrap.Modal(document.getElementById("modalFormTA")).show();
-                this.removeEventListener("hidden.bs.modal", handler);
-            });
-        });
+        // ── Validasi form ──
+        const form      = document.getElementById('formPengajuanTA');
+        const alertBox  = document.getElementById('errorAlertTA');
+        const wajib     = ['ta_tanggal','ta_judul1','ta_topik1','ta_judul2','ta_topik2','ta_judul3','ta_topik3'];
 
-        // ── Tombol Kembali di Form → balik ke Modal Info ──
-        document.getElementById("btnKembaliKeInfo").addEventListener("click", function() {
-            const modalForm = bootstrap.Modal.getInstance(document.getElementById("modalFormTA"));
-            modalForm.hide();
-            document.getElementById("modalFormTA").addEventListener("hidden.bs.modal", function handler() {
-                new bootstrap.Modal(document.getElementById("modalInfo")).show();
-                this.removeEventListener("hidden.bs.modal", handler);
-            });
-        });
+        form.addEventListener('submit', function (e) {
+            let valid = true;
+            wajib.forEach(id => document.getElementById(id).classList.remove('is-invalid'));
 
-        // ── Validasi & Loading saat submit ──
-        const formTA   = document.getElementById("formPengajuanTA");
-        const alertBox = document.getElementById("errorAlertTA");
-        const wajibTA  = ["ta_nim", "ta_nama", "ta_tanggal", "ta_topik1", "ta_judul1",
-                          "ta_topik2", "ta_judul2", "ta_topik3", "ta_judul3"];
-
-        formTA.addEventListener("submit", function(e) {
-            let isValid = true;
-            wajibTA.forEach(id => document.getElementById(id).classList.remove("is-invalid"));
-
-            wajibTA.forEach(id => {
+            wajib.forEach(id => {
                 const el = document.getElementById(id);
-                if (!el.value.trim()) {
-                    el.classList.add("is-invalid");
-                    isValid = false;
-                }
+                if (!el.value.trim()) { el.classList.add('is-invalid'); valid = false; }
             });
 
-            if (!isValid) {
+            if (!valid) {
                 e.preventDefault();
-                alertBox.classList.remove("d-none");
+                alertBox.style.display = 'block';
+                document.getElementById('modalOverlay').scrollTop = 0;
                 return;
             }
 
-            alertBox.classList.add("d-none");
-
-            const btnSubmit = document.querySelector('button[form="formPengajuanTA"]');
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = `
-                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                Sedang memproses...
-            `;
+            alertBox.style.display = 'none';
+            const btn = document.getElementById('btnAjukan');
+            btn.disabled = true;
+            btn.innerHTML = `<span style="width:14px;height:14px;border:2px solid #00000044;border-top-color:#000;border-radius:50%;display:inline-block;animation:spin .6s linear infinite;"></span> Memproses...`;
         });
-
     });
 </script>
+
+<style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+</style>
 
 @endsection

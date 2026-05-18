@@ -36,23 +36,12 @@ class ProposalController extends Controller
     }
 
     // =====================================================
-    // INDEX
+    // QUERY BUILDER HELPER: join standar proposal + semua relasi dosen
+    // (dipakai berulang di detail & verifikasi)
     // =====================================================
-    public function index(Request $request)
+    private function baseProposalQuery()
     {
-        $user = session('user');
-        if (!$user) return redirect('/login')->with('error', 'Silakan login dulu!');
-
-        $role = strtolower(trim($user->role));
-
-        if ($role !== 'dosen' || !$this->isKoordinator()) {
-            if ($role === 'mahasiswa') {
-                return redirect('/mahasiswa')->with('error', 'Akses ditolak!');
-            }
-            return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
-        }
-
-        $query = DB::table('proposal')
+        return DB::table('proposal')
             ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
 
             ->leftJoin('usulan_pembimbing as up1', function ($join) {
@@ -77,8 +66,27 @@ class ProposalController extends Controller
                 $join->on('dp2.proposal_id', '=', 'proposal.id')
                      ->where('dp2.urutan', '=', 2);
             })
-            ->leftJoin('users as dd2', 'dp2.nim_nid_dosen', '=', 'dd2.nim_nid')
+            ->leftJoin('users as dd2', 'dp2.nim_nid_dosen', '=', 'dd2.nim_nid');
+    }
 
+    // =====================================================
+    // INDEX
+    // =====================================================
+    public function index(Request $request)
+    {
+        $user = session('user');
+        if (!$user) return redirect('/login')->with('error', 'Silakan login dulu!');
+
+        $role = strtolower(trim($user->role));
+
+        if ($role !== 'dosen' || !$this->isKoordinator()) {
+            if ($role === 'mahasiswa') {
+                return redirect('/mahasiswa')->with('error', 'Akses ditolak!');
+            }
+            return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
+        }
+
+        $query = $this->baseProposalQuery()
             ->select([
                 'proposal.id',
                 'proposal.nim_nid',
@@ -137,36 +145,9 @@ class ProposalController extends Controller
             return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
         }
 
-        $proposal = DB::table('proposal')
-            ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
-
-            ->leftJoin('usulan_pembimbing as up1', function ($join) {
-                $join->on('up1.proposal_id', '=', 'proposal.id')
-                     ->where('up1.urutan', '=', 1);
-            })
-            ->leftJoin('users as du1', 'up1.nim_nid_dosen', '=', 'du1.nim_nid')
-
-            ->leftJoin('usulan_pembimbing as up2', function ($join) {
-                $join->on('up2.proposal_id', '=', 'proposal.id')
-                     ->where('up2.urutan', '=', 2);
-            })
-            ->leftJoin('users as du2', 'up2.nim_nid_dosen', '=', 'du2.nim_nid')
-
-            ->leftJoin('dosen_pembimbing as dp1', function ($join) {
-                $join->on('dp1.proposal_id', '=', 'proposal.id')
-                     ->where('dp1.urutan', '=', 1);
-            })
-            ->leftJoin('users as dd1', 'dp1.nim_nid_dosen', '=', 'dd1.nim_nid')
-
-            ->leftJoin('dosen_pembimbing as dp2', function ($join) {
-                $join->on('dp2.proposal_id', '=', 'proposal.id')
-                     ->where('dp2.urutan', '=', 2);
-            })
-            ->leftJoin('users as dd2', 'dp2.nim_nid_dosen', '=', 'dd2.nim_nid')
-
+        $proposal = $this->baseProposalQuery()
             ->leftJoin('tinjauan_proposal as tp', 'tp.proposal_id', '=', 'proposal.id')
             ->leftJoin('users as reviewer', 'tp.nim_nid_reviewer', '=', 'reviewer.nim_nid')
-
             ->select([
                 'proposal.id',
                 'proposal.nim_nid',
@@ -206,7 +187,7 @@ class ProposalController extends Controller
             return redirect('/proposal')->with('error', 'Data tidak ditemukan!');
         }
 
-        // Hanya tampilkan dosen yang punya role pembimbing
+        // Hanya dosen berole pembimbing yang ditampilkan di dropdown
         $dosenList = $this->getDosenPembimbingList();
 
         return view('pengajuan.proposal_verifikasi_dosen', compact('proposal', 'dosenList'));
@@ -224,33 +205,7 @@ class ProposalController extends Controller
             return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
         }
 
-        $proposal = DB::table('proposal')
-            ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
-
-            ->leftJoin('usulan_pembimbing as up1', function ($join) {
-                $join->on('up1.proposal_id', '=', 'proposal.id')
-                     ->where('up1.urutan', '=', 1);
-            })
-            ->leftJoin('users as du1', 'up1.nim_nid_dosen', '=', 'du1.nim_nid')
-
-            ->leftJoin('usulan_pembimbing as up2', function ($join) {
-                $join->on('up2.proposal_id', '=', 'proposal.id')
-                     ->where('up2.urutan', '=', 2);
-            })
-            ->leftJoin('users as du2', 'up2.nim_nid_dosen', '=', 'du2.nim_nid')
-
-            ->leftJoin('dosen_pembimbing as dp1', function ($join) {
-                $join->on('dp1.proposal_id', '=', 'proposal.id')
-                     ->where('dp1.urutan', '=', 1);
-            })
-            ->leftJoin('users as dd1', 'dp1.nim_nid_dosen', '=', 'dd1.nim_nid')
-
-            ->leftJoin('dosen_pembimbing as dp2', function ($join) {
-                $join->on('dp2.proposal_id', '=', 'proposal.id')
-                     ->where('dp2.urutan', '=', 2);
-            })
-            ->leftJoin('users as dd2', 'dp2.nim_nid_dosen', '=', 'dd2.nim_nid')
-
+        $proposal = $this->baseProposalQuery()
             ->select([
                 'proposal.id',
                 'proposal.nim_nid',
@@ -285,7 +240,7 @@ class ProposalController extends Controller
             return redirect('/proposal')->with('error', 'Data tidak ditemukan!');
         }
 
-        // Hanya tampilkan dosen yang punya role pembimbing
+        // Hanya dosen berole pembimbing yang ditampilkan di dropdown
         $dosenList = $this->getDosenPembimbingList();
 
         return view('pengajuan.proposal_verifikasi_dosen', compact('proposal', 'dosenList'));
@@ -338,7 +293,7 @@ class ProposalController extends Controller
             ->where('proposal_id', $id)
             ->whereNotIn('nim_nid_dosen', [
                 $request->dosen_pembimbing_1,
-                $request->dosen_pembimbing_2
+                $request->dosen_pembimbing_2,
             ])
             ->update(['status' => 'ditolak']);
 

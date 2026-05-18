@@ -22,9 +22,7 @@
             --text-muted-custom: #6b7280;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Hanken Grotesk', sans-serif;
@@ -34,6 +32,9 @@
             padding: 0;
         }
 
+        /* ============================================================
+           SIDEBAR
+           ============================================================ */
         .sidebar {
             position: fixed;
             top: 0;
@@ -46,13 +47,10 @@
             z-index: 1000;
             overflow-y: auto;
             border-right: 1px solid #e5e7eb;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
             transition: transform 0.3s ease, width 0.3s ease;
         }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
+        .sidebar.collapsed { transform: translateX(-100%); }
 
         .sidebar-brand {
             padding: 18px 20px 14px 20px;
@@ -61,24 +59,19 @@
             align-items: center;
             justify-content: space-between;
         }
-
         .sidebar-brand .brand-title {
             font-size: 0.95rem;
             font-weight: 800;
             color: var(--primary-dark);
             letter-spacing: -0.3px;
         }
-
         .sidebar-brand .brand-subtitle {
             font-size: 0.65rem;
             color: #94a3b8;
             margin-top: 1px;
         }
 
-        .sidebar-nav {
-            padding: 16px 12px;
-            flex: 1;
-        }
+        .sidebar-nav { padding: 16px 12px; flex: 1; }
 
         .nav-label {
             font-size: 0.6rem;
@@ -109,7 +102,6 @@
             cursor: pointer;
             text-align: left;
         }
-
         .sidebar-link i {
             width: 16px;
             font-size: 0.85rem;
@@ -117,26 +109,18 @@
             flex-shrink: 0;
             color: #735C00;
         }
-
         .sidebar-link:hover {
             background: #FFE083;
             color: #735C00;
             text-decoration: none;
         }
-
-        .sidebar-link:hover i {
-            color: #735C00;
-        }
-
+        .sidebar-link:hover i { color: #735C00; }
         .sidebar-link.active {
             background: #FFE083;
             color: #735C00;
             font-weight: 700;
         }
-
-        .sidebar-link.active i {
-            color: #735C00;
-        }
+        .sidebar-link.active i { color: #735C00; }
 
         /* ── LOCKED MENU ITEM ── */
         .sidebar-link-locked {
@@ -149,23 +133,18 @@
             color: #dc2626 !important;
             opacity: 0.7;
         }
-        .sidebar-link-locked:hover i {
-            color: #dc2626 !important;
-        }
+        .sidebar-link-locked:hover i { color: #dc2626 !important; }
 
         .sidebar-footer {
             padding: 14px 12px;
             border-top: 1px solid #f1f5f9;
         }
+        .sidebar-footer .sidebar-link { color: #dc2626; }
+        .sidebar-footer .sidebar-link i { color: #dc2626; }
 
-        .sidebar-footer .sidebar-link {
-            color: #dc2626;
-        }
-
-        .sidebar-footer .sidebar-link i {
-            color: #dc2626;
-        }
-
+        /* ============================================================
+           TOPBAR
+           ============================================================ */
         .topbar {
             position: fixed;
             top: 0;
@@ -179,19 +158,12 @@
             justify-content: space-between;
             padding: 0 24px;
             z-index: 999;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
             transition: left 0.3s ease;
         }
+        body.sidebar-collapsed .topbar { left: 0; }
 
-        body.sidebar-collapsed .topbar {
-            left: 0;
-        }
-
-        .topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .topbar-left { display: flex; align-items: center; gap: 12px; }
 
         .btn-hamburger {
             width: 36px;
@@ -208,11 +180,7 @@
             transition: 0.2s;
             flex-shrink: 0;
         }
-
-        .btn-hamburger:hover {
-            background: #FFE083;
-            color: #735C00;
-        }
+        .btn-hamburger:hover { background: #FFE083; color: #735C00; }
 
         .topbar-logo-badge {
             display: flex;
@@ -222,131 +190,64 @@
             border-radius: 10px;
             padding: 5px 12px;
         }
-
         .topbar-logo-badge img {
             width: 25px;
             height: 25px;
             object-fit: contain;
             border-radius: 4px;
         }
-
         .topbar-logo-badge span {
             font-size: 0.78rem;
             font-weight: 700;
             color: var(--neutral);
         }
 
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .topbar-right { display: flex; align-items: center; gap: 10px; }
 
-        .topbar-user {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .topbar-user .user-info {
-            text-align: right;
-            line-height: 1.05;
-        }
-
-        .topbar-user .user-nim {
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: #111827;
-        }
-
-        .topbar-user .user-role {
-            font-size: 0.7rem;
-            color: #374151;
-            font-weight: 500;
-        }
-
+        .topbar-user { display: flex; align-items: center; gap: 8px; }
+        .topbar-user .user-info { text-align: right; line-height: 1.05; }
+        .topbar-user .user-nim { font-size: 0.82rem; font-weight: 700; color: #111827; }
+        .topbar-user .user-role { font-size: 0.7rem; color: #374151; font-weight: 500; }
         .topbar-user .user-avatar {
-            width: auto;
-            height: auto;
-            background: transparent;
-            border: none;
-            border-radius: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #111827;
-            font-size: 1.2rem;
-            padding: 0;
+            width: auto; height: auto;
+            background: transparent; border: none; border-radius: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: #111827; font-size: 1.2rem; padding: 0;
         }
 
+        /* ============================================================
+           MAIN WRAPPER
+           ============================================================ */
         .main-wrapper {
             margin-left: var(--sidebar-width);
             padding-top: var(--topbar-height);
             min-height: 100vh;
             transition: margin-left 0.3s ease;
         }
-
-        body.sidebar-collapsed .main-wrapper {
-            margin-left: 0;
-        }
-
-        .main-content {
-            padding: 24px;
-        }
+        body.sidebar-collapsed .main-wrapper { margin-left: 0; }
+        .main-content { padding: 24px; }
 
         .sidebar-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0,0,0,0.35);
             z-index: 999;
         }
+        .sidebar-overlay.show { display: block; }
 
-        .sidebar-overlay.show {
-            display: block;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.open {
-                transform: translateX(0) !important;
-            }
-
-            .topbar {
-                left: 0 !important;
-            }
-
-            .main-wrapper {
-                margin-left: 0 !important;
-            }
-
-            .main-content {
-                padding: 16px;
-            }
-        }
-
-        .badge-status {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-        }
-
+        /* ============================================================
+           MISC
+           ============================================================ */
+        .badge-status { padding: 6px 14px; border-radius: 20px; font-size: 13px; }
         .approved { background: #c8e6c9; color: #2e7d32; }
         .rejected { background: #ffcdd2; color: #c62828; }
         .pending  { background: #ffe082; color: #8d6e00; }
 
-        .modal-content {
-            border-radius: 15px;
-            padding: 10px;
-        }
-
+        .modal-content { border-radius: 15px; padding: 10px; }
         .modal-body label { font-size: 14px; font-weight: 500; }
         .modal-body input,
         .modal-body textarea { border-radius: 8px; }
-
         .is-invalid { border: 2px solid #dc3545 !important; }
 
         .form-header-box {
@@ -355,6 +256,17 @@
             border-radius: 10px;
             display: inline-block;
             min-width: 400px;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0) !important; }
+            .topbar { left: 0 !important; }
+            .main-wrapper { margin-left: 0 !important; }
+            .main-content { padding: 16px; }
         }
     </style>
 </head>
@@ -443,10 +355,11 @@
                 <a href="{{ route('proposal.mahasiswa') }}"
                     class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
                     <i class="fa-solid fa-file-arrow-up"></i>
-                    Upload Proposal
+                    Proposal
                 </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
+                <a href="{{ url('/bimbingan') }}"
+                    class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
                     <i class="fa-solid fa-comments"></i>
                     Riwayat Bimbingan
                 </a>
@@ -463,12 +376,16 @@
                     Nilai
                 </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                <a href="{{ route('jadwal.index') }}"
+                    class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
                     <i class="fa-solid fa-calendar-days"></i>
                     Jadwal
                 </a>
 
-                
+                <a href="#" class="sidebar-link {{ request()->is('dosen-pembimbing*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    Dosen Pembimbing
+                </a>
 
                 <a href="{{ url('/panduan-ta/mahasiswa') }}"
                     class="sidebar-link {{ request()->is('panduan-ta*') ? 'active' : '' }}">
@@ -510,7 +427,7 @@
                     </button>
                 @endif
 
-                {{-- ── Proposal (nama sama, URL beda tergantung role) ── --}}
+                {{-- ── Proposal ── --}}
                 @if($isKoor)
                     <a href="{{ route('proposal.index') }}"
                        class="sidebar-link {{ request()->is('proposal*') && !request()->is('reviewer*') ? 'active' : '' }}">
@@ -533,7 +450,8 @@
 
                 {{-- ── Riwayat Bimbingan ── --}}
                 @if($isPembimbing)
-                    <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
+                    <a href="{{ route('dosen.bimbingan.index') }}"
+                       class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
                         <i class="fa-solid fa-comments"></i>
                         Riwayat Bimbingan
                     </a>
@@ -545,8 +463,14 @@
                     </button>
                 @endif
 
+                <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-rectangle-list"></i>
+                    Daftar Seminar
+                </a>
+
                 <div class="nav-label">Akademik</div>
 
+                {{-- ── Nilai ── --}}
                 @if($isPembimbing || $isPenguji)
                     <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
                         <i class="fa-solid fa-star"></i>
@@ -560,7 +484,8 @@
                     </button>
                 @endif
 
-                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                <a href="{{ route('jadwal.index') }}"
+                    class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
                     <i class="fa-solid fa-calendar-days"></i>
                     Jadwal
                 </a>
@@ -690,20 +615,16 @@
     <header class="topbar">
 
         <div class="topbar-left">
-
             <button class="btn-hamburger" id="topbarToggle" onclick="toggleSidebar()" style="display:none;">
                 <i class="fa-solid fa-bars"></i>
             </button>
-
             <div class="topbar-logo-badge">
                 <img src="{{ asset('images/SI.jpeg') }}" alt="Logo SI">
                 <span>S1 – Sistem Informasi Unjani</span>
             </div>
-
         </div>
 
         <div class="topbar-right">
-
             @if(session('user'))
             <div class="topbar-user">
                 <div class="user-info">
@@ -720,7 +641,6 @@
                 Masuk
             </a>
             @endif
-
         </div>
 
     </header>
@@ -802,6 +722,7 @@
         });
     </script>
 
+    {{-- SweetAlert: success umum --}}
     @if(session('success'))
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -809,6 +730,36 @@
                 title: 'Berhasil!',
                 text: "{{ session('success') }}",
                 icon: 'success',
+                confirmButtonColor: '#FACC15',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+    @endif
+
+    {{-- SweetAlert: proposal success --}}
+    @if(session('proposal_success'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: "{{ session('proposal_success') }}",
+                icon: 'success',
+                confirmButtonColor: '#FACC15',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+    @endif
+
+    {{-- SweetAlert: proposal error --}}
+    @if(session('proposal_error'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Swal.fire({
+                title: 'Gagal!',
+                text: "{{ session('proposal_error') }}",
+                icon: 'error',
                 confirmButtonColor: '#FACC15',
                 confirmButtonText: 'OK'
             });

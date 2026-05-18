@@ -15,7 +15,7 @@
 
     $proposalUrl  = $isKoor ? route('proposal.index') : ($isReviewer ? route('reviewer.proposal') : '#');
     $pengajuanUrl = $isKoor ? route('pengajuan') : '#';
-    $bimbinganUrl = '#'; // belum ada route
+    $bimbinganUrl = $isPembimbing ? route('dosen.bimbingan.index') : '#';
     $penilaianUrl = '#'; // belum ada route
 
     $adaPengajuanBaru = $isKoor
@@ -23,10 +23,10 @@
         : false;
 
     $jumlahMenungguProposal = $isKoor
-    ? \Illuminate\Support\Facades\DB::table('proposal')->where('status', 'menunggu_verifikasi')->count()
-    : ($isReviewer
-        ? \Illuminate\Support\Facades\DB::table('proposal')->where('status', 'menunggu_review')->count()
-        : 0);
+        ? \Illuminate\Support\Facades\DB::table('proposal')->where('status', 'menunggu_verifikasi')->count()
+        : ($isReviewer
+            ? \Illuminate\Support\Facades\DB::table('proposal')->where('status', 'menunggu_review')->count()
+            : 0);
 @endphp
 
 <!-- HERO -->
@@ -161,7 +161,7 @@
 
         {{-- CARD JADWAL — semua dosen bisa akses --}}
         <div class="col-md-3">
-            <a href="#" class="text-decoration-none text-dark">
+            <a href="{{ route('jadwal.index') }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm h-100 border-0 p-3 menu-card">
                     <img src="{{ asset('images/jadwal.jpeg') }}" class="menu-img mb-3">
                     <h6 class="fw-bold">Jadwal</h6>
@@ -214,10 +214,20 @@
         display: flex;
         align-items: center;
     }
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
     .hero-content h2 {
         color: #735C00;
         font-size: 1.6rem;
         margin-bottom: 4px;
+    }
+    .hero-content p {
+        color: #735C00;
+        font-size: 0.88rem;
+        margin-top: 10px;
+        line-height: 1.7;
     }
     .menu-img {
         height: 140px;

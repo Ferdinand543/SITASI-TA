@@ -434,10 +434,7 @@
     box-shadow: 0 2px 8px rgba(17,28,45,0.06);
     transition: 0.2s;
 }
-.stats-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(17,28,45,0.1);
-}
+.stats-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(17,28,45,0.1); }
 .stats-icon-wrap {
     width: 48px; height: 48px;
     border-radius: 12px;

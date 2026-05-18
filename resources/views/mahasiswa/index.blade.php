@@ -759,7 +759,7 @@
             </a>
 
             {{-- CARD RIWAYAT BIMBINGAN --}}
-            <a href="#" class="menu-card-item">
+            <a href="{{ url('/bimbingan') }}" class="menu-card-item">
                 <div class="card-icon-wrap">
                     <img src="{{ asset('images/bimbingan.jpeg') }}" alt="Bimbingan">
                 </div>
@@ -770,7 +770,7 @@
             </a>
 
             {{-- CARD JADWAL --}}
-            <a href="#" class="menu-card-item">
+            <a href="{{ route('jadwal.index') }}" class="menu-card-item">
                 <div class="card-icon-wrap">
                     <img src="{{ asset('images/jadwal.jpeg') }}" alt="Jadwal">
                 </div>
@@ -803,50 +803,6 @@
             </a>
 
         </div>
-    </div>
-
-    {{-- STATUS TA --}}
-    <div class="status-section">
-        <h5>Status Tugas Akhir</h5>
-        @if(session('user'))
-        <table class="status-table table mb-0">
-            <tr>
-                <td>Status</td>
-                <td>:</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>Topik</td>
-                <td>:</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>Bimbingan</td>
-                <td>:</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>Seminar</td>
-                <td>:</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>Sidang</td>
-                <td>:</td>
-                <td>-</td>
-            </tr>
-        </table>
-        @else
-        <div class="text-center py-4">
-            <i class="fa-solid fa-lock mb-3" style="font-size:28px;color:#d1d5db;"></i>
-            <p style="color:#9ca3af;font-size:0.85rem;margin-bottom:16px;">
-                Silahkan login untuk melihat progres tugas akhir anda
-            </p>
-            <a href="/login" style="background:var(--primary);color:var(--neutral);border:none;border-radius:10px;padding:10px 28px;font-weight:700;font-size:0.85rem;text-decoration:none;">
-                Login Sekarang
-            </a>
-        </div>
-        @endif
     </div>
 
 </div>
