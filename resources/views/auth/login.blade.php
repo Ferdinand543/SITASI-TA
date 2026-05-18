@@ -78,6 +78,7 @@
             font-weight: 800;
             color: #111C2D;   /* dari mockup */
             margin-bottom: 4px;
+            text-align: center;
         }
 
         /* "Masuk untuk melanjutkan ke sistem." — #5D5F5F */
@@ -87,6 +88,7 @@
             color: #5D5F5F;   /* dari mockup */
             font-weight: 400;
             margin-bottom: 28px;
+            text-align: center;
         }
 
         /* ── FIELD ── */
