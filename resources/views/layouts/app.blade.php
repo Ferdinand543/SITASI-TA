@@ -22,7 +22,9 @@
             --text-muted-custom: #6b7280;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Hanken Grotesk', sans-serif;
@@ -47,10 +49,13 @@
             z-index: 1000;
             overflow-y: auto;
             border-right: 1px solid #e5e7eb;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
             transition: transform 0.3s ease, width 0.3s ease;
         }
-        .sidebar.collapsed { transform: translateX(-100%); }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
 
         .sidebar-brand {
             padding: 18px 20px 14px 20px;
@@ -59,19 +64,24 @@
             align-items: center;
             justify-content: space-between;
         }
+
         .sidebar-brand .brand-title {
             font-size: 0.95rem;
             font-weight: 800;
-            color: var(--primary-dark);
+            color: #735C00;
             letter-spacing: -0.3px;
         }
+
         .sidebar-brand .brand-subtitle {
             font-size: 0.65rem;
-            color: #94a3b8;
+            color: #4D4632;
             margin-top: 1px;
         }
 
-        .sidebar-nav { padding: 16px 12px; flex: 1; }
+        .sidebar-nav {
+            padding: 16px 12px;
+            flex: 1;
+        }
 
         .nav-label {
             font-size: 0.6rem;
@@ -102,6 +112,7 @@
             cursor: pointer;
             text-align: left;
         }
+
         .sidebar-link i {
             width: 16px;
             font-size: 0.85rem;
@@ -109,18 +120,26 @@
             flex-shrink: 0;
             color: #735C00;
         }
+
         .sidebar-link:hover {
             background: #FFE083;
-            color: #735C00;
+            color: #4D4632;
             text-decoration: none;
         }
-        .sidebar-link:hover i { color: #735C00; }
+
+        .sidebar-link:hover i {
+            color: #4D4632;
+        }
+
         .sidebar-link.active {
             background: #FFE083;
-            color: #735C00;
+            color: #4D4632;
             font-weight: 700;
         }
-        .sidebar-link.active i { color: #735C00; }
+
+        .sidebar-link.active i {
+            color: #4D4632;
+        }
 
         /* ── LOCKED MENU ITEM ── */
         .sidebar-link-locked {
@@ -128,19 +147,29 @@
             filter: grayscale(60%);
             cursor: pointer;
         }
+
         .sidebar-link-locked:hover {
             background: #fee2e2 !important;
             color: #dc2626 !important;
             opacity: 0.7;
         }
-        .sidebar-link-locked:hover i { color: #dc2626 !important; }
+
+        .sidebar-link-locked:hover i {
+            color: #dc2626 !important;
+        }
 
         .sidebar-footer {
             padding: 14px 12px;
             border-top: 1px solid #f1f5f9;
         }
-        .sidebar-footer .sidebar-link { color: #dc2626; }
-        .sidebar-footer .sidebar-link i { color: #dc2626; }
+
+        .sidebar-footer .sidebar-link {
+            color: #dc2626;
+        }
+
+        .sidebar-footer .sidebar-link i {
+            color: #dc2626;
+        }
 
         /* ============================================================
            TOPBAR
@@ -158,12 +187,19 @@
             justify-content: space-between;
             padding: 0 24px;
             z-index: 999;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
             transition: left 0.3s ease;
         }
-        body.sidebar-collapsed .topbar { left: 0; }
 
-        .topbar-left { display: flex; align-items: center; gap: 12px; }
+        body.sidebar-collapsed .topbar {
+            left: 0;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
         .btn-hamburger {
             width: 36px;
@@ -180,7 +216,11 @@
             transition: 0.2s;
             flex-shrink: 0;
         }
-        .btn-hamburger:hover { background: #FFE083; color: #735C00; }
+
+        .btn-hamburger:hover {
+            background: #FFE083;
+            color: #735C00;
+        }
 
         .topbar-logo-badge {
             display: flex;
@@ -190,29 +230,61 @@
             border-radius: 10px;
             padding: 5px 12px;
         }
+
         .topbar-logo-badge img {
             width: 25px;
             height: 25px;
             object-fit: contain;
             border-radius: 4px;
         }
+
         .topbar-logo-badge span {
             font-size: 0.78rem;
             font-weight: 700;
             color: var(--neutral);
         }
 
-        .topbar-right { display: flex; align-items: center; gap: 10px; }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-        .topbar-user { display: flex; align-items: center; gap: 8px; }
-        .topbar-user .user-info { text-align: right; line-height: 1.05; }
-        .topbar-user .user-nim { font-size: 0.82rem; font-weight: 700; color: #111827; }
-        .topbar-user .user-role { font-size: 0.7rem; color: #374151; font-weight: 500; }
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .topbar-user .user-info {
+            text-align: right;
+            line-height: 1.05;
+        }
+
+        .topbar-user .user-nim {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .topbar-user .user-role {
+            font-size: 0.7rem;
+            color: #374151;
+            font-weight: 500;
+        }
+
         .topbar-user .user-avatar {
-            width: auto; height: auto;
-            background: transparent; border: none; border-radius: 0;
-            display: flex; align-items: center; justify-content: center;
-            color: #111827; font-size: 1.2rem; padding: 0;
+            width: auto;
+            height: auto;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+            font-size: 1.2rem;
+            padding: 0;
         }
 
         /* ============================================================
@@ -224,31 +296,69 @@
             min-height: 100vh;
             transition: margin-left 0.3s ease;
         }
-        body.sidebar-collapsed .main-wrapper { margin-left: 0; }
-        .main-content { padding: 24px; }
+
+        body.sidebar-collapsed .main-wrapper {
+            margin-left: 0;
+        }
+
+        .main-content {
+            padding: 24px;
+        }
 
         .sidebar-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.35);
+            background: rgba(0, 0, 0, 0.35);
             z-index: 999;
         }
-        .sidebar-overlay.show { display: block; }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
 
         /* ============================================================
            MISC
            ============================================================ */
-        .badge-status { padding: 6px 14px; border-radius: 20px; font-size: 13px; }
-        .approved { background: #c8e6c9; color: #2e7d32; }
-        .rejected { background: #ffcdd2; color: #c62828; }
-        .pending  { background: #ffe082; color: #8d6e00; }
+        .badge-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
 
-        .modal-content { border-radius: 15px; padding: 10px; }
-        .modal-body label { font-size: 14px; font-weight: 500; }
+        .approved {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .rejected {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .pending {
+            background: #ffe082;
+            color: #8d6e00;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            padding: 10px;
+        }
+
+        .modal-body label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
         .modal-body input,
-        .modal-body textarea { border-radius: 8px; }
-        .is-invalid { border: 2px solid #dc3545 !important; }
+        .modal-body textarea {
+            border-radius: 8px;
+        }
+
+        .is-invalid {
+            border: 2px solid #dc3545 !important;
+        }
 
         .form-header-box {
             background: #f1f1f1;
@@ -262,11 +372,25 @@
            RESPONSIVE
            ============================================================ */
         @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0) !important; }
-            .topbar { left: 0 !important; }
-            .main-wrapper { margin-left: 0 !important; }
-            .main-content { padding: 16px; }
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0) !important;
+            }
+
+            .topbar {
+                left: 0 !important;
+            }
+
+            .main-wrapper {
+                margin-left: 0 !important;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
         }
     </style>
 </head>
@@ -316,24 +440,24 @@
         <nav class="sidebar-nav">
 
             @php
-                $role = session('user')->role ?? '';
+            $role = session('user')->role ?? '';
 
-                if ($role == 'mahasiswa') {
-                    $dashboardUrl = url('mahasiswa');
-                    $isActive = request()->is('mahasiswa');
-                } elseif ($role == 'dosen') {
-                    $dashboardUrl = url('dashboard/dosen');
-                    $isActive = request()->is('dashboard/dosen');
-                } elseif ($role == 'admin') {
-                    $dashboardUrl = url('admin');
-                    $isActive = request()->is('admin');
-                } elseif ($role == 'koordinator') {
-                    $dashboardUrl = url('koordinator');
-                    $isActive = request()->is('koordinator');
-                } else {
-                    $dashboardUrl = url('/');
-                    $isActive = false;
-                }
+            if ($role == 'mahasiswa') {
+            $dashboardUrl = url('mahasiswa');
+            $isActive = request()->is('mahasiswa');
+            } elseif ($role == 'dosen') {
+            $dashboardUrl = url('dashboard/dosen');
+            $isActive = request()->is('dashboard/dosen');
+            } elseif ($role == 'admin') {
+            $dashboardUrl = url('admin');
+            $isActive = request()->is('admin');
+            } elseif ($role == 'koordinator') {
+            $dashboardUrl = url('koordinator');
+            $isActive = request()->is('koordinator');
+            } else {
+            $dashboardUrl = url('/');
+            $isActive = false;
+            }
             @endphp
 
             <a href="{{ $dashboardUrl }}" class="sidebar-link {{ $isActive ? 'active' : '' }}">
@@ -344,269 +468,285 @@
             {{-- ══════════ MAHASISWA ══════════ --}}
             @if($role === 'mahasiswa')
 
-                <div class="nav-label">Tugas Akhir</div>
+            <div class="nav-label">Tugas Akhir</div>
 
-                <a href="{{ session('user') ? route('pengajuan.mahasiswa') : '/login' }}"
-                    class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-circle-plus"></i>
-                    Pengajuan Judul
-                </a>
+            <a href="{{ session('user') ? route('pengajuan.mahasiswa') : '/login' }}"
+                class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
+                <i class="fa-solid fa-file-circle-plus"></i>
+                Pengajuan Judul
+            </a>
 
-                <a href="{{ route('proposal.mahasiswa') }}"
-                    class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-arrow-up"></i>
-                    Proposal
-                </a>
+            <a href="{{ route('proposal.mahasiswa') }}"
+                class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
+                <i class="fa-solid fa-file-arrow-up"></i>
+                Proposal
+            </a>
 
-                <a href="{{ url('/bimbingan') }}"
-                    class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-comments"></i>
-                    Riwayat Bimbingan
-                </a>
+            <a href="{{ url('/bimbingan') }}"
+                class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
+                <i class="fa-solid fa-comments"></i>
+                Riwayat Bimbingan
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-rectangle-list"></i>
-                    Daftar Seminar
-                </a>
+            <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
+                <i class="fa-solid fa-rectangle-list"></i>
+                Daftar Seminar
+            </a>
 
-                <div class="nav-label">Akademik</div>
+            <div class="nav-label">Akademik</div>
 
-                <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-star"></i>
-                    Nilai
-                </a>
+            <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
+                <i class="fa-solid fa-star"></i>
+                Nilai
+            </a>
 
-                <a href="{{ route('jadwal.index') }}"
-                    class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    Jadwal
-                </a>
+            <a href="{{ route('jadwal.index') }}"
+                class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                <i class="fa-solid fa-calendar-days"></i>
+                Jadwal
+            </a>
 
-                <a href="{{ url('/panduan-ta/mahasiswa') }}"
-                    class="sidebar-link {{ request()->is('panduan-ta*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-book-open"></i>
-                    Panduan TA
-                </a>
+            <a href="{{ url('/panduan-ta/mahasiswa') }}"
+                class="sidebar-link {{ request()->is('panduan-ta*') ? 'active' : '' }}">
+                <i class="fa-solid fa-book-open"></i>
+                Panduan TA
+            </a>
 
             @endif
 
             {{-- ══════════ DOSEN ══════════ --}}
             @if($role === 'dosen')
 
-                @php
-                    $nimSesi      = session('user')->nim_nid;
-                    $rolesDb      = DB::table('dosen_roles')
-                                      ->where('nim_nid', $nimSesi)
-                                      ->pluck('role_dosen')
-                                      ->toArray();
-                    $isKoor       = in_array('koordinator', $rolesDb);
-                    $isReviewer   = in_array('reviewer',    $rolesDb);
-                    $isPembimbing = in_array('pembimbing',  $rolesDb);
-                    $isPenguji    = in_array('penguji',     $rolesDb);
-                @endphp
+            @php
+            $nimSesi = session('user')->nim_nid;
+            $rolesDb = DB::table('dosen_roles')
+            ->where('nim_nid', $nimSesi)
+            ->pluck('role_dosen')
+            ->toArray();
+            $isKoor = in_array('koordinator', $rolesDb);
+            $isReviewer = in_array('reviewer', $rolesDb);
+            $isPembimbing = in_array('pembimbing', $rolesDb);
+            $isPenguji = in_array('penguji', $rolesDb);
+            @endphp
 
-                <div class="nav-label">Tugas Akhir</div>
+            <div class="nav-label">Tugas Akhir</div>
 
-                {{-- ── Pengajuan Judul ── --}}
-                @if($isKoor)
-                    <a href="{{ route('pengajuan') }}"
-                       class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-file-circle-plus"></i>
-                        Pengajuan Judul
-                    </a>
-                @else
-                    <button class="sidebar-link sidebar-link-locked"
-                            onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator.')">
-                        <i class="fa-solid fa-file-circle-plus"></i>
-                        Pengajuan Judul
-                    </button>
-                @endif
+            {{-- ── Pengajuan Judul ── --}}
+            @if($isKoor)
+            <a href="{{ route('pengajuan') }}"
+                class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
+                <i class="fa-solid fa-file-circle-plus"></i>
+                Pengajuan Judul
+            </a>
+            @else
+            <button class="sidebar-link sidebar-link-locked"
+                onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator.')">
+                <i class="fa-solid fa-file-circle-plus"></i>
+                Pengajuan Judul
+            </button>
+            @endif
 
-                {{-- ── Proposal ── --}}
-                @if($isKoor)
-                    <a href="{{ route('proposal.index') }}"
-                       class="sidebar-link {{ request()->is('proposal*') && !request()->is('reviewer*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-file-arrow-up"></i>
-                        Proposal
-                    </a>
-                @elseif($isReviewer)
-                    <a href="{{ route('reviewer.proposal') }}"
-                       class="sidebar-link {{ request()->is('reviewer*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-file-arrow-up"></i>
-                        Proposal
-                    </a>
-                @else
-                    <button class="sidebar-link sidebar-link-locked"
-                            onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator atau Reviewer.')">
-                        <i class="fa-solid fa-file-arrow-up"></i>
-                        Proposal
-                    </button>
-                @endif
+            {{-- ── Proposal ── --}}
+            @if($isKoor)
+            <a href="{{ route('proposal.index') }}"
+                class="sidebar-link {{ request()->is('proposal*') && !request()->is('reviewer*') ? 'active' : '' }}">
+                <i class="fa-solid fa-file-arrow-up"></i>
+                Proposal
+            </a>
+            @elseif($isReviewer)
+            <a href="{{ route('reviewer.proposal') }}"
+                class="sidebar-link {{ request()->is('reviewer*') ? 'active' : '' }}">
+                <i class="fa-solid fa-file-arrow-up"></i>
+                Proposal
+            </a>
+            @else
+            <button class="sidebar-link sidebar-link-locked"
+                onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator atau Reviewer.')">
+                <i class="fa-solid fa-file-arrow-up"></i>
+                Proposal
+            </button>
+            @endif
 
-                {{-- ── Riwayat Bimbingan ── --}}
-                @if($isPembimbing)
-                    <a href="{{ route('dosen.bimbingan.index') }}"
-                       class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-comments"></i>
-                        Riwayat Bimbingan
-                    </a>
-                @else
-                    <button class="sidebar-link sidebar-link-locked"
-                            onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Pembimbing.')">
-                        <i class="fa-solid fa-comments"></i>
-                        Riwayat Bimbingan
-                    </button>
-                @endif
+            {{-- ── Riwayat Bimbingan ── --}}
+            @if($isPembimbing)
+            <a href="{{ route('dosen.bimbingan.index') }}"
+                class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
+                <i class="fa-solid fa-comments"></i>
+                Riwayat Bimbingan
+            </a>
+            @else
+            <button class="sidebar-link sidebar-link-locked"
+                onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Pembimbing.')">
+                <i class="fa-solid fa-comments"></i>
+                Riwayat Bimbingan
+            </button>
+            @endif
 
-                <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-rectangle-list"></i>
-                    Daftar Seminar
-                </a>
+            <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
+                <i class="fa-solid fa-rectangle-list"></i>
+                Daftar Seminar
+            </a>
 
-                <div class="nav-label">Akademik</div>
+            <div class="nav-label">Akademik</div>
 
-                {{-- ── Nilai ── --}}
-                @if($isPembimbing || $isPenguji)
-                    <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-star"></i>
-                        Nilai
-                    </a>
-                @else
-                    <button class="sidebar-link sidebar-link-locked"
-                            onclick="showSidebarDenied('Akses Ditolak. Halaman ini khusus untuk Dosen Pembimbing dan Dosen Penguji.')">
-                        <i class="fa-solid fa-star"></i>
-                        Nilai
-                    </button>
-                @endif
+            {{-- ── Nilai ── --}}
+            @if($isPembimbing || $isPenguji)
+            <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
+                <i class="fa-solid fa-star"></i>
+                Nilai
+            </a>
+            @else
+            <button class="sidebar-link sidebar-link-locked"
+                onclick="showSidebarDenied('Akses Ditolak. Halaman ini khusus untuk Dosen Pembimbing dan Dosen Penguji.')">
+                <i class="fa-solid fa-star"></i>
+                Nilai
+            </button>
+            @endif
 
-                <a href="{{ route('jadwal.index') }}"
-                    class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    Jadwal
-                </a>
+            <a href="{{ route('jadwal.index') }}"
+                class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                <i class="fa-solid fa-calendar-days"></i>
+                Jadwal
+            </a>
 
-                {{-- ── Mahasiswa (khusus Koordinator) ── --}}
-                @if($isKoor)
-                    <a href="{{ route('dosen.mahasiswa') }}"
-                       class="sidebar-link {{ request()->is('dosen/mahasiswa*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-users"></i>
-                        Mahasiswa
-                    </a>
-                @else
-                    <button class="sidebar-link sidebar-link-locked"
-                            onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator.')">
-                        <i class="fa-solid fa-users"></i>
-                        Mahasiswa
-                    </button>
-                @endif
+            {{-- ── Mahasiswa (khusus Koordinator) ── --}}
+            @if($isKoor)
+            <a href="{{ route('dosen.mahasiswa') }}"
+                class="sidebar-link {{ request()->is('dosen/mahasiswa*') ? 'active' : '' }}">
+                <i class="fa-solid fa-users"></i>
+                Mahasiswa
+            </a>
+            @else
+            <button class="sidebar-link sidebar-link-locked"
+                onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator.')">
+                <i class="fa-solid fa-users"></i>
+                Mahasiswa
+            </button>
+            @endif
 
-                <a href="{{ url('/panduan-ta/dosen') }}"
-                    class="sidebar-link {{ request()->is('panduan-ta*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-book-open"></i>
-                    Panduan TA
-                </a>
+            <a href="{{ url('/panduan-ta/dosen') }}"
+                class="sidebar-link {{ request()->is('panduan-ta*') ? 'active' : '' }}">
+                <i class="fa-solid fa-book-open"></i>
+                Panduan TA
+            </a>
 
             @endif
 
             {{-- ══════════ KOORDINATOR ══════════ --}}
             @if($role === 'koordinator')
 
-                <div class="nav-label">Tugas Akhir</div>
+            <div class="nav-label">Tugas Akhir</div>
 
-                <a href="#" class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-circle-plus"></i>
-                    Pengajuan Judul
-                </a>
+            <a href="#" class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
+                <i class="fa-solid fa-file-circle-plus"></i>
+                Pengajuan Judul
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-arrow-up"></i>
-                    Upload Proposal
-                </a>
+            <a href="#" class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
+                <i class="fa-solid fa-file-arrow-up"></i>
+                Upload Proposal
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-comments"></i>
-                    Riwayat Bimbingan
-                </a>
+            <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
+                <i class="fa-solid fa-comments"></i>
+                Riwayat Bimbingan
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-rectangle-list"></i>
-                    Daftar Seminar
-                </a>
+            <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
+                <i class="fa-solid fa-rectangle-list"></i>
+                Daftar Seminar
+            </a>
 
-                <div class="nav-label">Akademik</div>
+            <div class="nav-label">Akademik</div>
 
-                <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-star"></i>
-                    Nilai
-                </a>
+            <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
+                <i class="fa-solid fa-star"></i>
+                Nilai
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    Jadwal
-                </a>
+            <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+                <i class="fa-solid fa-calendar-days"></i>
+                Jadwal
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('dosen-pembimbing*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    Dosen Pembimbing
-                </a>
+            <a href="#" class="sidebar-link {{ request()->is('dosen-pembimbing*') ? 'active' : '' }}">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                Dosen Pembimbing
+            </a>
 
             @endif
 
             {{-- ══════════ ADMIN ══════════ --}}
             @if($role === 'admin')
 
-                <div class="nav-label">Tugas Akhir</div>
+            <a href="/admin/judul"
+                class="sidebar-link">
+                <i class="fa-regular fa-file-lines"></i>
+                Pengajuan Judul
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-circle-plus"></i>
-                    Pengajuan Judul
-                </a>
+            <a href="{{ route('admin.proposal.index') }}"
+                class="sidebar-link {{ request()->routeIs('admin.proposal.*') ? 'active' : '' }}">
+                <i class="fa-regular fa-folder-open"></i>
+                Proposal Mahasiswa
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('proposal*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-arrow-up"></i>
-                    Upload Proposal
-                </a>
+            <a href="/admin/bimbingan"
+                class="sidebar-link {{ request()->is('admin/bimbingan') || request()->is('admin/bimbingan/*') ? 'active' : '' }}">
+                <i class="fa-regular fa-clock"></i>
+                Riwayat Bimbingan
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-comments"></i>
-                    Riwayat Bimbingan
-                </a>
+            <a href="#"
+                class="sidebar-link">
+                <i class="fa-solid fa-user-graduate"></i>
+                Administrasi Seminar
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-rectangle-list"></i>
-                    Daftar Seminar
-                </a>
+            <div class="nav-label">MASTER DATA</div>
 
-                <div class="nav-label">Akademik</div>
+            <a href="/admin/mahasiswa"
+                class="sidebar-link">
+                <i class="fa-solid fa-database"></i>
+                Data Mahasiswa
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-star"></i>
-                    Nilai
-                </a>
+            <a href="/admin/dosen"
+                class="sidebar-link">
+                <i class="fa-solid fa-users"></i>
+                Data Dosen
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    Jadwal
-                </a>
+            <a href="{{ route('jadwal-akademik.index') }}"
+                class="sidebar-link">
+                <i class="fa-regular fa-calendar-days"></i>
+                Jadwal
+            </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('dosen-pembimbing*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    Dosen Pembimbing
-                </a>
+            <a href="/panduan-ta/admin"
+                class="sidebar-link">
+                <i class="fa-regular fa-bookmark"></i>
+                Panduan TA
+            </a>
 
+            <a href="#"
+                class="sidebar-link">
+                <i class="fa-solid fa-user-tie"></i>
+                Dosen Pembimbing
+            </a>
             @endif
 
             {{-- ══ PROFIL — otomatis sesuai role ══ --}}
             @php
-                $profilUrl = match($role) {
-                    'mahasiswa' => route('mahasiswa.profil'),
-                    'admin'     => route('admin.profil'),
-                    'dosen'     => route('dosen.profil'),
-                    default     => '#',
-                };
+            $profilUrl = match($role) {
+            'mahasiswa' => route('mahasiswa.profil'),
+            'admin' => route('admin.profil_admin_tu'),
+            'dosen' => route('dosen.profil'),
+            default => '#',
+            };
             @endphp
             <a href="{{ $profilUrl }}"
-               class="sidebar-link {{ request()->is('mahasiswa/profil*') || request()->is('admin/profil*') || request()->is('dosen/profil*') ? 'active' : '' }}">
+                class="sidebar-link {{ request()->is('mahasiswa/profil*') || request()->is('admin/profil*') || request()->is('dosen/profil*') ? 'active' : '' }}">
                 <i class="fa-solid fa-circle-user"></i>
                 Profil
             </a>
@@ -736,7 +876,7 @@
                         allowOutsideClick: false,
                         allowEscapeKey: false,
                     });
-                    setTimeout(function () {
+                    setTimeout(function() {
                         window.location.href = '/logout';
                     }, 800);
                 }

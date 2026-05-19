@@ -2,14 +2,12 @@
 
 @section('content')
 
-
 <!-- HERO -->
 <div class="hero-section mb-4">
-    <div class="hero-content" style="width:100%; text-align:center;">
-        <h2 class="fw-bold" style="text-align:center;">Pengajuan Judul TA-1</h2>
-        <p class="text-muted" style="text-align:center;">
-            Tinjau dan verifikasi pengajuan judul TA-1 mahasiswa
-        </p>
+    <div class="hero-content">
+        <h2 class="fw-bold">Pengajuan Judul Tugas Akhir
+            Mahasiswa</h2>
+        <p>Monitoring dan verifikasi pengajuan judul tugas akhir mahasiswa.</p>
     </div>
 </div>
 
@@ -58,48 +56,45 @@
                 @forelse($pengajuans as $index => $item)
                 <tr
                     data-status="{{ strtolower($item->status) }}"
-                    data-search="{{ strtolower($item->nim_nid . ' ' . $item->nama . ' ' . $item->judul_1 . ' ' . $item->judul_2 . ' ' . $item->judul_3) }}"
-                >
+                    data-search="{{ strtolower($item->nim_nid . ' ' . $item->nama . ' ' . $item->judul_1 . ' ' . $item->judul_2 . ' ' . $item->judul_3) }}">
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $item->nim_nid }}</td>
                     <td>{{ $item->nama }}</td>
                     <td class="text-start">
                         @if(strtolower($item->status) === 'disetujui')
-                            {{ $item->judul_disetujui }}
+                        {{ $item->judul_disetujui }}
                         @else
-                            {{ $item->judul_1 }}
-                            <div class="text-muted" style="font-size:0.78rem; margin-top:2px;">+2 lainnya</div>
+                        {{ $item->judul_1 }}
+                        <div class="text-muted" style="font-size:0.78rem; margin-top:2px;">+2 lainnya</div>
                         @endif
                     </td>
                     <td>{{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d F Y') }}</td>
                     <td>
                         @if(strtolower($item->status) === 'disetujui')
-                            <span class="badge-status badge-disetujui">Disetujui</span>
+                        <span class="badge-status badge-disetujui">Disetujui</span>
                         @elseif(strtolower($item->status) === 'menunggu verifikasi')
-                            <span class="badge-status badge-menunggu">Menunggu</span>
+                        <span class="badge-status badge-menunggu">Menunggu</span>
                         @else
-                            <span class="badge-status badge-ditolak">Ditolak</span>
+                        <span class="badge-status badge-ditolak">Ditolak</span>
                         @endif
                     </td>
                     <td>
                         @if(strtolower($item->status) === 'menunggu verifikasi')
-                            <button
-                                class="btn btn-sm btn-warning text-white fw-bold btn-verifikasi"
-                                data-id="{{ $item->id }}"
-                                data-nim="{{ $item->nim_nid }}"
-                                data-nama="{{ $item->nama }}"
-                            >
-                                Verifikasi
-                            </button>
+                        <button
+                            class="btn btn-sm fw-bold btn-verifikasi"
+                            data-id="{{ $item->id }}"
+                            data-nim="{{ $item->nim_nid }}"
+                            data-nama="{{ $item->nama }}">
+                            Verifikasi
+                        </button>
                         @else
-                            <a href="{{ route('pengajuan.verifikasi', $item->id) }}" class="btn btn-sm btn-outline-secondary">
-                                Detail
-                            </a>
+                        <a href="{{ route('pengajuan.verifikasi', $item->id) }}" class="btn btn-sm btn-outline-secondary">
+                            Detail
+                        </a>
                         @endif
                     </td>
                 </tr>
                 @empty
-                {{-- Belum ada data dari DB sama sekali → inbox icon --}}
                 <tr id="rowKosongDefault">
                     <td colspan="7" style="padding: 60px 20px; text-align: center; border: none;">
                         <div style="display:inline-flex; flex-direction:column; align-items:center; gap:12px;">
@@ -117,7 +112,7 @@
         </table>
     </div>
 
-    {{-- Filter/search tidak nemu hasil → magnifier icon --}}
+    {{-- Filter/search tidak nemu hasil --}}
     <div id="pesanKosong" class="d-none">
         <table class="table table-bordered text-center">
             <tbody>
@@ -181,7 +176,8 @@
 
                 </div>
 
-                <a href="#" id="btnTinjau" class="btn btn-warning w-100 fw-bold mb-2">
+                <a href="#" id="btnTinjau" class="btn w-100 fw-bold mb-2"
+                    style="background:#FEF9C3; color:#6C5700; border:1px solid #FFE083;">
                     Tinjau dan verifikasi judul mahasiswa
                 </a>
                 <button class="btn btn-link text-muted" data-bs-dismiss="modal">Kembali</button>
@@ -192,109 +188,151 @@
 </div>
 
 <style>
-.hero-section {
-    min-height: 220px !important;
-    padding: 40px 60px !important;
-    justify-content: center !important;
-    background-image: url('/images/bg_ajukan.jpeg') !important;
-    background-size: cover !important;
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
-}
-.hero-section .hero-content {
-    width: 100% !important;
-    text-align: center !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-}
-.hero-section .hero-content h2,
-.hero-section .hero-content p {
-    text-align: center !important;
-    width: 100%;
-}
-.badge-status {
-    display: inline-block;
-    padding: 5px 14px;
-    border-radius: 20px;
-    font-size: 0.82rem;
-    font-weight: 600;
-}
-.badge-disetujui { background: #d4edda; color: #28a745; }
-.badge-menunggu  { background: #fff3cd; color: #856404; }
-.badge-ditolak   { background: #f8d7da; color: #dc3545; }
-#tabelPengajuan th { vertical-align: middle; white-space: nowrap; }
-#tabelPengajuan td { vertical-align: middle; }
-.sub-menu {
-    text-decoration: none;
-    color: #555;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    transition: 0.2s;
-}
-.sub-menu:hover {
-    background: #f7d27c;
-    color: #000;
-}
-.sub-menu.active {
-    background: #f7d27c;
-    color: #000;
-    font-weight: 500;
-}
+    .hero-section {
+        min-height: 220px !important;
+        padding: 40px 60px !important;
+        display: flex !important;
+        align-items: center !important;
+        background-image: url('/images/1.jpeg') !important;
+        background-size: contain !important;
+        background-position: right center !important;
+        background-color: #FFFBEA !important;
+        background-repeat: no-repeat !important;
+        border-radius: 20px !important;
+    }
+
+    .hero-section .hero-content {
+        max-width: 50%;
+    }
+
+    .hero-section .hero-content h2 {
+        color: #735C00;
+        font-size: 1.8rem;
+        margin-bottom: 6px;
+    }
+
+    .hero-section .hero-content p {
+        color: #92400E;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .badge-status {
+        display: inline-block;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 600;
+    }
+
+    .badge-disetujui {
+        background: #d4edda;
+        color: #28a745;
+    }
+
+    .badge-menunggu {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-ditolak {
+        background: #f8d7da;
+        color: #dc3545;
+    }
+
+    #tabelPengajuan th {
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    #tabelPengajuan td {
+        vertical-align: middle;
+    }
+
+    .sub-menu {
+        text-decoration: none;
+        color: #555;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .sub-menu:hover {
+        background: #f7d27c;
+        color: #000;
+    }
+
+    .sub-menu.active {
+        background: #f7d27c;
+        color: #000;
+        font-weight: 500;
+    }
+
+    .btn-verifikasi {
+        background: #FEF9C3;
+        color: #6C5700;
+        border: 1px solid #e9d94f;
+    }
+
+    .btn-verifikasi:hover {
+        background: #fde68a;
+        color: #6C5700;
+        border-color: #e9d94f;
+    }
 </style>
 
 <script>
-const filterStatusEl = document.getElementById('filterStatus');
-const searchInputEl  = document.getElementById('searchInput');
+    const filterStatusEl = document.getElementById('filterStatus');
+    const searchInputEl = document.getElementById('searchInput');
 
-filterStatusEl.addEventListener('change', filterTabel);
-searchInputEl.addEventListener('input', filterTabel);
+    filterStatusEl.addEventListener('change', filterTabel);
+    searchInputEl.addEventListener('input', filterTabel);
 
-document.getElementById('resetFilter').addEventListener('click', function() {
-    filterStatusEl.value = '';
-    searchInputEl.value  = '';
-    filterTabel();
-});
+    document.getElementById('resetFilter').addEventListener('click', function() {
+        filterStatusEl.value = '';
+        searchInputEl.value = '';
+        filterTabel();
+    });
 
-function filterTabel() {
-    const status = filterStatusEl.value.toLowerCase();
-    const search = searchInputEl.value.toLowerCase();
-    const rows   = document.querySelectorAll('#tabelBody tr[data-status]');
-    let adaData  = false;
+    function filterTabel() {
+        const status = filterStatusEl.value.toLowerCase();
+        const search = searchInputEl.value.toLowerCase();
+        const rows = document.querySelectorAll('#tabelBody tr[data-status]');
+        let adaData = false;
 
-    rows.forEach(row => {
-        const cocokStatus = status === '' || row.getAttribute('data-status').toLowerCase() === status;
-        const cocokSearch = search === '' || row.getAttribute('data-search').toLowerCase().includes(search);
+        rows.forEach(row => {
+            const cocokStatus = status === '' || row.getAttribute('data-status').toLowerCase() === status;
+            const cocokSearch = search === '' || row.getAttribute('data-search').toLowerCase().includes(search);
 
-        if (cocokStatus && cocokSearch) {
-            row.style.display = '';
-            adaData = true;
+            if (cocokStatus && cocokSearch) {
+                row.style.display = '';
+                adaData = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const tabel = document.getElementById('tabelPengajuan');
+        const pesanEl = document.getElementById('pesanKosong');
+
+        if (!adaData && rows.length > 0) {
+            tabel.classList.add('d-none');
+            pesanEl.classList.remove('d-none');
         } else {
-            row.style.display = 'none';
+            tabel.classList.remove('d-none');
+            pesanEl.classList.add('d-none');
         }
-    });
-
-    const tabel   = document.getElementById('tabelPengajuan');
-    const pesanEl = document.getElementById('pesanKosong');
-
-    if (!adaData && rows.length > 0) {
-        tabel.classList.add('d-none');
-        pesanEl.classList.remove('d-none');
-    } else {
-        tabel.classList.remove('d-none');
-        pesanEl.classList.add('d-none');
     }
-}
 
-document.querySelectorAll('.btn-verifikasi').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const id = this.getAttribute('data-id');
-        document.getElementById('btnTinjau').href = '/pengajuan/verifikasi/' + id;
-        const modal = new bootstrap.Modal(document.getElementById('modalInfoVerifikasi'));
-        modal.show();
+    document.querySelectorAll('.btn-verifikasi').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            document.getElementById('btnTinjau').href = '/pengajuan/verifikasi/' + id;
+            const modal = new bootstrap.Modal(document.getElementById('modalInfoVerifikasi'));
+            modal.show();
+        });
     });
-});
 </script>
 
 @endsection

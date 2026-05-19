@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Hanken Grotesk', sans-serif; background: url('{{ asset('bg_resetpass.jpeg') }}') right top / cover no-repeat fixed; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+body { font-family: 'Hanken Grotesk', sans-serif; background: url("{{ asset('bg_resetpass.jpeg') }}") right top / cover no-repeat fixed; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
 
 .brand-wrap { text-align: center; margin-bottom: 24px; }
 .brand-wrap img { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }

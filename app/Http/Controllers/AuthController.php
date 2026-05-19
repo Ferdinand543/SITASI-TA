@@ -212,7 +212,7 @@ class AuthController extends Controller
 
         $user = DB::table('users')->where('nim_nid', $user->nim_nid)->first();
 
-        return view('dosen.profil_admin_tu', compact('user'));
+        return view('admin.profil_admin_tu', compact('user'));
     }
 
     // =====================================================

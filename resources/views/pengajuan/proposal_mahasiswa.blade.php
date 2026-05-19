@@ -272,7 +272,6 @@
 
     .btn-detail:hover { background: #FFF8E1; border-color: #FFC107; color: #7a4f00; }
 
-    /* ── EMPTY STATE ── */
     .empty-state-wrap {
         padding: 60px 20px;
         text-align: center;
@@ -296,7 +295,6 @@
     .empty-state-title { font-size: 0.95rem; font-weight: 700; color: #475569; }
     .empty-state-sub   { font-size: 0.82rem; color: #94a3b8; }
 
-    /* MODAL */
     .modal-content { border-radius: 20px; border: 0; }
     .modal-label {
         font-size: 0.82rem;
@@ -384,6 +382,11 @@
         border-color: #FACC15;
         background: #fffde7;
     }
+
+    .drop-zone.is-invalid {
+        border-color: #dc3545 !important;
+        background: #fff5f5;
+    }
 </style>
 
 <div class="container page-wrapper">
@@ -421,7 +424,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="#735C00" viewBox="0 0 16 16">
             <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
         </svg>
-        <span>Unggah proposal tugas akhir setelah judul disetujui. Pastikan dokumen sudah sesuai dengan pedoman penulisan akademik.</span>
+        <span>Unggah proposal tugas akhir setelah judul disetujui. Pastikan dokumen sudah sesuai dengan pedoman penulisan akademik. <strong>Maksimal ukuran file: 10MB.</strong></span>
     </div>
 
     {{-- FILTER BAR --}}
@@ -554,7 +557,6 @@
                     </td>
                 </tr>
                 @empty
-                {{-- DB kosong total → inbox icon --}}
                 <tr id="rowKosongDefault">
                     <td colspan="8">
                         <div class="empty-state-wrap">
@@ -573,7 +575,6 @@
         </table>
     </div>
 
-    {{-- Filter/search tidak nemu hasil → magnifier icon --}}
     <div id="noSearchResult" style="display:none;">
         <div class="table-card">
             <div class="empty-state-wrap">
@@ -606,13 +607,12 @@
             <div class="modal-body" style="padding:20px 28px;">
 
                 <div id="errorAlert" class="alert alert-danger d-none mb-3" style="font-size:0.84rem;">
-                    Semua field wajib diisi!
+                    <span id="errorMsg">Semua field wajib diisi!</span>
                 </div>
 
                 <form id="formUpload" action="{{ route('proposal.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
-                    {{-- NIM | NAMA | TANGGAL --}}
                     <div class="row g-3 mb-3">
                         <div class="col-md-4">
                             <label class="modal-label">NIM</label>
@@ -633,7 +633,6 @@
                         </div>
                     </div>
 
-                    {{-- JUDUL --}}
                     <div class="mb-3">
                         <label class="modal-label">Judul Proposal</label>
                         <textarea name="judul" id="up_judul" class="modal-input"
@@ -641,9 +640,8 @@
                                   style="resize:none;"></textarea>
                     </div>
 
-                    {{-- DRAG DROP --}}
                     <div class="mb-3">
-                        <label class="modal-label">Proposal</label>
+                        <label class="modal-label">Proposal <span style="color:#94a3b8; font-weight:400;">(PDF, maks. 10MB)</span></label>
                         <div id="dropZone" class="drop-zone" onclick="document.getElementById('up_file').click()">
                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#d4a01e" viewBox="0 0 16 16" style="margin-bottom:10px;">
                                 <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
@@ -652,12 +650,11 @@
                             <div id="dropText" style="font-size:0.85rem; font-weight:600; color:#64748b;">
                                 Klik atau seret file proposal untuk diunggah
                             </div>
-                            <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Maksimal ukuran file: 10MB</div>
+                            <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Format PDF · Maksimal 10MB</div>
                         </div>
                         <input type="file" name="file_proposal" id="up_file" accept=".pdf" style="display:none;">
                     </div>
 
-                    {{-- PEMBIMBING --}}
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="modal-label">Usulan Pembimbing 1</label>
@@ -696,6 +693,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
+    // ── FILTER & SEARCH ──
     const filterStatus   = document.getElementById("filterStatus");
     const searchInput    = document.getElementById("searchInput");
     const btnReset       = document.getElementById("btnReset");
@@ -717,16 +715,13 @@ document.addEventListener("DOMContentLoaded", function () {
             if (ok) visible++;
         });
 
-        // Sembunyikan row default kosong kalau ada data asli
         const rowDefault = document.getElementById("rowKosongDefault");
         if (rowDefault) rowDefault.style.display = "none";
 
         if (visible === 0 && rows.length > 0) {
-            // Ada data tapi filter ga nemu → magnifier
             tableCard.style.display      = "none";
             noSearchResult.style.display = "block";
         } else {
-            // Nemu data atau DB emang kosong → tabel normal
             tableCard.style.display      = "";
             noSearchResult.style.display = "none";
         }
@@ -743,12 +738,23 @@ document.addEventListener("DOMContentLoaded", function () {
     // ── VALIDASI FORM ──
     const formUpload = document.getElementById("formUpload");
     const alertBox   = document.getElementById("errorAlert");
+    const errorMsg   = document.getElementById("errorMsg");
+    const dropZone   = document.getElementById("dropZone");
+    const fileInput  = document.getElementById("up_file");
+    const dropText   = document.getElementById("dropText");
     const wajib      = ["up_judul", "up_tanggal", "up_dosbing1", "up_dosbing2"];
+    const MAX_SIZE   = 10 * 1024 * 1024; // 10MB dalam bytes
 
     formUpload.addEventListener("submit", function (e) {
         let isValid = true;
-        wajib.forEach(id => document.getElementById(id).classList.remove("is-invalid"));
 
+        // Reset semua state error
+        wajib.forEach(id => document.getElementById(id).classList.remove("is-invalid"));
+        dropZone.classList.remove("is-invalid");
+        dropText.style.color = "#64748b";
+        alertBox.classList.add("d-none");
+
+        // Cek field wajib
         wajib.forEach(id => {
             const el = document.getElementById(id);
             if (!el.value.trim()) {
@@ -757,10 +763,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        const file = document.getElementById("up_file");
-        if (!file.files.length) {
-            document.getElementById("dropZone").style.borderColor = "#dc3545";
+        // Cek file
+        if (!fileInput.files.length) {
+            dropZone.classList.add("is-invalid");
             isValid = false;
+            errorMsg.textContent = "File proposal wajib diunggah!";
+        } else if (fileInput.files[0].size > MAX_SIZE) {
+            // File terlalu besar
+            dropZone.classList.add("is-invalid");
+            dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
+            dropText.style.color = "#dc3545";
+            isValid = false;
+            errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB. Kompres file PDF kamu terlebih dahulu.";
         }
 
         if (!isValid) {
@@ -773,14 +787,29 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ── DRAG & DROP ──
-    const dropZone  = document.getElementById("dropZone");
-    const fileInput = document.getElementById("up_file");
-    const dropText  = document.getElementById("dropText");
-
     fileInput.addEventListener("change", function () {
         if (this.files.length) {
-            dropText.textContent = this.files[0].name;
-            dropZone.classList.add("has-file");
+            const file = this.files[0];
+
+            // Reset error state dulu
+            dropZone.classList.remove("is-invalid");
+            alertBox.classList.add("d-none");
+
+            if (file.size > MAX_SIZE) {
+                // Langsung kasih tau kalau kebesaran
+                dropZone.classList.add("is-invalid");
+                dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
+                dropText.style.color = "#dc3545";
+                errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB. Kompres file PDF kamu terlebih dahulu.";
+                alertBox.classList.remove("d-none");
+                // Reset input biar ga kekirim
+                this.value = "";
+            } else {
+                dropText.textContent = "✅ " + file.name;
+                dropText.style.color = "#15803d";
+                dropZone.classList.add("has-file");
+                dropZone.classList.remove("is-invalid");
+            }
         }
     });
 
@@ -797,13 +826,37 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         this.classList.remove("dragover");
         const file = e.dataTransfer.files[0];
-        if (file && file.type === "application/pdf") {
-            fileInput.files = e.dataTransfer.files;
-            dropText.textContent = file.name;
-            this.classList.add("has-file");
-        } else {
+
+        if (!file || file.type !== "application/pdf") {
             alert("Hanya file PDF yang diperbolehkan!");
+            return;
         }
+
+        if (file.size > MAX_SIZE) {
+            dropZone.classList.add("is-invalid");
+            dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
+            dropText.style.color = "#dc3545";
+            errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB. Kompres file PDF kamu terlebih dahulu.";
+            alertBox.classList.remove("d-none");
+            return;
+        }
+
+        fileInput.files = e.dataTransfer.files;
+        dropText.textContent = "✅ " + file.name;
+        dropText.style.color = "#15803d";
+        dropZone.classList.add("has-file");
+        dropZone.classList.remove("is-invalid");
+        alertBox.classList.add("d-none");
+    });
+
+    // Reset modal saat ditutup
+    document.getElementById("modalUpload").addEventListener("hidden.bs.modal", function () {
+        formUpload.reset();
+        wajib.forEach(id => document.getElementById(id).classList.remove("is-invalid"));
+        dropZone.classList.remove("is-invalid", "has-file", "dragover");
+        dropText.textContent = "Klik atau seret file proposal untuk diunggah";
+        dropText.style.color = "#64748b";
+        alertBox.classList.add("d-none");
     });
 });
 </script>

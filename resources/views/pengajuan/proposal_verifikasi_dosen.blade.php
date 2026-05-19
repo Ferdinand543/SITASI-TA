@@ -3,7 +3,9 @@
 @section('content')
 
 <style>
-    body { background: #f4f6f9; }
+    body {
+        background: #f4f6f9;
+    }
 
     .wrapper {
         max-width: 900px;
@@ -11,8 +13,18 @@
         padding: 32px 20px;
     }
 
-    .page-title { font-size: 1.8rem; font-weight: 800; color: #111; margin-bottom: 4px; }
-    .page-sub   { font-size: 0.9rem; color: #888; margin-bottom: 24px; }
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #111;
+        margin-bottom: 4px;
+    }
+
+    .page-sub {
+        font-size: 0.9rem;
+        color: #888;
+        margin-bottom: 24px;
+    }
 
     .info-grid {
         display: grid;
@@ -37,13 +49,36 @@
         gap: 6px;
     }
 
-    .info-box .val { font-size: 1rem; font-weight: 700; color: #111; }
-    .val.selesai  { color: #28a745; }
-    .val.menunggu { color: #b8860b; }
-    .val.ditolak  { color: #dc3545; }
+    .info-box .val {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #111;
+    }
 
-    .section-title { font-size: 1rem; font-weight: 700; color: #111; margin-bottom: 2px; }
-    .section-sub   { font-size: 0.83rem; color: #888; margin-bottom: 14px; }
+    .val.selesai {
+        color: #28a745;
+    }
+
+    .val.menunggu {
+        color: #b8860b;
+    }
+
+    .val.ditolak {
+        color: #dc3545;
+    }
+
+    .section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #111;
+        margin-bottom: 2px;
+    }
+
+    .section-sub {
+        font-size: 0.83rem;
+        color: #888;
+        margin-bottom: 14px;
+    }
 
     .dosen-grid {
         display: grid;
@@ -60,37 +95,86 @@
         position: relative;
     }
 
-    .dosen-card .dosen-label { font-size: 0.8rem; color: #888; margin-bottom: 8px; }
-    .dosen-card .dosen-nama  { font-size: 1rem; font-weight: 700; color: #111; margin-bottom: 2px; }
-    .dosen-card .dosen-nidn  { font-size: 0.85rem; color: #555; margin-bottom: 8px; }
-    .dosen-card .dosen-tanggal { font-size: 0.8rem; color: #888; }
+    .dosen-card .dosen-label {
+        font-size: 0.8rem;
+        color: #888;
+        margin-bottom: 8px;
+    }
+
+    .dosen-card .dosen-nama {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #111;
+        margin-bottom: 2px;
+    }
+
+    .dosen-card .dosen-nidn {
+        font-size: 0.85rem;
+        color: #555;
+        margin-bottom: 8px;
+    }
+
+    .dosen-card .dosen-tanggal {
+        font-size: 0.8rem;
+        color: #888;
+    }
 
     .badge-disetujui {
-        background: #d4edda; color: #28a745;
+        background: #d4edda;
+        color: #28a745;
         border: 1px solid #b7dfbb;
-        padding: 5px 14px; border-radius: 20px;
-        font-size: 0.8rem; font-weight: 700; display: inline-block;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: inline-block;
     }
 
     .badge-menunggu {
-        background: #fff3cd; color: #856404;
+        background: #fff3cd;
+        color: #856404;
         border: 1px solid #ffe082;
-        padding: 5px 14px; border-radius: 20px;
-        font-size: 0.8rem; font-weight: 700; display: inline-block;
-        text-decoration: none; cursor: pointer;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
     }
-    .badge-menunggu:hover { background: #ffe69c; color: #856404; }
+
+    .badge-menunggu:hover {
+        background: #ffe69c;
+        color: #856404;
+    }
 
     .badge-ditolak {
-        background: #f8d7da; color: #dc3545;
+        background: #f8d7da;
+        color: #dc3545;
         border: 1px solid #f1aeb5;
-        padding: 5px 14px; border-radius: 20px;
-        font-size: 0.8rem; font-weight: 700; display: inline-block;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: inline-block;
     }
 
-    .proposal-box { display: flex; align-items: center; justify-content: space-between; }
-    .proposal-box .file-name { font-size: 0.9rem; font-weight: 600; color: #111; }
-    .proposal-box .file-meta { font-size: 0.78rem; color: #888; }
+    .proposal-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .proposal-box .file-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #111;
+    }
+
+    .proposal-box .file-meta {
+        font-size: 0.78rem;
+        color: #888;
+    }
 
     .footer-btn {
         display: flex;
@@ -101,36 +185,66 @@
     }
 
     .btn-kembali {
-        background: #e0e0e0; color: #333; border: none;
-        padding: 10px 22px; border-radius: 20px;
-        font-size: 0.9rem; text-decoration: none; transition: 0.2s;
+        background: #e0e0e0;
+        color: #333;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: 0.2s;
     }
-    .btn-kembali:hover { background: #c8c8c8; color: #111; }
+
+    .btn-kembali:hover {
+        background: #c8c8c8;
+        color: #111;
+    }
 
     .btn-ubah {
-        position: absolute; top: 14px; right: 14px;
-        background: #e8e8e8; border: none; color: #555;
-        font-size: 0.75rem; font-weight: 600;
-        padding: 4px 12px; border-radius: 20px;
-        cursor: pointer; transition: 0.2s;
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        background: #e8e8e8;
+        border: none;
+        color: #555;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: 0.2s;
     }
-    .btn-ubah:hover { background: #d4d4d4; color: #333; }
+
+    .btn-ubah:hover {
+        background: #d4d4d4;
+        color: #333;
+    }
 
     .icon-user {
-        width: 32px; height: 32px; border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
         border: 2px solid #ccc;
-        display: inline-flex; align-items: center; justify-content: center;
-        margin-right: 8px; color: #888; font-size: 16px;
-        vertical-align: middle; flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 8px;
+        color: #888;
+        font-size: 16px;
+        vertical-align: middle;
+        flex-shrink: 0;
     }
 
-    #btnLanjutkan.hidden { display: none !important; }
+    #btnLanjutkan.hidden {
+        display: none !important;
+    }
 
     /* ── MODAL OVERLAY ── */
     .modal-overlay {
         display: none;
-        position: fixed; inset: 0;
-        background: rgba(0,0,0,0.45);
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
         z-index: 9999;
         align-items: center;
         justify-content: center;
@@ -143,20 +257,27 @@
         padding: 32px 32px 28px;
         width: 100%;
         max-width: 500px;
-        box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
         margin: 0 16px;
         position: relative;
     }
 
     .modal-close-btn {
         position: absolute;
-        top: 18px; right: 18px;
-        background: none; border: none;
-        font-size: 1.1rem; color: #aaa;
-        cursor: pointer; line-height: 1;
+        top: 18px;
+        right: 18px;
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        color: #aaa;
+        cursor: pointer;
+        line-height: 1;
         transition: 0.15s;
     }
-    .modal-close-btn:hover { color: #333; }
+
+    .modal-close-btn:hover {
+        color: #333;
+    }
 
     .modal-title-new {
         font-size: 1.25rem;
@@ -180,8 +301,17 @@
         margin-bottom: 16px;
     }
 
-    .modal-field { display: flex; flex-direction: column; }
-    .modal-lbl   { font-size: 0.82rem; font-weight: 600; color: #444; margin-bottom: 5px; }
+    .modal-field {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-lbl {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 5px;
+    }
 
     .modal-inp {
         padding: 10px 13px;
@@ -194,8 +324,17 @@
         box-sizing: border-box;
         width: 100%;
     }
-    .modal-inp[readonly] { cursor: default; color: #555; }
-    .modal-inp:focus     { outline: none; border-color: #FACC15; background: #fff; }
+
+    .modal-inp[readonly] {
+        cursor: default;
+        color: #555;
+    }
+
+    .modal-inp:focus {
+        outline: none;
+        border-color: #FACC15;
+        background: #fff;
+    }
 
     /* Usulan dosen row with buttons */
     .usulan-row {
@@ -205,13 +344,18 @@
         margin-bottom: 4px;
     }
 
-    .usulan-inp-wrap { flex: 1; position: relative; }
+    .usulan-inp-wrap {
+        flex: 1;
+        position: relative;
+    }
 
     .usulan-inp-icon {
         position: absolute;
-        left: 12px; top: 50%;
+        left: 12px;
+        top: 50%;
         transform: translateY(-50%);
-        color: #aaa; font-size: 0.9rem;
+        color: #aaa;
+        font-size: 0.9rem;
     }
 
     .usulan-inp {
@@ -225,29 +369,51 @@
         box-sizing: border-box;
     }
 
-    .usulan-inp.error { border-color: #dc3545; }
+    .usulan-inp.error {
+        border-color: #dc3545;
+    }
 
     .btn-acc {
-        width: 40px; height: 40px;
-        border-radius: 50%; border: none;
-        background: #d4edda; color: #28a745;
-        font-size: 1.1rem; font-weight: 700;
-        cursor: pointer; display: flex;
-        align-items: center; justify-content: center;
-        flex-shrink: 0; transition: 0.2s;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        background: #d4edda;
+        color: #28a745;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: 0.2s;
     }
-    .btn-acc:hover { background: #b7dfbb; }
+
+    .btn-acc:hover {
+        background: #b7dfbb;
+    }
 
     .btn-tolak-x {
-        width: 40px; height: 40px;
-        border-radius: 50%; border: none;
-        background: #f8d7da; color: #dc3545;
-        font-size: 1.1rem; font-weight: 700;
-        cursor: pointer; display: flex;
-        align-items: center; justify-content: center;
-        flex-shrink: 0; transition: 0.2s;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        background: #f8d7da;
+        color: #dc3545;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: 0.2s;
     }
-    .btn-tolak-x:hover { background: #f1aeb5; }
+
+    .btn-tolak-x:hover {
+        background: #f1aeb5;
+    }
 
     .error-msg {
         font-size: 0.78rem;
@@ -255,7 +421,10 @@
         margin-top: 4px;
         display: none;
     }
-    .error-msg.show { display: block; }
+
+    .error-msg.show {
+        display: block;
+    }
 
     /* Catatan verifikasi box */
     .catatan-box {
@@ -308,7 +477,10 @@
         cursor: pointer;
         transition: 0.2s;
     }
-    .btn-modal-kembali:hover { background: #f5f5f5; }
+
+    .btn-modal-kembali:hover {
+        background: #f5f5f5;
+    }
 
     .btn-modal-kirim {
         padding: 10px 26px;
@@ -321,10 +493,15 @@
         cursor: pointer;
         transition: 0.2s;
     }
-    .btn-modal-kirim:hover { background: #e6b800; }
+
+    .btn-modal-kirim:hover {
+        background: #e6b800;
+    }
 
     /* Dropdown pengganti (saat tolak) */
-    .section-tolak-new { display: none; }
+    .section-tolak-new {
+        display: none;
+    }
 
     .modal-select {
         width: 100%;
@@ -336,7 +513,11 @@
         box-sizing: border-box;
         margin-top: 0;
     }
-    .modal-select:focus { outline: none; border-color: #FACC15; }
+
+    .modal-select:focus {
+        outline: none;
+        border-color: #FACC15;
+    }
 
     /* ── MODAL UBAH ── */
     .modal-box-ubah {
@@ -345,7 +526,7 @@
         padding: 32px 32px 28px;
         width: 100%;
         max-width: 460px;
-        box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
         margin: 0 16px;
         position: relative;
     }
@@ -353,46 +534,115 @@
     /* ── POPUP ── */
     .popup-overlay {
         display: none;
-        position: fixed; inset: 0;
-        background: rgba(0,0,0,0.45);
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
         z-index: 99999;
-        align-items: center; justify-content: center;
+        align-items: center;
+        justify-content: center;
     }
-    .popup-overlay.active { display: flex; }
+
+    .popup-overlay.active {
+        display: flex;
+    }
 
     .popup-box {
-        background: #fff; border-radius: 20px;
+        background: #fff;
+        border-radius: 20px;
         padding: 40px 32px 32px;
-        width: 100%; max-width: 400px;
+        width: 100%;
+        max-width: 400px;
         margin: 0 16px;
-        box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
         text-align: center;
     }
 
     .popup-icon-wrap {
-        width: 80px; height: 80px; border-radius: 50%;
-        display: inline-flex; align-items: center; justify-content: center;
-        margin-bottom: 20px; font-size: 2.2rem;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        font-size: 2.2rem;
     }
-    .popup-icon-wrap.success { background: #e8f5e9; border: 3px solid #66bb6a; color: #28a745; }
-    .popup-icon-wrap.error   { background: #fdecea; border: 3px solid #ef9a9a; color: #dc3545; }
-    .popup-icon-wrap.confirm { background: #fff8e1; border: 3px solid #fdd835; color: #f9a825; }
-    .popup-icon-wrap.warning { background: #fdecea; border: 3px solid #ef9a9a; color: #dc3545; }
 
-    .popup-title { font-size: 1.5rem; font-weight: 800; color: #222; margin-bottom: 10px; }
-    .popup-msg   { font-size: 0.92rem; color: #555; margin-bottom: 28px; line-height: 1.5; }
+    .popup-icon-wrap.success {
+        background: #e8f5e9;
+        border: 3px solid #66bb6a;
+        color: #28a745;
+    }
 
-    .popup-btn-row { display: flex; gap: 12px; justify-content: center; }
+    .popup-icon-wrap.error {
+        background: #fdecea;
+        border: 3px solid #ef9a9a;
+        color: #dc3545;
+    }
+
+    .popup-icon-wrap.confirm {
+        background: #fff8e1;
+        border: 3px solid #fdd835;
+        color: #f9a825;
+    }
+
+    .popup-icon-wrap.warning {
+        background: #fdecea;
+        border: 3px solid #ef9a9a;
+        color: #dc3545;
+    }
+
+    .popup-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #222;
+        margin-bottom: 10px;
+    }
+
+    .popup-msg {
+        font-size: 0.92rem;
+        color: #555;
+        margin-bottom: 28px;
+        line-height: 1.5;
+    }
+
+    .popup-btn-row {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
 
     .popup-btn {
-        padding: 11px 32px; border-radius: 10px;
-        font-size: 0.95rem; font-weight: 700;
-        cursor: pointer; border: none; transition: 0.2s;
+        padding: 11px 32px;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        transition: 0.2s;
     }
-    .popup-btn.ok, .popup-btn.kirim { background: #FACC15; color: #333; min-width: 120px; }
-    .popup-btn.ok:hover, .popup-btn.kirim:hover { background: #e6b800; }
-    .popup-btn.batal { background: #e0e0e0; color: #333; min-width: 100px; }
-    .popup-btn.batal:hover { background: #c8c8c8; }
+
+    .popup-btn.ok,
+    .popup-btn.kirim {
+        background: #FACC15;
+        color: #333;
+        min-width: 120px;
+    }
+
+    .popup-btn.ok:hover,
+    .popup-btn.kirim:hover {
+        background: #e6b800;
+    }
+
+    .popup-btn.batal {
+        background: #e0e0e0;
+        color: #333;
+        min-width: 100px;
+    }
+
+    .popup-btn.batal:hover {
+        background: #c8c8c8;
+    }
 </style>
 
 <div class="wrapper">
@@ -475,14 +725,14 @@
             </div>
             @php $s1 = strtolower($proposal->usulan_dosen1_status ?? 'menunggu'); @endphp
             @if($s1 == 'disetujui')
-                <span class="badge-disetujui">Disetujui</span>
+            <span class="badge-disetujui">Disetujui</span>
             @elseif($s1 == 'ditolak')
-                <span class="badge-ditolak">Ditolak</span>
+            <span class="badge-ditolak">Ditolak</span>
             @else
-                <button type="button" class="badge-menunggu"
-                    onclick="bukaModal(1,'{{ addslashes($proposal->usulan_dosen1_nama) }}','{{ $proposal->usulan_dosen1_nidn }}','{{ $proposal->nim_nid }}','{{ addslashes($proposal->nama) }}')">
-                    Menunggu Verifikasi
-                </button>
+            <button type="button" class="badge-menunggu"
+                onclick="bukaModal(1,'{{ addslashes($proposal->usulan_dosen1_nama) }}','{{ $proposal->usulan_dosen1_nidn }}','{{ $proposal->nim_nid }}','{{ addslashes($proposal->nama) }}')">
+                Menunggu Verifikasi
+            </button>
             @endif
             @else
             <span class="text-muted">-</span>
@@ -506,14 +756,14 @@
             </div>
             @php $s2 = strtolower($proposal->usulan_dosen2_status ?? 'menunggu'); @endphp
             @if($s2 == 'disetujui')
-                <span class="badge-disetujui">Disetujui</span>
+            <span class="badge-disetujui">Disetujui</span>
             @elseif($s2 == 'ditolak')
-                <span class="badge-ditolak">Ditolak</span>
+            <span class="badge-ditolak">Ditolak</span>
             @else
-                <button type="button" class="badge-menunggu"
-                    onclick="bukaModal(2,'{{ addslashes($proposal->usulan_dosen2_nama) }}','{{ $proposal->usulan_dosen2_nidn }}','{{ $proposal->nim_nid }}','{{ addslashes($proposal->nama) }}')">
-                    Menunggu Verifikasi
-                </button>
+            <button type="button" class="badge-menunggu"
+                onclick="bukaModal(2,'{{ addslashes($proposal->usulan_dosen2_nama) }}','{{ $proposal->usulan_dosen2_nidn }}','{{ $proposal->nim_nid }}','{{ addslashes($proposal->nama) }}')">
+                Menunggu Verifikasi
+            </button>
             @endif
             @else
             <span class="text-muted">-</span>
@@ -574,14 +824,14 @@
     {{-- FOOTER --}}
     @php
     $stProposal = strtolower(trim($proposal->status));
-    $isSelesai  = $stProposal === 'selesai' || $stProposal === 'menunggu_review';
+    $isSelesai = $stProposal === 'selesai' || $stProposal === 'menunggu_review';
     @endphp
 
     <div class="footer-btn">
         <a href="/proposal" class="btn-kembali">Kembali</a>
         <button id="btnLanjutkan" type="button"
             class="{{ $isSelesai ? 'hidden' : '' }}"
-            style="background:#4caf7d;color:#fff;border:none;padding:10px 24px;border-radius:20px;font-size:0.9rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;"
+            style="background:#FFE083;color:#6C5700;border:none;padding:10px 24px;border-radius:20px;font-size:0.9rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;"
             onclick="handleLanjutkan()">
             Simpan dan lanjutkan ke reviewer →
         </button>
@@ -859,154 +1109,206 @@ $dosen2Nama = $proposal->dosen2_nama;
 @endphp
 
 <script>
-const semuaDosen      = @json($dosenList);
-const dosen1NamaServer = @json($dosen1Nama);
-const dosen2NamaServer = @json($dosen2Nama);
+    const semuaDosen = @json($dosenList);
+    const dosen1NamaServer = @json($dosen1Nama);
+    const dosen2NamaServer = @json($dosen2Nama);
 
-function bukaPopup(id)  { document.getElementById(id).classList.add('active'); }
-function tutupPopup(id) { document.getElementById(id).classList.remove('active'); }
-
-function tampilkanBtnLanjutkan() {
-    var btn = document.getElementById('btnLanjutkan');
-    if (btn) btn.classList.remove('hidden');
-}
-
-function handleLanjutkan() {
-    if (!dosen1NamaServer && !dosen2NamaServer) {
-        document.getElementById('popupDosenKurangMsg').innerText = 'Dosen Pembimbing 1 dan 2 wajib diisi sebelum melanjutkan ke reviewer.';
-        bukaPopup('popupDosenKurang'); return;
+    function bukaPopup(id) {
+        document.getElementById(id).classList.add('active');
     }
-    if (!dosen1NamaServer) {
-        document.getElementById('popupDosenKurangMsg').innerText = 'Dosen Pembimbing 1 wajib diisi sebelum melanjutkan ke reviewer.';
-        bukaPopup('popupDosenKurang'); return;
+
+    function tutupPopup(id) {
+        document.getElementById(id).classList.remove('active');
     }
-    if (!dosen2NamaServer) {
-        document.getElementById('popupDosenKurangMsg').innerText = 'Dosen Pembimbing 2 wajib diisi sebelum melanjutkan ke reviewer.';
-        bukaPopup('popupDosenKurang'); return;
+
+    function tampilkanBtnLanjutkan() {
+        var btn = document.getElementById('btnLanjutkan');
+        if (btn) btn.classList.remove('hidden');
     }
-    bukaPopup('popupLanjutkan');
-}
 
-function submitLanjutkan() {
-    tutupPopup('popupLanjutkan');
-    var form = document.getElementById('formLanjutkan');
-    fetch(form.action, { method:'POST', body:new FormData(form), headers:{'X-Requested-With':'XMLHttpRequest'} })
-        .then(function(res) { res.ok ? bukaPopup('popupLanjutkanBerhasil') : bukaPopup('popupLanjutkanGagal'); })
-        .catch(function()   { bukaPopup('popupLanjutkanGagal'); });
-}
+    function handleLanjutkan() {
+        if (!dosen1NamaServer && !dosen2NamaServer) {
+            document.getElementById('popupDosenKurangMsg').innerText = 'Dosen Pembimbing 1 dan 2 wajib diisi sebelum melanjutkan ke reviewer.';
+            bukaPopup('popupDosenKurang');
+            return;
+        }
+        if (!dosen1NamaServer) {
+            document.getElementById('popupDosenKurangMsg').innerText = 'Dosen Pembimbing 1 wajib diisi sebelum melanjutkan ke reviewer.';
+            bukaPopup('popupDosenKurang');
+            return;
+        }
+        if (!dosen2NamaServer) {
+            document.getElementById('popupDosenKurangMsg').innerText = 'Dosen Pembimbing 2 wajib diisi sebelum melanjutkan ke reviewer.';
+            bukaPopup('popupDosenKurang');
+            return;
+        }
+        bukaPopup('popupLanjutkan');
+    }
 
-// ── Modal Verifikasi ──
-function bukaModal(urutan, nama, nidn, nimMhs, namaMhs) {
-    document.getElementById('modalUrutanLabel').innerText  = urutan;
-    document.getElementById('modalUrutanLabel2').innerText = urutan;
-    document.getElementById('modalUrutanLabel3').innerText = urutan;
-    document.getElementById('modalUrutanLabel4').innerText = urutan;
-    document.getElementById('modalNim').value              = nimMhs;
-    document.getElementById('modalNama').value             = namaMhs;
-    document.getElementById('modalNimTolak').value         = nimMhs;
-    document.getElementById('modalNamaTolak').value        = namaMhs;
-    document.getElementById('modalUsulanDosen').value      = nidn + ' - ' + nama;
-    document.getElementById('modalUsulanDosenTolak').value = nidn + ' - ' + nama;
+    function submitLanjutkan() {
+        tutupPopup('popupLanjutkan');
+        var form = document.getElementById('formLanjutkan');
+        fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(res) {
+                res.ok ? bukaPopup('popupLanjutkanBerhasil') : bukaPopup('popupLanjutkanGagal');
+            })
+            .catch(function() {
+                bukaPopup('popupLanjutkanGagal');
+            });
+    }
 
-    var baseUrl = "{{ url('/proposal/'.$proposal->id.'/tetapkan') }}/" + urutan;
-    document.getElementById('formAcc').action   = baseUrl;
-    document.getElementById('formTolak').action = baseUrl;
+    // ── Modal Verifikasi ──
+    function bukaModal(urutan, nama, nidn, nimMhs, namaMhs) {
+        document.getElementById('modalUrutanLabel').innerText = urutan;
+        document.getElementById('modalUrutanLabel2').innerText = urutan;
+        document.getElementById('modalUrutanLabel3').innerText = urutan;
+        document.getElementById('modalUrutanLabel4').innerText = urutan;
+        document.getElementById('modalNim').value = nimMhs;
+        document.getElementById('modalNama').value = namaMhs;
+        document.getElementById('modalNimTolak').value = nimMhs;
+        document.getElementById('modalNamaTolak').value = namaMhs;
+        document.getElementById('modalUsulanDosen').value = nidn + ' - ' + nama;
+        document.getElementById('modalUsulanDosenTolak').value = nidn + ' - ' + nama;
 
-    sembunyikanDropdown();
-    document.getElementById('modalVerifikasi').style.display = 'flex';
-}
+        var baseUrl = "{{ url('/proposal/'.$proposal->id.'/tetapkan') }}/" + urutan;
+        document.getElementById('formAcc').action = baseUrl;
+        document.getElementById('formTolak').action = baseUrl;
 
-function tampilkanDropdown() {
-    document.getElementById('formAcc').style.display        = 'none';
-    document.getElementById('sectionTolak').style.display   = 'block';
-}
+        sembunyikanDropdown();
+        document.getElementById('modalVerifikasi').style.display = 'flex';
+    }
 
-function sembunyikanDropdown() {
-    document.getElementById('formAcc').style.display        = 'block';
-    document.getElementById('sectionTolak').style.display   = 'none';
-}
+    function tampilkanDropdown() {
+        document.getElementById('formAcc').style.display = 'none';
+        document.getElementById('sectionTolak').style.display = 'block';
+    }
 
-function tutupModal() {
-    document.getElementById('modalVerifikasi').style.display = 'none';
-}
+    function sembunyikanDropdown() {
+        document.getElementById('formAcc').style.display = 'block';
+        document.getElementById('sectionTolak').style.display = 'none';
+    }
 
-document.getElementById('modalVerifikasi').addEventListener('click', function(e) {
-    if (e.target === this) tutupModal();
-});
+    function tutupModal() {
+        document.getElementById('modalVerifikasi').style.display = 'none';
+    }
 
-function konfirmasiAcc()   { bukaPopup('popupKonfirmasiAcc'); }
-
-function submitAcc() {
-    tutupPopup('popupKonfirmasiAcc');
-    tutupModal();
-    var form = document.getElementById('formAcc');
-    fetch(form.action, { method:'POST', body:new FormData(form), headers:{'X-Requested-With':'XMLHttpRequest'} })
-        .then(function(res) { res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal'); })
-        .catch(function()   { bukaPopup('popupPembimbingGagal'); });
-}
-
-function konfirmasiTolak() {
-    var sel = document.querySelector('#formTolak select[name="dosen_pengganti"]');
-    if (!sel || !sel.value) return;
-    bukaPopup('popupKonfirmasiTolak');
-}
-
-function submitTolak() {
-    tutupPopup('popupKonfirmasiTolak');
-    tutupModal();
-    var form = document.getElementById('formTolak');
-    fetch(form.action, { method:'POST', body:new FormData(form), headers:{'X-Requested-With':'XMLHttpRequest'} })
-        .then(function(res) { res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal'); })
-        .catch(function()   { bukaPopup('popupPembimbingGagal'); });
-}
-
-// ── Modal Ubah ──
-function bukaModalUbah(btn) {
-    var urutan   = btn.getAttribute('data-urutan');
-    var nama     = btn.getAttribute('data-nama');
-    var nidn     = btn.getAttribute('data-nidn');
-    var nidnLain = btn.getAttribute('data-nidn-lain');
-
-    document.getElementById('ubahUrutanLabel').innerText   = urutan;
-    document.getElementById('ubahDosenSekarang').value     = nidn + ' - ' + nama;
-
-    var url = "{{ url('/proposal/'.$proposal->id.'/ubah-pembimbing') }}/" + urutan;
-    document.getElementById('formUbah').action = url;
-
-    var select = document.getElementById('ubahDosenBaru');
-    select.innerHTML = '<option value="">-- Pilih Dosen --</option>';
-    semuaDosen.forEach(function(d) {
-        if (d.nim_nid === nidnLain) return;
-        var opt = document.createElement('option');
-        opt.value = d.nim_nid;
-        opt.textContent = d.nim_nid + ' - ' + d.nama;
-        select.appendChild(opt);
+    document.getElementById('modalVerifikasi').addEventListener('click', function(e) {
+        if (e.target === this) tutupModal();
     });
 
-    tampilkanBtnLanjutkan();
-    document.getElementById('modalUbah').style.display = 'flex';
-}
+    function konfirmasiAcc() {
+        bukaPopup('popupKonfirmasiAcc');
+    }
 
-function tutupModalUbah() { document.getElementById('modalUbah').style.display = 'none'; }
+    function submitAcc() {
+        tutupPopup('popupKonfirmasiAcc');
+        tutupModal();
+        var form = document.getElementById('formAcc');
+        fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(res) {
+                res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal');
+            })
+            .catch(function() {
+                bukaPopup('popupPembimbingGagal');
+            });
+    }
 
-document.getElementById('modalUbah').addEventListener('click', function(e) {
-    if (e.target === this) tutupModalUbah();
-});
+    function konfirmasiTolak() {
+        var sel = document.querySelector('#formTolak select[name="dosen_pengganti"]');
+        if (!sel || !sel.value) return;
+        bukaPopup('popupKonfirmasiTolak');
+    }
 
-function konfirmasiUbah() {
-    var sel = document.getElementById('ubahDosenBaru');
-    if (!sel || !sel.value) return;
-    bukaPopup('popupKonfirmasiUbah');
-}
+    function submitTolak() {
+        tutupPopup('popupKonfirmasiTolak');
+        tutupModal();
+        var form = document.getElementById('formTolak');
+        fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(res) {
+                res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal');
+            })
+            .catch(function() {
+                bukaPopup('popupPembimbingGagal');
+            });
+    }
 
-function submitUbah() {
-    tutupPopup('popupKonfirmasiUbah');
-    tutupModalUbah();
-    var form = document.getElementById('formUbah');
-    fetch(form.action, { method:'POST', body:new FormData(form), headers:{'X-Requested-With':'XMLHttpRequest'} })
-        .then(function(res) { res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal'); })
-        .catch(function()   { bukaPopup('popupPembimbingGagal'); });
-}
+    // ── Modal Ubah ──
+    function bukaModalUbah(btn) {
+        var urutan = btn.getAttribute('data-urutan');
+        var nama = btn.getAttribute('data-nama');
+        var nidn = btn.getAttribute('data-nidn');
+        var nidnLain = btn.getAttribute('data-nidn-lain');
+
+        document.getElementById('ubahUrutanLabel').innerText = urutan;
+        document.getElementById('ubahDosenSekarang').value = nidn + ' - ' + nama;
+
+        var url = "{{ url('/proposal/'.$proposal->id.'/ubah-pembimbing') }}/" + urutan;
+        document.getElementById('formUbah').action = url;
+
+        var select = document.getElementById('ubahDosenBaru');
+        select.innerHTML = '<option value="">-- Pilih Dosen --</option>';
+        semuaDosen.forEach(function(d) {
+            if (d.nim_nid === nidnLain) return;
+            var opt = document.createElement('option');
+            opt.value = d.nim_nid;
+            opt.textContent = d.nim_nid + ' - ' + d.nama;
+            select.appendChild(opt);
+        });
+
+        tampilkanBtnLanjutkan();
+        document.getElementById('modalUbah').style.display = 'flex';
+    }
+
+    function tutupModalUbah() {
+        document.getElementById('modalUbah').style.display = 'none';
+    }
+
+    document.getElementById('modalUbah').addEventListener('click', function(e) {
+        if (e.target === this) tutupModalUbah();
+    });
+
+    function konfirmasiUbah() {
+        var sel = document.getElementById('ubahDosenBaru');
+        if (!sel || !sel.value) return;
+        bukaPopup('popupKonfirmasiUbah');
+    }
+
+    function submitUbah() {
+        tutupPopup('popupKonfirmasiUbah');
+        tutupModalUbah();
+        var form = document.getElementById('formUbah');
+        fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(res) {
+                res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal');
+            })
+            .catch(function() {
+                bukaPopup('popupPembimbingGagal');
+            });
+    }
 </script>
 
 @endsection

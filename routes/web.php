@@ -12,23 +12,34 @@ use App\Http\Controllers\PanduanTAController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\BimbinganController;
 use App\Http\Controllers\DosenBimbinganController;
+use App\Http\Controllers\AdminBimbinganController;
 use App\Http\Controllers\MahasiswaDosenController;
+use App\Http\Controllers\AdminDosenController;
+use App\Http\Controllers\AdminMahasiswaController;
+use App\Http\Controllers\JadwalAkademikController;
+use App\Http\Controllers\AdminProposalController;
+use App\Http\Controllers\AdminjudulController;
+
 
 // ROOT
 Route::get('/', fn() => redirect('/login'));
 
+
+// =====================================================
 // AUTH
+// =====================================================
+
 Route::get('/login',          [AuthController::class, 'showLogin']);
 Route::post('/login',         [AuthController::class, 'login']);
 Route::get('/logout', function () {
     session()->forget('user');
     return redirect('/login')->with('success', 'Berhasil logout');
 });
-Route::get('/forgot-password',                    fn() => view('auth.forgotpass'));
-Route::post('/forgot-password',                   [AuthController::class, 'sendResetLink']);
-Route::get('/reset-password/{token}',             [AuthController::class, 'showResetForm'])->name('password.reset');
-Route::get('/reset-success', fn() => view('auth.reset_success'));
-Route::post('/reset-password',                    [AuthController::class, 'doResetPassword']);
+Route::get('/forgot-password',         fn() => view('auth.forgotpass'));
+Route::post('/forgot-password',        [AuthController::class, 'sendResetLink']);
+Route::get('/reset-password/{token}',  [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::get('/reset-success',           fn() => view('auth.reset_success'));
+Route::post('/reset-password',         [AuthController::class, 'doResetPassword']);
 
 
 // =====================================================
@@ -169,7 +180,7 @@ Route::get('/mahasiswa', function () {
         ->where('nim_nid', $nim)
         ->where('status', 'disetujui')
         ->exists();
-    $adaProposal   = DB::table('proposal')->where('nim_nid', $nim)->exists();
+    $adaProposal = DB::table('proposal')->where('nim_nid', $nim)->exists();
 
     // Verifikasi pembimbing: ada dosen_pembimbing di proposal ini
     $verifikasiPembimbing = false;
@@ -218,13 +229,13 @@ Route::get('/mahasiswa', function () {
 // PROFIL
 // =====================================================
 
-Route::get('/admin/profil', [AuthController::class, 'profilAdmin'])->name('admin.profil');
+Route::get('/admin/profil_admin_tu',           [AuthController::class, 'profilAdmin'])->name('admin.profil_admin_tu');
 
 Route::get('/mahasiswa/profil',       [AuthController::class, 'profilMahasiswa'])->name('mahasiswa.profil');
 Route::post('/mahasiswa/profil/foto', [AuthController::class, 'uploadFotoMahasiswa'])->name('mahasiswa.profil.foto');
 
-Route::get('/dosen/profil',       [AuthController::class, 'profilDosen'])->name('dosen.profil');
-Route::post('/dosen/profil/foto', [AuthController::class, 'uploadFotoDosen'])->name('dosen.profil.foto');
+Route::get('/dosen/profil',           [AuthController::class, 'profilDosen'])->name('dosen.profil');
+Route::post('/dosen/profil/foto',     [AuthController::class, 'uploadFotoDosen'])->name('dosen.profil.foto');
 
 
 // =====================================================
@@ -233,7 +244,10 @@ Route::post('/dosen/profil/foto', [AuthController::class, 'uploadFotoDosen'])->n
 
 Route::get('/panduan-ta/mahasiswa',     [PanduanTAController::class, 'mahasiswa'])->name('panduan-ta.mahasiswa');
 Route::get('/panduan-ta/dosen',         [PanduanTAController::class, 'dosen'])->name('panduan-ta.dosen');
+Route::get('/panduan-ta/admin',         [PanduanTAController::class, 'admin'])->name('panduan-ta.admin');
 Route::get('/panduan-ta/download/{id}', [PanduanTAController::class, 'download'])->name('panduan-ta.download');
+Route::get('/admin/panduan-ta/create',  [PanduanTAController::class, 'create'])->name('panduan.create');
+Route::post('/admin/panduan-ta/store',  [PanduanTAController::class, 'store'])->name('panduan.store');
 
 
 // =====================================================
@@ -255,7 +269,7 @@ Route::post('/pengajuan/proses/{id}',    [PengajuanController::class, 'prosesVer
 
 
 // =====================================================
-// PROPOSAL TA-1 — MAHASISWA
+// PROPOSAL TA-1 — MAHASISWA (taruh di atas semua {id}!)
 // =====================================================
 
 Route::get('/proposal/mahasiswa',        [ProposalMahasiswaController::class, 'index'])->name('proposal.mahasiswa');
@@ -290,6 +304,7 @@ Route::get('/reviewer/proposal/{id}/detail',  [ReviewerController::class, 'detai
 // =====================================================
 
 Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
+Route::resource('jadwal-akademik', JadwalAkademikController::class);
 
 
 // =====================================================
@@ -310,6 +325,23 @@ Route::get('/dosen/proposal/{id}/lihat', [DosenBimbinganController::class, 'liha
 
 
 // =====================================================
+// RIWAYAT BIMBINGAN — ADMIN
+// =====================================================
+
+Route::get('/admin/bimbingan', [AdminBimbinganController::class, 'index'])
+    ->name('admin.bimbingan.index');
+
+Route::put('/admin/bimbingan/proposal/{id}/status', [AdminBimbinganController::class, 'updateStatusProposal'])
+    ->name('admin.bimbingan.proposal.status');
+
+Route::get('/admin/bimbingan/{nim}', [AdminBimbinganController::class, 'detailMahasiswa'])
+    ->name('admin.bimbingan.detail');
+
+Route::get('/admin/proposal/{id}/lihat', [AdminBimbinganController::class, 'lihatProposal'])
+    ->name('admin.proposal.lihat');
+
+
+// =====================================================
 // BIMBINGAN — MAHASISWA
 // =====================================================
 
@@ -323,3 +355,64 @@ Route::post('/bimbingan/proposal', [BimbinganController::class, 'storeProposal']
 // =====================================================
 
 Route::get('/dosen/mahasiswa', [MahasiswaDosenController::class, 'index'])->name('dosen.mahasiswa');
+
+
+// =====================================================
+// DOSEN CRUD — ADMIN
+// =====================================================
+
+Route::get('/admin/dosen',                [AdminDosenController::class, 'index'])->name('dosen.index');
+Route::post('/admin/dosen/store',         [AdminDosenController::class, 'store'])->name('dosen.store');
+Route::get('/admin/dosen/{nim_nid}',      [AdminDosenController::class, 'show'])->name('dosen.show');
+Route::get('/admin/dosen/{nim_nid}/edit', [AdminDosenController::class, 'edit'])->name('dosen.edit');
+Route::put('/admin/dosen/{nim_nid}',      [AdminDosenController::class, 'update'])->name('dosen.update');
+Route::delete('/admin/dosen/{nim_nid}',   [AdminDosenController::class, 'destroy'])->name('dosen.destroy');
+
+
+// =====================================================
+// MAHASISWA CRUD — ADMIN
+// =====================================================
+
+Route::get('/admin/mahasiswa',                [AdminMahasiswaController::class, 'index'])->name('mahasiswa.index');
+Route::post('/admin/mahasiswa/store',         [AdminMahasiswaController::class, 'store'])->name('mahasiswa.store');
+Route::get('/admin/mahasiswa/{nim_nid}',      [AdminMahasiswaController::class, 'show'])->name('mahasiswa.show');
+Route::get('/admin/mahasiswa/{nim_nid}/edit', [AdminMahasiswaController::class, 'edit'])->name('mahasiswa.edit');
+Route::put('/admin/mahasiswa/{nim_nid}',      [AdminMahasiswaController::class, 'update'])->name('mahasiswa.update');
+Route::delete('/admin/mahasiswa/{nim_nid}',   [AdminMahasiswaController::class, 'destroy'])->name('mahasiswa.destroy');
+
+
+// =====================================================
+// RIWAYAT PENGAJUAN PROPOSAL — ADMIN
+// =====================================================
+
+Route::prefix('admin')->group(function () {
+    Route::get('/proposal',      [AdminProposalController::class, 'index'])->name('admin.proposal.index');
+    Route::get('/proposal/{id}', [AdminProposalController::class, 'show'])->name('admin.proposal.detail');
+});
+
+
+// =====================================================
+// PENGAJUAN JUDUL — ADMIN
+// =====================================================
+
+Route::prefix('admin')->group(function () {
+    Route::get('/judul',      [AdminjudulController::class, 'index'])->name('admin.judul.index');
+    Route::get('/judul/{id}', [AdminjudulController::class, 'show'])->name('admin.judul.show');
+});
+
+
+// =====================================================
+// REGISTER ADMIN
+// =====================================================
+
+Route::get('/register-admin', function () {
+    if (!session('user')) {
+        return view('auth.register-admin');
+    }
+    if (strtolower(session('user')->role) !== 'admin') {
+        return redirect('/login')->with('error', 'Akses ditolak!');
+    }
+    return view('auth.register-admin');
+});
+
+Route::post('/register-admin', [AuthController::class, 'register']);

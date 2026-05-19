@@ -93,8 +93,8 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: var(--gold);
-        color: #fff;
+        background: #FFE083;
+        color: #6C5700;
         border: none;
         border-radius: 10px;
         padding: 10px 20px;
@@ -106,8 +106,8 @@
     }
 
     .btn-tambah:hover {
-        background: #b08a1e;
-        color: #fff;
+        background: #f5d040;
+        color: #6C5700;
     }
 
     .bimb-grid {
@@ -217,8 +217,8 @@
 
     .btn-kirim {
         width: 100%;
-        background: var(--gold);
-        color: #fff;
+        background: #FFE083;
+        color: #6C5700;
         border: none;
         border-radius: 10px;
         padding: 11px;
@@ -231,7 +231,8 @@
     }
 
     .btn-kirim:hover {
-        background: #b08a1e;
+        background: #f5d040;
+        color: #6C5700;
     }
 
     .tabel-card {
@@ -555,17 +556,18 @@
         padding: 10px 22px;
         border: none;
         border-radius: 10px;
-        background: var(--gold);
+        background: #FFE083;
         font-size: 13.5px;
         font-weight: 700;
-        color: #fff;
+        color: #6C5700;
         cursor: pointer;
         font-family: inherit;
         transition: .2s;
     }
 
     .btn-simpan:hover {
-        background: #b08a1e;
+        background: #f5d040;
+        color: #6C5700;
     }
 
     .modal-dropzone {

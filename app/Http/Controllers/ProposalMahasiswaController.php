@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\ProposalMahasiswa;
 use App\Models\UsulanPembimbing;
 
@@ -28,7 +29,7 @@ class ProposalMahasiswaController extends Controller
             ->get();
 
         // Hanya ambil dosen yang punya role 'pembimbing' di tabel dosen_roles
-        $dosenList = \DB::table('users')
+        $dosenList = DB::table('users')
             ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
             ->where('dosen_roles.role_dosen', 'pembimbing')
             ->orderBy('users.nama')
@@ -87,7 +88,7 @@ class ProposalMahasiswaController extends Controller
         }
     }
 
-    public function detail($id)
+    public function detail(int $id)
     {
         if (!session('user')) {
             return redirect('/login')->with('error', 'Silakan login dulu!');

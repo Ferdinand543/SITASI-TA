@@ -2,6 +2,22 @@
 
 @section('content')
 
+{{-- LOADING OVERLAY --}}
+<div id="loadingOverlay" style="
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(255,255,255,0.9);
+    z-index:9999;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+">
+    <div class="spinner-border mb-3" role="status" style="width:3rem;height:3rem;color:#FACC15;border-width:3px;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p style="color:#6b7280;font-weight:600;font-family:'Hanken Grotesk',sans-serif;">Sedang memproses data...</p>
+</div>
+
 @php
     $nimSesi      = session('user')->nim_nid;
     $rolesDb      = \Illuminate\Support\Facades\DB::table('dosen_roles')
@@ -285,6 +301,10 @@
     function closeAccessDenied() {
         document.getElementById('popupAksesDitolak').style.display = 'none';
     }
+
+    window.addEventListener("load", function () {
+        document.getElementById("loadingOverlay").style.display = "none";
+    });
 </script>
 
 @endsection

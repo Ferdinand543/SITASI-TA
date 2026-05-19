@@ -459,7 +459,7 @@
                     <select class="filter-select" id="filterStatusProposal" onchange="filterProposal()">
                         <option value="">Semua Status</option>
                         <option value="pending">Baru Dikirim</option>
-                        <option value="sudah_dilihat">Sudah Dilihat</option>
+                        <option value="sudah_dilihat">Sudah Dilihat</option> 
                     </select>
                 </div>
                 <button class="btn-reset" onclick="resetProposal()">
@@ -502,21 +502,15 @@
                             <td>
                                 @if($p->file_proposal)
                                 <div class="file-wrap">
-                                    <a href="#"
-                                       data-id="{{ $p->id }}"
-                                       data-url="{{ route('dosen.proposal.lihat', $p->id) }}"
-                                       onclick="lihatPDF(this)"
-                                       class="file-chip">
+
+                                    <a href="#" onclick="lihatPDF({{ $p->id }}, '{{ route('admin.proposal.lihat', $p->id) }}')" class="file-chip">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                         </svg>
                                         {{ Str::limit($p->file_proposal, 22) }}
                                     </a>
-                                    <a href="#"
-                                       data-id="{{ $p->id }}"
-                                       data-url="{{ route('dosen.proposal.lihat', $p->id) }}"
-                                       onclick="lihatPDF(this)"
-                                       class="preview-link">
+
+                                    <a href="#" onclick="lihatPDF({{ $p->id }}, '{{ route('admin.proposal.lihat', $p->id) }}')" class="preview-link">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <circle cx="12" cy="12" r="2" />
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
@@ -532,7 +526,7 @@
                                 @if($p->status === 'pending')
                                 <span class="badge badge-pending">⏳ Baru Dikirim</span>
                                 @elseif($p->status === 'sudah_dilihat')
-                                <span class="badge badge-dilihat">✓ Sudah Dilihat</span>
+                                <span class="badge badge-dilihat">✓ Sudah Dilihat</span> {{-- ✅ fix --}}
                                 @elseif($p->status === 'ditolak')
                                 <span class="badge badge-ditolak">✕ Ditolak</span>
                                 @else
@@ -601,7 +595,7 @@
                             </td>
                             <td style="font-size:13px;font-weight:600;">{{ $m->angkatan }}</td>
                             <td>
-                                <a href="{{ route('dosen.bimbingan.detail', $m->nim_nid) }}" class="btn-lihat">
+                                <a href="{{ route('admin.bimbingan.detail', $m->nim_nid) }}" class="btn-lihat">
                                     Lihat Riwayat
                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -626,16 +620,16 @@
 </div>
 
 <script>
-    function lihatPDF(el) {
-        var id  = el.dataset.id;
-        var url = el.dataset.url;
+    function lihatPDF(id, url) {
+        // Buka di tab baru (preview)
         window.open(url, '_blank');
 
-        var rows = document.querySelectorAll('#tabelProposal tbody tr');
-        rows.forEach(function(row) {
-            var link = row.querySelector('a[data-id]');
-            if (link && link.dataset.id === id) {
-                var badge = row.querySelector('.badge');
+        // Update badge langsung tanpa refresh
+        const rows = document.querySelectorAll('#tabelProposal tbody tr');
+        rows.forEach(row => {
+            const links = row.querySelectorAll('a[onclick]');
+            if (links.length && links[0].getAttribute('onclick').includes('(' + id + ',')) {
+                const badge = row.querySelector('.badge');
                 if (badge && row.dataset.status === 'pending') {
                     badge.className = 'badge badge-dilihat';
                     badge.textContent = '✓ Sudah Dilihat';
@@ -646,23 +640,23 @@
     }
 
     function switchTab(tab) {
-        document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
-        document.querySelectorAll('.tab-btn').forEach(function(b) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => {
             b.classList.remove('active');
             b.classList.add('inactive');
         });
         document.getElementById('panel-' + tab).classList.add('active');
-        var btn = document.getElementById('tab-' + tab + '-btn');
+        const btn = document.getElementById('tab-' + tab + '-btn');
         btn.classList.add('active');
         btn.classList.remove('inactive');
     }
 
     function filterProposal() {
-        var q      = document.getElementById('searchProposal').value.toLowerCase();
-        var status = document.getElementById('filterStatusProposal').value;
-        document.querySelectorAll('#tabelProposal tbody tr:not(.empty-row)').forEach(function(row) {
-            var matchQ = !q || (row.dataset.nama + ' ' + row.dataset.judul).includes(q);
-            var matchS = !status || row.dataset.status === status;
+        const q = document.getElementById('searchProposal').value.toLowerCase();
+        const status = document.getElementById('filterStatusProposal').value;
+        document.querySelectorAll('#tabelProposal tbody tr:not(.empty-row)').forEach(row => {
+            const matchQ = !q || (row.dataset.nama + ' ' + row.dataset.judul).includes(q);
+            const matchS = !status || row.dataset.status === status;
             row.style.display = (matchQ && matchS) ? '' : 'none';
         });
     }
@@ -674,9 +668,9 @@
     }
 
     function filterMahasiswa() {
-        var q = document.getElementById('searchMahasiswa').value.toLowerCase();
-        document.querySelectorAll('#tabelMahasiswa tbody tr:not(.empty-row)').forEach(function(row) {
-            var match = !q || row.dataset.nama.includes(q) || row.dataset.nim.includes(q);
+        const q = document.getElementById('searchMahasiswa').value.toLowerCase();
+        document.querySelectorAll('#tabelMahasiswa tbody tr:not(.empty-row)').forEach(row => {
+            const match = !q || row.dataset.nama.includes(q) || row.dataset.nim.includes(q);
             row.style.display = match ? '' : 'none';
         });
     }

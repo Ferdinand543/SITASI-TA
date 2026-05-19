@@ -21,7 +21,7 @@
 
     /* ── HERO ── */
     .pj-hero {
-        background-image: url('{{ asset("images/bg_ajukan.jpeg") }}');
+        background-image: url('{{ asset("images/1.jpeg") }}');
         background-size: cover;
         background-position: center;
         border-radius: 20px;
