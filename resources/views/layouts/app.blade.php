@@ -382,11 +382,6 @@
                     Jadwal
                 </a>
 
-                <a href="#" class="sidebar-link {{ request()->is('dosen-pembimbing*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    Dosen Pembimbing
-                </a>
-
                 <a href="{{ url('/panduan-ta/mahasiswa') }}"
                     class="sidebar-link {{ request()->is('panduan-ta*') ? 'active' : '' }}">
                     <i class="fa-solid fa-book-open"></i>
@@ -619,7 +614,7 @@
         </nav>
 
         <div class="sidebar-footer">
-            <a href="/logout" class="sidebar-link">
+            <a href="#" class="sidebar-link" onclick="konfirmasiLogout()">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 Logout
             </a>
@@ -715,6 +710,37 @@
         function showSidebarDenied(msg) {
             document.getElementById('popupSidebarMsg').innerText = msg;
             document.getElementById('popupSidebarDenied').style.display = 'flex';
+        }
+
+        // ── LOGOUT DENGAN KONFIRMASI ──
+        function konfirmasiLogout() {
+            Swal.fire({
+                title: 'Yakin ingin logout?',
+                text: 'Anda akan keluar dari sesi ini.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#FACC15',
+                cancelButtonColor: '#d1d5db',
+                confirmButtonText: 'Ya, Logout',
+                cancelButtonText: 'Batal',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Berhasil Logout!',
+                        text: 'Sampai jumpa lagi.',
+                        icon: 'success',
+                        confirmButtonColor: '#FACC15',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    });
+                    setTimeout(function () {
+                        window.location.href = '/logout';
+                    }, 800);
+                }
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function() {

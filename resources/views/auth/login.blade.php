@@ -10,21 +10,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        * {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+        }
+
         body {
             font-family: 'Hanken Grotesk', sans-serif;
             background: #FFFFFF;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 24px;
+            /* FIX: pastiin nggak ada offset horizontal */
+            text-align: center;
         }
 
         /* ── BRAND ── */
@@ -32,6 +38,8 @@
             text-align: center;
             margin-bottom: 28px;
             animation: fadeDown 0.45s ease both;
+            width: 100%;
+            max-width: 448px;
         }
 
         .brand-logo {
@@ -46,18 +54,20 @@
             font-family: 'Hanken Grotesk', sans-serif;
             font-size: 2rem;
             font-weight: 800;
-            color: #4D4632;   /* dari mockup */
+            color: #4D4632;
             letter-spacing: -0.5px;
             margin-bottom: 4px;
+            text-align: center;
         }
 
         .brand-subtitle {
             font-family: 'Hanken Grotesk', sans-serif;
-            font-size: 20px;          /* dari mockup: 20px */
-            font-weight: 500;         /* Medium dari mockup */
-            line-height: 28px;        /* dari mockup */
-            color: #4D4632;           /* dari mockup */
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 28px;
+            color: #4D4632;
             letter-spacing: 0px;
+            text-align: center;
         }
 
         /* ── CARD ── */
@@ -69,23 +79,24 @@
             max-width: 448px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.07);
             animation: fadeUp 0.45s ease 0.1s both;
+            /* FIX: text-align kembali ke left supaya label & input rapi */
+            text-align: left;
         }
 
-        /* "Login" judul card — #111C2D */
+        /* "Login" judul card */
         .card-title {
             font-family: 'Hanken Grotesk', sans-serif;
             font-size: 1.5rem;
             font-weight: 800;
-            color: #111C2D;   /* dari mockup */
+            color: #111C2D;
             margin-bottom: 4px;
             text-align: center;
         }
 
-        /* "Masuk untuk melanjutkan ke sistem." — #5D5F5F */
         .card-desc {
             font-family: 'Hanken Grotesk', sans-serif;
             font-size: 0.85rem;
-            color: #5D5F5F;   /* dari mockup */
+            color: #5D5F5F;
             font-weight: 400;
             margin-bottom: 28px;
             text-align: center;
@@ -96,13 +107,12 @@
             margin-bottom: 18px;
         }
 
-        /* Label "Username", "Password" — #111C2D */
         .field-label {
             display: block;
             font-family: 'Hanken Grotesk', sans-serif;
             font-size: 0.82rem;
             font-weight: 600;
-            color: #111C2D;   /* dari mockup */
+            color: #111C2D;
             margin-bottom: 8px;
         }
 
@@ -112,11 +122,10 @@
             align-items: center;
         }
 
-        /* Icon dalam input — #5D5F5F */
         .input-icon {
             position: absolute;
             left: 14px;
-            color: #5D5F5F;   /* dari mockup */
+            color: #5D5F5F;
             font-size: 0.88rem;
             pointer-events: none;
         }
@@ -124,19 +133,18 @@
         .input-wrap input {
             width: 100%;
             padding: 13px 14px 13px 42px;
-            border: 1.5px solid #D1C6AB;   /* dari mockup */
+            border: 1.5px solid #D1C6AB;
             border-radius: 12px;
             font-size: 0.9rem;
             font-family: 'Hanken Grotesk', sans-serif;
-            color: #111C2D;      /* dari mockup */
+            color: #111C2D;
             background: #FFFFFF;
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        /* Placeholder — #5D5F5F */
         .input-wrap input::placeholder {
-            color: #5D5F5F;   /* dari mockup */
+            color: #5D5F5F;
             font-weight: 400;
         }
 
@@ -145,14 +153,13 @@
             box-shadow: 0 0 0 3px rgba(108, 87, 0, 0.08);
         }
 
-        /* Eye icon — #5D5F5F */
         .eye-btn {
             position: absolute;
             right: 14px;
             background: none;
             border: none;
             cursor: pointer;
-            color: #5D5F5F;   /* dari mockup */
+            color: #5D5F5F;
             font-size: 0.9rem;
             padding: 0;
             transition: color 0.2s;
@@ -162,12 +169,11 @@
             color: #111C2D;
         }
 
-        /* ── FORGOT — #5D5F5F ── */
         .forgot-link {
             display: block;
             text-align: right;
             font-size: 0.78rem;
-            color: #5D5F5F;   /* dari mockup */
+            color: #5D5F5F;
             text-decoration: none;
             margin-top: 8px;
             font-weight: 500;
@@ -178,17 +184,17 @@
             color: #111C2D;
         }
 
-        /* ── BUTTON — gradient #FACC15 → #FDE047 ── */
+        /* ── BUTTON ── */
         .btn-login {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(90deg, #FACC15 0%, #FDE047 100%);   /* dari mockup */
+            background: linear-gradient(90deg, #FACC15 0%, #FDE047 100%);
             border: none;
             border-radius: 50px;
             font-size: 1rem;
             font-weight: 700;
             font-family: 'Hanken Grotesk', sans-serif;
-            color: #6C5700;   /* dari mockup */
+            color: #6C5700;
             cursor: pointer;
             margin-top: 24px;
             letter-spacing: 0.2px;
