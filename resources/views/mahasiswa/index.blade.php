@@ -151,11 +151,6 @@
         flex-shrink: 0;
     }
 
-    .stat-content {
-        display: flex;
-        flex-direction: column;
-    }
-
     .stat-number {
         font-size: 2rem;
         font-weight: 800;
@@ -169,6 +164,34 @@
         color: #64748b;
         font-weight: 500;
         line-height: 1.3;
+    }
+
+    /* Progress bar bimbingan */
+    .bimbingan-progress-wrap {
+        margin-top: 8px;
+    }
+
+    .bimbingan-progress-track {
+        background: #f1f5f9;
+        border-radius: 99px;
+        height: 6px;
+        width: 110px;
+        overflow: hidden;
+    }
+
+    .bimbingan-progress-fill {
+        background: linear-gradient(90deg, #FACC15, #f59e0b);
+        height: 6px;
+        border-radius: 99px;
+        transition: width 0.8s ease;
+    }
+
+    .bimbingan-progress-label {
+        font-size: 0.65rem;
+        color: #64748b;
+        font-weight: 600;
+        margin-top: 4px;
+        display: block;
     }
 
     /* ── MIDDLE ROW ── */
@@ -203,6 +226,14 @@
         color: var(--neutral);
         margin-bottom: 18px;
         line-height: 1.35;
+    }
+
+    .proposal-title-empty {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #94a3b8;
+        font-style: italic;
+        margin-bottom: 18px;
     }
 
     .dosen-row {
@@ -242,6 +273,13 @@
         color: var(--neutral);
     }
 
+    .dosen-name-empty {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #94a3b8;
+        font-style: italic;
+    }
+
     .proposal-time {
         margin-top: 14px;
         font-size: 0.7rem;
@@ -251,12 +289,34 @@
         gap: 5px;
     }
 
+    .judul-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #dcfce7;
+        color: #16a34a;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 99px;
+        margin-bottom: 10px;
+    }
+
+    .judul-status-badge::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: #16a34a;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
     /* AKTIVITAS */
     .aktivitas-card {
         background: #fff;
         border-radius: var(--border-radius);
         padding: 18px;
-        width: 240px;
+        width: 260px;
         flex-shrink: 0;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
@@ -302,25 +362,11 @@
         margin-top: 2px;
     }
 
-    .btn-lihat-semua {
-        display: block;
+    .aktivitas-empty {
         text-align: center;
-        margin-top: 10px;
-        padding: 8px;
-        border: 1.5px solid var(--primary);
-        border-radius: 10px;
-        font-size: 0.74rem;
-        font-weight: 600;
-        color: var(--neutral);
-        text-decoration: none;
-        background: transparent;
-        transition: 0.2s;
-    }
-
-    .btn-lihat-semua:hover {
-        background: var(--primary);
-        color: var(--neutral);
-        text-decoration: none;
+        padding: 20px 0;
+        color: #94a3b8;
+        font-size: 0.78rem;
     }
 
     /* ── ALUR ── */
@@ -522,7 +568,6 @@
         line-height: 1.4;
     }
 
-    /* ── Badge notif card ── */
     .card-badge-notif {
         position: absolute;
         top: 10px;
@@ -534,42 +579,20 @@
         display: inline-block;
         z-index: 10;
     }
-
-    /* ── STATUS TA ── */
-    .status-section {
-        background: #fff;
-        border-radius: var(--border-radius);
-        padding: 22px 24px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        margin-bottom: 24px;
-    }
-
-    .status-section h5 {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: var(--neutral);
-        margin-bottom: 16px;
-    }
-
-    .status-table td {
-        font-size: 0.82rem;
-        color: var(--neutral);
-        padding: 7px 0;
-        vertical-align: middle;
-        border: none;
-    }
-
-    .status-table td:first-child {
-        color: var(--text-muted);
-        width: 130px;
-        font-weight: 500;
-    }
-
-    .status-table td:nth-child(2) {
-        color: var(--text-muted);
-        width: 18px;
-    }
 </style>
+
+@php
+    // Judul aktif
+    $judulAktif = $judulDisetujui->judul_disetujui ?? null;
+    $updatedAt  = $judulDisetujui->updated_at      ?? null;
+
+    // Progress bimbingan
+    $targetBimbinganVal = $targetBimbingan ?? 12;
+    $totalBimbinganVal  = $totalBimbingan  ?? 0;
+    $persenBimbingan    = $targetBimbinganVal > 0
+        ? min(100, round(($totalBimbinganVal / $targetBimbinganVal) * 100))
+        : 0;
+@endphp
 
 <div class="sitasi-wrap">
 
@@ -587,11 +610,11 @@
     {{-- STATS --}}
     <div class="stat-row">
 
+        {{-- Total Pengajuan Judul --}}
         <div class="stat-item">
             <div class="stat-icon-wrap">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="#2563eb" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
+                    stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                     <polyline points="14 2 14 8 20 8" />
                     <line x1="16" y1="13" x2="8" y2="13" />
@@ -599,32 +622,32 @@
                 </svg>
             </div>
             <div>
-                <span class="stat-number">{{ $totalPengajuan }}</span>
-                <span class="stat-label">Total Pengajuan Judul</span>
+                <div class="stat-number">{{ $totalPengajuan }}</div>
+                <div class="stat-label">Total Pengajuan Judul</div>
             </div>
         </div>
 
+        {{-- Total Upload Proposal --}}
         <div class="stat-item">
             <div class="stat-icon-wrap">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="#16a34a" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
+                    stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
                 </svg>
             </div>
             <div>
-                <span class="stat-number">{{ $totalProposal }}</span>
-                <span class="stat-label">Total Upload Proposal</span>
+                <div class="stat-number">{{ $totalProposal }}</div>
+                <div class="stat-label">Total Upload Proposal</div>
             </div>
         </div>
 
+        {{-- Total Bimbingan + Progress bar target 12 --}}
         <div class="stat-item">
             <div class="stat-icon-wrap">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="#f59e0b" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
+                    stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -632,97 +655,129 @@
                 </svg>
             </div>
             <div>
-                <span class="stat-number">{{ $totalBimbingan ?? 0 }}</span>
-                <span class="stat-label">Total Bimbingan</span>
+                <div class="stat-number">{{ $totalBimbinganVal }}</div>
+                <div class="stat-label">Total Bimbingan</div>
+                <div class="bimbingan-progress-wrap">
+                    <div class="bimbingan-progress-track">
+                        <div class="bimbingan-progress-fill" style="width: {{ $persenBimbingan }}%;"></div>
+                    </div>
+                    <span class="bimbingan-progress-label">
+                        {{ $persenBimbingan }}% dari target ({{ $targetBimbinganVal }}x)
+                    </span>
+                </div>
             </div>
         </div>
 
     </div>
 
-    {{-- PROPOSAL + AKTIVITAS --}}
+    {{-- JUDUL AKTIF + AKTIVITAS TERBARU (REALTIME) --}}
     <div class="middle-row">
+
+        {{-- Judul & Dosen --}}
         <div class="proposal-card">
-            <div class="proposal-label">Proposal Aktif</div>
-            <div class="proposal-title">Implementasi Deep Learning untuk Klasifikasi Citra Medis Berbasis Web</div>
+            <div class="proposal-label">Judul Aktif</div>
+
+            @if($judulAktif)
+                <div class="judul-status-badge">Disetujui</div>
+                <div class="proposal-title">{{ $judulAktif }}</div>
+            @else
+                <div class="proposal-title-empty">Belum ada judul yang disetujui.</div>
+            @endif
+
             <div class="dosen-row">
                 <div class="dosen-item">
                     <div class="dosen-avatar">🎓</div>
                     <div>
                         <div class="dosen-role">Dosen Pembimbing 1</div>
-                        <div class="dosen-name">Prof. Dr. Suharyanto, M.Eng</div>
+                        @if(!empty($namaDosen1))
+                            <div class="dosen-name">{{ $namaDosen1 }}</div>
+                        @else
+                            <div class="dosen-name-empty">Belum ditentukan</div>
+                        @endif
                     </div>
                 </div>
                 <div class="dosen-item">
                     <div class="dosen-avatar">🎓</div>
                     <div>
                         <div class="dosen-role">Dosen Pembimbing 2</div>
-                        <div class="dosen-name">Prof. Dr. Suharyanto, M.Eng</div>
+                        @if(!empty($namaDosen2))
+                            <div class="dosen-name">{{ $namaDosen2 }}</div>
+                        @else
+                            <div class="dosen-name-empty">Belum ditentukan</div>
+                        @endif
                     </div>
                 </div>
             </div>
-            <div class="proposal-time">
-                🕐 Terakhir diperbarui: 2 jam yang lalu
-            </div>
+
+            @if($updatedAt)
+                <div class="proposal-time">
+                    🕐 Terakhir diperbarui: {{ \Carbon\Carbon::parse($updatedAt)->diffForHumans() }}
+                </div>
+            @endif
         </div>
 
+        {{-- AKTIVITAS TERBARU REALTIME (tanpa tombol Lihat Semua) --}}
         <div class="aktivitas-card">
             <h6>Aktivitas Terbaru</h6>
-            <div class="aktivitas-item">
-                <div class="aktivitas-bar" style="background:#FACC15;"></div>
-                <div>
-                    <div class="aktivitas-text">Proposal berhasil diunggah</div>
-                    <div class="aktivitas-time">Hari ini, 10:30 AM</div>
+
+            @forelse($aktivitas as $i => $item)
+                <div class="aktivitas-item">
+                    <div class="aktivitas-bar" style="background: {{ $i === 0 ? '#FACC15' : '#e2e8f0' }};"></div>
+                    <div>
+                        <div class="aktivitas-text">{{ $item->teks }}</div>
+                        <div class="aktivitas-time">
+                            {{ \Carbon\Carbon::parse($item->waktu)->diffForHumans() }}
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="aktivitas-item">
-                <div class="aktivitas-bar" style="background:#e2e8f0;"></div>
-                <div>
-                    <div class="aktivitas-text">Pembimbing telah ditentukan</div>
-                    <div class="aktivitas-time">Kemarin</div>
+            @empty
+                <div class="aktivitas-empty">
+                    Belum ada aktivitas.
                 </div>
-            </div>
-            <div class="aktivitas-item">
-                <div class="aktivitas-bar" style="background:#e2e8f0;"></div>
-                <div>
-                    <div class="aktivitas-text">Judul TA Disetujui</div>
-                    <div class="aktivitas-time">2 hari yang lalu</div>
-                </div>
-            </div>
-            <div class="aktivitas-item">
-                <div class="aktivitas-bar" style="background:#e2e8f0;"></div>
-                <div>
-                    <div class="aktivitas-text">Pengajuan Judul TA Baru</div>
-                    <div class="aktivitas-time">1 minggu yang lalu</div>
-                </div>
-            </div>
-            <a href="#" class="btn-lihat-semua">Lihat Semua Riwayat</a>
+            @endforelse
         </div>
+
     </div>
 
-    {{-- ALUR KEMAJUAN --}}
+    {{-- ALUR KEMAJUAN TA — REALTIME --}}
     <div class="alur-section">
         <h6>Alur Kemajuan Tugas Akhir</h6>
         <div class="alur-steps">
-            <div class="alur-step done">
-                <div class="step-circle">✓</div>
-                <div class="step-label">Pengajuan<br>Judul</div>
-            </div>
-            <div class="alur-step done">
-                <div class="step-circle">✓</div>
-                <div class="step-label">Upload Proposal<br>& Usulan Pembimbing</div>
-            </div>
-            <div class="alur-step active">
-                <div class="step-circle"></div>
-                <div class="step-label">Verifikasi<br>Pembimbing</div>
-            </div>
-            <div class="alur-step">
-                <div class="step-circle">4</div>
-                <div class="step-label">Review<br>Proposal</div>
-            </div>
-            <div class="alur-step">
-                <div class="step-circle">5</div>
-                <div class="step-label">Seminar<br>Proposal</div>
-            </div>
+
+            @php
+                $stepList = [
+                    'pengajuan_judul'       => 'Pengajuan<br>Judul',
+                    'upload_proposal'       => 'Upload Proposal<br>& Usulan Pembimbing',
+                    'verifikasi_pembimbing' => 'Verifikasi<br>Pembimbing',
+                    'review_proposal'       => 'Review<br>Proposal',
+                    'proses_bimbingan'      => 'Proses<br>Bimbingan',
+                    'seminar_proposal'      => 'Seminar<br>Proposal',
+                ];
+                $activeFound = false;
+            @endphp
+
+            @foreach($stepList as $key => $label)
+                @php
+                    $isDone   = $steps[$key] ?? false;
+                    $isActive = !$isDone && !$activeFound;
+                    if ($isActive) $activeFound = true;
+                    $stepNo = $loop->iteration;
+                @endphp
+
+                <div class="alur-step {{ $isDone ? 'done' : ($isActive ? 'active' : '') }}">
+                    <div class="step-circle">
+                        @if($isDone)
+                            ✓
+                        @elseif($isActive)
+                            {{-- dot ditampilkan via CSS ::after --}}
+                        @else
+                            {{ $stepNo }}
+                        @endif
+                    </div>
+                    <div class="step-label">{!! $label !!}</div>
+                </div>
+            @endforeach
+
         </div>
     </div>
 
@@ -808,7 +863,7 @@
 </div>
 
 <script>
-    window.addEventListener("load", function() {
+    window.addEventListener("load", function () {
         document.getElementById("loadingOverlay").style.display = "none";
     });
 </script>
