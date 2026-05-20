@@ -44,6 +44,18 @@
         : ($isReviewer
             ? \Illuminate\Support\Facades\DB::table('proposal')->where('status', 'menunggu_review')->count()
             : 0);
+
+    // ── BADGE BIMBINGAN: nyala kalau ada bimbingan baru ATAU proposal pending ──
+    $jumlahBimbinganBaru = $isPembimbing
+        ? \Illuminate\Support\Facades\DB::table('bimbingan')
+            ->where('dosen_nid', $nimSesi)
+            ->where('status', 'Baru Dikirim')
+            ->count()
+          + \Illuminate\Support\Facades\DB::table('pengajuan_proposal_bimbingan')
+            ->where('dosen_nid', $nimSesi)
+            ->where('status', 'pending')
+            ->count()
+        : 0;
 @endphp
 
 <!-- HERO -->
@@ -83,7 +95,6 @@
         </div>
 
         {{-- CARD PROPOSAL --}}
-        {{-- BARIS INI DIUBAH: tambah || $isPenguji --}}
         <div class="col-md-3">
             @if($isKoor || $isReviewer || $isPenguji)
                 <a href="{{ $proposalUrl }}" class="text-decoration-none text-dark">
@@ -110,7 +121,8 @@
         <div class="col-md-3">
             @if($isPembimbing)
                 <a href="{{ $bimbinganUrl }}" class="text-decoration-none text-dark">
-                    <div class="card shadow-sm h-100 border-0 p-3 menu-card">
+                    <div class="card shadow-sm h-100 border-0 p-3 menu-card" style="position:relative;">
+                        @if($jumlahBimbinganBaru > 0)<span class="badge-notif"></span>@endif
                         <img src="{{ asset('images/bimbingan.jpeg') }}" class="menu-img mb-3">
                         <h6 class="fw-bold">Riwayat Bimbingan</h6>
                         <p class="text-muted small mb-0">Riwayat bimbingan TA</p>
