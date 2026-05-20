@@ -736,11 +736,7 @@
                 Panduan TA
             </a>
 
-            <a href="#"
-                class="sidebar-link">
-                <i class="fa-solid fa-user-tie"></i>
-                Dosen Pembimbing
-            </a>
+            
             @endif
 
             {{-- ══ PROFIL — otomatis sesuai role ══ --}}

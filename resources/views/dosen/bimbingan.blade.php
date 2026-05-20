@@ -77,20 +77,20 @@
     }
 
     .tab-btn.active {
-        background: var(--gold);
-        color: #fff;
-        border-color: var(--gold);
+    background: #FFE083;
+    color: #6C5700;
+    border-color: #D1C6AB;
     }
 
-    .tab-btn.inactive {
-        background: rgba(255, 255, 255, .7);
-        color: #92400E;
-        border-color: var(--gold-border);
+.tab-btn.inactive {
+    background: #FFFFFF;
+    color: #6C5700;
+    border-color: #D1C6AB;
     }
 
-    .tab-btn.inactive:hover {
-        background: #fff;
-        border-color: var(--gold);
+.tab-btn.inactive:hover {
+    background: #FFF8DC;
+    border-color: #6C5700;
     }
 
     .count-chip {
@@ -108,7 +108,7 @@
     }
 
     .tab-btn.inactive .count-chip {
-        background: #92400E;
+        background: #6C5700;
     }
 
     .card {

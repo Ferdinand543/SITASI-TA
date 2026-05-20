@@ -743,18 +743,46 @@ document.addEventListener("DOMContentLoaded", function () {
     const fileInput  = document.getElementById("up_file");
     const dropText   = document.getElementById("dropText");
     const wajib      = ["up_judul", "up_tanggal", "up_dosbing1", "up_dosbing2"];
-    const MAX_SIZE   = 10 * 1024 * 1024; // 10MB dalam bytes
+    const MAX_SIZE   = 10 * 1024 * 1024;
+
+    // ── SYNC DROPDOWN DOSEN (biar ga bisa pilih yang sama) ──
+    const dosbing1 = document.getElementById("up_dosbing1");
+    const dosbing2 = document.getElementById("up_dosbing2");
+
+    function syncDosbingOptions() {
+        const val1 = dosbing1.value;
+        const val2 = dosbing2.value;
+
+        // Reset semua option dulu
+        Array.from(dosbing1.options).forEach(opt => opt.disabled = false);
+        Array.from(dosbing2.options).forEach(opt => opt.disabled = false);
+
+        // Disable di dosbing2 option yang sudah dipilih di dosbing1
+        if (val1) {
+            Array.from(dosbing2.options).forEach(opt => {
+                if (opt.value === val1) opt.disabled = true;
+            });
+        }
+
+        // Disable di dosbing1 option yang sudah dipilih di dosbing2
+        if (val2) {
+            Array.from(dosbing1.options).forEach(opt => {
+                if (opt.value === val2) opt.disabled = true;
+            });
+        }
+    }
+
+    dosbing1.addEventListener("change", syncDosbingOptions);
+    dosbing2.addEventListener("change", syncDosbingOptions);
 
     formUpload.addEventListener("submit", function (e) {
         let isValid = true;
 
-        // Reset semua state error
         wajib.forEach(id => document.getElementById(id).classList.remove("is-invalid"));
         dropZone.classList.remove("is-invalid");
         dropText.style.color = "#64748b";
         alertBox.classList.add("d-none");
 
-        // Cek field wajib
         wajib.forEach(id => {
             const el = document.getElementById(id);
             if (!el.value.trim()) {
@@ -763,13 +791,19 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // Cek file
+        // Cek dosen sama
+        if (dosbing1.value && dosbing2.value && dosbing1.value === dosbing2.value) {
+            dosbing1.classList.add("is-invalid");
+            dosbing2.classList.add("is-invalid");
+            errorMsg.textContent = "Pembimbing 1 dan Pembimbing 2 tidak boleh sama!";
+            isValid = false;
+        }
+
         if (!fileInput.files.length) {
             dropZone.classList.add("is-invalid");
             isValid = false;
             errorMsg.textContent = "File proposal wajib diunggah!";
         } else if (fileInput.files[0].size > MAX_SIZE) {
-            // File terlalu besar
             dropZone.classList.add("is-invalid");
             dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
             dropText.style.color = "#dc3545";
@@ -791,18 +825,15 @@ document.addEventListener("DOMContentLoaded", function () {
         if (this.files.length) {
             const file = this.files[0];
 
-            // Reset error state dulu
             dropZone.classList.remove("is-invalid");
             alertBox.classList.add("d-none");
 
             if (file.size > MAX_SIZE) {
-                // Langsung kasih tau kalau kebesaran
                 dropZone.classList.add("is-invalid");
                 dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
                 dropText.style.color = "#dc3545";
                 errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB. Kompres file PDF kamu terlebih dahulu.";
                 alertBox.classList.remove("d-none");
-                // Reset input biar ga kekirim
                 this.value = "";
             } else {
                 dropText.textContent = "✅ " + file.name;
@@ -857,6 +888,9 @@ document.addEventListener("DOMContentLoaded", function () {
         dropText.textContent = "Klik atau seret file proposal untuk diunggah";
         dropText.style.color = "#64748b";
         alertBox.classList.add("d-none");
+        // Reset disabled options
+        Array.from(dosbing1.options).forEach(opt => opt.disabled = false);
+        Array.from(dosbing2.options).forEach(opt => opt.disabled = false);
     });
 });
 </script>

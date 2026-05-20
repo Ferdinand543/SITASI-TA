@@ -677,16 +677,11 @@ body{
     align-items:center;
 }
 
-.hero-overlay{
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,0.25);
-}
 
 .hero-content{
     position:relative;
     z-index:2;
-    color:#fff;
+    color:#735C00; 
 }
 
 .hero-content h1{
