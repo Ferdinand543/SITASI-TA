@@ -134,6 +134,43 @@ class ProposalController extends Controller
     }
 
     // =====================================================
+    // INDEX PENGUJI (READ ONLY) ← TAMBAHAN BARU
+    // =====================================================
+    public function indexPenguji()
+    {
+        $user = session('user');
+        if (!$user) return redirect('/login')->with('error', 'Silakan login dulu!');
+
+        $isPenguji = DB::table('dosen_roles')
+            ->where('nim_nid', $user->nim_nid)
+            ->where('role_dosen', 'penguji')
+            ->exists();
+
+        if (!$isPenguji) {
+            return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
+        }
+
+        $proposals = $this->baseProposalQuery()
+            ->select([
+                'proposal.id',
+                'proposal.nim_nid',
+                'mhs.nama',
+                'proposal.judul',
+                'proposal.file_proposal',
+                'proposal.tanggal_pengajuan',
+                'proposal.status',
+                'dd1.nama as dosen1_nama',
+                'dd1.nim_nid as dosen1_nidn',
+                'dd2.nama as dosen2_nama',
+                'dd2.nim_nid as dosen2_nidn',
+            ])
+            ->orderBy('proposal.tanggal_pengajuan', 'asc')
+            ->get();
+
+        return view('pengajuan.proposal_penguji', compact('proposals'));
+    }
+
+    // =====================================================
     // DETAIL
     // =====================================================
     public function detail($id)

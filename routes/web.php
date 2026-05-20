@@ -278,6 +278,13 @@ Route::get('/proposal/mahasiswa/{id}',   [ProposalMahasiswaController::class, 'd
 
 
 // =====================================================
+// PROPOSAL TA-1 — DOSEN PENGUJI (READ ONLY) ← TAMBAHAN BARU
+// =====================================================
+
+Route::get('/proposal/penguji', [ProposalController::class, 'indexPenguji'])->name('proposal.penguji');
+
+
+// =====================================================
 // PROPOSAL TA-1 — KOORDINATOR
 // =====================================================
 

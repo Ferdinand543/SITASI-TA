@@ -29,7 +29,8 @@
     $isPembimbing = in_array('pembimbing',  $rolesDb);
     $isPenguji    = in_array('penguji',     $rolesDb);
 
-    $proposalUrl  = $isKoor ? route('proposal.index') : ($isReviewer ? route('reviewer.proposal') : '#');
+    // tambah route penguji
+    $proposalUrl  = $isKoor ? route('proposal.index') : ($isReviewer ? route('reviewer.proposal') : ($isPenguji ? route('proposal.penguji') : '#'));
     $pengajuanUrl = $isKoor ? route('pengajuan') : '#';
     $bimbinganUrl = $isPembimbing ? route('dosen.bimbingan.index') : '#';
     $penilaianUrl = '#'; // belum ada route
@@ -82,8 +83,9 @@
         </div>
 
         {{-- CARD PROPOSAL --}}
+        {{-- BARIS INI DIUBAH: tambah || $isPenguji --}}
         <div class="col-md-3">
-            @if($isKoor || $isReviewer)
+            @if($isKoor || $isReviewer || $isPenguji)
                 <a href="{{ $proposalUrl }}" class="text-decoration-none text-dark">
                     <div class="card shadow-sm h-100 border-0 p-3 menu-card" style="position:relative;">
                         @if($jumlahMenungguProposal > 0)<span class="badge-notif"></span>@endif

@@ -549,13 +549,20 @@
             {{-- ── Proposal ── --}}
             @if($isKoor)
             <a href="{{ route('proposal.index') }}"
-                class="sidebar-link {{ request()->is('proposal*') && !request()->is('reviewer*') ? 'active' : '' }}">
+                class="sidebar-link {{ request()->is('proposal*') && !request()->is('reviewer*') && !request()->is('proposal/penguji*') ? 'active' : '' }}">
                 <i class="fa-solid fa-file-arrow-up"></i>
                 Proposal
             </a>
             @elseif($isReviewer)
             <a href="{{ route('reviewer.proposal') }}"
                 class="sidebar-link {{ request()->is('reviewer*') ? 'active' : '' }}">
+                <i class="fa-solid fa-file-arrow-up"></i>
+                Proposal
+            </a>
+            @elseif($isPenguji)
+            {{-- ← TAMBAHAN BARU: penguji bisa akses proposal (read only) --}}
+            <a href="{{ route('proposal.penguji') }}"
+                class="sidebar-link {{ request()->is('proposal/penguji*') ? 'active' : '' }}">
                 <i class="fa-solid fa-file-arrow-up"></i>
                 Proposal
             </a>
