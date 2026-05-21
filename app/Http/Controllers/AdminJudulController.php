@@ -101,4 +101,52 @@ class AdminJudulController extends Controller
             'pengajuan'
         ));
     }
+
+    public function proses(Request $request, $id)
+    {
+        $pengajuan = DB::table('pengajuan_judul')
+            ->where('id', $id)
+            ->first();
+
+        if (!$pengajuan) {
+            abort(404);
+        }
+
+        // kalau admin menyetujui
+        if ($request->status == 'disetujui') {
+
+            // update pengajuan yang dipilih
+            DB::table('pengajuan_judul')
+                ->where('id', $id)
+                ->update([
+                    'status' => 'disetujui',
+                    'judul_disetujui' => $request->judul_disetujui,
+                    'updated_at' => now()
+                ]);
+
+            // otomatis tolak semua pengajuan lain milik mahasiswa yang sama
+            DB::table('pengajuan_judul')
+                ->where('nim_nid', $pengajuan->nim_nid)
+                ->where('id', '!=', $id)
+                ->update([
+                    'status' => 'ditolak',
+                    'updated_at' => now()
+                ]);
+        }
+
+        // kalau ditolak biasa
+        else {
+
+            DB::table('pengajuan_judul')
+                ->where('id', $id)
+                ->update([
+                    'status' => 'ditolak',
+                    'updated_at' => now()
+                ]);
+        }
+
+        return redirect()
+            ->route('admin.judul.index')
+            ->with('success', 'Status pengajuan berhasil diperbarui');
+    }
 }

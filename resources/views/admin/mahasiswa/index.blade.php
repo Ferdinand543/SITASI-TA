@@ -178,6 +178,29 @@
 
     </div>
 
+    {{-- ALERT --}}
+    @if(session('success'))
+    <div class="alert alert-success rounded-4 border-0 shadow-sm">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger rounded-4 border-0 shadow-sm">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="alert alert-danger rounded-4 border-0 shadow-sm">
+            <ul class="mb-0 ps-3">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     {{-- TABLE --}}
     <div class="custom-card">
 
@@ -252,21 +275,94 @@
                                 </button>
 
                                 {{-- DELETE --}}
-                                <form action="{{ route('mahasiswa.destroy', $mhs->nim_nid) }}"
-                                      method="POST"
-                                      onsubmit="return confirm('Yakin ingin menghapus mahasiswa ini?')">
+                                <button
+                                    type="button"
+                                    class="btn-action btn-delete"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal{{ $mhs->nim_nid }}">
 
-                                    @csrf
-                                    @method('DELETE')
+                                    <i class="fa-solid fa-trash"></i>
 
-                                    <button type="submit"
-                                            class="btn-action btn-delete">
+                                </button>
 
-                                        <i class="fa-solid fa-trash"></i>
+                                {{-- MODAL DELETE --}}
+                                <div class="modal fade"
+                                    id="deleteModal{{ $mhs->nim_nid }}"
+                                    tabindex="-1"
+                                    aria-hidden="true">
 
-                                    </button>
+                                    <div class="modal-dialog modal-dialog-centered">
 
-                                </form>
+                                        <div class="modal-content border-0 rounded-4">
+
+                                            <div class="modal-header border-0 pb-0">
+
+                                                <h5 class="modal-title fw-bold text-danger">
+                                                    Hapus Mahasiswa
+                                                </h5>
+
+                                                <button type="button"
+                                                        class="btn-close"
+                                                        data-bs-dismiss="modal">
+                                                </button>
+
+                                            </div>
+
+                                            <div class="modal-body text-center py-4">
+
+                                                <div class="mb-3">
+
+                                                    <i class="fa-solid fa-trash-can"
+                                                    style="font-size:60px;color:#ef4444;">
+                                                    </i>
+
+                                                </div>
+
+                                                <h5 class="fw-bold mb-2">
+                                                    Yakin ingin menghapus?
+                                                </h5>
+
+                                                <p class="text-muted mb-0">
+                                                    Data mahasiswa
+                                                    <strong>{{ $mhs->nama }}</strong>
+                                                    akan dihapus permanen.
+                                                </p>
+
+                                            </div>
+
+                                            <div class="modal-footer border-0 pt-0">
+
+                                                <button type="button"
+                                                        class="btn btn-light rounded-3 px-4"
+                                                        data-bs-dismiss="modal">
+
+                                                    Batal
+
+                                                </button>
+
+                                                <form action="{{ route('mahasiswa.destroy', $mhs->nim_nid) }}"
+                                                    method="POST">
+
+                                                    @csrf
+                                                    @method('DELETE')
+
+                                                    <button type="submit"
+                                                            class="btn btn-danger rounded-3 px-4">
+
+                                                        <i class="fa-solid fa-trash me-2"></i>
+                                                        Hapus
+
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
 
                             </div>
 
@@ -448,7 +544,7 @@
                         </label>
 
                         <input type="text"
-                               name="nim"
+                               name="nim_nid"
                                class="form-control">
 
                     </div>

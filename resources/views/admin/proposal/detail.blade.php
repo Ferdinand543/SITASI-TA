@@ -356,17 +356,17 @@
                 <div class="card-header">
                     <div class="card-title">Informasi Mahasiswa</div>
 
-                    @if($proposal->status == 'pending')
+                    @if($proposal->status == 'menunggu_verifikasi')
                         <span class="badge badge-pending">
                             ⏳ Menunggu Review
                         </span>
 
-                    @elseif($proposal->status == 'direview')
+                    @elseif($proposal->status == 'menunggu_review')
                         <span class="badge badge-review">
                             📄 Sedang Direview
                         </span>
 
-                    @elseif($proposal->status == 'disetujui')
+                    @elseif($proposal->status == 'selesai')
                         <span class="badge badge-approved">
                             ✓ Disetujui
                         </span>
@@ -412,14 +412,6 @@
                             <div class="proposal-title">
                                 {{ $proposal->judul }}
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="info-group">
-                        <div class="info-label">Deskripsi Proposal</div>
-
-                        <div class="info-value">
-                            {{ $proposal->deskripsi ?? 'Belum ada deskripsi proposal.' }}
                         </div>
                     </div>
 
@@ -479,21 +471,204 @@
                         </div>
                     </div>
 
+
+                    @if($proposal->status != 'selesai' && $proposal->status != 'ditolak')
                     <div class="action-wrap">
 
-                        <button class="btn-action btn-approve">
+                        {{-- BUTTON SETUJUI --}}
+                        <button
+                            class="btn-action btn-approve"
+                            data-bs-toggle="modal"
+                            data-bs-target="#approveModal">
+
                             <i class="fa-solid fa-check"></i>
                             Setujui Proposal
+
                         </button>
 
-                        <button class="btn-action btn-reject">
+                        {{-- BUTTON TOLAK --}}
+                        <button
+                            class="btn-action btn-reject"
+                            data-bs-toggle="modal"
+                            data-bs-target="#rejectModal">
+
                             <i class="fa-solid fa-xmark"></i>
                             Tolak Proposal
+
                         </button>
 
                     </div>
+                    
+                    @else
+
+                    <div style="
+                        margin-top:20px;
+                        padding:14px 18px;
+                        border-radius:12px;
+                        background:#F9FAFB;
+                        border:1px solid #E5E7EB;
+                        color:#6B7280;
+                        font-size:13px;
+                        font-weight:600;
+                    ">
+                        Proposal sudah memiliki status final dan tidak dapat diubah lagi.
+                    </div>
+
+                @endif
 
                 </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{{-- MODAL SETUJUI --}}
+<div class="modal fade"
+     id="approveModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content border-0 rounded-4">
+
+            <div class="modal-header border-0 pb-0">
+
+                <h5 class="modal-title fw-bold text-success">
+                    Setujui Proposal
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body text-center py-4">
+
+                <div class="mb-3">
+
+                    <i class="fa-solid fa-circle-check"
+                       style="font-size:60px;color:#16A34A;">
+                    </i>
+
+                </div>
+
+                <h5 class="fw-bold mb-2">
+                    Yakin ingin menyetujui proposal?
+                </h5>
+
+                <p class="text-muted">
+                    Proposal mahasiswa akan disetujui.
+                </p>
+
+            </div>
+
+            <div class="modal-footer border-0">
+
+                <button type="button"
+                        class="btn btn-light rounded-3 px-4"
+                        data-bs-dismiss="modal">
+
+                    Batal
+
+                </button>
+
+                <form action="{{ route('admin.proposal.approve', $proposal->id) }}"
+                      method="POST">
+
+                    @csrf
+
+                    <button type="submit"
+                            class="btn btn-success rounded-3 px-4">
+
+                        <i class="fa-solid fa-check me-2"></i>
+                        Setujui
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{{-- MODAL TOLAK --}}
+<div class="modal fade"
+     id="rejectModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content border-0 rounded-4">
+
+            <div class="modal-header border-0 pb-0">
+
+                <h5 class="modal-title fw-bold text-danger">
+                    Tolak Proposal
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body text-center py-4">
+
+                <div class="mb-3">
+
+                    <i class="fa-solid fa-circle-xmark"
+                       style="font-size:60px;color:#DC2626;">
+                    </i>
+
+                </div>
+
+                <h5 class="fw-bold mb-2">
+                    Yakin ingin menolak proposal?
+                </h5>
+
+                <p class="text-muted">
+                    Proposal mahasiswa akan ditolak.
+                </p>
+
+            </div>
+
+            <div class="modal-footer border-0">
+
+                <button type="button"
+                        class="btn btn-light rounded-3 px-4"
+                        data-bs-dismiss="modal">
+
+                    Batal
+
+                </button>
+
+                <form action="{{ route('admin.proposal.reject', $proposal->id) }}"
+                      method="POST">
+
+                    @csrf
+
+                    <button type="submit"
+                            class="btn btn-danger rounded-3 px-4">
+
+                        <i class="fa-solid fa-xmark me-2"></i>
+                        Tolak
+
+                    </button>
+
+                </form>
 
             </div>
 

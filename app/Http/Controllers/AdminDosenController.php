@@ -17,7 +17,9 @@ class AdminDosenController extends Controller
 
     public function index()
     {
-        $dosen = User::where('role', 'dosen')->get();
+        $dosen = User::where('role', 'dosen')
+            ->orderBy('nama', 'asc')
+            ->get();
 
         return view('admin.dosen.index', compact('dosen'));
     }
@@ -31,84 +33,80 @@ class AdminDosenController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nidn' => 'required|unique:users,nim_nid',
-            'nama' => 'required',
-            'email' => 'required|email|unique:users,email',
+            'nim_nid' => 'required|unique:users,nim_nid',
+            'nama'     => 'required',
+            'email'    => 'required|email|unique:users,email',
             'password' => 'required|min:6',
+            'roles'    => 'required|array|min:1',
         ]);
 
-        // simpan user dosen
-        User::create([
-            'nim_nid' => $request->nidn,
-            'nama' => $request->nama,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'dosen',
-            'foto' => '',
-        ]);
+        DB::beginTransaction();
 
-        // simpan sub role dosen
-        if ($request->has('is_pembimbing')) {
-            DB::table('dosen_roles')->insert([
-                'nim_nid' => $request->nidn,
-                'role_dosen' => 'pembimbing'
+        try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | SIMPAN USER DOSEN
+            |--------------------------------------------------------------------------
+            */
+
+            User::create([
+                'nim_nid' => $request->nim_nid,
+                'nama'    => $request->nama,
+                'email'   => $request->email,
+                'password'=> Hash::make($request->password),
+                'role'    => 'dosen',
+                'foto'    => '',
             ]);
-        }
 
-        if ($request->has('is_penguji')) {
-            DB::table('dosen_roles')->insert([
-                'nim_nid' => $request->nidn,
-                'role_dosen' => 'penguji'
-            ]);
-        }
+            /*
+            |--------------------------------------------------------------------------
+            | SIMPAN ROLE DOSEN
+            |--------------------------------------------------------------------------
+            */
 
-        if ($request->has('is_reviewer')) {
-            DB::table('dosen_roles')->insert([
-                'nim_nid' => $request->nidn,
-                'role_dosen' => 'reviewer'
-            ]);
-        }
+            $roles = [];
 
-        if ($request->has('is_koordinator')) {
-            DB::table('dosen_roles')->insert([
-                'nim_nid' => $request->nidn,
-                'role_dosen' => 'koordinator'
-            ]);
-        }
+            foreach ($request->roles as $role) {
 
-        return redirect()
-            ->route('dosen.index')
-            ->with('success', 'Data dosen berhasil ditambahkan');
+                $roles[] = [
+                    'nim_nid'    => $request->nim_nid,
+                    'role_dosen' => $role,
+                ];
+            }
+
+            DB::table('dosen_roles')->insert($roles);
+
+            DB::commit();
+
+            return redirect()
+                ->route('dosen.index')
+                ->with('success', 'Data dosen berhasil ditambahkan');
+
+        } catch (\Exception $e) {
+
+            DB::rollback();
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     /*
     |--------------------------------------------------------------------------
-    | HAPUS DOSEN
+    | DETAIL DOSEN
     |--------------------------------------------------------------------------
     */
 
-    public function destroy($nim_nid)
-    {
-        DB::table('dosen_roles')
-            ->where('nim_nid', $nim_nid)
-            ->delete();
-
-        User::where('nim_nid', $nim_nid)
-            ->delete();
-
-        return redirect()
-            ->route('dosen.index')
-            ->with('success', 'Data dosen berhasil dihapus');
-    }
-
-    //detail
     public function show($nim_nid)
     {
         $dosen = User::where('nim_nid', $nim_nid)
             ->where('role', 'dosen')
             ->firstOrFail();
 
-        $roles = \DB::table('dosen_roles')
+        $roles = DB::table('dosen_roles')
             ->where('nim_nid', $nim_nid)
             ->pluck('role_dosen');
 
@@ -116,24 +114,24 @@ class AdminDosenController extends Controller
     }
 
     /*
-|--------------------------------------------------------------------------
-| FORM EDIT DOSEN
-|--------------------------------------------------------------------------
-*/
+    |--------------------------------------------------------------------------
+    | FORM EDIT DOSEN
+    |--------------------------------------------------------------------------
+    */
 
-public function edit($nim_nid)
-{
-    $dosen = User::where('nim_nid', $nim_nid)
-        ->where('role', 'dosen')
-        ->firstOrFail();
+    public function edit($nim_nid)
+    {
+        $dosen = User::where('nim_nid', $nim_nid)
+            ->where('role', 'dosen')
+            ->firstOrFail();
 
-    $roles = DB::table('dosen_roles')
-        ->where('nim_nid', $nim_nid)
-        ->pluck('role_dosen')
-        ->toArray();
+        $roles = DB::table('dosen_roles')
+            ->where('nim_nid', $nim_nid)
+            ->pluck('role_dosen')
+            ->toArray();
 
-    return view('admin.dosen.edit', compact('dosen', 'roles'));
-}
+        return view('admin.dosen.edit', compact('dosen', 'roles'));
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -144,63 +142,121 @@ public function edit($nim_nid)
     public function update(Request $request, $nim_nid)
     {
         $request->validate([
-            'nama' => 'required',
+            'nama'  => 'required',
             'email' => 'required|email|unique:users,email,' . $nim_nid . ',nim_nid',
+            'roles' => 'required|array|min:1',
         ]);
 
-        $dosen = User::where('nim_nid', $nim_nid)
-            ->where('role', 'dosen')
-            ->firstOrFail();
+        DB::beginTransaction();
 
-        // update user
-        $dosen->update([
-            'nama' => $request->nama,
-            'email' => $request->email,
-        ]);
+        try {
 
-        // update password kalau diisi
-        if ($request->password) {
+            $dosen = User::where('nim_nid', $nim_nid)
+                ->where('role', 'dosen')
+                ->firstOrFail();
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE USER
+            |--------------------------------------------------------------------------
+            */
+
             $dosen->update([
-                'password' => Hash::make($request->password)
+                'nama'  => $request->nama,
+                'email' => $request->email,
             ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE PASSWORD JIKA DIISI
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->filled('password')) {
+
+                $dosen->update([
+                    'password' => Hash::make($request->password)
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | HAPUS ROLE LAMA
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table('dosen_roles')
+                ->where('nim_nid', $nim_nid)
+                ->delete();
+
+            /*
+            |--------------------------------------------------------------------------
+            | INSERT ROLE BARU
+            |--------------------------------------------------------------------------
+            */
+
+            $roles = [];
+
+            foreach ($request->roles as $role) {
+
+                $roles[] = [
+                    'nim_nid'    => $nim_nid,
+                    'role_dosen' => $role,
+                ];
+            }
+
+            DB::table('dosen_roles')->insert($roles);
+
+            DB::commit();
+
+            return redirect()
+                ->route('dosen.index')
+                ->with('success', 'Data dosen berhasil diupdate');
+
+        } catch (\Exception $e) {
+
+            DB::rollback();
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
+    }
 
-        // hapus role lama
-        DB::table('dosen_roles')
-            ->where('nim_nid', $nim_nid)
-            ->delete();
+    /*
+    |--------------------------------------------------------------------------
+    | HAPUS DOSEN
+    |--------------------------------------------------------------------------
+    */
 
-        // insert role baru
-        if ($request->has('is_pembimbing')) {
-            DB::table('dosen_roles')->insert([
-                'nim_nid' => $nim_nid,
-                'role_dosen' => 'pembimbing'
-            ]);
+    public function destroy($nim_nid)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('dosen_roles')
+                ->where('nim_nid', $nim_nid)
+                ->delete();
+
+            User::where('nim_nid', $nim_nid)
+                ->where('role', 'dosen')
+                ->delete();
+
+            DB::commit();
+
+            return redirect()
+                ->route('dosen.index')
+                ->with('success', 'Data dosen berhasil dihapus');
+
+        } catch (\Exception $e) {
+
+            DB::rollback();
+
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal menghapus data');
         }
-
-        if ($request->has('is_penguji')) {
-            DB::table('dosen_roles')->insert([
-                'nim_nid' => $nim_nid,
-                'role_dosen' => 'penguji'
-            ]);
-        }
-
-        if ($request->has('is_reviewer')) {
-            DB::table('dosen_roles')->insert([
-                'nim_nid' => $nim_nid,
-                'role_dosen' => 'reviewer'
-            ]);
-        }
-
-        if ($request->has('is_koordinator')) {
-            DB::table('dosen_roles')->insert([
-                'nim_nid' => $nim_nid,
-                'role_dosen' => 'koordinator'
-            ]);
-        }
-
-        return redirect()
-            ->route('dosen.index')
-            ->with('success', 'Data dosen berhasil diupdate');
     }
 }
