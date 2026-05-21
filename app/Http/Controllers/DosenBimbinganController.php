@@ -14,6 +14,13 @@ class DosenBimbinganController extends Controller
         $dosen    = session('user');
         $nidDosen = $dosen->nim_nid;
 
+        // ✅ FIX: Otomatis mark semua bimbingan 'Baru Dikirim' jadi 'Sudah Dilihat'
+        // saat dosen buka halaman Riwayat Bimbingan → badge di dashboard langsung ilang
+        DB::table('bimbingan')
+            ->where('dosen_nid', $nidDosen)
+            ->where('status', 'Baru Dikirim')
+            ->update(['status' => 'Sudah Dilihat', 'updated_at' => now()]);
+
         $proposalIds = DB::table('dosen_pembimbing')
             ->where('nim_nid_dosen', $nidDosen)
             ->pluck('proposal_id');

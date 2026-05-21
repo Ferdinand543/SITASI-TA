@@ -21,8 +21,16 @@
         transition: 0.2s;
     }
 
-    .sub-menu:hover { background: #FFF3CD; color: #7a4f00; }
-    .sub-menu.active { background: #FFC107; color: #4a3000; font-weight: 700; }
+    .sub-menu:hover {
+        background: #FFF3CD;
+        color: #7a4f00;
+    }
+
+    .sub-menu.active {
+        background: #FFC107;
+        color: #4a3000;
+        font-weight: 700;
+    }
 
     .hero-card {
         background: url("{{ asset('images/psi.jpeg') }}") center / 100% 100% no-repeat;
@@ -69,7 +77,9 @@
         transition: background 0.15s;
     }
 
-    .btn-upload-hero:hover { background: #e09518; }
+    .btn-upload-hero:hover {
+        background: #e09518;
+    }
 
     .info-box {
         background: #FFE083;
@@ -85,7 +95,10 @@
         margin-bottom: 1.5rem;
     }
 
-    .alert { border-radius: 10px; font-size: 0.88rem; }
+    .alert {
+        border-radius: 10px;
+        font-size: 0.88rem;
+    }
 
     .filter-bar {
         display: flex;
@@ -150,7 +163,9 @@
         transition: border-color 0.15s;
     }
 
-    .filter-select:focus { border-color: #FFC107; }
+    .filter-select:focus {
+        border-color: #FFC107;
+    }
 
     .btn-reset-filter {
         padding: 9px 16px;
@@ -167,18 +182,26 @@
         white-space: nowrap;
     }
 
-    .btn-reset-filter:hover { background: #f5f5f5; }
+    .btn-reset-filter:hover {
+        background: #f5f5f5;
+    }
 
     .table-card {
         background: #fff;
         border-radius: 14px;
         border: 1px solid #f0f0f0;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         overflow: hidden;
     }
 
-    #tabelProposal { width: 100%; border-collapse: collapse; }
-    #tabelProposal thead tr { background: #DEE8FF; }
+    #tabelProposal {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    #tabelProposal thead tr {
+        background: #DEE8FF;
+    }
 
     #tabelProposal th {
         padding: 12px 14px;
@@ -190,7 +213,10 @@
         white-space: nowrap;
     }
 
-    #tabelProposal th:first-child { text-align: center; width: 52px; }
+    #tabelProposal th:first-child {
+        text-align: center;
+        width: 52px;
+    }
 
     #tabelProposal td {
         padding: 12px 14px;
@@ -200,9 +226,20 @@
         vertical-align: top;
     }
 
-    #tabelProposal td:first-child { text-align: center; font-weight: 600; color: #999; }
-    #tabelProposal tbody tr:last-child td { border-bottom: none; }
-    #tabelProposal tbody tr:hover td { background: #FFFDE7; transition: background 0.1s; }
+    #tabelProposal td:first-child {
+        text-align: center;
+        font-weight: 600;
+        color: #999;
+    }
+
+    #tabelProposal tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    #tabelProposal tbody tr:hover td {
+        background: #FFFDE7;
+        transition: background 0.1s;
+    }
 
     .file-link {
         display: inline-flex;
@@ -221,10 +258,23 @@
         line-height: 1.3;
     }
 
-    .file-link:hover { background: #ffe5e5; color: #a93226; }
+    .file-link:hover {
+        background: #ffe5e5;
+        color: #a93226;
+    }
 
-    .dosbing-name { font-weight: 700; font-size: 0.82rem; color: #222; line-height: 1.35; }
-    .dosbing-nidn { font-size: 0.74rem; color: #999; margin-top: 1px; }
+    .dosbing-name {
+        font-weight: 700;
+        font-size: 0.82rem;
+        color: #222;
+        line-height: 1.35;
+    }
+
+    .dosbing-nidn {
+        font-size: 0.74rem;
+        color: #999;
+        margin-top: 1px;
+    }
 
     .dosbing-badge {
         display: inline-block;
@@ -236,8 +286,15 @@
         letter-spacing: 0.02em;
     }
 
-    .badge-pembimbing { background: #E3F2FD; color: #1565C0; }
-    .badge-usulan { background: #FFF8E1; color: #F57F17; }
+    .badge-pembimbing {
+        background: #E3F2FD;
+        color: #1565C0;
+    }
+
+    .badge-usulan {
+        background: #FFF8E1;
+        color: #F57F17;
+    }
 
     .status-badge {
         display: inline-flex;
@@ -250,10 +307,29 @@
         letter-spacing: 0.01em;
     }
 
-    .s-menunggu-verifikasi { background: #FFF3CD; color: #856404; border: 1px solid #ffd96a; }
-    .s-menunggu-review { background: #CCE5FF; color: #004085; border: 1px solid #b8daff; }
-    .s-selesai { background: #D4EDDA; color: #155724; border: 1px solid #c3e6cb; }
-    .s-ditolak { background: #F8D7DA; color: #721c24; border: 1px solid #f1aeb5; }
+    .s-menunggu-verifikasi {
+        background: #FFF3CD;
+        color: #856404;
+        border: 1px solid #ffd96a;
+    }
+
+    .s-menunggu-review {
+        background: #CCE5FF;
+        color: #004085;
+        border: 1px solid #b8daff;
+    }
+
+    .s-selesai {
+        background: #D4EDDA;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .s-ditolak {
+        background: #F8D7DA;
+        color: #721c24;
+        border: 1px solid #f1aeb5;
+    }
 
     .btn-detail {
         display: inline-flex;
@@ -270,19 +346,24 @@
         transition: background 0.15s, border-color 0.15s;
     }
 
-    .btn-detail:hover { background: #FFF8E1; border-color: #FFC107; color: #7a4f00; }
+    .btn-detail:hover {
+        background: #FFF8E1;
+        border-color: #FFC107;
+        color: #7a4f00;
+    }
 
-    /* ── EMPTY STATE ── */
     .empty-state-wrap {
         padding: 60px 20px;
         text-align: center;
     }
+
     .empty-state-inner {
         display: inline-flex;
         flex-direction: column;
         align-items: center;
         gap: 12px;
     }
+
     .empty-state-icon {
         width: 64px;
         height: 64px;
@@ -292,12 +373,28 @@
         align-items: center;
         justify-content: center;
     }
-    .empty-state-icon i { font-size: 1.8rem; color: #94a3b8; }
-    .empty-state-title { font-size: 0.95rem; font-weight: 700; color: #475569; }
-    .empty-state-sub   { font-size: 0.82rem; color: #94a3b8; }
 
-    /* MODAL */
-    .modal-content { border-radius: 20px; border: 0; }
+    .empty-state-icon i {
+        font-size: 1.8rem;
+        color: #94a3b8;
+    }
+
+    .empty-state-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #475569;
+    }
+
+    .empty-state-sub {
+        font-size: 0.82rem;
+        color: #94a3b8;
+    }
+
+    .modal-content {
+        border-radius: 20px;
+        border: 0;
+    }
+
     .modal-label {
         font-size: 0.82rem;
         font-weight: 700;
@@ -343,7 +440,9 @@
         transition: background 0.15s;
     }
 
-    .btn-modal-cancel:hover { background: #f5f5f5; }
+    .btn-modal-cancel:hover {
+        background: #f5f5f5;
+    }
 
     .btn-modal-submit {
         flex: 1;
@@ -358,7 +457,9 @@
         transition: background 0.15s;
     }
 
-    .btn-modal-submit:hover { background: #e0a800; }
+    .btn-modal-submit:hover {
+        background: #e0a800;
+    }
 
     .drop-zone {
         border: 2px dashed #e2c97e;
@@ -383,6 +484,25 @@
     .drop-zone.has-file {
         border-color: #FACC15;
         background: #fffde7;
+    }
+
+    .drop-zone.is-invalid {
+        border-color: #dc3545 !important;
+        background: #fff5f5;
+    }
+
+    .warn-dosbing {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        background: #FEF2F2;
+        border: 1px solid #FECACA;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.82rem;
+        color: #DC2626;
+        margin-top: 10px;
+        font-weight: 600;
     }
 </style>
 
@@ -409,8 +529,8 @@
         <p>Unggah proposal tugas akhir setelah judul disetujui</p>
         <button class="btn-upload-hero" data-bs-toggle="modal" data-bs-target="#modalUpload">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
             </svg>
             Upload Proposal
         </button>
@@ -419,9 +539,9 @@
     {{-- INFO BOX --}}
     <div class="info-box">
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="#735C00" viewBox="0 0 16 16">
-            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
         </svg>
-        <span>Unggah proposal tugas akhir setelah judul disetujui. Pastikan dokumen sudah sesuai dengan pedoman penulisan akademik.</span>
+        <span>Unggah proposal tugas akhir setelah judul disetujui. Pastikan dokumen sudah sesuai dengan pedoman penulisan akademik. <strong>Maksimal ukuran file: 10MB.</strong></span>
     </div>
 
     {{-- FILTER BAR --}}
@@ -430,7 +550,7 @@
             <label>Cari</label>
             <div class="search-wrap">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
                 </svg>
                 <input type="text" id="searchInput" placeholder="Cari">
             </div>
@@ -449,8 +569,8 @@
             <label>&nbsp;</label>
             <button class="btn-reset-filter" id="btnReset">
                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
                 </svg>
                 Reset Filter
             </button>
@@ -475,15 +595,15 @@
             <tbody id="tabelBody">
                 @forelse($proposalList as $index => $item)
                 @php
-                    $st = strtolower($item->status);
-                    $usulan1 = $item->usulanPembimbing->where('urutan', 1)->first();
-                    $usulan2 = $item->usulanPembimbing->where('urutan', 2)->first();
-                    $final1  = $item->dosenPembimbing->where('urutan', 1)->first();
-                    $final2  = $item->dosenPembimbing->where('urutan', 2)->first();
-                    $namaUsulan1 = $usulan1 ? (\DB::table('users')->where('nim_nid', $usulan1->nim_nid_dosen)->value('nama') ?? '') : '';
-                    $namaUsulan2 = $usulan2 ? (\DB::table('users')->where('nim_nid', $usulan2->nim_nid_dosen)->value('nama') ?? '') : '';
-                    $namaFinal1  = $final1  ? (\DB::table('users')->where('nim_nid', $final1->nim_nid_dosen)->value('nama')  ?? '') : '';
-                    $namaFinal2  = $final2  ? (\DB::table('users')->where('nim_nid', $final2->nim_nid_dosen)->value('nama')  ?? '') : '';
+                $st = strtolower($item->status);
+                $usulan1 = $item->usulanPembimbing->where('urutan', 1)->first();
+                $usulan2 = $item->usulanPembimbing->where('urutan', 2)->first();
+                $final1 = $item->dosenPembimbing->where('urutan', 1)->first();
+                $final2 = $item->dosenPembimbing->where('urutan', 2)->first();
+                $namaUsulan1 = $usulan1 ? (\DB::table('users')->where('nim_nid', $usulan1->nim_nid_dosen)->value('nama') ?? '') : '';
+                $namaUsulan2 = $usulan2 ? (\DB::table('users')->where('nim_nid', $usulan2->nim_nid_dosen)->value('nama') ?? '') : '';
+                $namaFinal1 = $final1 ? (\DB::table('users')->where('nim_nid', $final1->nim_nid_dosen)->value('nama') ?? '') : '';
+                $namaFinal2 = $final2 ? (\DB::table('users')->where('nim_nid', $final2->nim_nid_dosen)->value('nama') ?? '') : '';
                 @endphp
                 <tr data-status="{{ $st }}"
                     data-search="{{ strtolower($item->judul . ' ' . $item->nim_nid . ' ' . ($usulan1->nim_nid_dosen ?? '') . ' ' . $namaUsulan1 . ' ' . ($usulan2->nim_nid_dosen ?? '') . ' ' . $namaUsulan2 . ' ' . ($final1->nim_nid_dosen ?? '') . ' ' . $namaFinal1 . ' ' . ($final2->nim_nid_dosen ?? '') . ' ' . $namaFinal2 . ' ' . basename($item->file_proposal ?? '')) }}">
@@ -496,7 +616,7 @@
                         @if($item->file_proposal)
                         <a href="{{ asset('storage/' . $item->file_proposal) }}" target="_blank" class="file-link">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
+                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
                             </svg>
                             {{ \Illuminate\Support\Str::limit(basename($item->file_proposal), 22) }}
                         </a>
@@ -508,53 +628,52 @@
                     <td>
                         @php $d1 = \DB::table('users')->where('nim_nid', $final1->nim_nid_dosen ?? $usulan1->nim_nid_dosen ?? '')->first(); @endphp
                         @if($d1)
-                            <div class="dosbing-name">{{ $d1->nama }}</div>
-                            <div class="dosbing-nidn">NIDN: {{ $final1->nim_nid_dosen ?? $usulan1->nim_nid_dosen ?? '-' }}</div>
-                            <span class="dosbing-badge {{ $final1 ? 'badge-pembimbing' : 'badge-usulan' }}">
-                                {{ $final1 ? 'PEMBIMBING TA' : 'USULAN PEMBIMBING' }}
-                            </span>
+                        <div class="dosbing-name">{{ $d1->nama }}</div>
+                        <div class="dosbing-nidn">NIDN: {{ $final1->nim_nid_dosen ?? $usulan1->nim_nid_dosen ?? '-' }}</div>
+                        <span class="dosbing-badge {{ $final1 ? 'badge-pembimbing' : 'badge-usulan' }}">
+                            {{ $final1 ? 'PEMBIMBING TA' : 'USULAN PEMBIMBING' }}
+                        </span>
                         @else
-                            <span style="color:#bbb;">-</span>
+                        <span style="color:#bbb;">-</span>
                         @endif
                     </td>
 
                     <td>
                         @php $d2 = \DB::table('users')->where('nim_nid', $final2->nim_nid_dosen ?? $usulan2->nim_nid_dosen ?? '')->first(); @endphp
                         @if($d2)
-                            <div class="dosbing-name">{{ $d2->nama }}</div>
-                            <div class="dosbing-nidn">NIDN: {{ $final2->nim_nid_dosen ?? $usulan2->nim_nid_dosen ?? '-' }}</div>
-                            <span class="dosbing-badge {{ $final2 ? 'badge-pembimbing' : 'badge-usulan' }}">
-                                {{ $final2 ? 'PEMBIMBING TA' : 'USULAN PEMBIMBING' }}
-                            </span>
+                        <div class="dosbing-name">{{ $d2->nama }}</div>
+                        <div class="dosbing-nidn">NIDN: {{ $final2->nim_nid_dosen ?? $usulan2->nim_nid_dosen ?? '-' }}</div>
+                        <span class="dosbing-badge {{ $final2 ? 'badge-pembimbing' : 'badge-usulan' }}">
+                            {{ $final2 ? 'PEMBIMBING TA' : 'USULAN PEMBIMBING' }}
+                        </span>
                         @else
-                            <span style="color:#bbb;">-</span>
+                        <span style="color:#bbb;">-</span>
                         @endif
                     </td>
 
                     <td>
                         @if($st === 'selesai')
-                            <span class="status-badge s-selesai">Selesai</span>
+                        <span class="status-badge s-selesai">Selesai</span>
                         @elseif($st === 'menunggu_review')
-                            <span class="status-badge s-menunggu-review">Menunggu Review</span>
+                        <span class="status-badge s-menunggu-review">Menunggu Review</span>
                         @elseif($st === 'ditolak')
-                            <span class="status-badge s-ditolak">Ditolak</span>
+                        <span class="status-badge s-ditolak">Ditolak</span>
                         @else
-                            <span class="status-badge s-menunggu-verifikasi">Menunggu Verifikasi</span>
+                        <span class="status-badge s-menunggu-verifikasi">Menunggu Verifikasi</span>
                         @endif
                     </td>
 
                     <td>
                         <a href="{{ route('proposal.mahasiswa.detail', $item->id) }}" class="btn-detail">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
-                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
                             </svg>
                             Detail
                         </a>
                     </td>
                 </tr>
                 @empty
-                {{-- DB kosong total → inbox icon --}}
                 <tr id="rowKosongDefault">
                     <td colspan="8">
                         <div class="empty-state-wrap">
@@ -573,7 +692,6 @@
         </table>
     </div>
 
-    {{-- Filter/search tidak nemu hasil → magnifier icon --}}
     <div id="noSearchResult" style="display:none;">
         <div class="table-card">
             <div class="empty-state-wrap">
@@ -606,58 +724,54 @@
             <div class="modal-body" style="padding:20px 28px;">
 
                 <div id="errorAlert" class="alert alert-danger d-none mb-3" style="font-size:0.84rem;">
-                    Semua field wajib diisi!
+                    <span id="errorMsg">Semua field wajib diisi!</span>
                 </div>
 
                 <form id="formUpload" action="{{ route('proposal.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
-                    {{-- NIM | NAMA | TANGGAL --}}
                     <div class="row g-3 mb-3">
                         <div class="col-md-4">
                             <label class="modal-label">NIM</label>
                             <input type="text" class="modal-input"
-                                   value="{{ session('user')->nim_nid ?? '-' }}"
-                                   readonly style="background:#f8fafc; color:#64748b;">
+                                value="{{ session('user')->nim_nid ?? '-' }}"
+                                readonly style="background:#f8fafc; color:#64748b;">
                         </div>
                         <div class="col-md-4">
                             <label class="modal-label">Mahasiswa</label>
                             <input type="text" class="modal-input"
-                                   value="{{ session('user')->nama ?? '-' }}"
-                                   readonly style="background:#f8fafc; color:#64748b;">
+                                value="{{ session('user')->nama ?? '-' }}"
+                                readonly style="background:#f8fafc; color:#64748b;">
                         </div>
                         <div class="col-md-4">
                             <label class="modal-label">Tanggal</label>
                             <input type="date" name="tanggal_pengajuan" id="up_tanggal"
-                                   class="modal-input" value="{{ date('Y-m-d') }}">
+                                class="modal-input" value="{{ date('Y-m-d') }}">
                         </div>
                     </div>
 
-                    {{-- JUDUL --}}
                     <div class="mb-3">
                         <label class="modal-label">Judul Proposal</label>
                         <textarea name="judul" id="up_judul" class="modal-input"
-                                  rows="3" placeholder="Masukkan judul proposal"
-                                  style="resize:none;"></textarea>
+                            rows="3" placeholder="Masukkan judul proposal"
+                            style="resize:none;"></textarea>
                     </div>
 
-                    {{-- DRAG DROP --}}
                     <div class="mb-3">
-                        <label class="modal-label">Proposal</label>
+                        <label class="modal-label">Proposal <span style="color:#94a3b8; font-weight:400;">(PDF, maks. 10MB)</span></label>
                         <div id="dropZone" class="drop-zone" onclick="document.getElementById('up_file').click()">
                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#d4a01e" viewBox="0 0 16 16" style="margin-bottom:10px;">
-                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
-                                <path d="M8 6.5a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 10.793V7a.5.5 0 0 1 .5-.5z"/>
+                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                <path d="M8 6.5a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 10.793V7a.5.5 0 0 1 .5-.5z" />
                             </svg>
                             <div id="dropText" style="font-size:0.85rem; font-weight:600; color:#64748b;">
                                 Klik atau seret file proposal untuk diunggah
                             </div>
-                            <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Maksimal ukuran file: 10MB</div>
+                            <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Format PDF · Maksimal 10MB</div>
                         </div>
                         <input type="file" name="file_proposal" id="up_file" accept=".pdf" style="display:none;">
                     </div>
 
-                    {{-- PEMBIMBING --}}
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="modal-label">Usulan Pembimbing 1</label>
@@ -696,12 +810,13 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    const filterStatus   = document.getElementById("filterStatus");
-    const searchInput    = document.getElementById("searchInput");
-    const btnReset       = document.getElementById("btnReset");
-    const tableCard      = document.getElementById("tableCard");
+    // ── FILTER & SEARCH ──
+    const filterStatus = document.getElementById("filterStatus");
+    const searchInput  = document.getElementById("searchInput");
+    const btnReset     = document.getElementById("btnReset");
+    const tableCard    = document.getElementById("tableCard");
     const noSearchResult = document.getElementById("noSearchResult");
-    const tabelBody      = document.getElementById("tabelBody");
+    const tabelBody    = document.getElementById("tabelBody");
 
     function applyFilter() {
         const status  = filterStatus.value.toLowerCase();
@@ -717,17 +832,14 @@ document.addEventListener("DOMContentLoaded", function () {
             if (ok) visible++;
         });
 
-        // Sembunyikan row default kosong kalau ada data asli
         const rowDefault = document.getElementById("rowKosongDefault");
         if (rowDefault) rowDefault.style.display = "none";
 
         if (visible === 0 && rows.length > 0) {
-            // Ada data tapi filter ga nemu → magnifier
-            tableCard.style.display      = "none";
+            tableCard.style.display = "none";
             noSearchResult.style.display = "block";
         } else {
-            // Nemu data atau DB emang kosong → tabel normal
-            tableCard.style.display      = "";
+            tableCard.style.display = "";
             noSearchResult.style.display = "none";
         }
     }
@@ -740,14 +852,39 @@ document.addEventListener("DOMContentLoaded", function () {
         applyFilter();
     });
 
+    // ── TOAST ──
+    function showToast(msg) {
+        let toast = document.getElementById("toastDosbing");
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "toastDosbing";
+            toast.style.cssText = "position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#DC2626;color:#fff;padding:12px 22px;border-radius:10px;font-size:0.84rem;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;align-items:center;gap:8px;opacity:1;transition:opacity 0.3s;";
+            toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="white" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/></svg><span></span>`;
+            document.body.appendChild(toast);
+        }
+        toast.querySelector("span").textContent = msg;
+        toast.style.opacity = "1";
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => { toast.style.opacity = "0"; }, 2500);
+    }
+
     // ── VALIDASI FORM ──
     const formUpload = document.getElementById("formUpload");
     const alertBox   = document.getElementById("errorAlert");
+    const errorMsg   = document.getElementById("errorMsg");
+    const dropZone   = document.getElementById("dropZone");
+    const fileInput  = document.getElementById("up_file");
+    const dropText   = document.getElementById("dropText");
     const wajib      = ["up_judul", "up_tanggal", "up_dosbing1", "up_dosbing2"];
+    const MAX_SIZE   = 10 * 1024 * 1024;
 
     formUpload.addEventListener("submit", function (e) {
         let isValid = true;
+
         wajib.forEach(id => document.getElementById(id).classList.remove("is-invalid"));
+        dropZone.classList.remove("is-invalid");
+        dropText.style.color = "#64748b";
+        alertBox.classList.add("d-none");
 
         wajib.forEach(id => {
             const el = document.getElementById(id);
@@ -757,30 +894,53 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        const file = document.getElementById("up_file");
-        if (!file.files.length) {
-            document.getElementById("dropZone").style.borderColor = "#dc3545";
+        const val1 = document.getElementById("up_dosbing1").value;
+        const val2 = document.getElementById("up_dosbing2").value;
+        if (val1 && val2 && val1 === val2) {
+            document.getElementById("up_dosbing1").classList.add("is-invalid");
+            document.getElementById("up_dosbing2").classList.add("is-invalid");
+            errorMsg.textContent = "Pembimbing 1 dan Pembimbing 2 tidak boleh sama!";
+            isValid = false;
+        }
+
+        if (!fileInput.files.length) {
+            dropZone.classList.add("is-invalid");
+            if (isValid) errorMsg.textContent = "File proposal wajib diunggah!";
+            isValid = false;
+        } else if (fileInput.files[0].size > MAX_SIZE) {
+            dropZone.classList.add("is-invalid");
+            dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
+            dropText.style.color = "#dc3545";
+            errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB.";
             isValid = false;
         }
 
         if (!isValid) {
             e.preventDefault();
             alertBox.classList.remove("d-none");
-            return;
         }
-
-        alertBox.classList.add("d-none");
     });
 
     // ── DRAG & DROP ──
-    const dropZone  = document.getElementById("dropZone");
-    const fileInput = document.getElementById("up_file");
-    const dropText  = document.getElementById("dropText");
-
     fileInput.addEventListener("change", function () {
         if (this.files.length) {
-            dropText.textContent = this.files[0].name;
-            dropZone.classList.add("has-file");
+            const file = this.files[0];
+            dropZone.classList.remove("is-invalid");
+            alertBox.classList.add("d-none");
+
+            if (file.size > MAX_SIZE) {
+                dropZone.classList.add("is-invalid");
+                dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
+                dropText.style.color = "#dc3545";
+                errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB. Kompres file PDF kamu terlebih dahulu.";
+                alertBox.classList.remove("d-none");
+                this.value = "";
+            } else {
+                dropText.textContent = "✅ " + file.name;
+                dropText.style.color = "#15803d";
+                dropZone.classList.add("has-file");
+                dropZone.classList.remove("is-invalid");
+            }
         }
     });
 
@@ -797,15 +957,96 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         this.classList.remove("dragover");
         const file = e.dataTransfer.files[0];
-        if (file && file.type === "application/pdf") {
-            fileInput.files = e.dataTransfer.files;
-            dropText.textContent = file.name;
-            this.classList.add("has-file");
-        } else {
+
+        if (!file || file.type !== "application/pdf") {
             alert("Hanya file PDF yang diperbolehkan!");
+            return;
         }
+
+        if (file.size > MAX_SIZE) {
+            dropZone.classList.add("is-invalid");
+            dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
+            dropText.style.color = "#dc3545";
+            errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB.";
+            alertBox.classList.remove("d-none");
+            return;
+        }
+
+        fileInput.files = e.dataTransfer.files;
+        dropText.textContent = "✅ " + file.name;
+        dropText.style.color = "#15803d";
+        dropZone.classList.add("has-file");
+        dropZone.classList.remove("is-invalid");
+        alertBox.classList.add("d-none");
     });
-});
+
+    // ── RESET MODAL ──
+    document.getElementById("modalUpload").addEventListener("hidden.bs.modal", function () {
+        formUpload.reset();
+        wajib.forEach(id => document.getElementById(id).classList.remove("is-invalid"));
+        dropZone.classList.remove("is-invalid", "has-file", "dragover");
+        dropText.textContent = "Klik atau seret file proposal untuk diunggah";
+        dropText.style.color = "#64748b";
+        alertBox.classList.add("d-none");
+        // Reset prev values & sync dropdown
+        prevVal1 = "";
+        prevVal2 = "";
+        syncDosbing();
+    });
+
+    // ── DOSBING DUPLICATE PREVENTION ──
+    const dosbing1 = document.getElementById("up_dosbing1");
+    const dosbing2 = document.getElementById("up_dosbing2");
+    let prevVal1 = "";
+    let prevVal2 = "";
+
+    function syncDosbing() {
+        const val1 = dosbing1.value;
+        const val2 = dosbing2.value;
+
+        // Reset semua option dulu biar ga numpuk disable
+        Array.from(dosbing2.options).forEach(opt => opt.disabled = false);
+        Array.from(dosbing1.options).forEach(opt => opt.disabled = false);
+
+        // Disable di dosbing2 option yang udah dipilih di dosbing1
+        if (val1) {
+            Array.from(dosbing2.options).forEach(opt => {
+                if (opt.value === val1) opt.disabled = true;
+            });
+        }
+
+        // Disable di dosbing1 option yang udah dipilih di dosbing2
+        if (val2) {
+            Array.from(dosbing1.options).forEach(opt => {
+                if (opt.value === val2) opt.disabled = true;
+            });
+        }
+    }
+
+    dosbing1.addEventListener("change", function () {
+        if (dosbing1.value && dosbing1.value === dosbing2.value) {
+            showToast("Pembimbing 1 dan 2 tidak boleh sama!");
+            dosbing1.value = prevVal1;
+        } else {
+            prevVal1 = dosbing1.value;
+        }
+        syncDosbing();
+    });
+
+    dosbing2.addEventListener("change", function () {
+        if (dosbing2.value && dosbing2.value === dosbing1.value) {
+            showToast("Pembimbing 1 dan 2 tidak boleh sama!");
+            dosbing2.value = prevVal2;
+        } else {
+            prevVal2 = dosbing2.value;
+        }
+        syncDosbing();
+    });
+
+    // Init sync on load
+    syncDosbing();
+
+}); // end DOMContentLoaded
 </script>
 
 @endsection
