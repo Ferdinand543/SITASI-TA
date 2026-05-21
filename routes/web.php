@@ -423,3 +423,50 @@ Route::get('/register-admin', function () {
 });
 
 Route::post('/register-admin', [AuthController::class, 'register']);
+
+//pengajuan judul-admin
+Route::prefix('admin')->group(function () {
+
+    Route::get('/judul', [AdminjudulController::class, 'index'])
+        ->name('admin.judul.index');
+
+    Route::get('/judul/{id}', [AdminjudulController::class, 'show'])
+        ->name('admin.judul.show');
+
+        // PROSES VERIFIKASI
+    Route::post('/judul/{id}/proses', [AdminjudulController::class, 'proses'])
+        ->name('admin.judul.proses');
+});
+
+// =====================================================
+// RIWAYAT PENGAJUAN PROPOSAL — ADMIN
+// =====================================================
+
+Route::prefix('admin')->group(function () {
+
+    Route::get('/proposal', [AdminProposalController::class, 'index'])
+        ->name('admin.proposal.index');
+
+    Route::get('/proposal/{id}', [AdminProposalController::class, 'show'])
+        ->name('admin.proposal.detail');
+    
+    Route::post('/proposal/{id}/approve', [AdminProposalController::class, 'approve'])
+        ->name('admin.proposal.approve');
+
+    Route::post('/proposal/{id}/reject', [AdminProposalController::class, 'reject'])
+        ->name('admin.proposal.reject');
+});
+
+//pengajuan judul-admin
+Route::prefix('admin')->group(function () {
+
+    Route::get('/judul', [AdminjudulController::class, 'index'])
+        ->name('admin.judul.index');
+
+    Route::get('/judul/{id}', [AdminjudulController::class, 'show'])
+        ->name('admin.judul.show');
+
+        // PROSES VERIFIKASI
+    Route::post('/judul/{id}/proses', [AdminjudulController::class, 'proses'])
+        ->name('admin.judul.proses');
+});

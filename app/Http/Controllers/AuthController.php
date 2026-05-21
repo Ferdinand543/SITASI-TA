@@ -326,4 +326,58 @@ class AuthController extends Controller
 
         return back()->with('success', 'Foto profil berhasil diperbarui!');
     }
+
+    //register admin
+    public function register(Request $request)
+    {
+        $request->validate([
+            'nim_nid' => 'required|max:20|unique:users,nim_nid',
+
+            'nama' => 'required|max:100',
+
+            'email' => 'required|email|unique:users,email',
+
+            'role' => 'required|in:admin,dosen,mahasiswa',
+
+            'password' => 'required|min:6|confirmed',
+        ], [
+
+            'nim_nid.required' => 'NIM / NID wajib diisi',
+            'nim_nid.unique' => 'NIM / NID sudah digunakan',
+
+            'nama.required' => 'Nama wajib diisi',
+
+            'email.required' => 'Email wajib diisi',
+            'email.email' => 'Format email tidak valid',
+            'email.unique' => 'Email sudah digunakan',
+
+            'role.required' => 'Role wajib dipilih',
+
+            'password.required' => 'Password wajib diisi',
+            'password.min' => 'Password minimal 6 karakter',
+            'password.confirmed' => 'Konfirmasi password tidak cocok',
+        ]);
+
+        DB::table('users')->insert([
+
+            'nim_nid' => $request->nim_nid,
+
+            'nama' => $request->nama,
+
+            'email' => $request->email,
+
+            'password' => Hash::make($request->password),
+
+            'role' => strtolower($request->role),
+
+            'angkatan' => $request->role == 'mahasiswa'
+                ? date('Y')
+                : null,
+
+            'foto' => '',
+        ]);
+
+        return redirect('/login')
+            ->with('success', 'Akun berhasil didaftarkan');
+    }
 }

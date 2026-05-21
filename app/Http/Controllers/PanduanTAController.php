@@ -91,7 +91,7 @@ class PanduanTAController extends Controller
 
     public function download(int $id)
     {
-        $userRole = Auth::user()->role;
+        $userRole = session('user')->role;
 
         $dok = DB::table('panduan_ta_dokumen')
             ->where('id', $id)
@@ -99,6 +99,9 @@ class PanduanTAController extends Controller
             ->whereIn('role', ['all', $userRole])
             ->firstOrFail();
 
-        return Storage::download($dok->file_path, $dok->judul . '.docx');
+        return Storage::disk('public')->download(
+            $dok->file_path,
+            $dok->judul . '.docx'
+        );
     }
 }

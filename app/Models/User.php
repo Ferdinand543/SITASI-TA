@@ -2,48 +2,71 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | TABLE
+    |--------------------------------------------------------------------------
+    */
+
+    protected $table = 'users';
+
+    /*
+    |--------------------------------------------------------------------------
+    | PRIMARY KEY
+    |--------------------------------------------------------------------------
+    */
+
+    protected $primaryKey = 'nim_nid';
+
+    /*
+    |--------------------------------------------------------------------------
+    | PRIMARY KEY TYPE
+    |--------------------------------------------------------------------------
+    */
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    /*
+    |--------------------------------------------------------------------------
+    | TIMESTAMP
+    |--------------------------------------------------------------------------
+    */
+
+    public $timestamps = false;
+
+    /*
+    |--------------------------------------------------------------------------
+    | MASS ASSIGNMENT
+    |--------------------------------------------------------------------------
+    */
+
     protected $fillable = [
-        'name',
+        'nim_nid',
+        'nama',
         'email',
         'password',
+        'role',
+        'angkatan',
+        'foto',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | HIDDEN
+    |--------------------------------------------------------------------------
+    */
+
     protected $hidden = [
         'password',
-        'remember_token',
     ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
 }

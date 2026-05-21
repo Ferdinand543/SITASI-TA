@@ -133,22 +133,12 @@
         display:inline-flex;
         align-items:center;
         gap:5px;
+        margin:2px;
     }
 
     .badge-role{
         background:#FEF3C7;
         color:#92400E;
-        margin:2px;
-    }
-
-    .badge-active{
-        background:#DCFCE7;
-        color:#166534;
-    }
-
-    .badge-nonactive{
-        background:#FEE2E2;
-        color:#B91C1C;
     }
 
     .btn-action{
@@ -160,6 +150,7 @@
         align-items:center;
         justify-content:center;
         transition:0.2s;
+        text-decoration:none;
     }
 
     .btn-detail{
@@ -185,7 +176,6 @@
         border:none;
         border-radius:24px;
         overflow:hidden;
-        padding:0;
     }
 
     .modal-header{
@@ -322,7 +312,7 @@
                 </div>
 
                 <p class="page-subtitle">
-                    Kelola data dosen, dan role dosen tugas akhir.
+                    Kelola data dosen dan sub role dosen tugas akhir.
                 </p>
             </div>
 
@@ -340,7 +330,24 @@
 
     </div>
 
-    {{-- TABLE CARD --}}
+    {{-- ALERT --}}
+    @if(session('success'))
+        <div class="alert alert-success rounded-4 border-0 shadow-sm">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="alert alert-danger rounded-4 border-0 shadow-sm">
+            <ul class="mb-0 ps-3">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- TABLE --}}
     <div class="custom-card">
 
         <div class="table-responsive">
@@ -350,7 +357,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>NIDN</th>
+                        <th>NID</th>
                         <th>Dosen</th>
                         <th>Sub Role</th>
                         <th width="180">Aksi</th>
@@ -360,6 +367,14 @@
                 <tbody>
 
                     @forelse($dosen as $key => $dsn)
+
+                    @php
+                        $roles = DB::table('dosen_roles')
+                            ->where('nim_nid', $dsn->nim_nid)
+                            ->pluck('role_dosen');
+
+                        $roleDosen = $roles->toArray();
+                    @endphp
 
                     <tr>
 
@@ -387,31 +402,19 @@
 
                         <td>
 
-                            @php
-                                $roles = DB::table('dosen_roles')
-                                    ->where('nim_nid', $dsn->nim_nid)
-                                    ->pluck('role_dosen');
-                            @endphp
+                            @forelse($roles as $role)
 
-                            @if(count($roles) > 0)
+                                <span class="custom-badge badge-role">
+                                    {{ ucfirst($role) }}
+                                </span>
 
-                                @foreach($roles as $role)
-
-                                    <span class="custom-badge badge-role">
-
-                                        {{ ucfirst($role) }}
-
-                                    </span>
-
-                                @endforeach
-
-                            @else
+                            @empty
 
                                 <span class="text-muted">
                                     Tidak ada role
                                 </span>
 
-                            @endif
+                            @endforelse
 
                         </td>
 
@@ -419,9 +422,9 @@
 
                             <div class="d-flex justify-content-center gap-2">
 
-                               {{-- DETAIL --}}
+                                {{-- DETAIL --}}
                                 <a href="{{ route('dosen.show', $dsn->nim_nid) }}"
-                                class="btn-action btn-detail">
+                                   class="btn-action btn-detail">
 
                                     <i class="fa-solid fa-eye"></i>
 
@@ -437,31 +440,108 @@
 
                                 </button>
 
-                                {{-- DELETE --}}
-                                <form action="{{ route('dosen.destroy', $dsn->nim_nid) }}"
-                                    method="POST"
-                                    onsubmit="return confirm('Yakin ingin menghapus dosen ini?')">
+                                {{-- BUTTON DELETE --}}
+                                <button
+                                    type="button"
+                                    class="btn-action btn-delete"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal{{ $dsn->nim_nid }}">
 
-                                    @csrf
-                                    @method('DELETE')
+                                    <i class="fa-solid fa-trash"></i>
 
-                                    <button type="submit" class="btn-action btn-delete">
+                                </button>
 
-                                        <i class="fa-solid fa-trash"></i>
+                                {{-- MODAL DELETE --}}
+                                <div class="modal fade"
+                                    id="deleteModal{{ $dsn->nim_nid }}"
+                                    tabindex="-1"
+                                    aria-hidden="true">
 
-                                    </button>
+                                    <div class="modal-dialog modal-dialog-centered">
+
+                                        <div class="modal-content border-0 rounded-4">
+
+                                            <div class="modal-header border-0 pb-0">
+
+                                                <h5 class="modal-title fw-bold text-danger">
+                                                    Hapus Dosen
+                                                </h5>
+
+                                                <button type="button"
+                                                        class="btn-close"
+                                                        data-bs-dismiss="modal">
+                                                </button>
+
+                                            </div>
+
+                                            <div class="modal-body text-center py-4">
+
+                                                <div class="mb-3">
+
+                                                    <i class="fa-solid fa-trash-can"
+                                                    style="font-size: 60px; color:#ef4444;">
+                                                    </i>
+
+                                                </div>
+
+                                                <h5 class="fw-bold mb-2">
+                                                    Yakin ingin menghapus?
+                                                </h5>
+
+                                                <p class="text-muted mb-0">
+                                                    Data dosen
+                                                    <strong>{{ $dsn->nama }}</strong>
+                                                    akan dihapus permanen.
+                                                </p>
+
+                                            </div>
+
+                                            <div class="modal-footer border-0 pt-0">
+
+                                                <button type="button"
+                                                        class="btn btn-light rounded-3 px-4"
+                                                        data-bs-dismiss="modal">
+
+                                                    Batal
+
+                                                </button>
+
+                                                <form action="{{ route('dosen.destroy', $dsn->nim_nid) }}"
+                                                    method="POST">
+
+                                                    @csrf
+                                                    @method('DELETE')
+
+                                                    <button type="submit"
+                                                            class="btn btn-danger rounded-3 px-4">
+
+                                                        <i class="fa-solid fa-trash me-2"></i>
+                                                        Hapus
+
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
 
                                 </form>
+
                             </div>
 
                         </td>
 
                     </tr>
 
-                    {{-- MODAL EDIT DOSEN --}}
+                    {{-- MODAL EDIT --}}
                     <div class="modal fade"
-                        id="editModal{{ $dsn->nim_nid }}"
-                        tabindex="-1">
+                         id="editModal{{ $dsn->nim_nid }}"
+                         tabindex="-1">
 
                         <div class="modal-dialog modal-dialog-centered">
 
@@ -483,22 +563,22 @@
                                 <div class="modal-body">
 
                                     <form action="{{ route('dosen.update', $dsn->nim_nid) }}"
-                                        method="POST">
+                                          method="POST">
 
                                         @csrf
                                         @method('PUT')
 
-                                        {{-- NIDN --}}
+                                        {{-- NID --}}
                                         <div class="mb-3">
 
                                             <label class="form-label">
-                                                NIDN
+                                                NID
                                             </label>
 
                                             <input type="text"
-                                                class="form-control"
-                                                value="{{ $dsn->nim_nid }}"
-                                                disabled>
+                                                   class="form-control"
+                                                   value="{{ $dsn->nim_nid }}"
+                                                   disabled>
 
                                         </div>
 
@@ -510,9 +590,10 @@
                                             </label>
 
                                             <input type="text"
-                                                name="nama"
-                                                class="form-control"
-                                                value="{{ $dsn->nama }}">
+                                                   name="nama"
+                                                   class="form-control"
+                                                   value="{{ $dsn->nama }}"
+                                                   required>
 
                                         </div>
 
@@ -524,9 +605,10 @@
                                             </label>
 
                                             <input type="email"
-                                                name="email"
-                                                class="form-control"
-                                                value="{{ $dsn->email }}">
+                                                   name="email"
+                                                   class="form-control"
+                                                   value="{{ $dsn->email }}"
+                                                   required>
 
                                         </div>
 
@@ -539,67 +621,52 @@
 
                                             <div class="role-box">
 
-                                                @php
-                                                    $roleDosen = DB::table('dosen_roles')
-                                                        ->where('nim_nid', $dsn->nim_nid)
-                                                        ->pluck('role_dosen')
-                                                        ->toArray();
-                                                @endphp
-
                                                 <div class="form-check">
-
                                                     <input class="form-check-input"
-                                                        type="checkbox"
-                                                        name="is_pembimbing"
-                                                        value="1"
-                                                        {{ in_array('pembimbing', $roleDosen) ? 'checked' : '' }}>
+                                                           type="checkbox"
+                                                           name="roles[]"
+                                                           value="pembimbing"
+                                                           {{ in_array('pembimbing', $roleDosen) ? 'checked' : '' }}>
 
                                                     <label class="form-check-label">
                                                         Pembimbing
                                                     </label>
-
                                                 </div>
 
                                                 <div class="form-check">
-
                                                     <input class="form-check-input"
-                                                        type="checkbox"
-                                                        name="is_penguji"
-                                                        value="1"
-                                                        {{ in_array('penguji', $roleDosen) ? 'checked' : '' }}>
+                                                           type="checkbox"
+                                                           name="roles[]"
+                                                           value="penguji"
+                                                           {{ in_array('penguji', $roleDosen) ? 'checked' : '' }}>
 
                                                     <label class="form-check-label">
                                                         Penguji
                                                     </label>
-
                                                 </div>
 
                                                 <div class="form-check">
-
                                                     <input class="form-check-input"
-                                                        type="checkbox"
-                                                        name="is_reviewer"
-                                                        value="1"
-                                                        {{ in_array('reviewer', $roleDosen) ? 'checked' : '' }}>
+                                                           type="checkbox"
+                                                           name="roles[]"
+                                                           value="reviewer"
+                                                           {{ in_array('reviewer', $roleDosen) ? 'checked' : '' }}>
 
                                                     <label class="form-check-label">
                                                         Reviewer
                                                     </label>
-
                                                 </div>
 
-                                                <div class="form-check">
-
+                                                <div class="form-check mb-0">
                                                     <input class="form-check-input"
-                                                        type="checkbox"
-                                                        name="is_koordinator"
-                                                        value="1"
-                                                        {{ in_array('koordinator', $roleDosen) ? 'checked' : '' }}>
+                                                           type="checkbox"
+                                                           name="roles[]"
+                                                           value="koordinator"
+                                                           {{ in_array('koordinator', $roleDosen) ? 'checked' : '' }}>
 
                                                     <label class="form-check-label">
                                                         Koordinator
                                                     </label>
-
                                                 </div>
 
                                             </div>
@@ -614,9 +681,9 @@
                                             </label>
 
                                             <input type="password"
-                                                name="password"
-                                                class="form-control"
-                                                placeholder="Kosongkan jika tidak diganti">
+                                                   name="password"
+                                                   class="form-control"
+                                                   placeholder="Kosongkan jika tidak diganti">
 
                                         </div>
 
@@ -642,7 +709,7 @@
 
                     <tr>
 
-                        <td colspan="6">
+                        <td colspan="5">
 
                             <div class="empty-state">
 
@@ -674,7 +741,7 @@
 
 </div>
 
-{{-- MODAL --}}
+{{-- MODAL TAMBAH --}}
 <div class="modal fade" id="modalDosen" tabindex="-1">
 
     <div class="modal-dialog modal-dialog-centered">
@@ -687,37 +754,39 @@
                     Tambah Dosen
                 </h5>
 
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal">
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
                 </button>
 
             </div>
 
             <div class="modal-body">
 
-                <div id="errorAlert" class="alert alert-danger d-none">
+                <div id="errorAlert"
+                     class="alert alert-danger d-none">
                     Semua field wajib diisi!
                 </div>
 
-                <form id="formDosen" action="{{ route('dosen.store') }}" method="POST">
+                <form id="formDosen"
+                      action="{{ route('dosen.store') }}"
+                      method="POST">
 
                     @csrf
 
-                    {{-- NIDN --}}
+                    {{-- NID --}}
                     <div class="mb-3">
 
                         <label class="form-label">
-                            NIDN
+                            NID
                         </label>
 
-                        <input
-                            type="text"
-                            name="nidn"
-                            id="nidn"
-                            class="form-control"
-                            placeholder="Masukkan NIDN">
+                        <input type="text"
+                               name="nim_nid"
+                               id="nim_nid"
+                               class="form-control"
+                               placeholder="Masukkan NID"
+                               required>
 
                     </div>
 
@@ -728,12 +797,12 @@
                             Nama Dosen
                         </label>
 
-                        <input
-                            type="text"
-                            name="name"
-                            id="name"
-                            class="form-control"
-                            placeholder="Masukkan nama dosen">
+                        <input type="text"
+                               name="nama"
+                               id="nama"
+                               class="form-control"
+                               placeholder="Masukkan nama dosen"
+                               required>
 
                     </div>
 
@@ -744,16 +813,16 @@
                             Email
                         </label>
 
-                        <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            class="form-control"
-                            placeholder="Masukkan email">
+                        <input type="email"
+                               name="email"
+                               id="email"
+                               class="form-control"
+                               placeholder="Masukkan email"
+                               required>
 
                     </div>
 
-                    {{-- SUB ROLE --}}
+                    {{-- ROLE --}}
                     <div class="mb-3">
 
                         <label class="form-label">
@@ -763,29 +832,45 @@
                         <div class="role-box">
 
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="is_pembimbing" id="pembimbing" value="1">
-                                <label class="form-check-label" for="pembimbing">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="roles[]"
+                                       value="pembimbing">
+
+                                <label class="form-check-label">
                                     Pembimbing
                                 </label>
                             </div>
 
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="is_penguji" id="penguji" value="1">
-                                <label class="form-check-label" for="penguji">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="roles[]"
+                                       value="penguji">
+
+                                <label class="form-check-label">
                                     Penguji
                                 </label>
                             </div>
 
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="is_reviewer" id="reviewer" value="1">
-                                <label class="form-check-label" for="reviewer">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="roles[]"
+                                       value="reviewer">
+
+                                <label class="form-check-label">
                                     Reviewer
                                 </label>
                             </div>
 
                             <div class="form-check mb-0">
-                                <input class="form-check-input" type="checkbox" name="is_koordinator" id="koordinator" value="1">
-                                <label class="form-check-label" for="koordinator">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="roles[]"
+                                       value="koordinator">
+
+                                <label class="form-check-label">
                                     Koordinator
                                 </label>
                             </div>
@@ -801,16 +886,17 @@
                             Password
                         </label>
 
-                        <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            class="form-control"
-                            placeholder="Masukkan password">
+                        <input type="password"
+                               name="password"
+                               id="password"
+                               class="form-control"
+                               placeholder="Masukkan password"
+                               required>
 
                     </div>
 
-                    <button type="submit" class="btn-submit w-100">
+                    <button type="submit"
+                            class="btn-submit w-100">
 
                         <i class="fa-solid fa-floppy-disk me-2"></i>
                         Simpan Dosen
@@ -827,68 +913,32 @@
 
 </div>
 
-{{-- VALIDASI --}}
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
 
     const form = document.getElementById("formDosen");
-
     const alertBox = document.getElementById("errorAlert");
-
-    const nidn = document.getElementById("nidn");
-    const nama = document.getElementById("name");
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
 
     form.addEventListener("submit", function(e){
 
-        let isValid = true;
-
-        const inputs = [
-            nidn,
-            nama,
-            email,
-            password
-        ];
-
-        inputs.forEach(input => {
-            input.classList.remove("is-invalid");
-        });
-
-        inputs.forEach(input => {
-
-            if(input.value.trim() === ""){
-
-                input.classList.add("is-invalid");
-
-                isValid = false;
-            }
-
-        });
-
         const roles = document.querySelectorAll(
-            'input[type="checkbox"]:checked'
+            '#modalDosen input[name="roles[]"]:checked'
         );
 
         if(roles.length === 0){
-
-            isValid = false;
-
-            alertBox.innerHTML =
-                "Minimal pilih 1 sub role dosen!";
-        }
-
-        if(!isValid){
 
             e.preventDefault();
 
             alertBox.classList.remove("d-none");
 
-            return;
-        }
+            alertBox.innerHTML =
+                "Minimal pilih 1 sub role dosen!";
 
-        alertBox.classList.add("d-none");
+        } else {
+
+            alertBox.classList.add("d-none");
+        }
 
     });
 

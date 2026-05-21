@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Proposal;
 
 class AdminProposalController extends Controller
 {
@@ -166,5 +167,27 @@ class AdminProposalController extends Controller
             'usulanPembimbing',
             'progressTA'
         ));
+    }
+
+    public function approve($id)
+    {
+        $proposal = Proposal::findOrFail($id);
+
+        $proposal->update([
+            'status' => 'disetujui'
+        ]);
+
+        return back()->with('success', 'Proposal berhasil disetujui');
+    }
+
+    public function reject($id)
+    {
+        $proposal = Proposal::findOrFail($id);
+
+        $proposal->update([
+            'status' => 'ditolak'
+        ]);
+
+        return back()->with('success', 'Proposal berhasil ditolak');
     }
 }
