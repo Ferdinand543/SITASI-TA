@@ -338,9 +338,13 @@ tbody tr:hover { background: #FFFDF5; }
     font-size: 12px;
     font-weight: 700;
     text-decoration: none;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     transition: 0.2s;
     cursor: pointer;
+    border: none;
+    background: none;
 }
 
 .btn-verifikasi {
@@ -404,7 +408,6 @@ tbody tr:hover { background: #FFFDF5; }
 
 {{-- ══ HERO ══ --}}
 <div class="hero">
-    {{-- sparkles --}}
     <span class="hero-sparkle" style="top:22px;right:220px;">
         <svg width="18" height="18" viewBox="0 0 20 20"><path d="M10 0l1.5 8.5L20 10l-8.5 1.5L10 20l-1.5-8.5L0 10l8.5-1.5z"/></svg>
     </span>
@@ -414,7 +417,6 @@ tbody tr:hover { background: #FFFDF5; }
     <span class="hero-sparkle" style="bottom:28px;right:260px;">
         <svg width="10" height="10" viewBox="0 0 20 20"><path d="M10 0l1.5 8.5L20 10l-8.5 1.5L10 20l-1.5-8.5L0 10l8.5-1.5z"/></svg>
     </span>
-
     <div class="hero-content">
         <h1>Pengajuan Judul Tugas Akhir<br>Mahasiswa</h1>
         <p>Monitoring dan verifikasi pengajuan judul tugas akhir mahasiswa.</p>
@@ -444,27 +446,18 @@ tbody tr:hover { background: #FFFDF5; }
 {{-- ══ TABEL UTAMA ══ --}}
 <div class="main-card">
 
-    {{-- Filter Bar --}}
     <form method="GET" action="{{ url()->current() }}" id="filterForm">
         <div class="filter-bar">
-
-            {{-- Search --}}
             <div class="filter-group">
                 <label>Cari Mahasiswa atau Judul</label>
                 <div class="search-wrap">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input
-                        type="text"
-                        name="search"
-                        id="inputSearch"
+                    <input type="text" name="search" id="inputSearch"
                         value="{{ request('search') }}"
                         placeholder="Masukkan NIM, nama, atau kata kunci judul..."
-                        autocomplete="off"
-                    >
+                        autocomplete="off">
                 </div>
             </div>
-
-            {{-- Status --}}
             <div class="filter-status-wrap">
                 <label>Status</label>
                 <select name="status" id="inputStatus" onchange="document.getElementById('filterForm').submit()">
@@ -474,33 +467,22 @@ tbody tr:hover { background: #FFFDF5; }
                     <option value="ditolak"   {{ request('status')=='ditolak'   ? 'selected' : '' }}>Ditolak</option>
                 </select>
             </div>
-
-            {{-- Tanggal --}}
             <div class="filter-tanggal-wrap">
                 <label>Tanggal Pengajuan</label>
-                <input
-                    type="date"
-                    name="tanggal"
-                    id="inputTanggal"
+                <input type="date" name="tanggal" id="inputTanggal"
                     value="{{ request('tanggal') }}"
-                    onchange="document.getElementById('filterForm').submit()"
-                >
+                    onchange="document.getElementById('filterForm').submit()">
             </div>
-
-            {{-- Reset --}}
             <a href="{{ url()->current() }}" class="btn-reset">
                 <i class="fa-solid fa-rotate-right" style="font-size:11px;"></i>
                 Reset
             </a>
-
         </div>
     </form>
 
-    {{-- Active Filter Chips --}}
     @if(request('search') || request('status') || request('tanggal'))
     <div class="active-filters">
         <span style="font-size:12px;color:#94a3b8;font-weight:600;align-self:center;">Filter aktif:</span>
-
         @if(request('search'))
         <span class="filter-chip">
             <i class="fa-solid fa-magnifying-glass" style="font-size:10px;"></i>
@@ -508,7 +490,6 @@ tbody tr:hover { background: #FFFDF5; }
             <a href="{{ url()->current().'?'.http_build_query(array_merge(request()->except('search'),['page'=>1])) }}">×</a>
         </span>
         @endif
-
         @if(request('status'))
         <span class="filter-chip">
             <i class="fa-solid fa-tag" style="font-size:10px;"></i>
@@ -516,7 +497,6 @@ tbody tr:hover { background: #FFFDF5; }
             <a href="{{ url()->current().'?'.http_build_query(array_merge(request()->except('status'),['page'=>1])) }}">×</a>
         </span>
         @endif
-
         @if(request('tanggal'))
         <span class="filter-chip">
             <i class="fa-solid fa-calendar" style="font-size:10px;"></i>
@@ -527,7 +507,6 @@ tbody tr:hover { background: #FFFDF5; }
     </div>
     @endif
 
-    {{-- Tabel --}}
     <div class="tbl-wrap">
         <table>
             <thead>
@@ -556,14 +535,10 @@ tbody tr:hover { background: #FFFDF5; }
                     <td style="white-space:nowrap;font-weight:500;">
                         {{ $p->nama_mahasiswa }}
                     </td>
-
-                    {{-- ===== BAGIAN YANG DIFIX ===== --}}
                     <td style="max-width:260px;">
                         @if($p->status === 'disetujui')
-                            {{-- Kalau sudah disetujui, tampilkan judul yang disetujui dosen --}}
                             <div class="judul-main">{{ $p->judul_disetujui }}</div>
                         @else
-                            {{-- Kalau menunggu atau ditolak, tampilkan judul_1 + "+X lainnya" --}}
                             <div class="judul-main">{{ $p->judul_1 }}</div>
                             @php $extraCount = ($p->judul_2 ? 1 : 0)+($p->judul_3 ? 1 : 0); @endphp
                             @if($extraCount > 0)
@@ -574,8 +549,6 @@ tbody tr:hover { background: #FFFDF5; }
                             @endif
                         @endif
                     </td>
-                    {{-- ===== AKHIR BAGIAN YANG DIFIX ===== --}}
-
                     <td>
                         @if(in_array($p->status, ['menunggu','menunggu verifikasi']))
                             <span class="badge badge-menunggu">Menunggu Verifikasi</span>
@@ -588,10 +561,13 @@ tbody tr:hover { background: #FFFDF5; }
                         @endif
                     </td>
                     <td style="text-align:right;">
+                        {{-- ← PERUBAHAN: tombol Verifikasi sekarang buka modal info dulu --}}
                         @if(in_array($p->status, ['menunggu','menunggu verifikasi']))
-                        <a href="{{ route('admin.judul.show', $p->id) }}" class="btn-aksi btn-verifikasi">
+                        <button type="button" class="btn-aksi btn-verifikasi"
+                            data-id="{{ $p->id }}"
+                            onclick="bukaModalInfo(this)">
                             <i class="fa-solid fa-circle-check" style="font-size:11px;"></i> Verifikasi
-                        </a>
+                        </button>
                         @else
                         <a href="{{ route('admin.judul.show', $p->id) }}" class="btn-aksi btn-detail-outline">
                             <i class="fa-solid fa-eye" style="font-size:11px;"></i> Detail
@@ -619,7 +595,6 @@ tbody tr:hover { background: #FFFDF5; }
         </table>
     </div>
 
-    {{-- Pagination --}}
     @if($pengajuanJudul->hasPages())
     <div class="pagination-wrap">
         <div class="pagination-info">
@@ -657,7 +632,51 @@ tbody tr:hover { background: #FFFDF5; }
     </div>
 </div>
 
+{{-- ══ MODAL INFO VERIFIKASI (baru, sama kayak dosen) ══ --}}
+<div class="modal fade" id="modalInfoVerifikasi" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3" style="border-radius:18px;border:none;">
+            <div class="modal-body text-center">
+                <h5 class="fw-bold mb-3" style="font-size:17px;color:#1e293b;">Informasi</h5>
+                <p class="text-muted small text-start">
+                    Harap baca informasi berikut sebelum melakukan verifikasi judul tugas akhir mahasiswa.
+                </p>
+                <div class="mb-3 p-3 text-start" style="background:#FFFBEA;border-radius:12px;border:1px solid #FDE68A;">
+                    <div class="d-flex gap-2 mb-3 align-items-start">
+                        <span style="color:#F4B400;font-size:1.1rem;flex-shrink:0;margin-top:1px;"><i class="fa-regular fa-circle-check"></i></span>
+                        <p class="small mb-0" style="color:#78350F;">Admin hanya dapat menyetujui maksimal 1 judul dari beberapa usulan yang diajukan oleh mahasiswa.</p>
+                    </div>
+                    <div class="d-flex gap-2 mb-3 align-items-start">
+                        <span style="color:#F4B400;font-size:1.1rem;flex-shrink:0;margin-top:1px;"><i class="fa-regular fa-circle-check"></i></span>
+                        <p class="small mb-0" style="color:#78350F;">Jika tidak ada judul yang sesuai, admin dapat menolak semua usulan.</p>
+                    </div>
+                    <div class="d-flex gap-2 mb-3 align-items-start">
+                        <span style="color:#F4B400;font-size:1.1rem;flex-shrink:0;margin-top:1px;"><i class="fa-regular fa-circle-check"></i></span>
+                        <p class="small mb-0" style="color:#78350F;">Keputusan yang sudah disubmit tidak dapat diubah.</p>
+                    </div>
+                    <div class="d-flex gap-2 align-items-start">
+                        <span style="color:#F4B400;font-size:1.1rem;flex-shrink:0;margin-top:1px;"><i class="fa-regular fa-circle-check"></i></span>
+                        <p class="small mb-0" style="color:#78350F;">Pastikan judul yang disetujui relevan dengan topik penelitian.</p>
+                    </div>
+                </div>
+                <a href="#" id="btnTinjauAdmin" class="btn w-100 fw-bold mb-2"
+                    style="background:#FEF9C3;color:#6C5700;border:1px solid #FFE083;border-radius:12px;padding:12px;">
+                    Tinjau dan verifikasi judul mahasiswa
+                </a>
+                <button class="btn btn-link text-muted" data-bs-dismiss="modal">Kembali</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+// ← BARU: buka modal info dulu, set link ke show page
+function bukaModalInfo(btn) {
+    const id = btn.getAttribute('data-id');
+    document.getElementById('btnTinjauAdmin').href = '{{ url("/admin/judul") }}/' + id;
+    new bootstrap.Modal(document.getElementById('modalInfoVerifikasi')).show();
+}
+
 function lihatSemuaJudul(j1, j2, j3) {
     const judul  = [j1, j2, j3].filter(j => j && j.trim() !== '');
     const labels = ['Judul 1', 'Judul 2', 'Judul 3'];
@@ -672,7 +691,6 @@ function lihatSemuaJudul(j1, j2, j3) {
     new bootstrap.Modal(document.getElementById('modalJudul')).show();
 }
 
-// Auto-submit search dengan debounce 500ms
 let searchTimeout = null;
 document.getElementById('inputSearch').addEventListener('input', function() {
     clearTimeout(searchTimeout);

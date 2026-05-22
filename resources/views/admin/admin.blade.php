@@ -13,7 +13,7 @@ $totalMahasiswa = DB::table('users')->where('role', 'mahasiswa')->count();
 $totalDosen     = DB::table('users')->where('role', 'dosen')->count();
 $totalPengajuan = DB::table('pengajuan_judul')->count();
 $totalProposal  = DB::table('proposal')->count();
-$totalBimbingan = DB::table('bimbingan')->count();
+$totalBimbingan = DB::table('bimbingan')->distinct('nim_nid')->count('nim_nid');
 $totalSeminar   = DB::table('jadwal_akademik')->where('kategori', 'Seminar')->count();
 
 $pengajuanTerbaru = DB::table('pengajuan_judul as pj')
@@ -499,7 +499,6 @@ body {
                             <tr>
                                 <td style="font-weight:600;">{{ $item->nama }}</td>
 
-                                {{-- ===== BAGIAN YANG DIFIX ===== --}}
                                 @php
                                     $judulTampil = $item->status === 'disetujui'
                                         ? $item->judul_disetujui
@@ -509,7 +508,6 @@ body {
                                     title="{{ $judulTampil }}">
                                     {{ $judulTampil }}
                                 </td>
-                                {{-- ===== AKHIR BAGIAN YANG DIFIX ===== --}}
 
                                 <td>
                                     @if($item->status == 'disetujui')

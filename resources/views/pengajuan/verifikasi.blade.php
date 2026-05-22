@@ -7,6 +7,11 @@
 
     <div class="wrapper-page">
 
+        <!-- TOMBOL KEMBALI -->
+        <a href="/pengajuan" class="btn-back-top">
+            <i class="fa fa-arrow-left"></i> Kembali
+        </a>
+
         <!-- TITLE -->
         <h1 class="page-title">Tinjau dan Verifikasi Judul TA Mahasiswa</h1>
         <p class="page-subtitle">Verifikasi usulan judul tugas akhir mahasiswa untuk memastikan standar akademik.</p>
@@ -165,6 +170,28 @@
         padding: 36px 24px 100px;
     }
 
+    /* TOMBOL KEMBALI ATAS */
+    .btn-back-top {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #374151;
+        text-decoration: none;
+        margin-bottom: 20px;
+        padding: 8px 16px;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        background: #fff;
+        transition: 0.15s;
+    }
+    .btn-back-top:hover {
+        border-color: #F4B400;
+        color: #111;
+        background: #FFFBEA;
+    }
+
     /* TITLE */
     .page-title {
         font-size: 1.75rem;
@@ -216,9 +243,9 @@
         font-weight: 600;
         color: #111;
     }
-    .status-menunggu { color: #D97706; }
+    .status-menunggu  { color: #D97706; }
     .status-disetujui { color: #16A34A; }
-    .status-ditolak { color: #DC2626; }
+    .status-ditolak   { color: #DC2626; }
 
     /* INFORMASI PENTING */
     .info-penting {
@@ -234,15 +261,8 @@
         gap: 8px;
         margin-bottom: 12px;
     }
-    .info-penting-icon {
-        color: #F4B400;
-        font-size: 1.1rem;
-    }
-    .info-penting-title {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: #92400E;
-    }
+    .info-penting-icon  { color: #F4B400; font-size: 1.1rem; }
+    .info-penting-title { font-size: 0.95rem; font-weight: 700; color: #92400E; }
     .info-penting-list {
         margin: 0; padding-left: 18px;
         display: flex; flex-direction: column; gap: 6px;
@@ -339,7 +359,7 @@
         font-size: 0.82rem; font-weight: 600;
         cursor: pointer; transition: all 0.15s;
     }
-    .btn-setuju:hover { background: #BBF7D0; }
+    .btn-setuju:hover    { background: #BBF7D0; }
     .btn-setuju:disabled { opacity: 0.7; cursor: default; }
 
     .btn-tolak {
@@ -350,14 +370,10 @@
         font-size: 0.82rem; font-weight: 600;
         cursor: pointer; transition: all 0.15s;
     }
-    .btn-tolak:hover { background: #FECACA; }
+    .btn-tolak:hover    { background: #FECACA; }
     .btn-tolak:disabled { opacity: 0.7; cursor: default; }
 
-    .btn-hasil {
-        display: inline-flex; align-items: center; gap: 5px;
-        border-radius: 8px; padding: 7px 16px;
-        font-size: 0.82rem; font-weight: 600;
-    }
+    .btn-hasil { display: inline-flex; align-items: center; gap: 5px; border-radius: 8px; padding: 7px 16px; font-size: 0.82rem; font-weight: 600; }
     .btn-disetujui-hasil { background: #DCFCE7; color: #15803D; }
     .btn-ditolak-hasil   { background: #FEE2E2; color: #B91C1C; }
 
@@ -431,9 +447,9 @@
     .btn-batal:hover { background: #E5E7EB; }
 
     @media (max-width: 600px) {
-        .info-grid { grid-template-columns: 1fr; }
-        .wrapper-page { padding: 20px 14px 100px; }
-        .footer-sticky { padding: 12px 16px; }
+        .info-grid      { grid-template-columns: 1fr; }
+        .wrapper-page   { padding: 20px 14px 100px; }
+        .footer-sticky  { padding: 12px 16px; }
     }
 </style>
 

@@ -8,8 +8,9 @@
         ->pluck('role_dosen')
         ->toArray();
 
-    $isKoor     = in_array('koordinator', $subRoles);
-    $isReviewer = in_array('reviewer',    $subRoles);
+    $isAdmin    = strtolower(trim(session('user')->role)) === 'admin';
+    $isKoor     = in_array('koordinator', $subRoles) || $isAdmin;
+    $isReviewer = in_array('reviewer',    $subRoles) || $isAdmin;
 @endphp
 
 <!-- HERO -->

@@ -402,4 +402,6 @@ Route::get('/register-admin', function () {
     return view('auth.register-admin');
 });
 
+Route::post('/register-admin', [AuthController::class, 'register']); // ← INI YANG DITAMBAH
+
 Route::delete('/panduan-ta/{id}', [PanduanTAController::class, 'destroy'])->name('panduan.destroy');
