@@ -145,6 +145,33 @@
         color: #735C00;
         width: 100%;
     }
+
+    /* ── TOGGLE PASSWORD ── */
+    .pw-wrap {
+        position: relative;
+    }
+
+    .pw-wrap .form-control {
+        padding-right: 46px;
+    }
+
+    .pw-toggle {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #94a3b8;
+        padding: 0;
+        font-size: 16px;
+        line-height: 1;
+    }
+
+    .pw-toggle:hover {
+        color: #735C00;
+    }
 </style>
 
 <div class="container-fluid py-4">
@@ -216,7 +243,6 @@
                         <td>{{ $mhs->angkatan }}</td>
                         <td>
                             <div class="d-flex justify-content-center gap-2">
-
 
                                 {{-- EDIT --}}
                                 <button
@@ -306,7 +332,12 @@
                                         </div>
                                         <div class="mb-4">
                                             <label class="form-label">Password Baru</label>
-                                            <input type="password" name="password" class="form-control" placeholder="Kosongkan jika tidak diganti">
+                                            <div class="pw-wrap">
+                                                <input type="password" name="password" class="form-control" placeholder="Kosongkan jika tidak diganti">
+                                                <button type="button" class="pw-toggle" onclick="togglePw(this)">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                         <button type="submit" class="btn-submit">Update Mahasiswa</button>
                                     </form>
@@ -356,7 +387,12 @@
                     </div>
                     <div class="mb-4">
                         <label class="form-label">Password</label>
-                        <input type="password" name="password" class="form-control">
+                        <div class="pw-wrap">
+                            <input type="password" name="password" class="form-control">
+                            <button type="button" class="pw-toggle" onclick="togglePw(this)">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" class="btn-submit">Simpan Mahasiswa</button>
                 </form>
@@ -366,6 +402,19 @@
 </div>
 
 <script>
+// ── TOGGLE SHOW/HIDE PASSWORD ──
+function togglePw(btn) {
+    const input = btn.closest('.pw-wrap').querySelector('input');
+    const icon  = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const existingNim   = @json($mahasiswa->pluck('nim_nid'));
@@ -435,11 +484,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // ══════════════════════════════
     document.querySelectorAll('[id^="editModal"] form').forEach(function (formEdit) {
         formEdit.addEventListener('submit', function (e) {
-            const currentNim    = formEdit.dataset.currentNim;
-            const email         = formEdit.querySelector('[name="email"]').value.trim();
-            const password      = formEdit.querySelector('[name="password"]').value;
+            const currentNim = formEdit.dataset.currentNim;
+            const email      = formEdit.querySelector('[name="email"]').value.trim();
+            const password   = formEdit.querySelector('[name="password"]').value;
 
-            // Cek email duplikat (exclude milik sendiri)
             for (const [nim, em] of Object.entries(emailByNim)) {
                 if (em === email && nim !== currentNim) {
                     e.preventDefault();
@@ -454,7 +502,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
 
-            // Cek password hanya jika diisi
             if (password.length > 0 && password.length < 6) {
                 e.preventDefault();
                 Swal.fire({

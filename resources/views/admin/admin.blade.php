@@ -428,8 +428,8 @@ body {
         </div>
 
         <div class="stat-card">
-            <div class="stat-icon bg-warning-subtle">
-                <i class="fa-solid fa-file-earmark-text" style="color:#f59e0b;"></i>
+            <div class="stat-icon" style="background:#fef3c7;">
+                <i class="fa-solid fa-file-lines" style="color:#d97706;"></i>
             </div>
             <div class="stat-label">Pengajuan<br>Judul Aktif</div>
             <div class="stat-number">{{ $totalPengajuan }}</div>
@@ -498,7 +498,19 @@ body {
                             @forelse($pengajuanTerbaru as $item)
                             <tr>
                                 <td style="font-weight:600;">{{ $item->nama }}</td>
-                                <td style="max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ $item->judul_1 }}">{{ $item->judul_1 }}</td>
+
+                                {{-- ===== BAGIAN YANG DIFIX ===== --}}
+                                @php
+                                    $judulTampil = $item->status === 'disetujui'
+                                        ? $item->judul_disetujui
+                                        : $item->judul_1;
+                                @endphp
+                                <td style="max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+                                    title="{{ $judulTampil }}">
+                                    {{ $judulTampil }}
+                                </td>
+                                {{-- ===== AKHIR BAGIAN YANG DIFIX ===== --}}
+
                                 <td>
                                     @if($item->status == 'disetujui')
                                         <span class="badge-status badge-disetujui">Disetujui</span>

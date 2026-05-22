@@ -556,16 +556,26 @@ tbody tr:hover { background: #FFFDF5; }
                     <td style="white-space:nowrap;font-weight:500;">
                         {{ $p->nama_mahasiswa }}
                     </td>
+
+                    {{-- ===== BAGIAN YANG DIFIX ===== --}}
                     <td style="max-width:260px;">
-                        <div class="judul-main">{{ $p->judul_1 }}</div>
-                        @php $extraCount = ($p->judul_2 ? 1 : 0)+($p->judul_3 ? 1 : 0); @endphp
-                        @if($extraCount > 0)
-                        <span class="judul-lainnya"
-                            onclick="lihatSemuaJudul('{{ e($p->judul_1) }}','{{ e($p->judul_2) }}','{{ e($p->judul_3) }}')">
-                            +{{ $extraCount }} lainnya
-                        </span>
+                        @if($p->status === 'disetujui')
+                            {{-- Kalau sudah disetujui, tampilkan judul yang disetujui dosen --}}
+                            <div class="judul-main">{{ $p->judul_disetujui }}</div>
+                        @else
+                            {{-- Kalau menunggu atau ditolak, tampilkan judul_1 + "+X lainnya" --}}
+                            <div class="judul-main">{{ $p->judul_1 }}</div>
+                            @php $extraCount = ($p->judul_2 ? 1 : 0)+($p->judul_3 ? 1 : 0); @endphp
+                            @if($extraCount > 0)
+                            <span class="judul-lainnya"
+                                onclick="lihatSemuaJudul('{{ e($p->judul_1) }}','{{ e($p->judul_2) }}','{{ e($p->judul_3) }}')">
+                                +{{ $extraCount }} lainnya
+                            </span>
+                            @endif
                         @endif
                     </td>
+                    {{-- ===== AKHIR BAGIAN YANG DIFIX ===== --}}
+
                     <td>
                         @if(in_array($p->status, ['menunggu','menunggu verifikasi']))
                             <span class="badge badge-menunggu">Menunggu Verifikasi</span>
