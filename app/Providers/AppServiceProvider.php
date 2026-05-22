@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Pagination\Paginator;
 use App\Models\ProposalMahasiswa;
 use App\Models\PengajuanJudul;
 
@@ -13,26 +14,24 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Paginator::useBootstrap();
+
         View::composer('*', function ($view) {
             $user = session('user');
 
-            // ── Notif untuk mahasiswa ──
             $notifJudulMahasiswa    = 0;
             $notifProposalMahasiswa = 0;
 
             if ($user && strtolower($user->role) === 'mahasiswa') {
                 $nim = $user->nim_nid;
 
-                // Hitung jumlah pengajuan yang sudah direspon
                 $totalJudulDirespon = PengajuanJudul::where('nim_nid', $nim)
                     ->whereIn('status', ['disetujui', 'ditolak'])
                     ->count();
 
-                // Badge muncul kalau jumlah yg direspon BERBEDA dari yg terakhir dibaca
                 $sudahDibacaJudul = session('notif_judul_terakhir_' . $nim, 0);
                 $notifJudulMahasiswa = ($totalJudulDirespon > $sudahDibacaJudul) ? $totalJudulDirespon - $sudahDibacaJudul : 0;
 
-                // Hitung jumlah proposal yang sudah direspon
                 $totalProposalDirespon = ProposalMahasiswa::where('nim_nid', $nim)
                     ->whereIn('status', ['selesai', 'ditolak', 'disetujui'])
                     ->count();
@@ -42,11 +41,8 @@ class AppServiceProvider extends ServiceProvider
             }
 
             $view->with([
-                // ── Untuk dosen/admin/koordinator ──
                 'jumlahMenungguProposal' => ProposalMahasiswa::whereRaw('LOWER(status) LIKE ?', ['%menunggu%'])->count(),
                 'jumlahMenungguJudul'    => PengajuanJudul::whereRaw('LOWER(status) LIKE ?', ['%menunggu%'])->count(),
-
-                // ── Untuk mahasiswa ──
                 'notifJudulMahasiswa'    => $notifJudulMahasiswa,
                 'notifProposalMahasiswa' => $notifProposalMahasiswa,
             ]);

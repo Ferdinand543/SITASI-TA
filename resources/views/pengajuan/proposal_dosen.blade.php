@@ -8,7 +8,8 @@ $rolesDb = \Illuminate\Support\Facades\DB::table('dosen_roles')
 ->where('nim_nid', $nimSesi)
 ->pluck('role_dosen')
 ->toArray();
-$isReviewer = in_array('reviewer', $rolesDb);
+$isAdmin = strtolower(trim(session('user')->role)) === 'admin';
+$isReviewer = in_array('reviewer', $rolesDb) || $isAdmin;
 @endphp
 
 <style>

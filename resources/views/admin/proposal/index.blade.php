@@ -48,7 +48,7 @@
         display: grid; gap: 1px; background: #e5e7eb; border-radius: 16px;
         overflow: hidden; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
-    .stat-row.cols-5 { grid-template-columns: repeat(5,1fr); }
+    .stat-row.cols-4 { grid-template-columns: repeat(4,1fr); }
     .stat-card { background:#fff; padding:20px 24px; display:flex; align-items:center; gap:14px; }
     .stat-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .stat-icon.blue   { background:#eff6ff; }
@@ -106,7 +106,6 @@
     .dosen-nidn { font-size:0.72rem; color:#94a3b8; margin-top:1px; }
     .role-badge { display:inline-block; margin-top:4px; font-size:0.66rem; padding:2px 8px; border-radius:5px; font-weight:700; }
     .rb-pembimbing { background:#e0f2fe; color:#0369a1; }
-    .rb-usulan     { background:#fef9c3; color:#854d0e; }
 
     .status-pill { display:inline-flex; align-items:center; gap:5px; padding:5px 12px; border-radius:20px; font-size:0.74rem; font-weight:700; white-space:nowrap; }
     .sp-menunggu-verifikasi { background:#fff3cd; color:#856404; border:1px solid #ffd96a; }
@@ -120,13 +119,6 @@
         display:inline-flex; align-items:center; gap:5px; transition:0.15s; white-space:nowrap;
     }
     .btn-verifikasi:hover { background:#e0b800; color:#4a3000; }
-
-    .btn-review {
-        background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; border-radius:8px;
-        padding:7px 14px; font-size:0.8rem; font-weight:700; text-decoration:none;
-        display:inline-flex; align-items:center; gap:5px; transition:0.15s; white-space:nowrap;
-    }
-    .btn-review:hover { background:#bfdbfe; color:#1e3a8a; }
 
     .btn-detail {
         background:#fff; color:#475569; border:1px solid #e2e8f0; border-radius:8px;
@@ -144,6 +136,8 @@
     .empty-state-sub   { font-size:0.82rem; color:#94a3b8; }
 
     .pagination-wrap { display:flex; justify-content:flex-end; padding:16px 20px; border-top:1px solid #f0f0f0; }
+
+    
 </style>
 
 <div class="container-fluid px-4 page-wrap">
@@ -179,7 +173,7 @@
     </div>
 
     {{-- STAT CARDS — admin: 5 kolom --}}
-    <div class="stat-row mb-4 cols-5">
+    <div class="stat-row mb-4 cols-4">
         <div class="stat-card">
             <div class="stat-icon blue">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#2563eb" viewBox="0 0 16 16">
@@ -225,20 +219,9 @@
                 <div class="stat-label">Selesai</div>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon red">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#dc2626" viewBox="0 0 16 16">
-                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
-                </svg>
-            </div>
-            <div>
-                <div class="stat-num">{{ $ditolak }}</div>
-                <div class="stat-label">Ditolak</div>
-            </div>
-        </div>
     </div>
 
-    {{-- FILTER — server-side untuk admin --}}
+    {{-- FILTER --}}
     <form method="GET" action="{{ route('admin.proposal.index') }}" id="filterForm">
         <div class="filter-bar mb-4">
             <div class="search-wrap">
@@ -316,7 +299,7 @@
                         @endif
                     </td>
 
-                    {{-- Pembimbing 1 — ambil dari dosenPembimbing atau usulan --}}
+                    {{-- Pembimbing 1 --}}
                     <td style="min-width:180px;">
                         @if(!empty($p->dosen1_nama))
                             <div class="dosen-name">{{ $p->dosen1_nama }}</div>
@@ -352,6 +335,7 @@
                         @endif
                     </td>
 
+                    {{-- AKSI: Verifikasi jika menunggu_verifikasi, Detail untuk status lain --}}
                     <td class="center">
                         <div class="action-group">
                             @if($status === 'menunggu_verifikasi')
@@ -361,17 +345,7 @@
                                 </svg>
                                 Verifikasi
                             </a>
-                            @endif
-
-                            @if($status === 'menunggu_review')
-                            <a href="{{ route('admin.proposal.detail', $p->id) }}" class="btn-review">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
-                                </svg>
-                                Review
-                            </a>
-                            @endif
-
+                            @else
                             <a href="{{ route('admin.proposal.detail', $p->id) }}" class="btn-detail">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
                                     <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
@@ -379,6 +353,7 @@
                                 </svg>
                                 Detail
                             </a>
+                            @endif
                         </div>
                     </td>
                 </tr>
@@ -412,7 +387,6 @@
 </div>
 
 <script>
-    // Debounce search input → auto submit form
     let searchTimeout = null;
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {

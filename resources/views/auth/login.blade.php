@@ -18,7 +18,7 @@
 
         html, body {
             width: 100%;
-            min-height: 100vh;
+            height: 100%;
         }
 
         body {
@@ -28,43 +28,44 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 24px;
-            /* FIX: pastiin nggak ada offset horizontal */
+            padding: 16px;
             text-align: center;
+            min-height: 100vh;
+            overflow: hidden; /* FIX: no scroll */
         }
 
         /* ── BRAND ── */
         .brand-wrap {
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 16px; /* FIX: dari 28px */
             animation: fadeDown 0.45s ease both;
             width: 100%;
             max-width: 448px;
         }
 
         .brand-logo {
-            width: 76px;
-            height: 76px;
-            margin: 0 auto 14px;
+            width: 52px;  /* FIX: dari 76px */
+            height: 52px; /* FIX: dari 76px */
+            margin: 0 auto 8px; /* FIX: dari 14px */
             display: block;
             border-radius: 50%;
         }
 
         .brand-title {
             font-family: 'Hanken Grotesk', sans-serif;
-            font-size: 2rem;
+            font-size: 1.7rem;
             font-weight: 800;
             color: #4D4632;
             letter-spacing: -0.5px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             text-align: center;
         }
 
         .brand-subtitle {
             font-family: 'Hanken Grotesk', sans-serif;
-            font-size: 20px;
+            font-size: 13px; /* FIX: dari 20px */
             font-weight: 500;
-            line-height: 28px;
+            line-height: 20px;
             color: #4D4632;
             letter-spacing: 0px;
             text-align: center;
@@ -74,46 +75,44 @@
         .login-card {
             background: #FFFFFF;
             border-radius: 20px;
-            padding: 36px 32px 40px;
+            padding: 24px 28px 28px; /* FIX: dari 36px 32px 40px */
             width: 100%;
             max-width: 448px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.07);
             animation: fadeUp 0.45s ease 0.1s both;
-            /* FIX: text-align kembali ke left supaya label & input rapi */
             text-align: left;
         }
 
-        /* "Login" judul card */
         .card-title {
             font-family: 'Hanken Grotesk', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: #111C2D;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             text-align: center;
         }
 
         .card-desc {
             font-family: 'Hanken Grotesk', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: #5D5F5F;
             font-weight: 400;
-            margin-bottom: 28px;
+            margin-bottom: 20px; /* FIX: dari 28px */
             text-align: center;
         }
 
         /* ── FIELD ── */
         .field-group {
-            margin-bottom: 18px;
+            margin-bottom: 14px; /* FIX: dari 18px */
         }
 
         .field-label {
             display: block;
             font-family: 'Hanken Grotesk', sans-serif;
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: #111C2D;
-            margin-bottom: 8px;
+            margin-bottom: 6px; /* FIX: dari 8px */
         }
 
         .input-wrap {
@@ -126,16 +125,16 @@
             position: absolute;
             left: 14px;
             color: #5D5F5F;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             pointer-events: none;
         }
 
         .input-wrap input {
             width: 100%;
-            padding: 13px 14px 13px 42px;
+            padding: 11px 14px 11px 40px; /* FIX: dari 13px */
             border: 1.5px solid #D1C6AB;
             border-radius: 12px;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-family: 'Hanken Grotesk', sans-serif;
             color: #111C2D;
             background: #FFFFFF;
@@ -172,10 +171,10 @@
         .forgot-link {
             display: block;
             text-align: right;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             color: #5D5F5F;
             text-decoration: none;
-            margin-top: 8px;
+            margin-top: 6px; /* FIX: dari 8px */
             font-weight: 500;
             transition: color 0.2s;
         }
@@ -187,16 +186,16 @@
         /* ── BUTTON ── */
         .btn-login {
             width: 100%;
-            padding: 14px;
+            padding: 12px; /* FIX: dari 14px */
             background: linear-gradient(90deg, #FACC15 0%, #FDE047 100%);
             border: none;
             border-radius: 50px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             font-family: 'Hanken Grotesk', sans-serif;
             color: #6C5700;
             cursor: pointer;
-            margin-top: 24px;
+            margin-top: 18px; /* FIX: dari 24px */
             letter-spacing: 0.2px;
             transition: filter 0.2s, transform 0.15s, box-shadow 0.2s;
             box-shadow: 0 4px 16px rgba(0,0,0,0.12);
@@ -313,6 +312,17 @@
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(14px); }
             to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── RESPONSIVE: layar sangat kecil ── */
+        @media (max-height: 600px) {
+            .brand-logo { width: 40px; height: 40px; margin-bottom: 4px; }
+            .brand-wrap { margin-bottom: 10px; }
+            .brand-title { font-size: 1.3rem; }
+            .login-card { padding: 18px 22px 22px; }
+            .card-desc { margin-bottom: 14px; }
+            .field-group { margin-bottom: 10px; }
+            .btn-login { margin-top: 12px; padding: 10px; }
         }
     </style>
 </head>
