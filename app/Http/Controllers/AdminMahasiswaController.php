@@ -28,30 +28,31 @@ class AdminMahasiswaController extends Controller
     */
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'nim_nid' => 'required|unique:users,nim_nid',
-            'nama' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'angkatan' => 'required',
-            'password' => 'required|min:6',
-        ]);
+{
+    try {
 
-        User::create([
-            'nim_nid' => $request->nim_nid,
-            'nama' => $request->nama,
-            'email' => $request->email,
-            'angkatan' => $request->angkatan,
-            'password' => Hash::make($request->password),
-            'role' => 'mahasiswa',
-            'foto' => '',
-        ]);
+        $user = new User();
+
+        $user->nim_nid = $request->nim_nid;
+        $user->nama = $request->nama;
+        $user->email = $request->email;
+        $user->angkatan = $request->angkatan;
+        $user->password = Hash::make($request->password);
+        $user->role = 'mahasiswa';
+        $user->foto = '';
+
+        $user->save();
 
         return redirect()
             ->route('mahasiswa.index')
-            ->with('success', 'Data mahasiswa berhasil ditambahkan');
-    }
+            ->with('success', 'Berhasil tambah mahasiswa');
 
+    } catch (\Exception $e) {
+
+        dd($e->getMessage());
+
+    }
+}
     /*
     |--------------------------------------------------------------------------
     | DETAIL MAHASISWA

@@ -12,77 +12,63 @@ class AdminProposalController extends Controller
     {
         $query = DB::table('proposal')
             ->join('users', 'proposal.nim_nid', '=', 'users.nim_nid')
-
             ->leftJoin('tinjauan_proposal', 'proposal.id', '=', 'tinjauan_proposal.proposal_id')
             ->leftJoin('users as reviewer', 'tinjauan_proposal.nim_nid_reviewer', '=', 'reviewer.nim_nid')
-
+            // Join dosen pembimbing 1
+            ->leftJoin('dosen_pembimbing as dp1', function ($join) {
+                $join->on('dp1.proposal_id', '=', 'proposal.id')
+                     ->where('dp1.urutan', '=', 1);
+            })
+            ->leftJoin('users as dd1', 'dp1.nim_nid_dosen', '=', 'dd1.nim_nid')
+            // Join dosen pembimbing 2
+            ->leftJoin('dosen_pembimbing as dp2', function ($join) {
+                $join->on('dp2.proposal_id', '=', 'proposal.id')
+                     ->where('dp2.urutan', '=', 2);
+            })
+            ->leftJoin('users as dd2', 'dp2.nim_nid_dosen', '=', 'dd2.nim_nid')
             ->select(
-                'proposal.*',
+                'proposal.id',
+                'proposal.nim_nid',
+                'proposal.judul',
+                'proposal.file_proposal',
+                'proposal.status',
+                'proposal.created_at',
                 'users.nama as nama_mahasiswa',
-                'users.nim_nid',
                 'reviewer.nama as nama_reviewer',
-                'tinjauan_proposal.catatan'
+                'tinjauan_proposal.catatan',
+                'dd1.nama as dosen1_nama',
+                'dd1.nim_nid as dosen1_nidn',
+                'dd2.nama as dosen2_nama',
+                'dd2.nim_nid as dosen2_nidn',
             )
-
             ->orderBy('proposal.created_at', 'desc');
 
-        // SEARCH
-        if ($request->search) {
-
-            $query->where(function ($q) use ($request) {
-
-                $q->where('users.nama', 'like', '%' . $request->search . '%')
-                    ->orWhere('users.nim_nid', 'like', '%' . $request->search . '%')
-                    ->orWhere('proposal.judul', 'like', '%' . $request->search . '%');
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('users.nama',       'like', "%{$search}%")
+                  ->orWhere('users.nim_nid',  'like', "%{$search}%")
+                  ->orWhere('proposal.judul', 'like', "%{$search}%");
             });
         }
 
-        // FILTER STATUS
-        if ($request->status) {
-
+        if ($request->filled('status')) {
             $query->where('proposal.status', $request->status);
         }
 
-        // FILTER TANGGAL
-        if ($request->tanggal) {
+        $proposals = $query->paginate(10)->withQueryString();
 
-            $query->whereDate(
-                'proposal.tanggal_pengajuan',
-                $request->tanggal
-            );
-        }
-
-        // DATA PROPOSAL
-        $proposal = $query->paginate(10);
-
-        // STATISTIK
-        $totalProposal = DB::table('proposal')->count();
-
-        $belumDireview = DB::table('proposal')
-
-            ->whereIn('status', [
-                'menunggu_verifikasi',
-                'menunggu_review'
-            ])
-
-            ->count();
-
-        $selesaiDireview = DB::table('proposal')
-
-            ->where('status', 'selesai')
-
-            ->count();
-
-        $ditolak = DB::table('proposal')
-
-            ->where('status', 'ditolak')
-
-            ->count();
+        $totalProposal   = DB::table('proposal')->count();
+        $belumDireview   = DB::table('proposal')->whereIn('status', ['menunggu_verifikasi', 'menunggu_review'])->count();
+        $menungguReview  = DB::table('proposal')->where('status', 'menunggu_review')->count();
+        $selesaiDireview = DB::table('proposal')->where('status', 'selesai')->count();
+        $ditolak         = DB::table('proposal')->where('status', 'ditolak')->count();
 
         return view('admin.proposal.index', compact(
-            'proposal',
+            'proposals',
             'totalProposal',
             'belumDireview',
+            'menungguReview',
             'selesaiDireview',
             'ditolak'
         ));
@@ -91,13 +77,9 @@ class AdminProposalController extends Controller
     public function show($id)
     {
         $proposal = DB::table('proposal')
-
             ->join('users', 'proposal.nim_nid', '=', 'users.nim_nid')
-
             ->leftJoin('tinjauan_proposal', 'proposal.id', '=', 'tinjauan_proposal.proposal_id')
-
             ->leftJoin('users as reviewer', 'tinjauan_proposal.nim_nid_reviewer', '=', 'reviewer.nim_nid')
-
             ->select(
                 'proposal.*',
                 'users.nama as nama_mahasiswa',
@@ -108,86 +90,55 @@ class AdminProposalController extends Controller
                 'tinjauan_proposal.file_tinjauan',
                 'tinjauan_proposal.tanggal_tinjauan'
             )
-
             ->where('proposal.id', $id)
-
             ->first();
 
-        if (!$proposal) {
-
-            abort(404);
-        }
+        if (!$proposal) abort(404);
 
         $dosenPembimbing = DB::table('dosen_pembimbing')
-
             ->join('users', 'dosen_pembimbing.nim_nid_dosen', '=', 'users.nim_nid')
-
-            ->select(
-                'users.nama',
-                'users.nim_nid',
-                'dosen_pembimbing.urutan',
-                'dosen_pembimbing.tanggal_penetapan'
-            )
-
+            ->select('users.nama', 'users.nim_nid', 'dosen_pembimbing.urutan', 'dosen_pembimbing.tanggal_penetapan')
             ->where('dosen_pembimbing.proposal_id', $id)
-
             ->orderBy('dosen_pembimbing.urutan')
-
             ->get();
 
         $usulanPembimbing = DB::table('usulan_pembimbing')
-
             ->join('users', 'usulan_pembimbing.nim_nid_dosen', '=', 'users.nim_nid')
-
-            ->select(
-                'users.nama',
-                'users.nim_nid',
-                'usulan_pembimbing.urutan',
-                'usulan_pembimbing.status',
-                'usulan_pembimbing.tanggal_usulan'
-            )
-
+            ->select('users.nama', 'users.nim_nid', 'usulan_pembimbing.urutan', 'usulan_pembimbing.status', 'usulan_pembimbing.tanggal_usulan')
             ->where('usulan_pembimbing.proposal_id', $id)
-
             ->orderBy('usulan_pembimbing.urutan')
-
             ->get();
 
-        $progressTA = DB::table('progress_ta')
+        return view('admin.proposal.detail', compact('proposal', 'dosenPembimbing', 'usulanPembimbing'));
+    }
 
-            ->where('nim_nid', $proposal->nim_nid)
+    public function serveFile($id)
+    {
+        $proposal = DB::table('proposal')->where('id', $id)->first();
+        if (!$proposal || !$proposal->file_proposal) abort(404);
 
-            ->orderBy('id')
+        $path = storage_path('app/public/' . $proposal->file_proposal);
+        if (!file_exists($path)) $path = storage_path('app/' . $proposal->file_proposal);
+        if (!file_exists($path)) $path = public_path($proposal->file_proposal);
+        if (!file_exists($path)) abort(404, 'File tidak ditemukan');
 
-            ->get();
-
-        return view('admin.proposal.detail', compact(
-            'proposal',
-            'dosenPembimbing',
-            'usulanPembimbing',
-            'progressTA'
-        ));
+        return response()->file($path, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="proposal_' . $id . '.pdf"',
+        ]);
     }
 
     public function approve($id)
     {
         $proposal = Proposal::findOrFail($id);
-
-        $proposal->update([
-            'status' => 'disetujui'
-        ]);
-
+        $proposal->update(['status' => 'selesai']);
         return back()->with('success', 'Proposal berhasil disetujui');
     }
 
     public function reject($id)
     {
         $proposal = Proposal::findOrFail($id);
-
-        $proposal->update([
-            'status' => 'ditolak'
-        ]);
-
+        $proposal->update(['status' => 'ditolak']);
         return back()->with('success', 'Proposal berhasil ditolak');
     }
 }

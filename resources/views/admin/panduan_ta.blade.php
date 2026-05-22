@@ -19,13 +19,6 @@
         max-width: 560px;
     }
 
-    .section-title {
-        font-size: 20px;
-        font-weight: 700;
-        margin-bottom: 20px;
-        color: #111827;
-    }
-
     .card-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -90,39 +83,16 @@
         line-height: 1.7;
         margin: 0;
     }
-
-    .back-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: #C9A227;
-        font-size: 14px;
-        font-weight: 500;
-        text-decoration: none;
-        margin-bottom: 20px;
-    }
-
-    .back-link:hover {
-        opacity: .75;
-    }
-
-    .back-link:hover {
-        opacity: .75;
-    }
 </style>
 
 <h1 class="page-title">Panduan Tugas Akhir</h1>
-<p class="page-subtitle">
-    Dokumen referensi dan formulir penilaian untuk mendukung proses pembimbingan dan penilaian Tugas Akhir mahasiswa.
-</p>
+<p class="page-subtitle">Kelola dokumen dan informasi panduan tugas akhir mahasiswa secara mudah dan terstruktur.</p>
 
-<a href="{{ route('panduan.create') }}"
-   class="btn btn-warning text-white mb-4">
-
+<a href="{{ route('panduan.create') }}" class="mb-4" style="display:inline-block; background:#FFE083; color:#7C5C00; font-weight:700; font-size:14px; padding:10px 20px; border-radius:10px; text-decoration:none;">
     + Tambah Panduan
 </a>
 
-@if($shared->count() === 0 && $khusus->count() === 0)
+@if($dokumen->count() === 0)
 <div class="empty-state">
     <div class="empty-left-border"></div>
     <div class="empty-inner">
@@ -132,25 +102,12 @@
         <p class="empty-desc">Silakan tunggu hingga informasi tersedia pada halaman ini.</p>
     </div>
 </div>
-
 @else
-@if($shared->count())
-<h2 class="section-title">Dokumen Panduan</h2>
 <div class="card-grid">
-    @foreach($shared as $doc)
-    @include('partials._card_dokumen', ['doc' => (array) $doc])
+    @foreach($dokumen as $doc)
+    @include('partials._card_dokumen', ['doc' => (array) $doc, 'isAdmin' => true])
     @endforeach
 </div>
-@endif
-
-@if($khusus->count())
-<h2 class="section-title" style="margin-top: 48px;">Formulir & Berkas Dosen</h2>
-<div class="card-grid">
-    @foreach($khusus as $doc)
-    @include('partials._card_dokumen', ['doc' => (array) $doc])
-    @endforeach
-</div>
-@endif
 @endif
 
 @endsection

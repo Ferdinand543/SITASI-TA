@@ -10,10 +10,14 @@ class ProposalController extends Controller
     // =====================================================
     // CEK KOORDINATOR HELPER
     // =====================================================
+    // SESUDAH
     private function isKoordinator()
     {
         $user = session('user');
         if (!$user) return false;
+
+        // Admin langsung lolos
+        if (strtolower(trim($user->role)) === 'admin') return true;
 
         return DB::table('dosen_roles')
             ->where('nim_nid', $user->nim_nid)
@@ -46,25 +50,25 @@ class ProposalController extends Controller
 
             ->leftJoin('usulan_pembimbing as up1', function ($join) {
                 $join->on('up1.proposal_id', '=', 'proposal.id')
-                     ->where('up1.urutan', '=', 1);
+                    ->where('up1.urutan', '=', 1);
             })
             ->leftJoin('users as du1', 'up1.nim_nid_dosen', '=', 'du1.nim_nid')
 
             ->leftJoin('usulan_pembimbing as up2', function ($join) {
                 $join->on('up2.proposal_id', '=', 'proposal.id')
-                     ->where('up2.urutan', '=', 2);
+                    ->where('up2.urutan', '=', 2);
             })
             ->leftJoin('users as du2', 'up2.nim_nid_dosen', '=', 'du2.nim_nid')
 
             ->leftJoin('dosen_pembimbing as dp1', function ($join) {
                 $join->on('dp1.proposal_id', '=', 'proposal.id')
-                     ->where('dp1.urutan', '=', 1);
+                    ->where('dp1.urutan', '=', 1);
             })
             ->leftJoin('users as dd1', 'dp1.nim_nid_dosen', '=', 'dd1.nim_nid')
 
             ->leftJoin('dosen_pembimbing as dp2', function ($join) {
                 $join->on('dp2.proposal_id', '=', 'proposal.id')
-                     ->where('dp2.urutan', '=', 2);
+                    ->where('dp2.urutan', '=', 2);
             })
             ->leftJoin('users as dd2', 'dp2.nim_nid_dosen', '=', 'dd2.nim_nid');
     }
@@ -79,7 +83,7 @@ class ProposalController extends Controller
 
         $role = strtolower(trim($user->role));
 
-        if ($role !== 'dosen' || !$this->isKoordinator()) {
+        if (!in_array($role, ['dosen', 'admin']) || !$this->isKoordinator()) {
             if ($role === 'mahasiswa') {
                 return redirect('/mahasiswa')->with('error', 'Akses ditolak!');
             }
@@ -119,12 +123,12 @@ class ProposalController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('mhs.nama', 'like', "%{$search}%")
-                  ->orWhere('proposal.nim_nid', 'like', "%{$search}%")
-                  ->orWhere('proposal.judul', 'like', "%{$search}%")
-                  ->orWhere('du1.nama', 'like', "%{$search}%")
-                  ->orWhere('du2.nama', 'like', "%{$search}%")
-                  ->orWhere('dd1.nama', 'like', "%{$search}%")
-                  ->orWhere('dd2.nama', 'like', "%{$search}%");
+                    ->orWhere('proposal.nim_nid', 'like', "%{$search}%")
+                    ->orWhere('proposal.judul', 'like', "%{$search}%")
+                    ->orWhere('du1.nama', 'like', "%{$search}%")
+                    ->orWhere('du2.nama', 'like', "%{$search}%")
+                    ->orWhere('dd1.nama', 'like', "%{$search}%")
+                    ->orWhere('dd2.nama', 'like', "%{$search}%");
             });
         }
 
@@ -385,7 +389,6 @@ class ProposalController extends Controller
                 'urutan'            => $urutan,
                 'tanggal_penetapan' => now()->toDateString(),
             ]);
-
         } elseif ($aksi === 'tolak') {
 
             $request->validate([
@@ -410,7 +413,6 @@ class ProposalController extends Controller
                 'urutan'            => $urutan,
                 'tanggal_penetapan' => now()->toDateString(),
             ]);
-
         } else {
             return redirect()->back()->with('error', 'Aksi tidak valid!');
         }

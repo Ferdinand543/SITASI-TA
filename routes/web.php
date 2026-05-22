@@ -62,19 +62,16 @@ Route::get('/mahasiswa', function () {
     $user = session('user');
     $nim  = $user->nim_nid;
 
-    // ── Stat counts ──
     $totalPengajuan = DB::table('pengajuan_judul')->where('nim_nid', $nim)->count();
     $totalProposal  = DB::table('proposal')->where('nim_nid', $nim)->count();
     $totalBimbingan = DB::table('bimbingan')->where('nim_nid', $nim)->count();
 
-    // ── Judul yang disetujui ──
     $judulDisetujui = DB::table('pengajuan_judul')
         ->where('nim_nid', $nim)
         ->where('status', 'disetujui')
         ->latest('updated_at')
         ->first();
 
-    // ── Dosen pembimbing ──
     $namaDosen1 = null;
     $namaDosen2 = null;
 
@@ -99,12 +96,8 @@ Route::get('/mahasiswa', function () {
             : null;
     }
 
-    // ── TARGET BIMBINGAN: 6 per dosen × 2 = 12 ──
     $targetBimbingan = 12;
 
-    // ── AKTIVITAS TERBARU (realtime dari DB) ──
-
-    // Bimbingan terbaru (max 2)
     $bimbinganTerbaru = DB::table('bimbingan')
         ->where('nim_nid', $nim)
         ->latest('created_at')
@@ -115,7 +108,6 @@ Route::get('/mahasiswa', function () {
             'waktu' => $b->created_at,
         ]);
 
-    // Proposal terbaru
     $proposalTerbaru = DB::table('proposal')
         ->where('nim_nid', $nim)
         ->latest('created_at')
@@ -126,7 +118,6 @@ Route::get('/mahasiswa', function () {
             'waktu' => $p->created_at,
         ]);
 
-    // Pembimbing ditentukan
     $pembimbingDitentukan = collect();
     if ($proposal) {
         $tanggalPembimbing = DB::table('dosen_pembimbing')
@@ -141,7 +132,6 @@ Route::get('/mahasiswa', function () {
         }
     }
 
-    // Judul disetujui
     $judulDisetujuiAktivitas = DB::table('pengajuan_judul')
         ->where('nim_nid', $nim)
         ->where('status', 'disetujui')
@@ -153,7 +143,6 @@ Route::get('/mahasiswa', function () {
             'waktu' => $j->updated_at,
         ]);
 
-    // Pengajuan judul terbaru
     $pengajuanTerbaru = DB::table('pengajuan_judul')
         ->where('nim_nid', $nim)
         ->latest('created_at')
@@ -164,7 +153,6 @@ Route::get('/mahasiswa', function () {
             'waktu' => $p->created_at,
         ]);
 
-    // Gabungkan & sort by waktu terbaru, ambil 5
     $aktivitas = $bimbinganTerbaru
         ->concat($proposalTerbaru)
         ->concat($pembimbingDitentukan)
@@ -174,7 +162,6 @@ Route::get('/mahasiswa', function () {
         ->take(5)
         ->values();
 
-    // ── ALUR KEMAJUAN (realtime) ──
     $adaPengajuan  = DB::table('pengajuan_judul')->where('nim_nid', $nim)->exists();
     $judulApproved = DB::table('pengajuan_judul')
         ->where('nim_nid', $nim)
@@ -182,7 +169,6 @@ Route::get('/mahasiswa', function () {
         ->exists();
     $adaProposal = DB::table('proposal')->where('nim_nid', $nim)->exists();
 
-    // Verifikasi pembimbing: ada dosen_pembimbing di proposal ini
     $verifikasiPembimbing = false;
     if ($proposal) {
         $verifikasiPembimbing = DB::table('dosen_pembimbing')
@@ -190,16 +176,12 @@ Route::get('/mahasiswa', function () {
             ->exists();
     }
 
-    // Review proposal: proposal status selesai/disetujui
     $reviewProposal = DB::table('proposal')
         ->where('nim_nid', $nim)
         ->whereIn('status', ['selesai', 'disetujui'])
         ->exists();
 
-    // Proses bimbingan: sudah ada minimal 1 bimbingan
     $prosesBimbingan = DB::table('bimbingan')->where('nim_nid', $nim)->exists();
-
-    // Seminar: belum ada tabel, default false
     $seminarProposal = false;
 
     $steps = [
@@ -230,10 +212,8 @@ Route::get('/mahasiswa', function () {
 // =====================================================
 
 Route::get('/admin/profil_admin_tu',           [AuthController::class, 'profilAdmin'])->name('admin.profil_admin_tu');
-
 Route::get('/mahasiswa/profil',       [AuthController::class, 'profilMahasiswa'])->name('mahasiswa.profil');
 Route::post('/mahasiswa/profil/foto', [AuthController::class, 'uploadFotoMahasiswa'])->name('mahasiswa.profil.foto');
-
 Route::get('/dosen/profil',           [AuthController::class, 'profilDosen'])->name('dosen.profil');
 Route::post('/dosen/profil/foto',     [AuthController::class, 'uploadFotoDosen'])->name('dosen.profil.foto');
 
@@ -269,7 +249,14 @@ Route::post('/pengajuan/proses/{id}',    [PengajuanController::class, 'prosesVer
 
 
 // =====================================================
-// PROPOSAL TA-1 — MAHASISWA (taruh di atas semua {id}!)
+// PROPOSAL TA-1 — FILE SERVE (harus di atas route {id}!)
+// =====================================================
+
+Route::get('/proposal/file/{id}', [AdminProposalController::class, 'serveFile'])->name('proposal.file');
+
+
+// =====================================================
+// PROPOSAL TA-1 — MAHASISWA
 // =====================================================
 
 Route::get('/proposal/mahasiswa',        [ProposalMahasiswaController::class, 'index'])->name('proposal.mahasiswa');
@@ -278,7 +265,7 @@ Route::get('/proposal/mahasiswa/{id}',   [ProposalMahasiswaController::class, 'd
 
 
 // =====================================================
-// PROPOSAL TA-1 — DOSEN PENGUJI (READ ONLY) ← TAMBAHAN BARU
+// PROPOSAL TA-1 — DOSEN PENGUJI (READ ONLY)
 // =====================================================
 
 Route::get('/proposal/penguji', [ProposalController::class, 'indexPenguji'])->name('proposal.penguji');
@@ -318,35 +305,21 @@ Route::resource('jadwal-akademik', JadwalAkademikController::class);
 // RIWAYAT BIMBINGAN — DOSEN
 // =====================================================
 
-Route::get('/dosen/bimbingan', [DosenBimbinganController::class, 'index'])
-    ->name('dosen.bimbingan.index');
-
-Route::put('/dosen/bimbingan/proposal/{id}/status', [DosenBimbinganController::class, 'updateStatusProposal'])
-    ->name('dosen.bimbingan.proposal.status');
-
-Route::get('/dosen/bimbingan/mahasiswa/{nim}', [DosenBimbinganController::class, 'detailMahasiswa'])
-    ->name('dosen.bimbingan.detail');
-
-Route::get('/dosen/proposal/{id}/lihat', [DosenBimbinganController::class, 'lihatProposal'])
-    ->name('dosen.proposal.lihat');
+Route::get('/dosen/bimbingan', [DosenBimbinganController::class, 'index'])->name('dosen.bimbingan.index');
+Route::put('/dosen/bimbingan/proposal/{id}/status', [DosenBimbinganController::class, 'updateStatusProposal'])->name('dosen.bimbingan.proposal.status');
+Route::get('/dosen/bimbingan/mahasiswa/{nim}', [DosenBimbinganController::class, 'detailMahasiswa'])->name('dosen.bimbingan.detail');
+Route::get('/dosen/proposal/{id}/lihat', [DosenBimbinganController::class, 'lihatProposal'])->name('dosen.proposal.lihat');
 
 
 // =====================================================
 // RIWAYAT BIMBINGAN — ADMIN
 // =====================================================
 
-Route::get('/admin/bimbingan', [AdminBimbinganController::class, 'index'])
-    ->name('admin.bimbingan.index');
-
-Route::put('/admin/bimbingan/proposal/{id}/status', [AdminBimbinganController::class, 'updateStatusProposal'])
-    ->name('admin.bimbingan.proposal.status');
-
-Route::get('/admin/bimbingan/{nim}', [AdminBimbinganController::class, 'detailMahasiswa'])
-    ->name('admin.bimbingan.detail');
-
-Route::get('/admin/proposal/{id}/lihat', [AdminBimbinganController::class, 'lihatProposal'])
-    ->name('admin.proposal.lihat');
-
+Route::get('/admin/bimbingan', [AdminBimbinganController::class, 'index'])->name('admin.bimbingan.index');
+Route::put('/admin/bimbingan/proposal/{id}/status', [AdminBimbinganController::class, 'updateStatusProposal'])->name('admin.bimbingan.proposal.status');
+Route::get('/admin/bimbingan/{nim}', [AdminBimbinganController::class, 'detailMahasiswa'])->name('admin.bimbingan.detail');
+Route::get('/admin/proposal/{id}/lihat', [AdminBimbinganController::class, 'lihatProposal'])->name('admin.proposal.lihat');
+Route::get('/admin/bimbingan/dosen/{nim_nid}', [AdminBimbinganController::class, 'detailDosen'])->name('admin.bimbingan.dosen');
 
 // =====================================================
 // BIMBINGAN — MAHASISWA
@@ -393,8 +366,10 @@ Route::delete('/admin/mahasiswa/{nim_nid}',   [AdminMahasiswaController::class, 
 // =====================================================
 
 Route::prefix('admin')->group(function () {
-    Route::get('/proposal',      [AdminProposalController::class, 'index'])->name('admin.proposal.index');
-    Route::get('/proposal/{id}', [AdminProposalController::class, 'show'])->name('admin.proposal.detail');
+    Route::get('/proposal',                [AdminProposalController::class, 'index'])->name('admin.proposal.index');
+    Route::get('/proposal/{id}',           [AdminProposalController::class, 'show'])->name('admin.proposal.detail');
+    Route::post('/proposal/{id}/approve',  [AdminProposalController::class, 'approve'])->name('admin.proposal.approve');
+    Route::post('/proposal/{id}/reject',   [AdminProposalController::class, 'reject'])->name('admin.proposal.reject');
 });
 
 
@@ -403,8 +378,9 @@ Route::prefix('admin')->group(function () {
 // =====================================================
 
 Route::prefix('admin')->group(function () {
-    Route::get('/judul',      [AdminjudulController::class, 'index'])->name('admin.judul.index');
-    Route::get('/judul/{id}', [AdminjudulController::class, 'show'])->name('admin.judul.show');
+    Route::get('/judul',              [AdminjudulController::class, 'index'])->name('admin.judul.index');
+    Route::get('/judul/{id}',         [AdminjudulController::class, 'show'])->name('admin.judul.show');
+    Route::post('/judul/{id}/proses', [AdminjudulController::class, 'proses'])->name('admin.judul.proses');
 });
 
 
@@ -422,51 +398,7 @@ Route::get('/register-admin', function () {
     return view('auth.register-admin');
 });
 
-Route::post('/register-admin', [AuthController::class, 'register']);
 
-//pengajuan judul-admin
-Route::prefix('admin')->group(function () {
+// routes/web.php
+Route::delete('/panduan-ta/{id}',       [PanduanTAController::class, 'destroy'])->name('panduan.destroy');
 
-    Route::get('/judul', [AdminjudulController::class, 'index'])
-        ->name('admin.judul.index');
-
-    Route::get('/judul/{id}', [AdminjudulController::class, 'show'])
-        ->name('admin.judul.show');
-
-        // PROSES VERIFIKASI
-    Route::post('/judul/{id}/proses', [AdminjudulController::class, 'proses'])
-        ->name('admin.judul.proses');
-});
-
-// =====================================================
-// RIWAYAT PENGAJUAN PROPOSAL — ADMIN
-// =====================================================
-
-Route::prefix('admin')->group(function () {
-
-    Route::get('/proposal', [AdminProposalController::class, 'index'])
-        ->name('admin.proposal.index');
-
-    Route::get('/proposal/{id}', [AdminProposalController::class, 'show'])
-        ->name('admin.proposal.detail');
-    
-    Route::post('/proposal/{id}/approve', [AdminProposalController::class, 'approve'])
-        ->name('admin.proposal.approve');
-
-    Route::post('/proposal/{id}/reject', [AdminProposalController::class, 'reject'])
-        ->name('admin.proposal.reject');
-});
-
-//pengajuan judul-admin
-Route::prefix('admin')->group(function () {
-
-    Route::get('/judul', [AdminjudulController::class, 'index'])
-        ->name('admin.judul.index');
-
-    Route::get('/judul/{id}', [AdminjudulController::class, 'show'])
-        ->name('admin.judul.show');
-
-        // PROSES VERIFIKASI
-    Route::post('/judul/{id}/proses', [AdminjudulController::class, 'proses'])
-        ->name('admin.judul.proses');
-});

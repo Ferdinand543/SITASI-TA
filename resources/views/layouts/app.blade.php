@@ -47,7 +47,7 @@
             display: flex;
             flex-direction: column;
             z-index: 1000;
-            overflow-y: auto;
+            overflow: hidden; /* ← DIUBAH: dari overflow-y: auto */
             border-right: 1px solid #e5e7eb;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
             transition: transform 0.3s ease, width 0.3s ease;
@@ -63,6 +63,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-shrink: 0; /* ← TAMBAHAN: biar ga ikut shrink */
         }
 
         .sidebar-brand .brand-title {
@@ -81,6 +82,26 @@
         .sidebar-nav {
             padding: 16px 12px;
             flex: 1;
+            overflow-y: auto;   /* ← TAMBAHAN: scroll hanya di bagian nav */
+            min-height: 0;      /* ← PENTING: biar flex child bisa shrink */
+        }
+
+        /* Scrollbar tipis biar ga ganggu tampilan */
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 4px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background: #d1d5db;
         }
 
         .nav-label {
@@ -161,6 +182,7 @@
         .sidebar-footer {
             padding: 14px 12px;
             border-top: 1px solid #f1f5f9;
+            flex-shrink: 0; /* ← TAMBAHAN: footer selalu nempel di bawah */
         }
 
         .sidebar-footer .sidebar-link {
@@ -560,7 +582,6 @@
                 Proposal
             </a>
             @elseif($isPenguji)
-            {{-- ← TAMBAHAN BARU: penguji bisa akses proposal (read only) --}}
             <a href="{{ route('proposal.penguji') }}"
                 class="sidebar-link {{ request()->is('proposal/penguji*') ? 'active' : '' }}">
                 <i class="fa-solid fa-file-arrow-up"></i>
@@ -736,7 +757,6 @@
                 Panduan TA
             </a>
 
-            
             @endif
 
             {{-- ══ PROFIL — otomatis sesuai role ══ --}}

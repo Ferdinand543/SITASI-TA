@@ -15,6 +15,9 @@ class ReviewerController extends Controller
         $user = session('user');
         if (!$user) return false;
 
+        // Admin langsung lolos
+        if (strtolower(trim($user->role)) === 'admin') return true;
+
         return DB::table('dosen_roles')
             ->where('nim_nid', $user->nim_nid)
             ->where('role_dosen', 'reviewer')
@@ -38,16 +41,16 @@ class ReviewerController extends Controller
             ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
             ->leftJoin('tinjauan_proposal as tp', function ($join) use ($nimReviewer) {
                 $join->on('tp.proposal_id', '=', 'proposal.id')
-                     ->where('tp.nim_nid_reviewer', '=', $nimReviewer);
+                    ->where('tp.nim_nid_reviewer', '=', $nimReviewer);
             })
             ->leftJoin('dosen_pembimbing as dp1', function ($join) {
                 $join->on('dp1.proposal_id', '=', 'proposal.id')
-                     ->where('dp1.urutan', '=', 1);
+                    ->where('dp1.urutan', '=', 1);
             })
             ->leftJoin('users as dsn1', 'dp1.nim_nid_dosen', '=', 'dsn1.nim_nid')
             ->leftJoin('dosen_pembimbing as dp2', function ($join) {
                 $join->on('dp2.proposal_id', '=', 'proposal.id')
-                     ->where('dp2.urutan', '=', 2);
+                    ->where('dp2.urutan', '=', 2);
             })
             ->leftJoin('users as dsn2', 'dp2.nim_nid_dosen', '=', 'dsn2.nim_nid')
             ->whereIn('proposal.status', ['menunggu_review', 'selesai'])
@@ -87,8 +90,8 @@ class ReviewerController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('mhs.nama', 'like', "%{$search}%")
-                  ->orWhere('proposal.nim_nid', 'like', "%{$search}%")
-                  ->orWhere('proposal.judul', 'like', "%{$search}%");
+                    ->orWhere('proposal.nim_nid', 'like', "%{$search}%")
+                    ->orWhere('proposal.judul', 'like', "%{$search}%");
             });
         }
 
@@ -99,7 +102,10 @@ class ReviewerController extends Controller
         $totalSelesai  = $proposals->filter(fn($p) => !is_null($p->tinjauan_id))->count();
 
         return view('pengajuan.proposal_reviewer', compact(
-            'proposals', 'totalProposal', 'totalMenunggu', 'totalSelesai'
+            'proposals',
+            'totalProposal',
+            'totalMenunggu',
+            'totalSelesai'
         ));
     }
 
@@ -120,16 +126,16 @@ class ReviewerController extends Controller
             ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
             ->leftJoin('tinjauan_proposal as tp', function ($join) use ($nimReviewer) {
                 $join->on('tp.proposal_id', '=', 'proposal.id')
-                     ->where('tp.nim_nid_reviewer', '=', $nimReviewer);
+                    ->where('tp.nim_nid_reviewer', '=', $nimReviewer);
             })
             ->leftJoin('dosen_pembimbing as dp1', function ($join) {
                 $join->on('dp1.proposal_id', '=', 'proposal.id')
-                     ->where('dp1.urutan', '=', 1);
+                    ->where('dp1.urutan', '=', 1);
             })
             ->leftJoin('users as dsn1', 'dp1.nim_nid_dosen', '=', 'dsn1.nim_nid')
             ->leftJoin('dosen_pembimbing as dp2', function ($join) {
                 $join->on('dp2.proposal_id', '=', 'proposal.id')
-                     ->where('dp2.urutan', '=', 2);
+                    ->where('dp2.urutan', '=', 2);
             })
             ->leftJoin('users as dsn2', 'dp2.nim_nid_dosen', '=', 'dsn2.nim_nid')
             ->where('proposal.id', $id)

@@ -5,705 +5,671 @@
 @section('content')
 
 <style>
-    :root{
-        --gold:#C9A227;
-        --gold-soft:#FFF8E7;
-        --border:#ECECEC;
-        --bg:#F5F6FA;
-        --text:#1E293B;
-        --muted:#6B7280;
-        --green:#22C55E;
-        --red:#EF4444;
-        --yellow:#FACC15;
-    }
+:root {
+    --gold: #C9A227;
+    --gold-light: #FFF9E8;
+    --border: #ECECEC;
+    --bg: #F5F6FA;
+    --text: #1E293B;
+    --muted: #6B7280;
+}
 
-    body{
-        background:var(--bg);
-    }
+body { background: var(--bg); }
 
-    /* HERO */
-    .hero{
-        background:
-            linear-gradient(to right, rgba(255,255,255,.95), rgba(255,255,255,.85)),
-            url('{{ asset("images/bg.jpeg") }}');
-        background-size:cover;
-        background-position:center;
-        border-radius:24px;
-        padding:42px;
-        margin-bottom:24px;
-        position:relative;
-        overflow:hidden;
-        border:1px solid #F3E7BA;
-    }
+/* ── HERO ── */
+.hero {
+    position: relative;
+    overflow: hidden;
+    background: url('{{ asset("images/psi.jpeg") }}') right center/auto 100% no-repeat;
+    background-color: #fffbe6;
+    border-radius: 20px;
+    padding: 44px 44px 48px;
+    margin-bottom: 24px;
+    min-height: 190px;
+    display: flex;
+    align-items: center;
+}
 
-    .hero::after{
-        content:'';
-        position:absolute;
-        right:-40px;
-        top:-20px;
-        width:280px;
-        height:280px;
-        background:linear-gradient(180deg,#FFD84D,#F6C400);
-        border-radius:50%;
-        opacity:.15;
-    }
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 50%;
+    pointer-events: none;
+}
 
-    .hero h1{
-        font-size:38px;
-        font-weight:800;
-        color:#7C5C00;
-        line-height:1.1;
-        margin-bottom:10px;
-        position:relative;
-        z-index:2;
-    }
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: 120px;
+    width: 240px; height: 240px;
+    background: rgba(255,255,255,0.10);
+    border-radius: 50%;
+    pointer-events: none;
+}
 
-    .hero p{
-        color:#8B6B00;
-        font-size:14px;
-        position:relative;
-        z-index:2;
-    }
+.hero-sparkle {
+    position: absolute;
+    pointer-events: none;
+}
+.hero-sparkle svg { fill: #FACC15; }
 
-    /* STATS */
-    .stats{
-        display:grid;
-        grid-template-columns:repeat(4,1fr);
-        gap:18px;
-        margin-bottom:24px;
-    }
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
 
-    .stat-card{
-        background:white;
-        border-radius:16px;
-        padding:20px;
-        border:1px solid var(--border);
-        position:relative;
-    }
+.hero-content h1 {
+    font-size: 34px;
+    font-weight: 800;
+    color: #7C5C00;
+    line-height: 1.2;
+    margin-bottom: 8px;
+}
 
-    .stat-card::before{
-        content:'';
-        position:absolute;
-        left:0;
-        top:18px;
-        width:4px;
-        height:42px;
-        border-radius:20px;
-    }
+.hero-content p {
+    color: #8B6B00;
+    font-size: 14px;
+    margin: 0;
+}
 
-    .stat-card:nth-child(1)::before{
-        background:var(--gold);
-    }
+/* ── STAT ROW ── */
+.stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
 
-    .stat-card:nth-child(2)::before{
-        background:var(--yellow);
-    }
+.stat-item {
+    padding: 20px 24px;
+    border-right: 1px solid var(--border);
+}
 
-    .stat-card:nth-child(3)::before{
-        background:var(--green);
-    }
+.stat-item:last-child { border-right: none; }
 
-    .stat-card:nth-child(4)::before{
-        background:var(--red);
-    }
+.stat-item .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 6px;
+}
 
-    .stat-label{
-        font-size:12px;
-        color:var(--muted);
-        margin-bottom:6px;
-        padding-left:10px;
-    }
+.stat-item .stat-number {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+}
 
-    .stat-number{
-        font-size:30px;
-        font-weight:800;
-        padding-left:10px;
-    }
+.stat-item.s-total  .stat-number { color: #1E293B; }
+.stat-item.s-tunggu .stat-number { color: #D97706; }
+.stat-item.s-setuju .stat-number { color: #16A34A; }
+.stat-item.s-tolak  .stat-number { color: #DC2626; }
+.stat-item.s-tunggu { border-left: 3px solid #F59E0B; }
+.stat-item.s-setuju { border-left: 3px solid #22C55E; }
+.stat-item.s-tolak  { border-left: 3px solid #EF4444; }
 
-    /* CARD TABLE */
-    .table-card{
-        background:white;
-        border-radius:22px;
-        border:1px solid var(--border);
-        overflow:hidden;
-    }
+/* ── MAIN CARD ── */
+.main-card {
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
 
-    /* FILTER */
-    .filter-bar{
-        padding:18px 20px;
-        display:flex;
-        gap:12px;
-        align-items:center;
-        border-bottom:1px solid var(--border);
-    }
+/* ── FILTER BAR ── */
+.filter-bar {
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 12px;
+    align-items: end;
+    border-bottom: 1px solid #F3F4F6;
+}
 
-    .search-box{
-        flex:1;
-        position:relative;
-    }
+.filter-group { display: flex; flex-direction: column; }
 
-    .search-box i{
-        position:absolute;
-        left:14px;
-        top:50%;
-        transform:translateY(-50%);
-        color:#9CA3AF;
-        font-size:13px;
-    }
+.filter-group label,
+.filter-status-wrap label,
+.filter-tanggal-wrap label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
-    .search-input{
-        width:100%;
-        height:42px;
-        border-radius:10px;
-        border:1px solid var(--border);
-        padding:0 14px 0 38px;
-        font-size:13px;
-    }
+.search-wrap { position: relative; }
 
-    .filter-select{
-        height:42px;
-        border-radius:10px;
-        border:1px solid var(--border);
-        padding:0 14px;
-        font-size:13px;
-        min-width:170px;
-        background:white;
-    }
-    .filter-select:focus,
-    .search-input:focus,
-    .btn-filter:focus{
-        outline: none;
-        box-shadow: none;
-        border-color: var(--border);
-    }
+.search-wrap i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 13px;
+    pointer-events: none;
+}
 
-    .btn-filter{
-        height:42px;
-        padding:0 18px;
-        border:none;
-        border-radius:10px;
-        background:#F9FAFB;
-        font-size:13px;
-        font-weight:600;
-        color:#6B7280;
-    }
+.search-wrap input {
+    width: 100%;
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 0 14px 0 38px;
+    font-size: 13px;
+    font-family: 'Hanken Grotesk', sans-serif;
+    color: var(--text);
+    background: #FAFAFA;
+    outline: none;
+    transition: border 0.2s;
+}
 
-    /* TABLE */
-    table{
-        width:100%;
-        border-collapse:collapse;
-    }
+.search-wrap input:focus {
+    border-color: #FACC15;
+    background: #fff;
+}
 
-    thead{
-        background:#F8F6EF;
-    }
+.search-wrap input::placeholder { color: #94a3b8; }
 
-    th{
-        padding:16px;
-        font-size:12px;
-        color:#6B7280;
-        font-weight:700;
-        text-align:left;
-    }
+.filter-status-wrap,
+.filter-tanggal-wrap {
+    display: flex;
+    flex-direction: column;
+}
 
-    td{
-        padding:18px 16px;
-        border-top:1px solid #F3F4F6;
-        font-size:13px;
-        vertical-align:top;
-    }
+.filter-status-wrap select,
+.filter-tanggal-wrap input[type="date"] {
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 0 14px;
+    font-size: 13px;
+    font-family: 'Hanken Grotesk', sans-serif;
+    color: var(--text);
+    background: #FAFAFA;
+    outline: none;
+    cursor: pointer;
+    transition: border 0.2s;
+}
 
-    tbody tr:hover{
-        background:#FCFCFC;
-    }
+.filter-status-wrap select {
+    padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    appearance: none;
+    min-width: 160px;
+}
 
-    .judul-main{
-        font-weight:700;
-        color:var(--text);
-        margin-bottom:4px;
-        line-height:1.5;
-    }
+.filter-status-wrap select:focus,
+.filter-tanggal-wrap input[type="date"]:focus {
+    border-color: #FACC15;
+    background-color: #fff;
+}
 
-    .judul-more{
-        color:#9CA3AF;
-        font-size:11px;
-    }
+.btn-reset {
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #FAFAFA;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: 0.2s;
+    text-decoration: none;
+    align-self: flex-end;
+}
 
-    /* BADGE */
-    .badge-status{
-        padding:6px 12px;
-        border-radius:999px;
-        font-size:11px;
-        font-weight:700;
-        display:inline-block;
-    }
+.btn-reset:hover {
+    background: #f1f5f9;
+    color: var(--text);
+}
 
-    .badge-menunggu{
-        background:#FEF3C7;
-        color:#B45309;
-    }
+/* ── ACTIVE FILTER CHIPS ── */
+.active-filters {
+    padding: 10px 20px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #F3F4F6;
+    background: #FAFBFC;
+}
 
-    .badge-disetujui{
-        background:#DCFCE7;
-        color:#15803D;
-    }
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: #FEF9C3;
+    color: #854D0E;
+    font-size: 12px;
+    font-weight: 600;
+}
 
-    .badge-ditolak{
-        background:#FEE2E2;
-        color:#DC2626;
-    }
+.filter-chip a {
+    color: #B45309;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1;
+}
 
-    /* BUTTON */
-    .btn-verifikasi{
-        border:none;
-        background:#FFF7D6;
-        color:#B78A00;
-        font-size:11px;
-        font-weight:700;
-        padding:7px 16px;
-        border-radius:8px;
-        transition:.2s;
-    }
+.filter-chip a:hover { color: #DC2626; }
 
-    .btn-verifikasi:hover{
-        background:var(--gold);
-        color:white;
-    }
+/* ── TABLE ── */
+.tbl-wrap { overflow-x: auto; }
 
-    .btn-detail{
-        border:none;
-        background:#F3F4F6;
-        color:#6B7280;
-        font-size:11px;
-        font-weight:700;
-        padding:7px 16px;
-        border-radius:8px;
-    }
+table { width: 100%; border-collapse: collapse; }
 
-    @media(max-width:1100px){
-        .stats{
-            grid-template-columns:repeat(2,1fr);
-        }
-    }
+thead tr { background: #FAFBFC; }
 
-    @media(max-width:768px){
+thead th {
+    padding: 13px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #F1F5F9;
+    white-space: nowrap;
+}
 
-        .hero{
-            padding:28px;
-        }
+tbody td {
+    padding: 15px 16px;
+    font-size: 13px;
+    color: #334155;
+    border-top: 1px solid #F8FAFC;
+    vertical-align: middle;
+}
 
-        .hero h1{
-            font-size:28px;
-        }
+tbody tr:hover { background: #FFFDF5; }
 
-        .stats{
-            grid-template-columns:1fr;
-        }
+.judul-main {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 13px;
+    line-height: 1.4;
+}
 
-        .filter-bar{
-            flex-direction:column;
-            align-items:stretch;
-        }
+.judul-lainnya {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 3px;
+    cursor: pointer;
+    display: inline-block;
+    transition: color 0.15s;
+}
 
-        .filter-select,
-        .btn-filter{
-            width:100%;
-        }
+.judul-lainnya:hover { color: var(--gold); }
 
-        table{
-            min-width:900px;
-        }
+/* ── BADGE ── */
+.badge {
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-block;
+    white-space: nowrap;
+}
 
-        .table-card{
-            overflow-x:auto;
-        }
-    }
+.badge-menunggu  { background: #FEF3C7; color: #B45309; }
+.badge-disetujui { background: #DCFCE7; color: #15803D; }
+.badge-ditolak   { background: #FEE2E2; color: #DC2626; }
+
+/* ── BTN AKSI ── */
+.btn-aksi {
+    padding: 7px 16px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.btn-verifikasi {
+    background: var(--gold-light);
+    color: var(--gold);
+    border: 1.5px solid #F0D060;
+}
+
+.btn-verifikasi:hover { background: #FACC15; color: #7C5C00; }
+
+.btn-detail-outline {
+    background: #fff;
+    color: #475569;
+    border: 1.5px solid #E2E8F0;
+}
+
+.btn-detail-outline:hover { background: #f1f5f9; color: var(--text); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #94a3b8;
+}
+
+.empty-state i { font-size: 40px; margin-bottom: 14px; display: block; }
+.empty-state p { font-size: 14px; margin: 0; }
+
+/* ── PAGINATION ── */
+.pagination-wrap {
+    padding: 16px 20px;
+    border-top: 1px solid #F3F4F6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pagination-info { font-size: 13px; color: var(--muted); }
+.pagination-wrap .pagination { margin: 0; }
+
+/* ── MODAL ── */
+.modal-judul-alt {
+    font-size: 13px;
+    color: #64748b;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:992px) { .filter-bar { grid-template-columns: 1fr 1fr; } }
+@media(max-width:768px) {
+    .filter-bar { grid-template-columns: 1fr; }
+    .stat-row   { grid-template-columns: repeat(2,1fr); }
+    .hero-content h1 { font-size: 24px; }
+    .hero { padding: 32px 24px 36px; }
+}
 </style>
 
+{{-- ══ HERO ══ --}}
 <div class="hero">
+    {{-- sparkles --}}
+    <span class="hero-sparkle" style="top:22px;right:220px;">
+        <svg width="18" height="18" viewBox="0 0 20 20"><path d="M10 0l1.5 8.5L20 10l-8.5 1.5L10 20l-1.5-8.5L0 10l8.5-1.5z"/></svg>
+    </span>
+    <span class="hero-sparkle" style="top:60px;right:100px;">
+        <svg width="12" height="12" viewBox="0 0 20 20"><path d="M10 0l1.5 8.5L20 10l-8.5 1.5L10 20l-1.5-8.5L0 10l8.5-1.5z"/></svg>
+    </span>
+    <span class="hero-sparkle" style="bottom:28px;right:260px;">
+        <svg width="10" height="10" viewBox="0 0 20 20"><path d="M10 0l1.5 8.5L20 10l-8.5 1.5L10 20l-1.5-8.5L0 10l8.5-1.5z"/></svg>
+    </span>
 
-    <h1>
-        Pengajuan Judul Tugas Akhir <br>
-        Mahasiswa
-    </h1>
-
-    <p>
-        Monitoring dan verifikasi pengajuan judul tugas akhir mahasiswa.
-    </p>
-
+    <div class="hero-content">
+        <h1>Pengajuan Judul Tugas Akhir<br>Mahasiswa</h1>
+        <p>Monitoring dan verifikasi pengajuan judul tugas akhir mahasiswa.</p>
+    </div>
 </div>
 
-<div class="stats">
-
-    <div class="stat-card">
-        <div class="stat-label">
-            Total Pengajuan
-        </div>
-
-        <div class="stat-number">
-            {{ $totalPengajuan }}
-        </div>
+{{-- ══ STATISTIK ══ --}}
+<div class="stat-row">
+    <div class="stat-item s-total">
+        <div class="stat-label">Total Pengajuan</div>
+        <div class="stat-number">{{ $totalPengajuan }}</div>
     </div>
-
-    <div class="stat-card">
-        <div class="stat-label">
-            Menunggu Verifikasi
-        </div>
-
-        <div class="stat-number">
-            {{ $menunggu }}
-        </div>
+    <div class="stat-item s-tunggu">
+        <div class="stat-label">Menunggu Verifikasi</div>
+        <div class="stat-number">{{ $menunggu }}</div>
     </div>
-
-    <div class="stat-card">
-        <div class="stat-label">
-            Disetujui
-        </div>
-
-        <div class="stat-number">
-            {{ $disetujui }}
-        </div>
+    <div class="stat-item s-setuju">
+        <div class="stat-label">Disetujui</div>
+        <div class="stat-number">{{ $disetujui }}</div>
     </div>
-
-    <div class="stat-card">
-        <div class="stat-label">
-            Ditolak
-        </div>
-
-        <div class="stat-number">
-            {{ $ditolak }}
-        </div>
+    <div class="stat-item s-tolak">
+        <div class="stat-label">Ditolak</div>
+        <div class="stat-number">{{ $ditolak }}</div>
     </div>
-
 </div>
 
-<div class="table-card">
-
-    <form method="GET" class="filter-bar">
-
-        <div class="search-box">
-
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-            <input
-                type="text"
-                name="search"
-                class="search-input"
-                placeholder="Masukkan NIM, nama, atau kata kunci judul..."
-                value="{{ request('search') }}"
-            >
-
-        </div>
-
-        <select name="status" class="filter-select">
-
-            <option value="">
-                Semua Status
-            </option>
-
-            <option value="menunggu verifikasi">
-                Menunggu Verifikasi
-            </option>
-
-            <option value="disetujui">
-                Disetujui
-            </option>
-
-            <option value="ditolak">
-                Ditolak
-            </option>
-
-        </select>
-
-        <button type="submit" class="btn-filter">
-
-            <i class="fa-solid fa-rotate-right me-1"></i>
-            Reset Filter
-
-        </button>
-
-    </form>
-
-    <table>
-
-        <thead>
-
-            <tr>
-                <th>No.</th>
-                <th>Tanggal Pengajuan</th>
-                <th>NIM</th>
-                <th>Nama Mahasiswa</th>
-                <th>Judul yang Diajukan</th>
-                <th>Status</th>
-                <th>Detail</th>
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            @forelse($pengajuanJudul as $i => $p)
-
-            <tr>
-
-                <td>
-                    {{ $i + 1 }}
-                </td>
-
-                <td>
-                    {{ \Carbon\Carbon::parse($p->created_at)->format('d M Y') }}
-                </td>
-
-                <td>
-                    {{ $p->nim_nid }}
-                </td>
-
-                <td>
-                    {{ $p->nama_mahasiswa }}
-                </td>
-
-                <td>
-
-                    <div class="judul-main">
-                        {{ $p->judul_1 }}
-                    </div>
-
-                    <div class="judul-more">
-                        +2 lainnya
-                    </div>
-
-                </td>
-
-                <td>
-
-                {{-- BADGE STATUS --}}
-                @if($p->status == 'menunggu verifikasi')
-
-                    <span class="badge-status badge-menunggu">
-                        Menunggu
-                    </span>
-
-                @elseif($p->status == 'disetujui')
-
-                    <span class="badge-status badge-disetujui">
-                        Disetujui
-                    </span>
-
-                @elseif($p->status == 'ditolak')
-
-                    <span class="badge-status badge-ditolak">
-                        Ditolak
-                    </span>
-
-                @endif
-
-            </td>
-
-            <td>
-
-                @if($p->status == 'menunggu verifikasi')
-
-                    <div class="d-flex gap-2">
-
-                        <button
-                            type="button"
-                            class="btn-verifikasi"
-                            data-bs-toggle="modal"
-                            data-bs-target="#verifikasiModal{{ $p->id }}">
-
-                            Verifikasi
-
-                        </button>
-
-                        <a href="{{ route('admin.judul.show', $p->id) }}"
-                            class="btn-detail text-decoration-none">
-
-                            Detail
-
-                        </a>
-
-                    </div>
-
-                @else
-
-                    <a href="{{ route('admin.judul.show', $p->id) }}"
-                        class="btn-detail text-decoration-none">
-
-                        Detail
-
-                    </a>
-
-                @endif
-
-            </td>
-
-            </tr>
-
-            {{-- MODAL VERIFIKASI --}}
-            <div class="modal fade"
-                id="verifikasiModal{{ $p->id }}"
-                tabindex="-1"
-                aria-hidden="true">
-
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-
-                    <div class="modal-content border-0 rounded-4">
-
-                        <div class="modal-header border-0">
-
-                            <h5 class="fw-bold">
-                                Verifikasi Pengajuan Judul
-                            </h5>
-
-                            <button type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="modal">
-                            </button>
-
-                        </div>
-
-                        <div class="modal-body">
-
-                            <div class="mb-4">
-
-                                <div class="fw-bold fs-5">
-                                    {{ $p->nama_mahasiswa }}
-                                </div>
-
-                                <div class="text-muted">
-                                    {{ $p->nim_nid }}
-                                </div>
-
-                            </div>
-
-                            <div class="mb-3">
-
-                                <label class="fw-bold mb-2">
-                                    Judul 1
-                                </label>
-
-                                <div class="border rounded-3 p-3 bg-light">
-                                    {{ $p->judul_1 }}
-                                </div>
-
-                            </div>
-
-                            <div class="mb-3">
-
-                                <label class="fw-bold mb-2">
-                                    Judul 2
-                                </label>
-
-                                <div class="border rounded-3 p-3 bg-light">
-                                    {{ $p->judul_2 }}
-                                </div>
-
-                            </div>
-
-                            <div class="mb-3">
-
-                                <label class="fw-bold mb-2">
-                                    Judul 3
-                                </label>
-
-                                <div class="border rounded-3 p-3 bg-light">
-                                    {{ $p->judul_3 }}
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="modal-footer border-0 d-flex justify-content-between">
-
-                            {{-- TOLAK --}}
-                            <form action="{{ route('admin.judul.proses', $p->id) }}"
-                                method="POST">
-
-                                @csrf
-
-                                <input type="hidden"
-                                    name="status"
-                                    value="ditolak">
-
-                                <button type="submit"
-                                        class="btn btn-danger rounded-3 px-4">
-
-                                    Tolak
-
-                                </button>
-
-                            </form>
-
-                            {{-- SETUJUI --}}
-                            <form action="{{ route('admin.judul.proses', $p->id) }}"
-                                method="POST"
-                                class="d-flex align-items-center gap-2">
-
-                                @csrf
-
-                                <input type="hidden"
-                                    name="status"
-                                    value="disetujui">
-
-                                {{-- PILIH JUDUL --}}
-                                <select name="judul_disetujui"
-                                        class="form-select"
-                                        required>
-
-                                    <option value="">
-                                        Pilih Judul Disetujui
-                                    </option>
-
-                                    <option value="{{ $p->judul_1 }}">
-                                        Judul 1 - {{ $p->judul_1 }}
-                                    </option>
-
-                                    <option value="{{ $p->judul_2 }}">
-                                        Judul 2 - {{ $p->judul_2 }}
-                                    </option>
-
-                                    <option value="{{ $p->judul_3 }}">
-                                        Judul 3 - {{ $p->judul_3 }}
-                                    </option>
-
-                                </select>
-
-                                <button type="submit"
-                                        class="btn btn-success rounded-3 px-4">
-
-                                    Setujui
-
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                    </div>
-
+{{-- ══ TABEL UTAMA ══ --}}
+<div class="main-card">
+
+    {{-- Filter Bar --}}
+    <form method="GET" action="{{ url()->current() }}" id="filterForm">
+        <div class="filter-bar">
+
+            {{-- Search --}}
+            <div class="filter-group">
+                <label>Cari Mahasiswa atau Judul</label>
+                <div class="search-wrap">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input
+                        type="text"
+                        name="search"
+                        id="inputSearch"
+                        value="{{ request('search') }}"
+                        placeholder="Masukkan NIM, nama, atau kata kunci judul..."
+                        autocomplete="off"
+                    >
                 </div>
-
             </div>
 
-            @empty
+            {{-- Status --}}
+            <div class="filter-status-wrap">
+                <label>Status</label>
+                <select name="status" id="inputStatus" onchange="document.getElementById('filterForm').submit()">
+                    <option value="">Semua Status</option>
+                    <option value="menunggu"  {{ request('status')=='menunggu'  ? 'selected' : '' }}>Menunggu Verifikasi</option>
+                    <option value="disetujui" {{ request('status')=='disetujui' ? 'selected' : '' }}>Disetujui</option>
+                    <option value="ditolak"   {{ request('status')=='ditolak'   ? 'selected' : '' }}>Ditolak</option>
+                </select>
+            </div>
 
-            <tr>
+            {{-- Tanggal --}}
+            <div class="filter-tanggal-wrap">
+                <label>Tanggal Pengajuan</label>
+                <input
+                    type="date"
+                    name="tanggal"
+                    id="inputTanggal"
+                    value="{{ request('tanggal') }}"
+                    onchange="document.getElementById('filterForm').submit()"
+                >
+            </div>
 
-                <td colspan="7" align="center">
+            {{-- Reset --}}
+            <a href="{{ url()->current() }}" class="btn-reset">
+                <i class="fa-solid fa-rotate-right" style="font-size:11px;"></i>
+                Reset
+            </a>
 
-                    Belum ada pengajuan judul.
+        </div>
+    </form>
 
-                </td>
+    {{-- Active Filter Chips --}}
+    @if(request('search') || request('status') || request('tanggal'))
+    <div class="active-filters">
+        <span style="font-size:12px;color:#94a3b8;font-weight:600;align-self:center;">Filter aktif:</span>
 
-            </tr>
+        @if(request('search'))
+        <span class="filter-chip">
+            <i class="fa-solid fa-magnifying-glass" style="font-size:10px;"></i>
+            "{{ request('search') }}"
+            <a href="{{ url()->current().'?'.http_build_query(array_merge(request()->except('search'),['page'=>1])) }}">×</a>
+        </span>
+        @endif
 
-            @endforelse
+        @if(request('status'))
+        <span class="filter-chip">
+            <i class="fa-solid fa-tag" style="font-size:10px;"></i>
+            Status: {{ request('status')=='menunggu' ? 'Menunggu Verifikasi' : ucfirst(request('status')) }}
+            <a href="{{ url()->current().'?'.http_build_query(array_merge(request()->except('status'),['page'=>1])) }}">×</a>
+        </span>
+        @endif
 
-        </tbody>
+        @if(request('tanggal'))
+        <span class="filter-chip">
+            <i class="fa-solid fa-calendar" style="font-size:10px;"></i>
+            {{ \Carbon\Carbon::parse(request('tanggal'))->format('d M Y') }}
+            <a href="{{ url()->current().'?'.http_build_query(array_merge(request()->except('tanggal'),['page'=>1])) }}">×</a>
+        </span>
+        @endif
+    </div>
+    @endif
 
-    </table>
+    {{-- Tabel --}}
+    <div class="tbl-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:46px;">No.</th>
+                    <th>Tanggal Pengajuan</th>
+                    <th>NIM</th>
+                    <th>Nama Mahasiswa</th>
+                    <th>Judul yang Diajukan</th>
+                    <th>Status</th>
+                    <th style="text-align:right;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($pengajuanJudul as $i => $p)
+                <tr>
+                    <td style="color:#94a3b8;font-weight:600;">
+                        {{ ($pengajuanJudul->currentPage()-1)*$pengajuanJudul->perPage()+$i+1 }}
+                    </td>
+                    <td style="white-space:nowrap;color:#64748b;font-size:12px;">
+                        {{ \Carbon\Carbon::parse($p->created_at)->format('d M Y') }}
+                    </td>
+                    <td style="font-weight:600;white-space:nowrap;font-size:12px;">
+                        {{ $p->nim_nid }}
+                    </td>
+                    <td style="white-space:nowrap;font-weight:500;">
+                        {{ $p->nama_mahasiswa }}
+                    </td>
+                    <td style="max-width:260px;">
+                        <div class="judul-main">{{ $p->judul_1 }}</div>
+                        @php $extraCount = ($p->judul_2 ? 1 : 0)+($p->judul_3 ? 1 : 0); @endphp
+                        @if($extraCount > 0)
+                        <span class="judul-lainnya"
+                            onclick="lihatSemuaJudul('{{ e($p->judul_1) }}','{{ e($p->judul_2) }}','{{ e($p->judul_3) }}')">
+                            +{{ $extraCount }} lainnya
+                        </span>
+                        @endif
+                    </td>
+                    <td>
+                        @if(in_array($p->status, ['menunggu','menunggu verifikasi']))
+                            <span class="badge badge-menunggu">Menunggu Verifikasi</span>
+                        @elseif($p->status == 'disetujui')
+                            <span class="badge badge-disetujui">Disetujui</span>
+                        @elseif($p->status == 'ditolak')
+                            <span class="badge badge-ditolak">Ditolak</span>
+                        @else
+                            <span class="badge badge-menunggu">{{ ucfirst($p->status) }}</span>
+                        @endif
+                    </td>
+                    <td style="text-align:right;">
+                        @if(in_array($p->status, ['menunggu','menunggu verifikasi']))
+                        <a href="{{ route('admin.judul.show', $p->id) }}" class="btn-aksi btn-verifikasi">
+                            <i class="fa-solid fa-circle-check" style="font-size:11px;"></i> Verifikasi
+                        </a>
+                        @else
+                        <a href="{{ route('admin.judul.show', $p->id) }}" class="btn-aksi btn-detail-outline">
+                            <i class="fa-solid fa-eye" style="font-size:11px;"></i> Detail
+                        </a>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="fa-regular fa-folder-open"></i>
+                            <p>
+                                @if(request('search') || request('status') || request('tanggal'))
+                                    Tidak ada data yang sesuai dengan filter yang dipilih.
+                                @else
+                                    Belum ada pengajuan judul.
+                                @endif
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    {{-- Pagination --}}
+    @if($pengajuanJudul->hasPages())
+    <div class="pagination-wrap">
+        <div class="pagination-info">
+            Menampilkan {{ $pengajuanJudul->firstItem() }}–{{ $pengajuanJudul->lastItem() }}
+            dari {{ $pengajuanJudul->total() }} data
+        </div>
+        {{ $pengajuanJudul->appends(request()->query())->links() }}
+    </div>
+    @else
+    <div class="pagination-wrap">
+        <div class="pagination-info">Total {{ $pengajuanJudul->total() }} data</div>
+    </div>
+    @endif
 
 </div>
+
+{{-- ══ MODAL SEMUA JUDUL ══ --}}
+<div class="modal fade" id="modalJudul" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:18px;border:none;padding:4px;">
+            <div class="modal-header" style="border:none;padding:20px 24px 12px;">
+                <h5 class="modal-title" style="font-weight:800;font-size:16px;color:#1e293b;">
+                    <i class="fa-solid fa-file-lines" style="color:#FACC15;margin-right:8px;"></i>
+                    Semua Judul Pengajuan
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:8px 24px 24px;">
+                <p style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">
+                    Pilihan Judul
+                </p>
+                <div id="modalJudulList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function lihatSemuaJudul(j1, j2, j3) {
+    const judul  = [j1, j2, j3].filter(j => j && j.trim() !== '');
+    const labels = ['Judul 1', 'Judul 2', 'Judul 3'];
+    let html = '';
+    judul.forEach((j, i) => {
+        html += `<div style="margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">${labels[i]}</div>
+            <div class="modal-judul-alt">${j}</div>
+        </div>`;
+    });
+    document.getElementById('modalJudulList').innerHTML = html;
+    new bootstrap.Modal(document.getElementById('modalJudul')).show();
+}
+
+// Auto-submit search dengan debounce 500ms
+let searchTimeout = null;
+document.getElementById('inputSearch').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        document.getElementById('filterForm').submit();
+    }, 500);
+});
+</script>
 
 @endsection

@@ -11,20 +11,15 @@ class AdminJudulController extends Controller
     {
         $query = DB::table('pengajuan_judul')
             ->join('users', 'pengajuan_judul.nim_nid', '=', 'users.nim_nid')
-
             ->select(
                 'pengajuan_judul.*',
                 'users.nama as nama_mahasiswa',
                 'users.nim_nid'
             )
-
             ->orderBy('pengajuan_judul.created_at', 'desc');
 
-        // SEARCH
         if ($request->search) {
-
             $query->where(function ($q) use ($request) {
-
                 $q->where('users.nama', 'like', '%' . $request->search . '%')
                     ->orWhere('users.nim_nid', 'like', '%' . $request->search . '%')
                     ->orWhere('pengajuan_judul.judul_1', 'like', '%' . $request->search . '%')
@@ -33,29 +28,20 @@ class AdminJudulController extends Controller
             });
         }
 
-        // FILTER STATUS
         if ($request->status) {
-
             $query->where('pengajuan_judul.status', $request->status);
         }
 
-        // FILTER TANGGAL
         if ($request->tanggal) {
-
-            $query->whereDate(
-                'pengajuan_judul.tanggal_pengajuan',
-                $request->tanggal
-            );
+            $query->whereDate('pengajuan_judul.tanggal_pengajuan', $request->tanggal);
         }
 
-        // DATA
         $pengajuanJudul = $query->paginate(10);
 
-        // STATISTIK
         $totalPengajuan = DB::table('pengajuan_judul')->count();
 
         $menunggu = DB::table('pengajuan_judul')
-            ->where('status', 'menunggu verifikasi')
+            ->whereRaw("LOWER(status) LIKE '%menunggu%'")
             ->count();
 
         $disetujui = DB::table('pengajuan_judul')
@@ -78,27 +64,57 @@ class AdminJudulController extends Controller
     public function show($id)
     {
         $pengajuan = DB::table('pengajuan_judul')
-
             ->join('users', 'pengajuan_judul.nim_nid', '=', 'users.nim_nid')
-
             ->select(
                 'pengajuan_judul.*',
                 'users.nama as nama_mahasiswa',
                 'users.email',
                 'users.angkatan'
             )
-
             ->where('pengajuan_judul.id', $id)
-
             ->first();
 
         if (!$pengajuan) {
-
             abort(404);
         }
 
-        return view('admin.judul.detail', compact(
-            'pengajuan'
-        ));
+        return view('admin.judul.show', compact('pengajuan'));
+    }
+
+    // Dipanggil dari form verifikasi admin
+    public function proses(Request $request, $id)
+    {
+        $aksi = $request->aksi; // 'setujui' atau 'tolak'
+
+        if ($aksi === 'setujui') {
+            $request->validate([
+                'judul_disetujui' => 'required|string',
+            ]);
+
+            DB::table('pengajuan_judul')
+                ->where('id', $id)
+                ->update([
+                    'status'          => 'disetujui',
+                    'judul_disetujui' => $request->judul_disetujui,
+                    'updated_at'      => now(),
+                ]);
+
+            return redirect()->route('admin.judul.show', $id)
+                ->with('success', 'Pengajuan judul berhasil disetujui.');
+
+        } elseif ($aksi === 'tolak') {
+            DB::table('pengajuan_judul')
+                ->where('id', $id)
+                ->update([
+                    'status'     => 'ditolak',
+                    'updated_at' => now(),
+                ]);
+
+            return redirect()->route('admin.judul.show', $id)
+                ->with('success', 'Pengajuan judul telah ditolak.');
+        }
+
+        return redirect()->route('admin.judul.show', $id)
+            ->with('error', 'Aksi tidak valid.');
     }
 }
