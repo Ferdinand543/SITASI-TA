@@ -157,7 +157,6 @@
 
 <div class="wrapper-page">
 
-    {{-- ← TOMBOL KEMBALI YANG DITAMBAHKAN --}}
     <a href="{{ route('admin.judul.index') }}" class="btn-kembali" style="margin-bottom:20px;">
         <i class="fa fa-arrow-left"></i> Kembali
     </a>
@@ -259,7 +258,7 @@
                     Usulan {{ $no }} · {{ $badgeLabel }}
                 </span>
                 @if(!$sudahDiverifikasi)
-                <i class="fa fa-rotate-right reset-icon" onclick="resetJudul({{ $no }})" title="Reset"></i>
+                <i class="fa fa-rotate-right reset-icon" id="resetIcon{{ $no }}" onclick="resetJudul({{ $no }})" title="Reset"></i>
                 @endif
             </div>
             <div class="judul-main">{{ $j['judul'] }}</div>
@@ -327,7 +326,6 @@
     let nomorDipilih = null;
     let statusJudul = { 1: '', 2: '', 3: '' };
 
-    // map judul text per nomor untuk keperluan reset
     const judulMap = {
         @foreach($judulList as $no => $j)
         @if(!empty($j['judul']))
@@ -385,18 +383,18 @@
             card.className  = card.className.replace(/border-\w+/, 'border-green');
             badge.className = 'usulan-badge badge-approved';
             badge.innerHTML = 'Usulan ' + no + ' · Approved';
+            // Hanya ganti tombol aksi, TANPA tambah reset icon baru (reset icon sudah ada di atas)
             document.getElementById('aksi' + no).innerHTML =
-                '<button type="button" class="btn-setuju" disabled><i class="fa fa-check"></i> Disetujui</button>' +
-                '<i class="fa fa-rotate-right reset-icon" onclick="resetJudul(' + no + ')" title="Reset"></i>';
+                '<button type="button" class="btn-setuju" disabled><i class="fa fa-check"></i> Disetujui</button>';
             showPopup('success', 'Judul berhasil dipilih.');
         } else {
             statusJudul[no] = 'tolak';
             card.className  = card.className.replace(/border-\w+/, 'border-red');
             badge.className = 'usulan-badge badge-rejected';
             badge.innerHTML = 'Usulan ' + no + ' · Rejected';
+            // Hanya ganti tombol aksi, TANPA tambah reset icon baru (reset icon sudah ada di atas)
             document.getElementById('aksi' + no).innerHTML =
-                '<button type="button" class="btn-tolak" disabled><i class="fa fa-xmark"></i> Ditolak</button>' +
-                '<i class="fa fa-rotate-right reset-icon" onclick="resetJudul(' + no + ')" title="Reset"></i>';
+                '<button type="button" class="btn-tolak" disabled><i class="fa fa-xmark"></i> Ditolak</button>';
             showPopup('success', 'Judul berhasil ditolak.');
         }
     }

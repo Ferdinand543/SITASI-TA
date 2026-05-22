@@ -510,8 +510,7 @@
             badge.className = 'usulan-badge badge-approved';
             badge.innerHTML = 'Usulan ' + no + ' · Approved';
             document.getElementById('aksi' + no).innerHTML =
-                '<button type="button" class="btn-setuju" disabled><i class="fa fa-check"></i> Disetujui</button>' +
-                '<i class="fa fa-rotate-right reset-icon" onclick="resetJudul(' + no + ')" title="Reset"></i>';
+                '<button type="button" class="btn-setuju" disabled><i class="fa fa-check"></i> Disetujui</button>';
             showPopup('success', 'Judul berhasil dipilih.');
         } else {
             statusJudul[no] = 'tolak';
@@ -519,8 +518,7 @@
             badge.className = 'usulan-badge badge-rejected';
             badge.innerHTML = 'Usulan ' + no + ' · Rejected';
             document.getElementById('aksi' + no).innerHTML =
-                '<button type="button" class="btn-tolak" disabled><i class="fa fa-xmark"></i> Ditolak</button>' +
-                '<i class="fa fa-rotate-right reset-icon" onclick="resetJudul(' + no + ')" title="Reset"></i>';
+                '<button type="button" class="btn-tolak" disabled><i class="fa fa-xmark"></i> Ditolak</button>';
             showPopup('success', 'Judul berhasil ditolak.');
         }
     }

@@ -639,7 +639,6 @@ body {
             <div class="dash-card" style="position:sticky; top:80px;">
                 <div class="dash-card-header" style="margin-bottom:20px;">
                     <h5>Aktivitas Terbaru</h5>
-                    <i class="fa-solid fa-ellipsis" style="color:#94a3b8; cursor:pointer;"></i>
                 </div>
 
                 <div class="activity-list">
