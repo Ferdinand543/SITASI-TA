@@ -170,8 +170,10 @@ body { background: var(--bg); }
     font-weight: 700;
 }
 
-.badge-layak.yes { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
-.badge-layak.no  { background: #FEF9EC; color: #B45309; border: 1px solid var(--gold-border); }
+/* 3 kondisi warna badge */
+.badge-layak.yes    { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
+.badge-layak.warn   { background: #FEF9EC; color: #B45309; border: 1px solid var(--gold-border); }
+.badge-layak.danger { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
 
 .kelayakan-desc {
     font-size: 12.5px;
@@ -190,8 +192,7 @@ body { background: var(--bg); }
 .progress-bar {
     height: 100%;
     border-radius: 99px;
-    background: var(--gold);
-    transition: width .6s ease;
+    transition: width .6s ease, background .4s ease;
 }
 
 .progress-info {
@@ -206,7 +207,6 @@ body { background: var(--bg); }
 .progress-pct {
     font-size: 13px;
     font-weight: 700;
-    color: var(--gold);
 }
 
 /* ── TABEL CARD ── */
@@ -429,30 +429,48 @@ tbody td { padding: 14px 16px; font-size: 13px; color: var(--neutral); vertical-
 </div>
 
 {{-- ══ KELAYAKAN SEMINAR ══ --}}
+@php
+    $pct      = $minBimbingan > 0 ? ($totalBimbingan / $minBimbingan) * 100 : 0;
+    $pctCap   = min(100, $pct);
+
+    if ($pctCap >= 100) {
+        $badgeClass = 'yes';
+        $barColor   = '#16A34A';
+        $pctColor   = '#16A34A';
+        $badgeIcon  = 'fa-solid fa-circle-check';
+        $badgeText  = 'Layak Seminar';
+    } elseif ($pctCap >= 50) {
+        $badgeClass = 'warn';
+        $barColor   = '#C9A227';
+        $pctColor   = '#C9A227';
+        $badgeIcon  = 'fa-regular fa-clock';
+        $badgeText  = 'Belum Memenuhi';
+    } else {
+        $badgeClass = 'danger';
+        $barColor   = '#DC2626';
+        $pctColor   = '#DC2626';
+        $badgeIcon  = 'fa-solid fa-circle-xmark';
+        $badgeText  = 'Belum Memenuhi';
+    }
+@endphp
+
 <div class="kelayakan-card">
     <div class="kelayakan-top">
         <div class="kelayakan-title">Status Kelayakan Seminar</div>
-        @if($totalBimbingan >= $minBimbingan)
-            <span class="badge-layak yes">
-                <i class="fa-solid fa-circle-check" style="font-size:11px;"></i>
-                Layak Seminar
-            </span>
-        @else
-            <span class="badge-layak no">
-                <i class="fa-regular fa-clock" style="font-size:11px;"></i>
-                Belum Memenuhi
-            </span>
-        @endif
+        <span class="badge-layak {{ $badgeClass }}">
+            <i class="{{ $badgeIcon }}" style="font-size:11px;"></i>
+            {{ $badgeText }}
+        </span>
     </div>
     <div class="kelayakan-desc">
         Minimal {{ $minBimbingan }} kali bimbingan sebagai persyaratan seminar tugas akhir.
     </div>
     <div class="progress-wrap">
-        <div class="progress-bar" style="width: {{ min(100, ($totalBimbingan / $minBimbingan) * 100) }}%"></div>
+        <div class="progress-bar" style="width: {{ $pctCap }}%; background: {{ $barColor }};"></div>
     </div>
     <div class="progress-info">
         <span>{{ $totalBimbingan }} / {{ $minBimbingan }} Bimbingan</span>
-        <span class="progress-pct">{{ round(min(100, ($totalBimbingan / $minBimbingan) * 100)) }}%</span>
+        <span class="progress-pct" style="color: {{ $pctColor }};">{{ round($pctCap) }}%</span>
     </div>
 </div>
 

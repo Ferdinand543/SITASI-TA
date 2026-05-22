@@ -305,21 +305,25 @@ Route::resource('jadwal-akademik', JadwalAkademikController::class);
 // RIWAYAT BIMBINGAN — DOSEN
 // =====================================================
 
-Route::get('/dosen/bimbingan', [DosenBimbinganController::class, 'index'])->name('dosen.bimbingan.index');
-Route::put('/dosen/bimbingan/proposal/{id}/status', [DosenBimbinganController::class, 'updateStatusProposal'])->name('dosen.bimbingan.proposal.status');
-Route::get('/dosen/bimbingan/mahasiswa/{nim}', [DosenBimbinganController::class, 'detailMahasiswa'])->name('dosen.bimbingan.detail');
-Route::get('/dosen/proposal/{id}/lihat', [DosenBimbinganController::class, 'lihatProposal'])->name('dosen.proposal.lihat');
+Route::get('/dosen/bimbingan',                          [DosenBimbinganController::class, 'index'])->name('dosen.bimbingan.index');
+Route::put('/dosen/bimbingan/proposal/{id}/status',     [DosenBimbinganController::class, 'updateStatusProposal'])->name('dosen.bimbingan.proposal.status');
+Route::get('/dosen/bimbingan/mahasiswa/{nim}',          [DosenBimbinganController::class, 'detailMahasiswa'])->name('dosen.bimbingan.detail');
+Route::get('/dosen/proposal/{id}/lihat',                [DosenBimbinganController::class, 'lihatProposal'])->name('dosen.proposal.lihat');
 
 
 // =====================================================
 // RIWAYAT BIMBINGAN — ADMIN
+// URUTAN PENTING: static route dulu, baru dynamic route!
 // =====================================================
 
-Route::get('/admin/bimbingan', [AdminBimbinganController::class, 'index'])->name('admin.bimbingan.index');
-Route::put('/admin/bimbingan/proposal/{id}/status', [AdminBimbinganController::class, 'updateStatusProposal'])->name('admin.bimbingan.proposal.status');
-Route::get('/admin/bimbingan/{nim}', [AdminBimbinganController::class, 'detailMahasiswa'])->name('admin.bimbingan.detail');
-Route::get('/admin/proposal/{id}/lihat', [AdminBimbinganController::class, 'lihatProposal'])->name('admin.proposal.lihat');
-Route::get('/admin/bimbingan/dosen/{nim_nid}', [AdminBimbinganController::class, 'detailDosen'])->name('admin.bimbingan.dosen');
+Route::get('/admin/bimbingan',                          [AdminBimbinganController::class, 'index'])->name('admin.bimbingan.index');
+Route::put('/admin/bimbingan/proposal/{id}/status',     [AdminBimbinganController::class, 'updateStatusProposal'])->name('admin.bimbingan.proposal.status');
+Route::get('/admin/proposal/{id}/lihat',                [AdminBimbinganController::class, 'lihatProposal'])->name('admin.proposal.lihat');
+
+// ✅ FIX URUTAN: route "dosen" (static) HARUS di atas route {nim}/{nim_nid_dosen} (dynamic)
+Route::get('/admin/bimbingan/dosen/{nim_nid}',          [AdminBimbinganController::class, 'detailDosen'])->name('admin.bimbingan.dosen');
+Route::get('/admin/bimbingan/{nim}/{nim_nid_dosen}',    [AdminBimbinganController::class, 'detailMahasiswa'])->name('admin.bimbingan.detail');
+
 
 // =====================================================
 // BIMBINGAN — MAHASISWA
@@ -398,7 +402,4 @@ Route::get('/register-admin', function () {
     return view('auth.register-admin');
 });
 
-
-// routes/web.php
-Route::delete('/panduan-ta/{id}',       [PanduanTAController::class, 'destroy'])->name('panduan.destroy');
-
+Route::delete('/panduan-ta/{id}', [PanduanTAController::class, 'destroy'])->name('panduan.destroy');

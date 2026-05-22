@@ -13,33 +13,17 @@ class AdminBimbinganController extends Controller
 
         $admin = session('user');
 
-        /*
-        |------------------------------------------------------------------
-        | TAB 1 — Semua Proposal Bimbingan
-        |------------------------------------------------------------------
-        */
         $proposalList = DB::table('pengajuan_proposal_bimbingan as ppb')
             ->join('users as mhs', 'mhs.nim_nid', '=', 'ppb.nim_nid')
             ->leftJoin('users as dosen', 'dosen.nim_nid', '=', 'ppb.dosen_nid')
             ->select(
-                'ppb.id',
-                'ppb.nim_nid',
-                'ppb.judul',
-                'ppb.tanggal_pengajuan',
-                'ppb.file_proposal',
-                'ppb.status',
-                'ppb.created_at',
-                'mhs.nama as nama_mahasiswa',
-                'dosen.nama as nama_dosen'
+                'ppb.id', 'ppb.nim_nid', 'ppb.judul', 'ppb.tanggal_pengajuan',
+                'ppb.file_proposal', 'ppb.status', 'ppb.created_at',
+                'mhs.nama as nama_mahasiswa', 'dosen.nama as nama_dosen'
             )
             ->orderBy('ppb.created_at', 'desc')
             ->get();
 
-        /*
-        |------------------------------------------------------------------
-        | TAB 2 — Daftar Dosen + Jumlah Mahasiswa Bimbingan
-        |------------------------------------------------------------------
-        */
         $dosenList = DB::table('dosen_pembimbing as dp')
             ->join('users as d', 'd.nim_nid', '=', 'dp.nim_nid_dosen')
             ->select(
@@ -51,48 +35,29 @@ class AdminBimbinganController extends Controller
             ->orderBy('d.nama')
             ->get();
 
-        // Count untuk badge di tab button
-        $countProposal  = $proposalList->count();
-        $countDosen     = $dosenList->count();
+        $countProposal = $proposalList->count();
+        $countDosen    = $dosenList->count();
 
         return view('admin.bimbingan', compact(
-            'proposalList',
-            'dosenList',
-            'countProposal',
-            'countDosen',
-            'admin'
+            'proposalList', 'dosenList', 'countProposal', 'countDosen', 'admin'
         ));
     }
 
     public function updateStatusProposal(Request $request, $id)
     {
         if (!session('user')) return redirect('/login');
-
-        DB::table('pengajuan_proposal_bimbingan')
-            ->where('id', $id)
-            ->update(['status' => $request->status]);
-
+        DB::table('pengajuan_proposal_bimbingan')->where('id', $id)->update(['status' => $request->status]);
         return redirect()->back()->with('success', 'Status proposal berhasil diperbarui.');
     }
 
     public function lihatProposal($id)
     {
         if (!session('user')) return redirect('/login');
-
-        $proposal = DB::table('pengajuan_proposal_bimbingan')
-            ->where('id', $id)
-            ->first();
-
+        $proposal = DB::table('pengajuan_proposal_bimbingan')->where('id', $id)->first();
         if (!$proposal) abort(404);
-
         return redirect(asset('uploads/proposal/' . $proposal->file_proposal));
     }
 
-    /*
-    |------------------------------------------------------------------
-    | Detail mahasiswa bimbingan per dosen
-    |------------------------------------------------------------------
-    */
     public function detailDosen($nim_nid_dosen)
     {
         if (!session('user')) return redirect('/login');
@@ -108,7 +73,8 @@ class AdminBimbinganController extends Controller
                 'mhs.nim_nid',
                 'mhs.nama as nama_mahasiswa',
                 'mhs.angkatan',
-                DB::raw('(SELECT COUNT(*) FROM bimbingan WHERE nim_nid = mhs.nim_nid) as total_bimbingan')
+                // ✅ hanya ngitung bimbingan ke dosen ini saja
+                DB::raw('(SELECT COUNT(*) FROM bimbingan WHERE nim_nid = mhs.nim_nid AND dosen_nid = dp.nim_nid_dosen) as total_bimbingan')
             )
             ->orderBy('mhs.nama')
             ->get();
@@ -116,15 +82,18 @@ class AdminBimbinganController extends Controller
         return view('admin.detail_dosen_bimbingan', compact('dosen', 'mahasiswaList'));
     }
 
-    public function detailMahasiswa($nim)
+    public function detailMahasiswa($nim, $nim_nid_dosen)
     {
         if (!session('user')) return redirect('/login');
 
         $mahasiswa = DB::table('users')->where('nim_nid', $nim)->first();
+        $dosen     = DB::table('users')->where('nim_nid', $nim_nid_dosen)->first();
 
+        // ✅ filter bimbingan hanya ke dosen yang dipilih
         $bimbingan = DB::table('bimbingan as b')
             ->leftJoin('users as dosen', 'dosen.nim_nid', '=', 'b.dosen_nid')
             ->where('b.nim_nid', $nim)
+            ->where('b.dosen_nid', $nim_nid_dosen)
             ->select('b.*', 'dosen.nama as nama_dosen')
             ->orderBy('b.pertemuan_ke', 'asc')
             ->get();
@@ -140,7 +109,7 @@ class AdminBimbinganController extends Controller
         $minBimbingan   = 6;
 
         return view('admin.detail_bimbingan', compact(
-            'mahasiswa', 'bimbingan', 'judulTA',
+            'mahasiswa', 'dosen', 'bimbingan', 'judulTA',
             'totalBimbingan', 'minBimbingan'
         ));
     }
@@ -148,9 +117,7 @@ class AdminBimbinganController extends Controller
     public function updateStatusBimbingan(Request $request, $id)
     {
         if (!session('user')) return redirect('/login');
-
         DB::table('bimbingan')->where('id', $id)->update(['status' => 'Sudah Dilihat']);
-
         return redirect()->back()->with('success', 'Status bimbingan berhasil diperbarui.');
     }
 }

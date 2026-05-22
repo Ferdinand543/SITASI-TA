@@ -281,6 +281,30 @@
         color: #94a3b8;
         font-size: 0.88rem;
     }
+
+    /* ── TOGGLE PASSWORD ── */
+    .pw-wrap {
+        position: relative;
+    }
+    .pw-wrap .form-control {
+        padding-right: 46px;
+    }
+    .pw-toggle {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #94a3b8;
+        padding: 0;
+        font-size: 16px;
+        line-height: 1;
+    }
+    .pw-toggle:hover {
+        color: #735C00;
+    }
 </style>
 
 <div class="container-fluid py-4">
@@ -462,10 +486,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="mb-4">
-                                            <label class="form-label">Password Baru</label>
-                                            <input type="password" name="password" class="form-control" placeholder="Kosongkan jika tidak diganti">
-                                        </div>
+                                        
                                         <button type="submit" class="btn-submit">
                                             <i class="fa-solid fa-pen-to-square me-2"></i>Update Dosen
                                         </button>
@@ -539,7 +560,12 @@
                     </div>
                     <div class="mb-4">
                         <label class="form-label">Password</label>
-                        <input type="password" name="password" id="password_dosen" class="form-control" placeholder="Masukkan password" required>
+                        <div class="pw-wrap">
+                            <input type="password" name="password" id="password_dosen" class="form-control" placeholder="Masukkan password" required>
+                            <button type="button" class="pw-toggle" onclick="togglePw(this)">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" class="btn-submit">
                         <i class="fa-solid fa-floppy-disk me-2"></i>Simpan Dosen
@@ -554,6 +580,19 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // ── TOGGLE SHOW/HIDE PASSWORD ──
+    function togglePw(btn) {
+        const input = btn.closest('.pw-wrap').querySelector('input');
+        const icon  = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
 
         const existingNid = @json($dosen -> pluck('nim_nid'));

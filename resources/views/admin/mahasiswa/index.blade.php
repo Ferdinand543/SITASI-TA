@@ -330,15 +330,7 @@
                                             <label class="form-label">Angkatan</label>
                                             <input type="text" name="angkatan" class="form-control" value="{{ $mhs->angkatan }}">
                                         </div>
-                                        <div class="mb-4">
-                                            <label class="form-label">Password Baru</label>
-                                            <div class="pw-wrap">
-                                                <input type="password" name="password" class="form-control" placeholder="Kosongkan jika tidak diganti">
-                                                <button type="button" class="pw-toggle" onclick="togglePw(this)">
-                                                    <i class="fa-solid fa-eye"></i>
-                                                </button>
-                                            </div>
-                                        </div>
+                                        
                                         <button type="submit" class="btn-submit">Update Mahasiswa</button>
                                     </form>
                                 </div>
