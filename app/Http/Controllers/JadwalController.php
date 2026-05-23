@@ -61,8 +61,6 @@ class JadwalController extends Controller
 
             $today = now('Asia/Jakarta')->toDateString();
 
-            // Keyword matching: nama_kegiatan di jadwal_akademik → tahap timeline
-            // Sesuaikan keyword dengan nama kegiatan yang diinput admin
             $keywordMap = [
                 'Pengajuan Judul'            => ['pengajuan judul'],
                 'Verifikasi Judul'           => ['verifikasi judul'],
@@ -72,13 +70,11 @@ class JadwalController extends Controller
                 'Bimbingan Tugas Akhir'      => ['bimbingan tugas akhir', 'bimbingan mahasiswa'],
             ];
 
-            // Ambil semua jadwal akademik sekali saja
             $jadwalAkademikAll = DB::table('jadwal_akademik')->get();
 
             foreach ($tahapUrutan as $tahap) {
                 $keywords = $keywordMap[$tahap];
 
-                // Cari jadwal yang nama_kegiatannya mengandung keyword tahap ini
                 $match = $jadwalAkademikAll->first(function ($j) use ($keywords) {
                     foreach ($keywords as $kw) {
                         if (str_contains(strtolower($j->nama_kegiatan), $kw)) {
@@ -89,28 +85,34 @@ class JadwalController extends Controller
                 });
 
                 if (!$match) {
-                    // Tidak ada jadwal yang match → belum dijadwalkan admin
-                    $status     = 'belum';
-                    $tanggal    = null;
-                    $keterangan = null;
+                    $status          = 'belum';
+                    $tanggal         = null;
+                    $tanggal_selesai = null;
+                    $keterangan      = null;
                 } else {
-                    $tanggal    = $match->tanggal;
-                    $keterangan = $match->nama_kegiatan;
+                    $tanggalMulai    = $match->tanggal;
+                    // Kalau tanggal_selesai tidak diisi, anggap sama dengan tanggal mulai
+                    $tanggalSelesai  = $match->tanggal_selesai ?? $match->tanggal;
+                    $keterangan      = $match->nama_kegiatan;
 
-                    if ($match->tanggal < $today) {
-                        $status = 'selesai';    // tanggal sudah lewat → hijau
-                    } elseif ($match->tanggal === $today) {
-                        $status = 'aktif';      // hari ini → kuning
+                    if ($today < $tanggalMulai) {
+                        $status = 'mendatang'; // belum waktunya → abu
+                    } elseif ($today >= $tanggalMulai && $today <= $tanggalSelesai) {
+                        $status = 'aktif';     // dalam rentang → kuning
                     } else {
-                        $status = 'mendatang';  // belum waktunya → abu
+                        $status = 'selesai';   // sudah lewat tanggal selesai → hijau
                     }
+
+                    $tanggal         = $tanggalMulai;
+                    $tanggal_selesai = $match->tanggal_selesai ?? null;
                 }
 
                 $timeline[] = [
-                    'label'      => $tahap,
-                    'status'     => $status,
-                    'tanggal'    => $tanggal,
-                    'keterangan' => $keterangan,
+                    'label'           => $tahap,
+                    'status'          => $status,
+                    'tanggal'         => $tanggal,
+                    'tanggal_selesai' => $tanggal_selesai,
+                    'keterangan'      => $keterangan,
                 ];
             }
 

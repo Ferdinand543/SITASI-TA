@@ -14,6 +14,7 @@ class JadwalAkademik extends Model
         'kategori',
         'status',
         'tanggal',
+        'tanggal_selesai',
         'waktu',
         'lokasi',
         'deskripsi'
