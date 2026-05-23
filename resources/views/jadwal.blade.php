@@ -17,18 +17,57 @@
         --radius: 16px;
     }
 
-    .jadwal-wrap { background: var(--bg); min-height: 100vh; }
+    .jadwal-wrap {
+        background: var(--bg);
+        min-height: 100vh;
+    }
 
     .jadwal-hero {
         background-image: url('{{ asset("images/bg.jpeg") }}');
-        background-size: cover; background-position: center;
-        border-radius: 20px; padding: 36px 40px; margin-bottom: 24px;
-        position: relative; overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        border-radius: 20px;
+        padding: 36px 40px;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
     }
-    .jadwal-hero::before { content:''; position:absolute; right:-40px; top:-40px; width:220px; height:220px; background:rgba(201,162,39,.12); border-radius:50%; }
-    .jadwal-hero::after  { content:''; position:absolute; right:60px; bottom:-60px; width:160px; height:160px; background:rgba(201,162,39,.08); border-radius:50%; }
-    .jadwal-hero-title { font-size:26px; font-weight:800; color:#735C00; margin-bottom:6px; position:relative; }
-    .jadwal-hero-sub   { font-size:13px; color:#92400E; position:relative; }
+
+    .jadwal-hero::before {
+        content: '';
+        position: absolute;
+        right: -40px;
+        top: -40px;
+        width: 220px;
+        height: 220px;
+        background: rgba(201, 162, 39, .12);
+        border-radius: 50%;
+    }
+
+    .jadwal-hero::after {
+        content: '';
+        position: absolute;
+        right: 60px;
+        bottom: -60px;
+        width: 160px;
+        height: 160px;
+        background: rgba(201, 162, 39, .08);
+        border-radius: 50%;
+    }
+
+    .jadwal-hero-title {
+        font-size: 26px;
+        font-weight: 800;
+        color: #735C00;
+        margin-bottom: 6px;
+        position: relative;
+    }
+
+    .jadwal-hero-sub {
+        font-size: 13px;
+        color: #92400E;
+        position: relative;
+    }
 
     .jadwal-grid {
         display: grid;
@@ -39,110 +78,413 @@
 
     /* TIMELINE */
     .timeline-card {
-        background: var(--white); border-radius: var(--radius);
-        padding: 22px; box-shadow: 0 2px 10px rgba(0,0,0,.05);
-        border: 1px solid var(--border); margin-bottom: 20px;
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 22px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+        border: 1px solid var(--border);
+        margin-bottom: 20px;
     }
-    .timeline-card-title {
-        font-size: 15px; font-weight: 800; color: var(--neutral);
-        margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
-    }
-    .progress-persen {
-        font-size: 12px; font-weight: 700; color: var(--gold);
-        background: var(--gold-lt); border: 1px solid var(--gold-border);
-        padding: 3px 10px; border-radius: 99px;
-    }
-    .progress-bar-wrap { background: #F3F4F6; border-radius: 99px; height: 6px; margin-bottom: 20px; }
-    .progress-bar-fill { background: var(--gold); border-radius: 99px; height: 100%; transition: width .4s ease; }
 
-    .timeline-list { list-style: none; padding: 0; margin: 0; position: relative; }
+    .timeline-card-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--neutral);
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .progress-persen {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--gold);
+        background: var(--gold-lt);
+        border: 1px solid var(--gold-border);
+        padding: 3px 10px;
+        border-radius: 99px;
+    }
+
+    .progress-bar-wrap {
+        background: #F3F4F6;
+        border-radius: 99px;
+        height: 6px;
+        margin-bottom: 20px;
+    }
+
+    .progress-bar-fill {
+        background: var(--gold);
+        border-radius: 99px;
+        height: 100%;
+        transition: width .4s ease;
+    }
+
+    .timeline-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        position: relative;
+    }
+
     .timeline-list::before {
-        content: ''; position: absolute; left: 10px; top: 0; bottom: 0;
-        width: 2px; background: #E5E7EB; z-index: 0;
+        content: '';
+        position: absolute;
+        left: 10px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #E5E7EB;
+        z-index: 0;
     }
-    .timeline-item { display: flex; align-items: flex-start; gap: 14px; padding: 0 0 18px 0; position: relative; z-index: 1; }
-    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 0 0 18px 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
     .tl-dot {
-        width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 11px; font-weight: 700; margin-top: 1px; position: relative; z-index: 2;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        margin-top: 1px;
+        position: relative;
+        z-index: 2;
     }
-    .tl-dot.selesai { background: var(--gold); color: #fff; border: 2px solid var(--gold); }
-    .tl-dot.aktif   { background: #fff; color: var(--gold); border: 2.5px solid var(--gold); box-shadow: 0 0 0 3px rgba(201,162,39,.15); }
-    .tl-dot.belum   { background: #fff; color: #D1D5DB; border: 2px solid #E5E7EB; }
-    .tl-label { font-size: 13px; font-weight: 600; color: var(--neutral); line-height: 1.4; }
-    .tl-sub   { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
-    .tl-badge { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px; margin-top: 4px; }
-    .tl-badge.selesai { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
-    .tl-badge.aktif   { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
-    .tl-badge.belum   { background: #F9FAFB; color: #9CA3AF; border: 1px solid #E5E7EB; }
+
+    .tl-dot.selesai {
+        background: #16A34A;
+        color: #fff;
+        border: 2px solid #16A34A;
+    }
+
+    .tl-dot.aktif {
+        background: #fff;
+        color: var(--gold);
+        border: 2.5px solid var(--gold);
+        box-shadow: 0 0 0 3px rgba(201, 162, 39, .15);
+    }
+
+    .tl-dot.mendatang {
+        background: #fff;
+        color: #D1D5DB;
+        border: 2px solid #E5E7EB;
+    }
+
+    .tl-dot.belum {
+        background: #fff;
+        color: #D1D5DB;
+        border: 2px solid #E5E7EB;
+    }
+
+    .tl-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--neutral);
+        line-height: 1.4;
+    }
+
+    .tl-sub {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    .tl-badge {
+        display: inline-block;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 99px;
+        margin-top: 4px;
+    }
+
+    .tl-badge.selesai {
+        background: #F0FDF4;
+        color: #15803D;
+        border: 1px solid #BBF7D0;
+    }
+
+    .tl-badge.aktif {
+        background: #FFFBEB;
+        color: #92400E;
+        border: 1px solid #FDE68A;
+    }
+
+    .tl-badge.mendatang {
+        background: #F9FAFB;
+        color: #9CA3AF;
+        border: 1px solid #E5E7EB;
+    }
+
+    .tl-badge.belum {
+        background: #F9FAFB;
+        color: #9CA3AF;
+        border: 1px solid #E5E7EB;
+    }
 
     /* TERDEKAT */
     .terdekat-card {
         background: linear-gradient(135deg, #C9A227 0%, #E8C547 100%);
-        border-radius: var(--radius); padding: 18px 20px; color: #fff;
-        margin-bottom: 20px; position: relative; overflow: hidden;
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        color: #fff;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
     }
-    .terdekat-card::after { content: ''; position: absolute; right: -20px; bottom: -20px; width: 100px; height: 100px; background: rgba(255,255,255,.1); border-radius: 50%; }
-    .terdekat-label { font-size: 11px; font-weight: 700; opacity: .8; margin-bottom: 6px; letter-spacing: .5px; text-transform: uppercase; }
-    .terdekat-nama  { font-size: 17px; font-weight: 800; margin-bottom: 4px; line-height: 1.3; }
-    .terdekat-hari  { font-size: 22px; font-weight: 900; margin-bottom: 2px; }
-    .terdekat-tgl   { font-size: 12px; opacity: .85; display: flex; align-items: center; gap: 5px; }
+
+    .terdekat-card::after {
+        content: '';
+        position: absolute;
+        right: -20px;
+        bottom: -20px;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, .1);
+        border-radius: 50%;
+    }
+
+    .terdekat-label {
+        font-size: 11px;
+        font-weight: 700;
+        opacity: .8;
+        margin-bottom: 6px;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .terdekat-nama {
+        font-size: 17px;
+        font-weight: 800;
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+
+    .terdekat-hari {
+        font-size: 22px;
+        font-weight: 900;
+        margin-bottom: 2px;
+    }
+
+    .terdekat-tgl {
+        font-size: 12px;
+        opacity: .85;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
 
     /* FILTER */
     .filter-card {
-        background: var(--white); border-radius: var(--radius); padding: 16px 20px;
-        box-shadow: 0 2px 10px rgba(0,0,0,.05); border: 1px solid var(--border); margin-bottom: 20px;
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 16px 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+        border: 1px solid var(--border);
+        margin-bottom: 20px;
     }
-    .filter-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .filter-label { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+
+    .filter-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .filter-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+
     .filter-input {
-        flex: 1; min-width: 160px; padding: 8px 12px 8px 34px;
-        border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px;
-        outline: none; font-family: inherit; transition: border .2s;
+        flex: 1;
+        min-width: 160px;
+        padding: 8px 12px 8px 34px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        outline: none;
+        font-family: inherit;
+        transition: border .2s;
         background: #FAFAFA url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' viewBox='0 0 24 24' stroke='%236B7280' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;
     }
-    .filter-input:focus { border-color: var(--gold); background-color: #fff; }
-    .filter-select {
-        padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px;
-        font-size: 13px; outline: none; background: #FAFAFA; font-family: inherit; cursor: pointer;
+
+    .filter-input:focus {
+        border-color: var(--gold);
+        background-color: #fff;
     }
-    .filter-select:focus { border-color: var(--gold); }
+
+    .filter-select {
+        padding: 8px 12px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        outline: none;
+        background: #FAFAFA;
+        font-family: inherit;
+        cursor: pointer;
+    }
+
+    .filter-select:focus {
+        border-color: var(--gold);
+    }
 
     /* TABEL */
     .jadwal-tabel-card {
-        background: var(--white); border-radius: var(--radius);
-        box-shadow: 0 2px 10px rgba(0,0,0,.05); border: 1px solid var(--border); overflow: hidden;
+        background: var(--white);
+        border-radius: var(--radius);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+        border: 1px solid var(--border);
+        overflow: hidden;
     }
-    .jadwal-tabel-title { padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 15px; font-weight: 800; color: var(--neutral); }
-    .tabel-scroll { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 560px; }
-    thead th { padding: 11px 16px; font-size: 11.5px; font-weight: 700; color: var(--muted); text-align: left; background: #FAFAFA; border-bottom: 1px solid var(--border); white-space: nowrap; }
-    tbody tr { border-bottom: 1px solid #F3F4F6; transition: background .15s; }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: #FAFBFF; }
-    tbody td { padding: 13px 16px; font-size: 13px; color: var(--neutral); vertical-align: middle; }
 
-    .kat-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; }
-    .kat-seminar      { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
-    .kat-administrasi { background: #F5F3FF; color: #6D28D9; border: 1px solid #DDD6FE; }
-    .kat-bimbingan    { background: var(--gold-lt); color: #92400E; border: 1px solid var(--gold-border); }
+    .jadwal-tabel-title {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--neutral);
+    }
 
-    .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; }
-    .status-akan    { background: #F0F9FF; color: #0369A1; border: 1px solid #BAE6FD; }
-    .status-berlang { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
-    .status-selesai { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
-    .status-ditutup { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+    .tabel-scroll {
+        overflow-x: auto;
+    }
 
-    .empty-row td { text-align: center; padding: 48px; color: var(--muted); font-size: 14px; }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 560px;
+    }
+
+    thead th {
+        padding: 11px 16px;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--muted);
+        text-align: left;
+        background: #FAFAFA;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+    }
+
+    tbody tr {
+        border-bottom: 1px solid #F3F4F6;
+        transition: background .15s;
+    }
+
+    tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    tbody tr:hover {
+        background: #FAFBFF;
+    }
+
+    tbody td {
+        padding: 13px 16px;
+        font-size: 13px;
+        color: var(--neutral);
+        vertical-align: middle;
+    }
+
+    .kat-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 10px;
+        border-radius: 99px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .kat-seminar {
+        background: #EFF6FF;
+        color: #1D4ED8;
+        border: 1px solid #BFDBFE;
+    }
+
+    .kat-administrasi {
+        background: #F5F3FF;
+        color: #6D28D9;
+        border: 1px solid #DDD6FE;
+    }
+
+    .kat-bimbingan {
+        background: var(--gold-lt);
+        color: #92400E;
+        border: 1px solid var(--gold-border);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .status-akan {
+        background: #F0F9FF;
+        color: #0369A1;
+        border: 1px solid #BAE6FD;
+    }
+
+    .status-berlang {
+        background: #FFFBEB;
+        color: #92400E;
+        border: 1px solid #FDE68A;
+    }
+
+    .status-selesai {
+        background: #F0FDF4;
+        color: #15803D;
+        border: 1px solid #BBF7D0;
+    }
+
+    .status-ditutup {
+        background: #FEF2F2;
+        color: #991B1B;
+        border: 1px solid #FECACA;
+    }
+
+    .empty-row td {
+        text-align: center;
+        padding: 48px;
+        color: var(--muted);
+        font-size: 14px;
+    }
 
     .ringkasan-card {
-        background: var(--white); border-radius: var(--radius); padding: 18px 20px;
-        border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        border: 1px solid var(--border);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
     }
 
     @media (max-width: 900px) {
-        .jadwal-grid { grid-template-columns: 1fr; }
+        .jadwal-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
@@ -173,22 +515,27 @@
                     <li class="timeline-item">
                         <div class="tl-dot {{ $tl['status'] }}">
                             @if($tl['status'] === 'selesai')
-                                <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
                             @elseif($tl['status'] === 'aktif')
                                 <div style="width:6px;height:6px;background:var(--gold);border-radius:50%;"></div>
+                            @elseif($tl['status'] === 'mendatang')
+                                <div style="width:6px;height:6px;background:#D1D5DB;border-radius:50%;"></div>
                             @endif
                         </div>
                         <div>
                             <div class="tl-label">{{ $tl['label'] }}</div>
                             @if($tl['keterangan'])
-                            <div class="tl-sub">{{ $tl['keterangan'] }}</div>
+                                <div class="tl-sub">{{ $tl['keterangan'] }}</div>
                             @endif
                             @if($tl['tanggal'])
-                            <div class="tl-sub">{{ \Carbon\Carbon::parse($tl['tanggal'])->translatedFormat('d M Y') }}</div>
+                                <div class="tl-sub">{{ \Carbon\Carbon::parse($tl['tanggal'])->translatedFormat('d M Y') }}</div>
                             @endif
                             <span class="tl-badge {{ $tl['status'] }}">
                                 @if($tl['status'] === 'selesai') Selesai
                                 @elseif($tl['status'] === 'aktif') Sedang Berlangsung
+                                @elseif($tl['status'] === 'mendatang') Akan Datang
                                 @else Belum Dimulai
                                 @endif
                             </span>
@@ -254,16 +601,18 @@
                                 <td style="font-size:12.5px;">{{ $j->lokasi ?? '—' }}</td>
                                 <td>
                                     @php
-                                        $st = $j->status ?? 'Akan Datang';
-                                        $stClass = match($st) {
-                                            'Berlangsung' => 'status-berlang',
-                                            'Selesai'     => 'status-selesai',
-                                            'Ditutup'     => 'status-ditutup',
-                                            default       => 'status-akan',
-                                        };
+                                    $st = $j->status ?? 'Akan Datang';
+                                    $stClass = match($st) {
+                                        'Berlangsung' => 'status-berlang',
+                                        'Selesai'     => 'status-selesai',
+                                        'Ditutup'     => 'status-ditutup',
+                                        default       => 'status-akan',
+                                    };
                                     @endphp
                                     <span class="status-badge {{ $stClass }}">
-                                        <svg width="7" height="7" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+                                        <svg width="7" height="7" viewBox="0 0 10 10" fill="currentColor">
+                                            <circle cx="5" cy="5" r="5" />
+                                        </svg>
                                         {{ $st }}
                                     </span>
                                 </td>
@@ -288,7 +637,7 @@
 
             @if($terdekat)
             @php
-                $hariLagi = \Carbon\Carbon::now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($terdekat->tanggal)->startOfDay());
+            $hariLagi = \Carbon\Carbon::now('Asia/Jakarta')->startOfDay()->diffInDays(\Carbon\Carbon::parse($terdekat->tanggal)->startOfDay());
             @endphp
             <div class="terdekat-card">
                 <div class="terdekat-label">⚡ Terdekat</div>

@@ -59,90 +59,58 @@ class JadwalController extends Controller
                 'Bimbingan Tugas Akhir',
             ];
 
-            // Cek data existing mahasiswa
-            $pengajuan = DB::table('pengajuan_judul')
-                ->where('nim_nid', $nim)
-                ->latest('updated_at')
-                ->first();
+            $today = now('Asia/Jakarta')->toDateString();
 
-            $proposal = DB::table('proposal')
-                ->where('nim_nid', $nim)
-                ->latest('created_at')
-                ->first();
-
-            $dosenDitetapkan = DB::table('dosen_pembimbing')
-                ->join('proposal', 'proposal.id', '=', 'dosen_pembimbing.proposal_id')
-                ->where('proposal.nim_nid', $nim)
-                ->exists();
-
-            $adaBimbingan = DB::table('bimbingan')
-                ->where('nim_nid', $nim)
-                ->exists();
-
-            // Tentukan status otomatis per tahap
-            $autoStatus = [
-                'Pengajuan Judul' =>
-                    $pengajuan ? 'selesai' : 'belum',
-
-                'Verifikasi Judul' =>
-                    ($pengajuan && $pengajuan->status === 'disetujui') ? 'selesai'
-                    : ($pengajuan ? 'aktif' : 'belum'),
-
-                'Upload Proposal' =>
-                    $proposal ? 'selesai'
-                    : (($pengajuan && $pengajuan->status === 'disetujui') ? 'aktif' : 'belum'),
-
-                'Penetapan Dosen Pembimbing' =>
-                    $dosenDitetapkan ? 'selesai'
-                    : ($proposal ? 'aktif' : 'belum'),
-
-                'Review Proposal' =>
-                    ($proposal && isset($proposal->status) && in_array($proposal->status, ['disetujui', 'diterima'])) ? 'selesai'
-                    : ($dosenDitetapkan ? 'aktif' : 'belum'),
-
-                'Bimbingan Tugas Akhir' =>
-                    $adaBimbingan ? 'aktif' : 'belum',
+            // Keyword matching: nama_kegiatan di jadwal_akademik → tahap timeline
+            // Sesuaikan keyword dengan nama kegiatan yang diinput admin
+            $keywordMap = [
+                'Pengajuan Judul'            => ['pengajuan judul'],
+                'Verifikasi Judul'           => ['verifikasi judul'],
+                'Upload Proposal'            => ['upload proposal'],
+                'Penetapan Dosen Pembimbing' => ['penetapan dosen', 'dosen pembimbing'],
+                'Review Proposal'            => ['review proposal'],
+                'Bimbingan Tugas Akhir'      => ['bimbingan tugas akhir', 'bimbingan mahasiswa'],
             ];
 
-            // Pastikan row progress_ta ada untuk mahasiswa ini
-            $existingTahap = DB::table('progress_ta')
-                ->where('nim_nid', $nim)
-                ->pluck('tahap')
-                ->toArray();
+            // Ambil semua jadwal akademik sekali saja
+            $jadwalAkademikAll = DB::table('jadwal_akademik')->get();
 
             foreach ($tahapUrutan as $tahap) {
-                if (!in_array($tahap, $existingTahap)) {
-                    DB::table('progress_ta')->insert([
-                        'nim_nid'    => $nim,
-                        'tahap'      => $tahap,
-                        'status'     => 'belum',
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+                $keywords = $keywordMap[$tahap];
+
+                // Cari jadwal yang nama_kegiatannya mengandung keyword tahap ini
+                $match = $jadwalAkademikAll->first(function ($j) use ($keywords) {
+                    foreach ($keywords as $kw) {
+                        if (str_contains(strtolower($j->nama_kegiatan), $kw)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+
+                if (!$match) {
+                    // Tidak ada jadwal yang match → belum dijadwalkan admin
+                    $status     = 'belum';
+                    $tanggal    = null;
+                    $keterangan = null;
+                } else {
+                    $tanggal    = $match->tanggal;
+                    $keterangan = $match->nama_kegiatan;
+
+                    if ($match->tanggal < $today) {
+                        $status = 'selesai';    // tanggal sudah lewat → hijau
+                    } elseif ($match->tanggal === $today) {
+                        $status = 'aktif';      // hari ini → kuning
+                    } else {
+                        $status = 'mendatang';  // belum waktunya → abu
+                    }
                 }
-            }
 
-            // Update status otomatis ke DB
-            foreach ($autoStatus as $tahap => $status) {
-                DB::table('progress_ta')
-                    ->where('nim_nid', $nim)
-                    ->where('tahap', $tahap)
-                    ->update(['status' => $status, 'updated_at' => now()]);
-            }
-
-            // Ambil data terbaru dari DB (termasuk tanggal & keterangan dari admin)
-            $progressDb = DB::table('progress_ta')
-                ->where('nim_nid', $nim)
-                ->get()
-                ->keyBy('tahap');
-
-            foreach ($tahapUrutan as $tahap) {
-                $data = $progressDb->get($tahap);
                 $timeline[] = [
                     'label'      => $tahap,
-                    'status'     => $data->status ?? 'belum',
-                    'tanggal'    => $data->tanggal ?? null,
-                    'keterangan' => $data->keterangan ?? null,
+                    'status'     => $status,
+                    'tanggal'    => $tanggal,
+                    'keterangan' => $keterangan,
                 ];
             }
 
