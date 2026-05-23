@@ -18,7 +18,6 @@
 
     .wrap { background: var(--bg); min-height: 100vh; }
 
-    /* INFO CARD */
     .info-card {
         background: var(--white); border-radius: var(--radius);
         border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,.05);
@@ -36,7 +35,6 @@
     .stat-number { font-size: 28px; font-weight: 900; color: var(--gold); line-height: 1; }
     .stat-label  { font-size: 11px; color: #92400E; font-weight: 600; margin-top: 4px; }
 
-    /* STATUS KELAYAKAN */
     .kelayakan-card {
         background: var(--white); border-radius: var(--radius);
         border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,.05);
@@ -44,15 +42,12 @@
     }
     .kelayakan-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
     .kelayakan-title  { font-size: 14px; font-weight: 700; color: var(--neutral); }
-    .badge-layak     { display: inline-flex; align-items: center; gap: 5px; padding: 5px 14px; border-radius: 99px; font-size: 12px; font-weight: 700; }
-    .badge-layak.yes { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
-    .badge-layak.no  { background: #FEF9EC; color: #B45309; border: 1px solid var(--gold-border); }
+    .badge-layak { display: inline-flex; align-items: center; gap: 5px; padding: 5px 14px; border-radius: 99px; font-size: 12px; font-weight: 700; }
     .kelayakan-desc { font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
     .progress-wrap  { background: #F3F4F6; border-radius: 99px; height: 10px; overflow: hidden; }
-    .progress-bar   { height: 100%; border-radius: 99px; background: var(--gold); transition: width .6s ease; }
+    .progress-bar   { height: 100%; border-radius: 99px; transition: width .6s ease; }
     .progress-info  { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 6px; font-weight: 600; }
 
-    /* TABLE CARD */
     .tabel-card {
         background: var(--white); border-radius: var(--radius);
         border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,.05);
@@ -84,7 +79,6 @@
     }
     .btn-reset-sm:hover { border-color: var(--gold); color: var(--gold); }
 
-    /* TABLE */
     .tabel-scroll { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; min-width: 650px; }
     thead th {
@@ -103,10 +97,7 @@
         border: 1.5px solid var(--gold-border); border-radius: 8px;
         font-size: 13px; font-weight: 800; color: var(--gold);
     }
-    .status-baru    { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
-    .status-dilihat { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
 
-    /* DOKUMENTASI THUMB */
     .thumb {
         width: 52px; height: 52px; border-radius: 8px; object-fit: cover;
         border: 1.5px solid var(--border); cursor: pointer;
@@ -114,7 +105,6 @@
     }
     .thumb:hover { transform: scale(1.08); }
 
-    /* BACK BTN */
     .btn-back {
         display: inline-flex; align-items: center; gap: 7px;
         padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700;
@@ -125,7 +115,6 @@
 
     .empty-row td { text-align: center; padding: 48px; color: var(--muted); font-size: 14px; }
 
-    /* MODAL FOTO */
     .modal-overlay {
         display: none; position: fixed; inset: 0;
         background: rgba(0,0,0,.5); z-index: 2000;
@@ -147,7 +136,9 @@
 <div class="wrap">
 
     <a href="{{ route('dosen.bimbingan.index') }}" class="btn-back">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
+        </svg>
         Kembali
     </a>
 
@@ -165,24 +156,58 @@
     </div>
 
     {{-- STATUS KELAYAKAN --}}
+    @php
+        $persen = min(100, round(($totalBimbingan / $minBimbingan) * 100));
+
+        if ($persen >= 100) {
+            $barColor  = '#22C55E';
+            $barLight  = '#F0FDF4';
+            $barBorder = '#BBF7D0';
+            $barText   = '#15803D';
+            $barLabel  = 'Selesai';
+            $badgeIcon = '✓';
+            $badgeText = 'Layak Seminar';
+        } elseif ($persen >= 50) {
+            $barColor  = '#F59E0B';
+            $barLight  = '#FFFBEB';
+            $barBorder = '#FDE68A';
+            $barText   = '#92400E';
+            $barLabel  = 'Berlangsung';
+            $badgeIcon = '⏳';
+            $badgeText = 'Belum Mencukupi';
+        } else {
+            $barColor  = '#EF4444';
+            $barLight  = '#FEF2F2';
+            $barBorder = '#FECACA';
+            $barText   = '#991B1B';
+            $barLabel  = 'Awal';
+            $badgeIcon = '✕';
+            $badgeText = 'Belum Mencukupi';
+        }
+    @endphp
+
     <div class="kelayakan-card">
         <div class="kelayakan-header">
             <div class="kelayakan-title">Status Kelayakan Seminar</div>
-            @if($totalBimbingan >= $minBimbingan)
-                <span class="badge-layak yes">✓ Layak Seminar</span>
-            @else
-                <span class="badge-layak no">⏳ Belum Mencukupi</span>
-            @endif
+            <span class="badge-layak" style="background:{{ $barLight }};color:{{ $barText }};border:1px solid {{ $barBorder }};">
+                {{ $badgeIcon }} {{ $badgeText }}
+            </span>
         </div>
         <div class="kelayakan-desc">
             Minimal {{ $minBimbingan }} kali bimbingan sebagai persyaratan seminar tugas akhir.
         </div>
         <div class="progress-wrap">
-            <div class="progress-bar" style="width: {{ min(100, ($totalBimbingan / $minBimbingan) * 100) }}%"></div>
+            <div class="progress-bar" style="width:{{ $persen }}%; background:{{ $barColor }};"></div>
         </div>
         <div class="progress-info">
-            <span>{{ $totalBimbingan }} / {{ $minBimbingan }} Bimbingan</span>
-            <span>{{ round(min(100, ($totalBimbingan / $minBimbingan) * 100)) }}%</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span>{{ $totalBimbingan }} / {{ $minBimbingan }} Bimbingan</span>
+                <span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:{{ $barLight }};color:{{ $barText }};border:1px solid {{ $barBorder }};">
+                    <span style="width:6px;height:6px;border-radius:50%;background:{{ $barColor }};display:inline-block;"></span>
+                    {{ $barLabel }}
+                </span>
+            </div>
+            <span style="color:{{ $barColor }}; font-weight:800;">{{ $persen }}%</span>
         </div>
     </div>
 
@@ -192,8 +217,13 @@
             <div class="tabel-title">Riwayat Bimbingan</div>
             <div class="filter-row">
                 <div class="search-wrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#9CA3AF" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    <input type="text" class="search-input" id="searchTopik" placeholder="Cari topik bimbingan..." oninput="filterDetail()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#9CA3AF" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" class="search-input" id="searchTopik"
+                        placeholder="Cari topik bimbingan..."
+                        oninput="filterDetail()">
                 </div>
                 <select class="filter-select" id="filterStatusDetail" onchange="filterDetail()">
                     <option value="">Semua Status</option>
@@ -272,7 +302,6 @@
         if (e.target === document.getElementById('modalFoto'))
             document.getElementById('modalFoto').classList.remove('show');
     }
-
     function filterDetail() {
         const q      = document.getElementById('searchTopik').value.toLowerCase();
         const status = document.getElementById('filterStatusDetail').value;

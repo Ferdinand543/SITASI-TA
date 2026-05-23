@@ -9,6 +9,18 @@ class JadwalAkademikController extends Controller
 {
     public function index(Request $request)
     {
+        // ✅ AUTO UPDATE STATUS BERDASARKAN TANGGAL
+        $today = now()->toDateString();
+        JadwalAkademik::all()->each(function ($j) use ($today) {
+            if ($j->status === 'Ditutup') return; // skip yang manual ditutup
+            $mulai   = $j->tanggal;
+            $selesai = $j->tanggal_selesai ?? $j->tanggal;
+            if ($today < $mulai)                             $status = 'Akan Datang';
+            elseif ($today >= $mulai && $today <= $selesai)  $status = 'Berlangsung';
+            else                                             $status = 'Selesai';
+            if ($j->status !== $status) $j->update(['status' => $status]);
+        });
+
         $query = JadwalAkademik::query();
 
         if ($request->search) {
@@ -46,15 +58,15 @@ class JadwalAkademikController extends Controller
         ]);
 
         JadwalAkademik::create([
-            'nama_kegiatan'  => $request->nama_kegiatan,
-            'sub_judul'      => $request->sub_judul,
-            'kategori'       => $request->kategori,
-            'status'         => $request->status,
-            'tanggal'        => $request->tanggal,
-            'tanggal_selesai'=> $request->tanggal_selesai, // ✅ baru
-            'waktu'          => $request->waktu,
-            'lokasi'         => $request->lokasi,
-            'deskripsi'      => $request->deskripsi,
+            'nama_kegiatan'   => $request->nama_kegiatan,
+            'sub_judul'       => $request->sub_judul,
+            'kategori'        => $request->kategori,
+            'status'          => $request->status,
+            'tanggal'         => $request->tanggal,
+            'tanggal_selesai' => $request->tanggal_selesai,
+            'waktu'           => $request->waktu,
+            'lokasi'          => $request->lokasi,
+            'deskripsi'       => $request->deskripsi,
         ]);
 
         return redirect()->back()->with('success', 'Jadwal berhasil ditambahkan');
@@ -73,15 +85,15 @@ class JadwalAkademikController extends Controller
         $jadwal = JadwalAkademik::findOrFail($id);
 
         $jadwal->update([
-            'nama_kegiatan'  => $request->nama_kegiatan,
-            'sub_judul'      => $request->sub_judul,
-            'kategori'       => $request->kategori,
-            'status'         => $request->status,
-            'tanggal'        => $request->tanggal,
-            'tanggal_selesai'=> $request->tanggal_selesai, // ✅ baru
-            'waktu'          => $request->waktu,
-            'lokasi'         => $request->lokasi,
-            'deskripsi'      => $request->deskripsi,
+            'nama_kegiatan'   => $request->nama_kegiatan,
+            'sub_judul'       => $request->sub_judul,
+            'kategori'        => $request->kategori,
+            'status'          => $request->status,
+            'tanggal'         => $request->tanggal,
+            'tanggal_selesai' => $request->tanggal_selesai,
+            'waktu'           => $request->waktu,
+            'lokasi'          => $request->lokasi,
+            'deskripsi'       => $request->deskripsi,
         ]);
 
         return redirect()->back()->with('success', 'Jadwal berhasil diupdate');
