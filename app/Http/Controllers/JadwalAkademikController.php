@@ -12,7 +12,7 @@ class JadwalAkademikController extends Controller
         // ✅ AUTO UPDATE STATUS BERDASARKAN TANGGAL
         $today = now()->toDateString();
         JadwalAkademik::all()->each(function ($j) use ($today) {
-            if ($j->status === 'Ditutup') return; // skip yang manual ditutup
+            if ($j->status === 'Ditutup') return;
             $mulai   = $j->tanggal;
             $selesai = $j->tanggal_selesai ?? $j->tanggal;
             if ($today < $mulai)                             $status = 'Akan Datang';
@@ -52,7 +52,6 @@ class JadwalAkademikController extends Controller
         $request->validate([
             'nama_kegiatan' => 'required',
             'kategori'      => 'required',
-            'status'        => 'required',
             'tanggal'       => 'required',
             'waktu'         => 'required',
         ]);
@@ -61,7 +60,7 @@ class JadwalAkademikController extends Controller
             'nama_kegiatan'   => $request->nama_kegiatan,
             'sub_judul'       => $request->sub_judul,
             'kategori'        => $request->kategori,
-            'status'          => $request->status,
+            'status'          => 'Akan Datang', // ✅ default, nanti auto-update
             'tanggal'         => $request->tanggal,
             'tanggal_selesai' => $request->tanggal_selesai,
             'waktu'           => $request->waktu,
@@ -77,7 +76,6 @@ class JadwalAkademikController extends Controller
         $request->validate([
             'nama_kegiatan' => 'required',
             'kategori'      => 'required',
-            'status'        => 'required',
             'tanggal'       => 'required',
             'waktu'         => 'required',
         ]);
@@ -88,7 +86,7 @@ class JadwalAkademikController extends Controller
             'nama_kegiatan'   => $request->nama_kegiatan,
             'sub_judul'       => $request->sub_judul,
             'kategori'        => $request->kategori,
-            'status'          => $request->status,
+            // ✅ status tidak diupdate dari form, biar auto-update yg handle
             'tanggal'         => $request->tanggal,
             'tanggal_selesai' => $request->tanggal_selesai,
             'waktu'           => $request->waktu,

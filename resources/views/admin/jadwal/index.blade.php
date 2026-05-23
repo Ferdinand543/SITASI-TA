@@ -168,21 +168,13 @@
                         <label>Sub Judul</label>
                         <input type="text" name="sub_judul" class="form-control">
                     </div>
-                    <div class="col-md-6">
+                    {{-- ✅ Kategori full width karena status dihapus --}}
+                    <div class="col-md-12">
                         <label>Kategori</label>
                         <select name="kategori" class="form-select">
                             <option>Seminar</option>
                             <option>Administrasi</option>
                             <option>Bimbingan</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Status</label>
-                        <select name="status" class="form-select">
-                            <option>Akan Datang</option>
-                            <option>Berlangsung</option>
-                            <option>Selesai</option>
-                            <option>Ditutup</option>
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -231,21 +223,13 @@
                         <label>Sub Judul</label>
                         <input type="text" name="sub_judul" class="form-control" value="{{ $item->sub_judul }}">
                     </div>
-                    <div class="col-md-6">
+                    {{-- ✅ Kategori full width karena status dihapus --}}
+                    <div class="col-md-12">
                         <label>Kategori</label>
                         <select name="kategori" class="form-select">
                             <option value="Seminar" {{ $item->kategori == 'Seminar' ? 'selected' : '' }}>Seminar</option>
                             <option value="Administrasi" {{ $item->kategori == 'Administrasi' ? 'selected' : '' }}>Administrasi</option>
                             <option value="Bimbingan" {{ $item->kategori == 'Bimbingan' ? 'selected' : '' }}>Bimbingan</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Status</label>
-                        <select name="status" class="form-select">
-                            <option value="Akan Datang" {{ $item->status == 'Akan Datang' ? 'selected' : '' }}>Akan Datang</option>
-                            <option value="Berlangsung" {{ $item->status == 'Berlangsung' ? 'selected' : '' }}>Berlangsung</option>
-                            <option value="Selesai" {{ $item->status == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                            <option value="Ditutup" {{ $item->status == 'Ditutup' ? 'selected' : '' }}>Ditutup</option>
                         </select>
                     </div>
                     <div class="col-md-6">

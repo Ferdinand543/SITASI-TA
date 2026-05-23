@@ -106,6 +106,12 @@
     .filter-input:focus { border-color: var(--gold); background-color: #fff; }
     .filter-select { padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; outline: none; background: #FAFAFA; font-family: inherit; cursor: pointer; }
     .filter-select:focus { border-color: var(--gold); }
+    .btn-reset {
+        padding: 8px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+        background: #fff; font-size: 12px; cursor: pointer; color: var(--muted);
+        font-family: inherit; white-space: nowrap; transition: all .2s;
+    }
+    .btn-reset:hover { border-color: #f87171; color: #ef4444; background: #fef2f2; }
 
     /* TABEL */
     .jadwal-tabel-card { background: var(--white); border-radius: var(--radius); box-shadow: 0 2px 10px rgba(0,0,0,.05); border: 1px solid var(--border); overflow: hidden; }
@@ -172,7 +178,6 @@
                             @if($tl['keterangan'])
                                 <div class="tl-sub">{{ $tl['keterangan'] }}</div>
                             @endif
-                            {{-- Tampilkan rentang tanggal --}}
                             @if($tl['tanggal'])
                                 <div class="tl-sub">
                                     {{ \Carbon\Carbon::parse($tl['tanggal'])->translatedFormat('d M Y') }}
@@ -195,25 +200,24 @@
             </div>
             @endif
 
-            {{-- FILTER --}}
-            <form method="GET" action="{{ route('jadwal.index') }}">
-                <div class="filter-card">
-                    <div class="filter-row">
-                        <span class="filter-label">Cari Jadwal</span>
-                        <input type="text" name="search" class="filter-input"
-                            placeholder="Cari jadwal atau kegiatan..."
-                            value="{{ request('search') }}">
-                        <select name="bulan" class="filter-select" onchange="this.form.submit()">
-                            <option value="">Semua Bulan</option>
-                            @foreach(range(1,12) as $m)
-                            <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
-                                {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
+            {{-- ✅ FILTER — DIUBAH BAGIAN INI DOANG --}}
+            <div class="filter-card">
+                <div class="filter-row">
+                    <span class="filter-label">Cari Jadwal</span>
+                    <input type="text" id="filterSearch" class="filter-input"
+                        placeholder="Cari jadwal atau kegiatan..."
+                        value="{{ request('search') }}">
+                    <select id="filterBulan" class="filter-select">
+                        <option value="">Semua Bulan</option>
+                        @foreach(range(1,12) as $m)
+                        <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                        </option>
+                        @endforeach
+                    </select>
+                    <button type="button" class="btn-reset" onclick="resetFilter()">✕ Reset</button>
                 </div>
-            </form>
+            </div>
 
             {{-- TABEL --}}
             <div class="jadwal-tabel-card">
@@ -336,5 +340,37 @@
 
     </div>
 </div>
+
+{{-- ✅ SCRIPT FILTER — DITAMBAHIN DI BAWAH --}}
+<script>
+    let searchTimer;
+
+    // Ketik → otomatis filter setelah 400ms berhenti
+    document.getElementById('filterSearch').addEventListener('input', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => applyFilter(), 400);
+    });
+
+    // Ganti bulan → langsung filter
+    document.getElementById('filterBulan').addEventListener('change', function () {
+        applyFilter();
+    });
+
+    function applyFilter() {
+        const search = document.getElementById('filterSearch').value;
+        const bulan  = document.getElementById('filterBulan').value;
+        const url    = new URL(window.location.href);
+        url.searchParams.set('search', search);
+        url.searchParams.set('bulan', bulan);
+        window.location.href = url.toString();
+    }
+
+    function resetFilter() {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('search');
+        url.searchParams.delete('bulan');
+        window.location.href = url.toString();
+    }
+</script>
 
 @endsection

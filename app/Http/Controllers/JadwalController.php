@@ -16,6 +16,24 @@ class JadwalController extends Controller
         $role = $user->role;
 
         // =====================================================
+        // ✅ AUTO UPDATE STATUS — PALING ATAS SEBELUM SEMUA QUERY
+        // =====================================================
+        $today = now()->toDateString();
+        DB::table('jadwal_akademik')
+            ->where('status', '!=', 'Ditutup')
+            ->get()
+            ->each(function ($j) use ($today) {
+                $mulai   = $j->tanggal;
+                $selesai = $j->tanggal_selesai ?? $j->tanggal;
+                if ($today < $mulai)                             $status = 'Akan Datang';
+                elseif ($today >= $mulai && $today <= $selesai)  $status = 'Berlangsung';
+                else                                             $status = 'Selesai';
+                if ($j->status !== $status) {
+                    DB::table('jadwal_akademik')->where('id', $j->id)->update(['status' => $status]);
+                }
+            });
+
+        // =====================================================
         // JADWAL AKADEMIK
         // =====================================================
         $query = DB::table('jadwal_akademik')->orderBy('tanggal', 'asc');
@@ -59,8 +77,6 @@ class JadwalController extends Controller
                 'Bimbingan Tugas Akhir',
             ];
 
-            $today = now('Asia/Jakarta')->toDateString();
-
             $keywordMap = [
                 'Pengajuan Judul'            => ['pengajuan judul'],
                 'Verifikasi Judul'           => ['verifikasi judul'],
@@ -90,17 +106,16 @@ class JadwalController extends Controller
                     $tanggal_selesai = null;
                     $keterangan      = null;
                 } else {
-                    $tanggalMulai    = $match->tanggal;
-                    // Kalau tanggal_selesai tidak diisi, anggap sama dengan tanggal mulai
-                    $tanggalSelesai  = $match->tanggal_selesai ?? $match->tanggal;
-                    $keterangan      = $match->nama_kegiatan;
+                    $tanggalMulai   = $match->tanggal;
+                    $tanggalSelesai = $match->tanggal_selesai ?? $match->tanggal;
+                    $keterangan     = $match->nama_kegiatan;
 
                     if ($today < $tanggalMulai) {
-                        $status = 'mendatang'; // belum waktunya → abu
+                        $status = 'mendatang';
                     } elseif ($today >= $tanggalMulai && $today <= $tanggalSelesai) {
-                        $status = 'aktif';     // dalam rentang → kuning
+                        $status = 'aktif';
                     } else {
-                        $status = 'selesai';   // sudah lewat tanggal selesai → hijau
+                        $status = 'selesai';
                     }
 
                     $tanggal         = $tanggalMulai;
