@@ -54,25 +54,26 @@
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body">
 
-            <form method="GET" class="row mb-4">
+            {{-- ✅ FILTER OTOMATIS — FORM DIHAPUS, DIGANTI JS --}}
+            <div class="row mb-4">
                 <div class="col-md-5">
-                    <input type="text" name="search" class="form-control rounded-pill"
+                    <input type="text" id="adminSearch" class="form-control rounded-pill"
                         placeholder="Cari nama kegiatan atau kategori..."
                         value="{{ request('search') }}">
                 </div>
                 <div class="col-md-4">
-                    <select name="status" class="form-select rounded-pill">
-                        <option>Semua Status</option>
-                        <option {{ request('status') == 'Akan Datang' ? 'selected' : '' }}>Akan Datang</option>
-                        <option {{ request('status') == 'Berlangsung' ? 'selected' : '' }}>Berlangsung</option>
-                        <option {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                        <option {{ request('status') == 'Ditutup' ? 'selected' : '' }}>Ditutup</option>
+                    <select id="adminStatus" class="form-select rounded-pill">
+                        <option value="">Semua Status</option>
+                        <option value="Akan Datang" {{ request('status') == 'Akan Datang' ? 'selected' : '' }}>Akan Datang</option>
+                        <option value="Berlangsung" {{ request('status') == 'Berlangsung' ? 'selected' : '' }}>Berlangsung</option>
+                        <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                        <option value="Ditutup" {{ request('status') == 'Ditutup' ? 'selected' : '' }}>Ditutup</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <button class="btn btn-light border rounded-pill w-100">Filter</button>
+                    <button onclick="resetAdminFilter()" class="btn btn-light border rounded-pill w-100">✕ Reset</button>
                 </div>
-            </form>
+            </div>
 
             <div class="table-responsive">
                 <table class="table align-middle">
@@ -168,7 +169,6 @@
                         <label>Sub Judul</label>
                         <input type="text" name="sub_judul" class="form-control">
                     </div>
-                    {{-- ✅ Kategori full width karena status dihapus --}}
                     <div class="col-md-12">
                         <label>Kategori</label>
                         <select name="kategori" class="form-select">
@@ -223,7 +223,6 @@
                         <label>Sub Judul</label>
                         <input type="text" name="sub_judul" class="form-control" value="{{ $item->sub_judul }}">
                     </div>
-                    {{-- ✅ Kategori full width karena status dihapus --}}
                     <div class="col-md-12">
                         <label>Kategori</label>
                         <select name="kategori" class="form-select">
@@ -266,6 +265,35 @@
 </style>
 
 <script>
+// ✅ FILTER OTOMATIS
+let adminSearchTimer;
+
+document.getElementById('adminSearch').addEventListener('input', function () {
+    clearTimeout(adminSearchTimer);
+    adminSearchTimer = setTimeout(() => applyAdminFilter(), 400);
+});
+
+document.getElementById('adminStatus').addEventListener('change', function () {
+    applyAdminFilter();
+});
+
+function applyAdminFilter() {
+    const search = document.getElementById('adminSearch').value;
+    const status = document.getElementById('adminStatus').value;
+    const url    = new URL(window.location.href);
+    url.searchParams.set('search', search);
+    url.searchParams.set('status', status);
+    window.location.href = url.toString();
+}
+
+function resetAdminFilter() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('search');
+    url.searchParams.delete('status');
+    window.location.href = url.toString();
+}
+
+// ✅ KONFIRMASI HAPUS
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.form-delete').forEach(form => {
         form.addEventListener('submit', function(e) {
