@@ -416,3 +416,13 @@ Route::get('/penilaian',                     [PenilaianController::class, 'index
 Route::get('/penilaian/{proposalId}/form',   [PenilaianController::class, 'form'])->name('penilaian.form');
 Route::post('/penilaian/{proposalId}/store', [PenilaianController::class, 'store'])->name('penilaian.store');
 Route::get('/penilaian/{proposalId}/show',   [PenilaianController::class, 'show'])->name('penilaian.show');
+
+use App\Http\Controllers\PenilaianPembimbingController; // ← TAMBAHAN
+// =====================================================
+// PENILAIAN SEMINAR — DOSEN PEMBIMBING
+// =====================================================
+
+Route::get('/penilaian-pembimbing',                     [PenilaianPembimbingController::class, 'index'])->name('penilaian.pembimbing.index');
+Route::get('/penilaian-pembimbing/{proposalId}/form',   [PenilaianPembimbingController::class, 'form'])->name('penilaian.pembimbing.form');
+Route::post('/penilaian-pembimbing/{proposalId}/store', [PenilaianPembimbingController::class, 'store'])->name('penilaian.pembimbing.store');
+Route::get('/penilaian-pembimbing/{proposalId}/show',   [PenilaianPembimbingController::class, 'show'])->name('penilaian.pembimbing.show');
