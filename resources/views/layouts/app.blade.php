@@ -619,7 +619,7 @@
 
             {{-- ── Nilai ── --}}
             @if($isPembimbing || $isPenguji)
-            <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
+            <a href="{{ $isPenguji ? route('penilaian.index') : '#' }}" class="sidebar-link {{ request()->is('nilai*') || request()->is('penilaian*') ? 'active' : '' }}">
                 <i class="fa-solid fa-star"></i>
                 Nilai
             </a>

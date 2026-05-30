@@ -19,6 +19,7 @@ use App\Http\Controllers\AdminMahasiswaController;
 use App\Http\Controllers\JadwalAkademikController;
 use App\Http\Controllers\AdminProposalController;
 use App\Http\Controllers\AdminjudulController;
+use App\Http\Controllers\PenilaianController; // ← TAMBAHAN
 
 
 // ROOT
@@ -402,6 +403,16 @@ Route::get('/register-admin', function () {
     return view('auth.register-admin');
 });
 
-Route::post('/register-admin', [AuthController::class, 'register']); // ← INI YANG DITAMBAH
+Route::post('/register-admin', [AuthController::class, 'register']);
 
 Route::delete('/panduan-ta/{id}', [PanduanTAController::class, 'destroy'])->name('panduan.destroy');
+
+
+// =====================================================
+// PENILAIAN SEMINAR — DOSEN PENGUJI
+// =====================================================
+
+Route::get('/penilaian',                     [PenilaianController::class, 'index'])->name('penilaian.index');
+Route::get('/penilaian/{proposalId}/form',   [PenilaianController::class, 'form'])->name('penilaian.form');
+Route::post('/penilaian/{proposalId}/store', [PenilaianController::class, 'store'])->name('penilaian.store');
+Route::get('/penilaian/{proposalId}/show',   [PenilaianController::class, 'show'])->name('penilaian.show');

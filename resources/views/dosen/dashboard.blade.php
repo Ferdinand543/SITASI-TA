@@ -33,7 +33,7 @@
     $proposalUrl  = $isKoor ? route('proposal.index') : ($isReviewer ? route('reviewer.proposal') : ($isPenguji ? route('proposal.penguji') : '#'));
     $pengajuanUrl = $isKoor ? route('pengajuan') : '#';
     $bimbinganUrl = $isPembimbing ? route('dosen.bimbingan.index') : '#';
-    $penilaianUrl = '#'; // belum ada route
+    $penilaianUrl = ($isPenguji || $isPembimbing) ? route('penilaian.index') : '#';
 
     $adaPengajuanBaru = $isKoor
         ? \Illuminate\Support\Facades\DB::table('pengajuan_judul')->where('status', 'menunggu verifikasi')->exists()
