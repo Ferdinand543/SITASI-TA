@@ -57,7 +57,8 @@
             border:1px solid #f0f0f0;box-shadow:0 1px 6px rgba(0,0,0,0.05);
             margin-bottom:20px;">
 
-            <div style="font-size:0.75rem;font-weight:700;color:#92741A;
+            {{-- ✅ DIFIX: warna label header #574500 --}}
+            <div style="font-size:0.75rem;font-weight:700;color:#574500;
                         text-transform:uppercase;letter-spacing:1px;
                         margin-bottom:18px;
                         border-left:3px solid #FACC15;padding-left:10px;">
@@ -126,7 +127,8 @@
             border:1px solid #f0f0f0;box-shadow:0 1px 6px rgba(0,0,0,0.05);
             margin-bottom:20px;">
 
-            <div style="font-size:0.75rem;font-weight:700;color:#92741A;
+            {{-- ✅ DIFIX: warna label header #574500 --}}
+            <div style="font-size:0.75rem;font-weight:700;color:#574500;
                         text-transform:uppercase;letter-spacing:1px;
                         margin-bottom:20px;
                         border-left:3px solid #FACC15;padding-left:10px;">
@@ -156,22 +158,27 @@
                         </div>
                         <div style="font-size:0.75rem;color:#9ca3af;">{{ $k['desc'] }}</div>
                     </div>
-                    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-                        <span style="font-size:0.75rem;color:#9ca3af;white-space:nowrap;">
-                            Maks {{ $k['maks'] }} poin
-                        </span>
-                        <input type="number"
-                            name="{{ $k['key'] }}"
-                            id="inp-{{ $k['key'] }}"
-                            min="0" max="{{ $k['maks'] }}" step="1"
-                            value="{{ $penilaian ? (int)$penilaian->{$k['key']} : 0 }}"
-                            oninput="hitungAkumulasi()"
-                            style="width:68px;padding:8px 10px;
-                                border:1px solid #E5E7EB;border-radius:8px;
-                                font-size:0.95rem;font-weight:700;
-                                text-align:center;outline:none;
-                                color:#374151;background:#fff;
-                                font-family:'Hanken Grotesk',sans-serif;">
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span style="font-size:0.75rem;color:#9ca3af;white-space:nowrap;">
+                                Maks {{ $k['maks'] }} poin
+                            </span>
+                            <input type="number"
+                                name="{{ $k['key'] }}"
+                                id="inp-{{ $k['key'] }}"
+                                min="0" max="{{ $k['maks'] }}" step="1"
+                                value="{{ $penilaian ? (int)$penilaian->{$k['key']} : 0 }}"
+                                oninput="hitungAkumulasi()"
+                                style="width:68px;padding:8px 10px;
+                                    border:1px solid #E5E7EB;border-radius:8px;
+                                    font-size:0.95rem;font-weight:700;
+                                    text-align:center;outline:none;
+                                    color:#374151;background:#fff;
+                                    font-family:'Hanken Grotesk',sans-serif;">
+                        </div>
+                        <div id="err-{{ $k['key'] }}" style="display:none;font-size:0.72rem;color:#dc2626;font-weight:600;">
+                            Maksimal {{ $k['maks'] }} poin
+                        </div>
                     </div>
                 </div>
             </div>
@@ -270,7 +277,8 @@
         <div style="background:#fff;border-radius:16px;padding:28px;
                     border:1px solid #f0f0f0;box-shadow:0 1px 6px rgba(0,0,0,0.05);
                     margin-bottom:24px;">
-            <div style="font-size:0.75rem;font-weight:700;color:#92741A;
+            {{-- ✅ DIFIX: warna label header #574500 --}}
+            <div style="font-size:0.75rem;font-weight:700;color:#574500;
                         text-transform:uppercase;letter-spacing:1px;
                         margin-bottom:12px;
                         border-left:3px solid #FACC15;padding-left:10px;">
@@ -315,9 +323,23 @@ function hitungAkumulasi() {
     const maks = {nilai_teknik_presentasi:15,nilai_dokumentasi:20,nilai_pemahaman_teori:30,nilai_pemahaman_kebutuhan:35};
     let total = 0;
     keys.forEach(k => {
-        let val = parseInt(document.getElementById('inp-' + k).value) || 0;
-        val = Math.min(maks[k], Math.max(0, val));
-        document.getElementById('inp-' + k).value = val;
+        const inp = document.getElementById('inp-' + k);
+        const errEl = document.getElementById('err-' + k);
+        let val = parseInt(inp.value) || 0;
+        if (val > maks[k]) {
+            inp.style.border = '1.5px solid #dc2626';
+            errEl.style.display = 'block';
+            val = maks[k];
+            inp.value = val;
+        } else if (val < 0) {
+            val = 0;
+            inp.value = val;
+            inp.style.border = '1px solid #E5E7EB';
+            errEl.style.display = 'none';
+        } else {
+            inp.style.border = '1px solid #E5E7EB';
+            errEl.style.display = 'none';
+        }
         total += val;
     });
     const el = document.getElementById('akumulasiPreview');

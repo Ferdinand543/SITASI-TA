@@ -77,7 +77,7 @@
                 <div style="display:flex;align-items:center;gap:8px;
                             font-size:0.85rem;font-weight:700;color:#374151;
                             margin-bottom:18px;">
-                    <i class="fa fa-address-card" style="color:#FACC15;"></i>
+                    <i class="fa fa-address-card" style="color:#574500;"></i>
                     Informasi Mahasiswa
                 </div>
 
@@ -197,8 +197,8 @@
                 <div style="display:flex;align-items:center;gap:8px;
                             font-size:0.85rem;font-weight:700;color:#374151;
                             margin-bottom:16px;">
-                    <i class="fa fa-comment-quote" style="color:#FACC15;"></i>
-                    Catatan Dosen Penguji
+                    <i class="fa fa-rectangle-list" style="color:#574500;"></i>
+                    <span style="color:#574500;">Catatan Dosen Penguji</span>
                 </div>
                 <div style="
                     border-left:3px solid #FACC15;padding-left:16px;
