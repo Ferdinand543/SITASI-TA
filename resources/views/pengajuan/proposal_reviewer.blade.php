@@ -24,6 +24,10 @@
                 <i class="fa fa-user-check"></i>
                 Penetapan Dosen Pembimbing
             </a>
+            <a href="{{ url('/proposal?tab=reviewer') }}" class="btn-hero-white">
+                <i class="fa fa-user-shield"></i>
+                Penetapan Reviewer
+            </a>
             @endif
             @if($isReviewer)
             <a href="{{ route('reviewer.proposal') }}" class="btn-hero-yellow">
@@ -129,8 +133,6 @@
                     $tanggalReview  = $p->tanggal_tinjauan
                         ? \Carbon\Carbon::parse($p->tanggal_tinjauan)->format('d M Y')
                         : '-';
-                    $dsn1 = $p->nidn_dsn1 ? $p->nidn_dsn1 . ($p->nama_dsn1 ? ' - ' . $p->nama_dsn1 : '') : '-';
-                    $dsn2 = $p->nidn_dsn2 ? $p->nidn_dsn2 . ($p->nama_dsn2 ? ' - ' . $p->nama_dsn2 : '') : '-';
                 @endphp
                 <tr data-status="{{ $statusLabel }}"
                     data-search="{{ strtolower($p->nim_nid . ' ' . $p->nama . ' ' . $p->judul) }}"
@@ -164,14 +166,14 @@
                         @else
                             <button class="btn-aksi btn-review"
                                 onclick="bukaModalReview(
-                                    '{{ addslashes($p->nama) }}',
-                                    '{{ $p->nim_nid }}',
-                                    '{{ addslashes($p->judul) }}',
-                                    '{{ $p->id }}',
-                                    '{{ $p->file_proposal ?? '' }}',
-                                    '{{ addslashes($dsn1) }}',
-                                    '{{ addslashes($dsn2) }}'
-                                )">
+                                '{{ addslashes($p->nama) }}',
+                                '{{ $p->nim_nid }}',
+                                '{{ addslashes($p->judul) }}',
+                                '{{ $p->id }}',
+                                '{{ $p->file_proposal ?? '' }}',
+                                '-',
+                                '-'
+                            )">
                                 Review
                             </button>
                         @endif
@@ -265,16 +267,7 @@
                 </div>
             </div>
         </div>
-        <div class="mnew-row2 mb14">
-            <div class="mnew-field">
-                <label class="mnew-lbl">NIDN – Dosen Pembimbing 1</label>
-                <input type="text" id="reviewDsn1" readonly class="mnew-inp">
-            </div>
-            <div class="mnew-field">
-                <label class="mnew-lbl">NIDN – Dosen Pembimbing 2</label>
-                <input type="text" id="reviewDsn2" readonly class="mnew-inp">
-            </div>
-        </div>
+
         <form id="formReview" method="POST" action="" enctype="multipart/form-data">
             @csrf
             <div class="mnew-field mb14">
@@ -529,8 +522,8 @@
     cursor: pointer; transition: 0.2s;
     white-space: nowrap; text-decoration: none; text-align: center;
 }
-.btn-review { background: var(--gold); color: #fff; }
-.btn-review:hover { background: var(--brown-dark); }
+.btn-review { background: #DBEAFE; color: #1E40AF; }
+.btn-review:hover { background: #bfdbfe; color: #1E40AF; }
 .btn-detail { background: #fff; color: var(--brown-dark); border: 1px solid #D1C6AB; }
 .btn-detail:hover { background: #FEF3C7; border-color: var(--gold); color: var(--gold); }
 
@@ -680,8 +673,6 @@ function bukaModalReview(nama, nim, judul, proposalId, fileProposal, dsn1, dsn2)
     document.getElementById('reviewNim').value     = nim;
     document.getElementById('reviewNama').value    = nama;
     document.getElementById('reviewJudul').value   = judul;
-    document.getElementById('reviewDsn1').value    = dsn1 || '-';
-    document.getElementById('reviewDsn2').value    = dsn2 || '-';
     document.getElementById('reviewCatatan').value = '';
     document.getElementById('reviewFile').value    = '';
     document.getElementById('charCount').textContent = 'Maksimal 200 karakter';

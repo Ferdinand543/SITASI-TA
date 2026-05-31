@@ -29,13 +29,20 @@ class PenilaianController extends Controller
         $this->guardPenguji();
         $nimPenguji = session('user')->nim_nid;
 
+        // ✅ DIFIX: tampilkan mahasiswa yang sudah Lolos Administrasi seminar
+        // pakai COLLATE di join untuk hindari collation mismatch antar tabel
         $proposals = DB::table('proposal as p')
             ->join('users as u', 'u.nim_nid', '=', 'p.nim_nid')
+            ->join('pengajuan_seminars as psem',
+                DB::raw('psem.mahasiswa_id COLLATE utf8mb4_unicode_ci'),
+                '=',
+                DB::raw('p.nim_nid COLLATE utf8mb4_unicode_ci')
+            )
+            ->where('psem.status_administrasi', 'Lolos Administrasi')
             ->leftJoin('penilaian_seminar as ps', function ($join) use ($nimPenguji) {
                 $join->on('ps.proposal_id', '=', 'p.id')
                      ->where('ps.nim_nid_penguji', '=', $nimPenguji);
             })
-            ->where('p.status', 'selesai')
             ->select(
                 'p.id as proposal_id',
                 'p.nim_nid',
@@ -77,7 +84,7 @@ class PenilaianController extends Controller
             ->where('nim_nid', $nimPenguji)
             ->first();
 
-        // ✅ DIFIX: Baca urutan_penguji dari DB (yang nanti diisi koordinator)
+        // Baca urutan_penguji dari DB (yang nanti diisi koordinator)
         $urutan = DB::table('penilaian_seminar')
             ->where('proposal_id', $proposalId)
             ->where('nim_nid_penguji', $nimPenguji)
@@ -103,14 +110,10 @@ class PenilaianController extends Controller
                 $bisaEdit = now()->lte(\Carbon\Carbon::parse($jadwalSeminar->tanggal_selesai)->endOfDay());
             }
 
-            // Kalau deadline sudah lewat → blokir, redirect ke show
             if (!$bisaEdit) {
                 return redirect()->route('penilaian.show', $proposalId)
                     ->with('info', 'Batas waktu edit penilaian sudah berakhir.');
             }
-
-            // Kalau masih dalam deadline → boleh masuk form untuk edit
-            // (status di-reset ke draft sementara di view, bukan di DB)
         }
 
         return view('penilaianPenguji.form', compact(
@@ -141,7 +144,6 @@ class PenilaianController extends Controller
             ->where('nim_nid_penguji', $nimPenguji)
             ->first();
 
-        // Cek deadline edit (berlaku untuk semua kondisi, submitted maupun draft)
         $jadwalSeminar = DB::table('jadwal_akademik')
             ->where('kategori', 'Seminar')
             ->whereNotNull('tanggal_selesai')
@@ -226,7 +228,6 @@ class PenilaianController extends Controller
             ->where('nim_nid', $nimPenguji)
             ->first();
 
-        // Cek deadline edit dari jadwal_akademik
         $jadwalSeminar = DB::table('jadwal_akademik')
             ->where('kategori', 'Seminar')
             ->whereNotNull('tanggal_selesai')

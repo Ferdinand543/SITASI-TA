@@ -14,8 +14,13 @@ class PenilaianPembimbingController extends Controller
         }
 
         $nim = session('user')->nim_nid;
-        $isPembimbing = DB::table('dosen_pembimbing')
-            ->where('nim_nid_dosen', $nim)
+
+        // ✅ FIXED: cek dari dosen_roles (bukan dosen_pembimbing)
+        // dosen_pembimbing adalah tabel relasi mahasiswa-dosen,
+        // sedangkan dosen_roles adalah tabel yang menentukan role dosen
+        $isPembimbing = DB::table('dosen_roles')
+            ->where('nim_nid', $nim)
+            ->where('role_dosen', 'pembimbing')
             ->exists();
 
         if (!$isPembimbing) {
@@ -28,17 +33,26 @@ class PenilaianPembimbingController extends Controller
         $this->guardPembimbing();
         $nimPembimbing = session('user')->nim_nid;
 
+        // ✅ Filter mahasiswa yang:
+        // 1. Dibimbing oleh dosen ini → join dosen_pembimbing (dp.nim_nid_dosen = $nimPembimbing)
+        // 2. Sudah Lolos Administrasi → join pengajuan_seminars (status_administrasi = 'Lolos Administrasi')
+        // COLLATE dipakai untuk hindari collation mismatch antar kolom
         $proposals = DB::table('proposal as p')
             ->join('users as u', 'u.nim_nid', '=', 'p.nim_nid')
             ->join('dosen_pembimbing as dp', function ($join) use ($nimPembimbing) {
                 $join->on('dp.proposal_id', '=', 'p.id')
                      ->where('dp.nim_nid_dosen', '=', $nimPembimbing);
             })
+            ->join('pengajuan_seminars as psem',
+                DB::raw('psem.mahasiswa_id COLLATE utf8mb4_unicode_ci'),
+                '=',
+                DB::raw('p.nim_nid COLLATE utf8mb4_unicode_ci')
+            )
+            ->where('psem.status_administrasi', 'Lolos Administrasi')
             ->leftJoin('penilaian_seminar_pembimbing as psp', function ($join) use ($nimPembimbing) {
                 $join->on('psp.proposal_id', '=', 'p.id')
                      ->where('psp.nim_nid_pembimbing', '=', $nimPembimbing);
             })
-            ->where('p.status', 'selesai')
             ->select(
                 'p.id as proposal_id',
                 'p.nim_nid',
@@ -118,18 +132,15 @@ class PenilaianPembimbingController extends Controller
         $nimPembimbing = session('user')->nim_nid;
 
         $request->validate([
-            // Bagian A — total maks 100
             'nilai_kualitas_bimbingan'    => 'required|integer|min:1|max:10',
             'nilai_kemampuan_penelusuran' => 'required|integer|min:1|max:15',
             'nilai_penggunaan_teori'      => 'required|integer|min:1|max:15',
             'nilai_dokumentasi_produk'    => 'required|integer|min:1|max:25',
             'nilai_kesesuaian_target'     => 'required|integer|min:1|max:35',
-            // Bagian B — total maks 100
             'nilai_teknik_presentasi'     => 'required|integer|min:1|max:15',
             'nilai_dokumentasi_proposal'  => 'required|integer|min:1|max:20',
             'nilai_kemanfaatan_teori'     => 'required|integer|min:1|max:30',
             'nilai_pemahaman_kebutuhan'   => 'required|integer|min:1|max:35',
-            // Lainnya
             'kelayakan' => 'required|in:layak,tidak_layak',
             'catatan'   => 'nullable|string|max:1000',
             'aksi'      => 'required|in:draft,submitted',
@@ -159,22 +170,20 @@ class PenilaianPembimbingController extends Controller
                 ->with('error', 'Batas waktu edit penilaian sudah berakhir.');
         }
 
-        // Bagian A: maks 100
         $totalA =
-            $request->nilai_kualitas_bimbingan    +   // maks 10
-            $request->nilai_kemampuan_penelusuran  +   // maks 15
-            $request->nilai_penggunaan_teori       +   // maks 15
-            $request->nilai_dokumentasi_produk     +   // maks 25
-            $request->nilai_kesesuaian_target;         // maks 35
+            $request->nilai_kualitas_bimbingan    +
+            $request->nilai_kemampuan_penelusuran  +
+            $request->nilai_penggunaan_teori       +
+            $request->nilai_dokumentasi_produk     +
+            $request->nilai_kesesuaian_target;
 
-        // Bagian B: maks 100
         $totalB =
-            $request->nilai_teknik_presentasi    +     // maks 15
-            $request->nilai_dokumentasi_proposal +     // maks 20
-            $request->nilai_kemanfaatan_teori    +     // maks 30
-            $request->nilai_pemahaman_kebutuhan;       // maks 35
+            $request->nilai_teknik_presentasi    +
+            $request->nilai_dokumentasi_proposal +
+            $request->nilai_kemanfaatan_teori    +
+            $request->nilai_pemahaman_kebutuhan;
 
-        $nilaiAkhir = $totalA + $totalB; // maks 200
+        $nilaiAkhir = $totalA + $totalB;
 
         $urutan = DB::table('dosen_pembimbing')
             ->where('proposal_id', $proposalId)

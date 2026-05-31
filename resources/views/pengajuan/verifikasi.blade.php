@@ -77,8 +77,8 @@
 
         $juduls = [
             1 => ['judul' => $pengajuan->judul_1, 'topik' => $pengajuan->topik_1 ?? '-', 'mitra' => $pengajuan->mitra_1 ?? '-'],
-            2 => ['judul' => $pengajuan->judul_2, 'topik' => $pengajuan->topik_2 ?? '-', 'mitra' => $pengajuan->mitra_3 ?? '-'],
-            3 => ['judul' => $pengajuan->judul_3, 'topik' => $pengajuan->topik_3 ?? '-', 'mitra' => $pengajuan->mitra_2 ?? '-'],
+            2 => ['judul' => $pengajuan->judul_2, 'topik' => $pengajuan->topik_2 ?? '-', 'mitra' => $pengajuan->mitra_2 ?? '-'],
+            3 => ['judul' => $pengajuan->judul_3, 'topik' => $pengajuan->topik_3 ?? '-', 'mitra' => $pengajuan->mitra_3 ?? '-'],
         ];
         @endphp
 

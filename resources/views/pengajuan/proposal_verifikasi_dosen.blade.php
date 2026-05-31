@@ -3,9 +3,7 @@
 @section('content')
 
 <style>
-    body {
-        background: #f4f6f9;
-    }
+    body { background: #f4f6f9; }
 
     .wrapper {
         max-width: 900px;
@@ -55,17 +53,9 @@
         color: #111;
     }
 
-    .val.selesai {
-        color: #28a745;
-    }
-
-    .val.menunggu {
-        color: #b8860b;
-    }
-
-    .val.ditolak {
-        color: #dc3545;
-    }
+    .val.selesai   { color: #28a745; }
+    .val.menunggu  { color: #b8860b; }
+    .val.ditolak   { color: #dc3545; }
 
     .section-title {
         font-size: 1rem;
@@ -95,86 +85,32 @@
         position: relative;
     }
 
-    .dosen-card .dosen-label {
-        font-size: 0.8rem;
-        color: #888;
-        margin-bottom: 8px;
-    }
-
-    .dosen-card .dosen-nama {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #111;
-        margin-bottom: 2px;
-    }
-
-    .dosen-card .dosen-nidn {
-        font-size: 0.85rem;
-        color: #555;
-        margin-bottom: 8px;
-    }
-
-    .dosen-card .dosen-tanggal {
-        font-size: 0.8rem;
-        color: #888;
-    }
+    .dosen-card .dosen-label { font-size: 0.8rem; color: #888; margin-bottom: 8px; }
+    .dosen-card .dosen-nama  { font-size: 1rem; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .dosen-card .dosen-nidn  { font-size: 0.85rem; color: #555; margin-bottom: 8px; }
+    .dosen-card .dosen-tanggal { font-size: 0.8rem; color: #888; }
 
     .badge-disetujui {
-        background: #d4edda;
-        color: #28a745;
-        border: 1px solid #b7dfbb;
-        padding: 5px 14px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        display: inline-block;
+        background: #d4edda; color: #28a745; border: 1px solid #b7dfbb;
+        padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block;
     }
 
     .badge-menunggu {
-        background: #fff3cd;
-        color: #856404;
-        border: 1px solid #ffe082;
-        padding: 5px 14px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        display: inline-block;
-        text-decoration: none;
-        cursor: pointer;
+        background: #fff3cd; color: #856404; border: 1px solid #ffe082;
+        padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+        display: inline-block; text-decoration: none; cursor: pointer;
     }
 
-    .badge-menunggu:hover {
-        background: #ffe69c;
-        color: #856404;
-    }
+    .badge-menunggu:hover { background: #ffe69c; color: #856404; }
 
     .badge-ditolak {
-        background: #f8d7da;
-        color: #dc3545;
-        border: 1px solid #f1aeb5;
-        padding: 5px 14px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        display: inline-block;
+        background: #f8d7da; color: #dc3545; border: 1px solid #f1aeb5;
+        padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block;
     }
 
-    .proposal-box {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .proposal-box .file-name {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: #111;
-    }
-
-    .proposal-box .file-meta {
-        font-size: 0.78rem;
-        color: #888;
-    }
+    .proposal-box { display: flex; align-items: center; justify-content: space-between; }
+    .proposal-box .file-name { font-size: 0.9rem; font-weight: 600; color: #111; }
+    .proposal-box .file-meta { font-size: 0.78rem; color: #888; }
 
     .footer-btn {
         display: flex;
@@ -185,469 +121,212 @@
     }
 
     .btn-kembali {
-        background: #e0e0e0;
-        color: #333;
-        border: none;
-        padding: 10px 22px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        text-decoration: none;
-        transition: 0.2s;
+        background: #e0e0e0; color: #333; border: none;
+        padding: 10px 22px; border-radius: 20px; font-size: 0.9rem;
+        text-decoration: none; transition: 0.2s;
     }
 
-    .btn-kembali:hover {
-        background: #c8c8c8;
-        color: #111;
-    }
+    .btn-kembali:hover { background: #c8c8c8; color: #111; }
 
     .btn-ubah {
-        position: absolute;
-        top: 14px;
-        right: 14px;
-        background: #e8e8e8;
-        border: none;
-        color: #555;
-        font-size: 0.75rem;
-        font-weight: 600;
-        padding: 4px 12px;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: 0.2s;
+        position: absolute; top: 14px; right: 14px;
+        background: #e8e8e8; border: none; color: #555;
+        font-size: 0.75rem; font-weight: 600; padding: 4px 12px;
+        border-radius: 20px; cursor: pointer; transition: 0.2s;
     }
 
-    .btn-ubah:hover {
-        background: #d4d4d4;
-        color: #333;
-    }
+    .btn-ubah:hover { background: #d4d4d4; color: #333; }
 
     .icon-user {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        border: 2px solid #ccc;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 8px;
-        color: #888;
-        font-size: 16px;
-        vertical-align: middle;
-        flex-shrink: 0;
-    }
-
-    #btnLanjutkan.hidden {
-        display: none !important;
+        width: 32px; height: 32px; border-radius: 50%; border: 2px solid #ccc;
+        display: inline-flex; align-items: center; justify-content: center;
+        margin-right: 8px; color: #888; font-size: 16px; vertical-align: middle; flex-shrink: 0;
     }
 
     /* ── MODAL OVERLAY ── */
     .modal-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        z-index: 9999;
-        align-items: center;
-        justify-content: center;
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.45); z-index: 9999;
+        align-items: center; justify-content: center;
     }
 
-    /* ── MODAL BOX — new design ── */
     .modal-box-new {
-        background: #fff;
-        border-radius: 20px;
-        padding: 32px 32px 28px;
-        width: 100%;
-        max-width: 500px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
-        margin: 0 16px;
-        position: relative;
+        background: #fff; border-radius: 20px; padding: 32px 32px 28px;
+        width: 100%; max-width: 500px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.18); margin: 0 16px; position: relative;
     }
 
     .modal-close-btn {
-        position: absolute;
-        top: 18px;
-        right: 18px;
-        background: none;
-        border: none;
-        font-size: 1.1rem;
-        color: #aaa;
-        cursor: pointer;
-        line-height: 1;
-        transition: 0.15s;
+        position: absolute; top: 18px; right: 18px;
+        background: none; border: none; font-size: 1.1rem;
+        color: #aaa; cursor: pointer; line-height: 1; transition: 0.15s;
     }
 
-    .modal-close-btn:hover {
-        color: #333;
-    }
+    .modal-close-btn:hover { color: #333; }
 
-    .modal-title-new {
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: #111;
-        margin-bottom: 6px;
-    }
+    .modal-title-new { font-size: 1.25rem; font-weight: 800; color: #111; margin-bottom: 6px; }
+    .modal-sub-new   { font-size: 0.83rem; color: #888; margin-bottom: 24px; line-height: 1.5; }
 
-    .modal-sub-new {
-        font-size: 0.83rem;
-        color: #888;
-        margin-bottom: 24px;
-        line-height: 1.5;
-    }
-
-    /* 2-col row */
-    .modal-row2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-        margin-bottom: 16px;
-    }
-
-    .modal-field {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .modal-lbl {
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: #444;
-        margin-bottom: 5px;
-    }
+    .modal-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+    .modal-field { display: flex; flex-direction: column; }
+    .modal-lbl { font-size: 0.82rem; font-weight: 600; color: #444; margin-bottom: 5px; }
 
     .modal-inp {
-        padding: 10px 13px;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 10px;
-        font-size: 0.88rem;
-        color: #111;
-        background: #f9fafb;
-        font-family: inherit;
-        box-sizing: border-box;
-        width: 100%;
+        padding: 10px 13px; border: 1.5px solid #e5e7eb; border-radius: 10px;
+        font-size: 0.88rem; color: #111; background: #f9fafb;
+        font-family: inherit; box-sizing: border-box; width: 100%;
     }
 
-    .modal-inp[readonly] {
-        cursor: default;
-        color: #555;
-    }
+    .modal-inp[readonly] { cursor: default; color: #555; }
+    .modal-inp:focus { outline: none; border-color: #FACC15; background: #fff; }
 
-    .modal-inp:focus {
-        outline: none;
-        border-color: #FACC15;
-        background: #fff;
-    }
-
-    /* Usulan dosen row with buttons */
-    .usulan-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 4px;
-    }
-
-    .usulan-inp-wrap {
-        flex: 1;
-        position: relative;
-    }
+    .usulan-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .usulan-inp-wrap { flex: 1; position: relative; }
 
     .usulan-inp-icon {
-        position: absolute;
-        left: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #aaa;
-        font-size: 0.9rem;
+        position: absolute; left: 12px; top: 50%;
+        transform: translateY(-50%); color: #aaa; font-size: 0.9rem;
     }
 
     .usulan-inp {
-        width: 100%;
-        padding: 10px 13px 10px 34px;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 10px;
-        font-size: 0.88rem;
-        color: #111;
-        background: #f9fafb;
-        box-sizing: border-box;
+        width: 100%; padding: 10px 13px 10px 34px;
+        border: 1.5px solid #e5e7eb; border-radius: 10px;
+        font-size: 0.88rem; color: #111; background: #f9fafb; box-sizing: border-box;
     }
 
-    .usulan-inp.error {
-        border-color: #dc3545;
-    }
+    .usulan-inp.error { border-color: #dc3545; }
 
     .btn-acc {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: none;
-        background: #d4edda;
-        color: #28a745;
-        font-size: 1.1rem;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        transition: 0.2s;
+        width: 40px; height: 40px; border-radius: 50%; border: none;
+        background: #d4edda; color: #28a745; font-size: 1.1rem; font-weight: 700;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; transition: 0.2s;
     }
 
-    .btn-acc:hover {
-        background: #b7dfbb;
-    }
+    .btn-acc:hover { background: #b7dfbb; }
 
     .btn-tolak-x {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: none;
-        background: #f8d7da;
-        color: #dc3545;
-        font-size: 1.1rem;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        transition: 0.2s;
+        width: 40px; height: 40px; border-radius: 50%; border: none;
+        background: #f8d7da; color: #dc3545; font-size: 1.1rem; font-weight: 700;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; transition: 0.2s;
     }
 
-    .btn-tolak-x:hover {
-        background: #f1aeb5;
-    }
+    .btn-tolak-x:hover { background: #f1aeb5; }
 
-    .error-msg {
-        font-size: 0.78rem;
-        color: #dc3545;
-        margin-top: 4px;
-        display: none;
-    }
+    .error-msg { font-size: 0.78rem; color: #dc3545; margin-top: 4px; display: none; }
+    .error-msg.show { display: block; }
 
-    .error-msg.show {
-        display: block;
-    }
-
-    /* Catatan verifikasi box */
     .catatan-box {
-        background: #fffbe6;
-        border: 1px solid #ffe082;
-        border-radius: 12px;
-        padding: 14px 16px;
-        margin-bottom: 24px;
-        display: flex;
-        gap: 10px;
-        align-items: flex-start;
+        background: #fffbe6; border: 1px solid #ffe082; border-radius: 12px;
+        padding: 14px 16px; margin-bottom: 24px; display: flex; gap: 10px; align-items: flex-start;
     }
 
-    .catatan-box-icon {
-        color: #f59e0b;
-        font-size: 1rem;
-        flex-shrink: 0;
-        margin-top: 1px;
-    }
+    .catatan-box-icon  { color: #f59e0b; font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .catatan-box-title { font-size: 0.82rem; font-weight: 700; color: #856404; margin-bottom: 3px; }
+    .catatan-box-text  { font-size: 0.8rem; color: #856404; line-height: 1.5; }
 
-    .catatan-box-title {
-        font-size: 0.82rem;
-        font-weight: 700;
-        color: #856404;
-        margin-bottom: 3px;
-    }
-
-    .catatan-box-text {
-        font-size: 0.8rem;
-        color: #856404;
-        line-height: 1.5;
-    }
-
-    /* Modal footer */
-    .modal-footer-new {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 4px;
-    }
+    .modal-footer-new { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
 
     .btn-modal-kembali {
-        padding: 10px 26px;
-        border-radius: 10px;
-        border: 1.5px solid #e5e7eb;
-        background: #fff;
-        color: #555;
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.2s;
+        padding: 10px 26px; border-radius: 10px; border: 1.5px solid #e5e7eb;
+        background: #fff; color: #555; font-size: 0.9rem; font-weight: 600;
+        cursor: pointer; transition: 0.2s;
     }
 
-    .btn-modal-kembali:hover {
-        background: #f5f5f5;
-    }
+    .btn-modal-kembali:hover { background: #f5f5f5; }
 
     .btn-modal-kirim {
-        padding: 10px 26px;
-        border-radius: 10px;
-        border: none;
-        background: #FACC15;
-        color: #333;
-        font-size: 0.9rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: 0.2s;
+        padding: 10px 26px; border-radius: 10px; border: none;
+        background: #FACC15; color: #333; font-size: 0.9rem; font-weight: 700;
+        cursor: pointer; transition: 0.2s;
     }
 
-    .btn-modal-kirim:hover {
-        background: #e6b800;
-    }
+    .btn-modal-kirim:hover { background: #e6b800; }
 
-    /* Dropdown pengganti (saat tolak) */
-    .section-tolak-new {
-        display: none;
-    }
+    .section-tolak-new { display: none; }
 
     .modal-select {
-        width: 100%;
-        padding: 10px 13px;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 10px;
-        font-size: 0.88rem;
-        background: #fff;
-        box-sizing: border-box;
-        margin-top: 0;
+        width: 100%; padding: 10px 13px; border: 1.5px solid #e5e7eb;
+        border-radius: 10px; font-size: 0.88rem; background: #fff;
+        box-sizing: border-box; margin-top: 0;
     }
 
-    .modal-select:focus {
-        outline: none;
-        border-color: #FACC15;
-    }
+    .modal-select:focus { outline: none; border-color: #FACC15; }
 
-    /* ── MODAL UBAH ── */
     .modal-box-ubah {
-        background: #fff;
-        border-radius: 20px;
-        padding: 32px 32px 28px;
-        width: 100%;
-        max-width: 460px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
-        margin: 0 16px;
-        position: relative;
+        background: #fff; border-radius: 20px; padding: 32px 32px 28px;
+        width: 100%; max-width: 460px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.18); margin: 0 16px; position: relative;
     }
 
     /* ── POPUP ── */
     .popup-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        z-index: 99999;
-        align-items: center;
-        justify-content: center;
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.45); z-index: 99999;
+        align-items: center; justify-content: center;
     }
 
-    .popup-overlay.active {
-        display: flex;
-    }
+    .popup-overlay.active { display: flex; }
 
     .popup-box {
-        background: #fff;
-        border-radius: 20px;
-        padding: 40px 32px 32px;
-        width: 100%;
-        max-width: 400px;
-        margin: 0 16px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-        text-align: center;
+        background: #fff; border-radius: 20px; padding: 40px 32px 32px;
+        width: 100%; max-width: 400px; margin: 0 16px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.2); text-align: center;
     }
 
     .popup-icon-wrap {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
-        font-size: 2.2rem;
+        width: 80px; height: 80px; border-radius: 50%;
+        display: inline-flex; align-items: center; justify-content: center;
+        margin-bottom: 20px; font-size: 2.2rem;
     }
 
-    .popup-icon-wrap.success {
-        background: #e8f5e9;
-        border: 3px solid #66bb6a;
-        color: #28a745;
-    }
+    .popup-icon-wrap.success { background: #e8f5e9; border: 3px solid #66bb6a; color: #28a745; }
+    .popup-icon-wrap.error   { background: #fdecea; border: 3px solid #ef9a9a; color: #dc3545; }
+    .popup-icon-wrap.confirm { background: #fff8e1; border: 3px solid #fdd835; color: #f9a825; }
+    .popup-icon-wrap.warning { background: #fdecea; border: 3px solid #ef9a9a; color: #dc3545; }
 
-    .popup-icon-wrap.error {
-        background: #fdecea;
-        border: 3px solid #ef9a9a;
-        color: #dc3545;
-    }
-
-    .popup-icon-wrap.confirm {
-        background: #fff8e1;
-        border: 3px solid #fdd835;
-        color: #f9a825;
-    }
-
-    .popup-icon-wrap.warning {
-        background: #fdecea;
-        border: 3px solid #ef9a9a;
-        color: #dc3545;
-    }
-
-    .popup-title {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: #222;
-        margin-bottom: 10px;
-    }
-
-    .popup-msg {
-        font-size: 0.92rem;
-        color: #555;
-        margin-bottom: 28px;
-        line-height: 1.5;
-    }
-
-    .popup-btn-row {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-    }
+    .popup-title { font-size: 1.5rem; font-weight: 800; color: #222; margin-bottom: 10px; }
+    .popup-msg   { font-size: 0.92rem; color: #555; margin-bottom: 28px; line-height: 1.5; }
+    .popup-btn-row { display: flex; gap: 12px; justify-content: center; }
 
     .popup-btn {
-        padding: 11px 32px;
-        border-radius: 10px;
-        font-size: 0.95rem;
-        font-weight: 700;
-        cursor: pointer;
-        border: none;
-        transition: 0.2s;
+        padding: 11px 32px; border-radius: 10px; font-size: 0.95rem;
+        font-weight: 700; cursor: pointer; border: none; transition: 0.2s;
     }
 
     .popup-btn.ok,
-    .popup-btn.kirim {
-        background: #FACC15;
-        color: #333;
-        min-width: 120px;
-    }
-
+    .popup-btn.kirim { background: #FACC15; color: #333; min-width: 120px; }
     .popup-btn.ok:hover,
-    .popup-btn.kirim:hover {
-        background: #e6b800;
+    .popup-btn.kirim:hover { background: #e6b800; }
+    .popup-btn.batal { background: #e0e0e0; color: #333; min-width: 100px; }
+    .popup-btn.batal:hover { background: #c8c8c8; }
+
+    /* ── BOX STATUS REVIEWER ── */
+    .status-reviewer-box {
+        display: flex; align-items: center; gap: 14px;
+        background: #fff; border: 1px solid #e5e5e5; border-radius: 14px;
+        padding: 18px 20px; margin-bottom: 24px;
     }
 
-    .popup-btn.batal {
-        background: #e0e0e0;
-        color: #333;
-        min-width: 100px;
+    .status-reviewer-icon {
+        width: 44px; height: 44px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; flex-shrink: 0;
     }
 
-    .popup-btn.batal:hover {
-        background: #c8c8c8;
+    .status-reviewer-icon.menunggu { background: #fff3cd; color: #856404; }
+    .status-reviewer-icon.selesai  { background: #d4edda; color: #28a745; }
+
+    .reviewer-assign-box {
+        background: #fff; border: 1px solid #e5e5e5;
+        border-radius: 14px; padding: 20px; margin-bottom: 24px;
     }
 </style>
 
 <div class="wrapper">
 
-    <div class="page-title">Verifikasi dan Tetapkan Dosen Pembimbing Mahasiswa</div>
+    <div class="page-title">Verifikasi Proposal Mahasiswa</div>
     <div class="page-sub">Kelola verifikasi dan penetapan dosen pembimbing tugas akhir mahasiswa.</div>
 
     @if(session('success'))
@@ -662,7 +341,9 @@
     </div>
     @endif
 
-    {{-- INFO GRID --}}
+    {{-- ═══════════════════════════════════════
+         INFO GRID (selalu tampil)
+    ════════════════════════════════════════ --}}
     <div class="info-grid">
         <div class="info-box">
             <div class="lbl"><i class="fa fa-calendar"></i> Tanggal Pengajuan</div>
@@ -703,148 +384,309 @@
         </div>
     </div>
 
-    {{-- USULAN PEMBIMBING --}}
-    <div class="section-title">Usulan Pembimbing</div>
-    <div class="section-sub">Daftar dosen yang diusulkan mahasiswa</div>
-
-    <div class="dosen-grid">
-        {{-- Usulan 1 --}}
-        <div class="dosen-card">
-            <div class="dosen-label">Usulan Pembimbing 1</div>
-            @if($proposal->usulan_dosen1_nama)
-            <div style="display:flex;align-items:center;margin-bottom:4px;">
-                <span class="icon-user"><i class="fa fa-user"></i></span>
-                <div>
-                    <div class="dosen-nama">{{ $proposal->usulan_dosen1_nama }}</div>
-                    <div class="dosen-nidn">NIDN. {{ $proposal->usulan_dosen1_nidn }}</div>
-                </div>
-            </div>
-            <div class="dosen-tanggal mb-2">
-                Diusulkan pada<br>
-                {{ $proposal->usulan_dosen1_tanggal ? \Carbon\Carbon::parse($proposal->usulan_dosen1_tanggal)->translatedFormat('d M Y') : '-' }}
-            </div>
-            @php $s1 = strtolower($proposal->usulan_dosen1_status ?? 'menunggu'); @endphp
-            @if($s1 == 'disetujui')
-            <span class="badge-disetujui">Disetujui</span>
-            @elseif($s1 == 'ditolak')
-            <span class="badge-ditolak">Ditolak</span>
-            @else
-            <button type="button" class="badge-menunggu"
-                onclick="bukaModal(1,'{{ addslashes($proposal->usulan_dosen1_nama) }}','{{ $proposal->usulan_dosen1_nidn }}','{{ $proposal->nim_nid }}','{{ addslashes($proposal->nama) }}')">
-                Menunggu Verifikasi
-            </button>
-            @endif
-            @else
-            <span class="text-muted">-</span>
-            @endif
-        </div>
-
-        {{-- Usulan 2 --}}
-        <div class="dosen-card">
-            <div class="dosen-label">Usulan Pembimbing 2</div>
-            @if($proposal->usulan_dosen2_nama)
-            <div style="display:flex;align-items:center;margin-bottom:4px;">
-                <span class="icon-user"><i class="fa fa-user"></i></span>
-                <div>
-                    <div class="dosen-nama">{{ $proposal->usulan_dosen2_nama }}</div>
-                    <div class="dosen-nidn">NIDN. {{ $proposal->usulan_dosen2_nidn }}</div>
-                </div>
-            </div>
-            <div class="dosen-tanggal mb-2">
-                Diusulkan pada<br>
-                {{ $proposal->usulan_dosen2_tanggal ? \Carbon\Carbon::parse($proposal->usulan_dosen2_tanggal)->translatedFormat('d M Y') : '-' }}
-            </div>
-            @php $s2 = strtolower($proposal->usulan_dosen2_status ?? 'menunggu'); @endphp
-            @if($s2 == 'disetujui')
-            <span class="badge-disetujui">Disetujui</span>
-            @elseif($s2 == 'ditolak')
-            <span class="badge-ditolak">Ditolak</span>
-            @else
-            <button type="button" class="badge-menunggu"
-                onclick="bukaModal(2,'{{ addslashes($proposal->usulan_dosen2_nama) }}','{{ $proposal->usulan_dosen2_nidn }}','{{ $proposal->nim_nid }}','{{ addslashes($proposal->nama) }}')">
-                Menunggu Verifikasi
-            </button>
-            @endif
-            @else
-            <span class="text-muted">-</span>
-            @endif
-        </div>
-    </div>
-
-    {{-- DOSEN PEMBIMBING --}}
-    <div class="section-title">Dosen Pembimbing</div>
-    <div class="section-sub">Dosen Pembimbing yang telah ditetapkan untuk Tugas Akhir ini</div>
-
-    <div class="dosen-grid">
-        {{-- Pembimbing 1 --}}
-        <div class="dosen-card">
-            <div class="dosen-label">Pembimbing 1</div>
-            @if($proposal->dosen1_nama)
-            <button type="button" class="btn-ubah" data-urutan="1" data-nama="{{ addslashes($proposal->dosen1_nama) }}" data-nidn="{{ $proposal->dosen1_nidn }}" data-nidn-lain="{{ $proposal->dosen2_nidn }}" onclick="bukaModalUbah(this)">✏ Ubah Pembimbing</button>
-            <div style="display:flex;align-items:center;margin-bottom:4px;">
-                <span class="icon-user"><i class="fa fa-user"></i></span>
-                <div>
-                    <div class="dosen-nama">{{ $proposal->dosen1_nama }}</div>
-                    <div class="dosen-nidn">NIDN. {{ $proposal->dosen1_nidn }}</div>
-                </div>
-            </div>
-            <div class="dosen-tanggal">Ditetapkan pada<br>{{ $proposal->dosen1_tanggal ? \Carbon\Carbon::parse($proposal->dosen1_tanggal)->translatedFormat('d M Y') : '-' }}</div>
-            @else
-            <div style="display:flex;align-items:center;margin-bottom:8px;">
-                <span class="icon-user"><i class="fa fa-user"></i></span>
-                <span class="text-muted" style="font-size:0.9rem;">[Menunggu verifikasi]</span>
-            </div>
-            <div class="dosen-tanggal">Ditetapkan pada<br>-</div>
-            @endif
-        </div>
-
-        {{-- Pembimbing 2 --}}
-        <div class="dosen-card">
-            <div class="dosen-label">Pembimbing 2</div>
-            @if($proposal->dosen2_nama)
-            <button type="button" class="btn-ubah" data-urutan="2" data-nama="{{ addslashes($proposal->dosen2_nama) }}" data-nidn="{{ $proposal->dosen2_nidn }}" data-nidn-lain="{{ $proposal->dosen1_nidn }}" onclick="bukaModalUbah(this)">✏ Ubah Pembimbing</button>
-            <div style="display:flex;align-items:center;margin-bottom:4px;">
-                <span class="icon-user"><i class="fa fa-user"></i></span>
-                <div>
-                    <div class="dosen-nama">{{ $proposal->dosen2_nama }}</div>
-                    <div class="dosen-nidn">NIDN. {{ $proposal->dosen2_nidn }}</div>
-                </div>
-            </div>
-            <div class="dosen-tanggal">Ditetapkan pada<br>{{ $proposal->dosen2_tanggal ? \Carbon\Carbon::parse($proposal->dosen2_tanggal)->translatedFormat('d M Y') : '-' }}</div>
-            @else
-            <div style="display:flex;align-items:center;margin-bottom:8px;">
-                <span class="icon-user"><i class="fa fa-user"></i></span>
-                <span class="text-muted" style="font-size:0.9rem;">[Menunggu verifikasi]</span>
-            </div>
-            <div class="dosen-tanggal">Ditetapkan pada<br>-</div>
-            @endif
-        </div>
-    </div>
-
-    {{-- FOOTER --}}
+    {{-- ═══════════════════════════════════════
+         KONDISI BERDASARKAN STATUS
+    ════════════════════════════════════════ --}}
     @php
-    $stProposal = strtolower(trim($proposal->status));
-    $isSelesai = $stProposal === 'selesai' || $stProposal === 'menunggu_review';
+        $stProposal = strtolower(trim($proposal->status));
+        $sudahPunyaReviewer = !empty($proposal->nim_nid_reviewer);
     @endphp
 
+    {{-- ─────────────────────────────────────
+         STATUS: belum ada reviewer
+         → tampilkan form ASSIGN REVIEWER
+    ────────────────────────────────────── --}}
+    @if(!$sudahPunyaReviewer && $stProposal !== 'selesai')
+
+        <div class="section-title">Penugasan Reviewer</div>
+        <div class="section-sub">Pilih dosen reviewer untuk mengevaluasi proposal ini sebelum ditetapkan pembimbingnya.</div>
+
+        @php
+            $reviewerList = \DB::table('users')
+                ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
+                ->where('dosen_roles.role_dosen', 'reviewer')
+                ->select('users.nim_nid', 'users.nama')
+                ->distinct()->get();
+        @endphp
+
+        <div class="reviewer-assign-box">
+            <form action="{{ url('/proposal/'.$proposal->id.'/assign-reviewer') }}" method="POST">
+                @csrf
+                <div style="display:flex;gap:10px;align-items:flex-end;">
+                    <div style="flex:1;">
+                        <label style="font-size:0.82rem;font-weight:600;color:#444;margin-bottom:6px;display:block;">
+                            <i class="fa fa-user-check me-1" style="color:#FACC15;"></i> Pilih Dosen Reviewer
+                        </label>
+                        <select name="nim_nid_reviewer"
+                            style="width:100%;padding:11px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.88rem;background:#fff;">
+                            <option value="">-- Pilih Dosen Reviewer --</option>
+                            @foreach($reviewerList as $r)
+                                <option value="{{ $r->nim_nid }}">{{ $r->nim_nid }} - {{ $r->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="submit"
+                        style="padding:11px 22px;background:#FACC15;color:#333;border:none;border-radius:10px;font-weight:700;cursor:pointer;white-space:nowrap;font-size:0.9rem;">
+                        <i class="fa fa-paper-plane me-1"></i> Tetapkan & Teruskan
+                    </button>
+                </div>
+                <div style="margin-top:12px;font-size:0.8rem;color:#888;">
+                    <i class="fa fa-circle-info me-1" style="color:#FACC15;"></i>
+                    Setelah reviewer ditetapkan, proposal akan masuk ke antrian review dosen yang dipilih.
+                </div>
+            </form>
+        </div>
+
+    {{-- ─────────────────────────────────────
+         STATUS: menunggu_review
+         → reviewer sudah dipilih, belum selesai direview
+    ────────────────────────────────────── --}}
+    @elseif($stProposal === 'menunggu_review')
+
+        @php
+            $reviewerData = \DB::table('users')->where('nim_nid', $proposal->nim_nid_reviewer)->first();
+        @endphp
+
+        <div class="section-title">Status Review</div>
+        <div class="section-sub">Proposal sudah diteruskan ke reviewer. Menunggu hasil review.</div>
+
+        <div class="status-reviewer-box">
+            <div class="status-reviewer-icon menunggu">
+                <i class="fa fa-hourglass-half"></i>
+            </div>
+            <div style="flex:1;">
+                <div style="font-weight:700;color:#111;margin-bottom:2px;">Menunggu Review</div>
+                <div style="font-size:0.85rem;color:#666;">
+                    Reviewer: <strong>{{ $reviewerData->nama ?? $proposal->nim_nid_reviewer }}</strong>
+                    @if($reviewerData)
+                        <span style="color:#aaa;margin-left:4px;">({{ $proposal->nim_nid_reviewer }})</span>
+                    @endif
+                </div>
+                <div style="font-size:0.78rem;color:#aaa;margin-top:4px;">
+                    Proposal sedang dalam antrian review dosen yang ditunjuk.
+                </div>
+            </div>
+            {{-- Tombol ganti reviewer jika mau diganti --}}
+            <div>
+                @php
+                    $reviewerList2 = \DB::table('users')
+                        ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
+                        ->where('dosen_roles.role_dosen', 'reviewer')
+                        ->select('users.nim_nid', 'users.nama')
+                        ->distinct()->get();
+                @endphp
+                <button type="button"
+                    onclick="document.getElementById('formGantiReviewer').style.display = document.getElementById('formGantiReviewer').style.display === 'none' ? 'block' : 'none'"
+                    style="background:#e8e8e8;border:none;color:#555;font-size:0.78rem;font-weight:600;padding:6px 14px;border-radius:20px;cursor:pointer;">
+                    ✏ Ganti Reviewer
+                </button>
+            </div>
+        </div>
+
+        <div id="formGantiReviewer" style="display:none;background:#fff;border:1px solid #e5e5e5;border-radius:14px;padding:18px 20px;margin-bottom:24px;">
+            <form action="{{ url('/proposal/'.$proposal->id.'/assign-reviewer') }}" method="POST">
+                @csrf
+                <label style="font-size:0.82rem;font-weight:600;color:#444;margin-bottom:6px;display:block;">Ganti Reviewer</label>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <select name="nim_nid_reviewer"
+                        style="flex:1;padding:10px 13px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.88rem;background:#fff;">
+                        <option value="">-- Pilih Dosen Reviewer --</option>
+                        @foreach($reviewerList2 as $r)
+                            <option value="{{ $r->nim_nid }}" {{ $proposal->nim_nid_reviewer == $r->nim_nid ? 'selected' : '' }}>
+                                {{ $r->nim_nid }} - {{ $r->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="submit"
+                        style="padding:10px 18px;background:#FACC15;color:#333;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.88rem;">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    {{-- ─────────────────────────────────────
+         STATUS: selesai
+         → reviewer udah review, koor tetapkan dosbing
+    ────────────────────────────────────── --}}
+    @elseif($stProposal === 'selesai')
+
+        {{-- Info reviewer yang sudah mereview --}}
+        @php
+            $reviewerData = \DB::table('users')->where('nim_nid', $proposal->nim_nid_reviewer)->first();
+            $hasilReview  = \DB::table('tinjauan_proposal')->where('proposal_id', $proposal->id)->first();
+        @endphp
+
+        <div class="section-title">Hasil Review</div>
+        <div class="section-sub">Proposal sudah selesai direview. Silakan tetapkan dosen pembimbing.</div>
+
+        <div class="status-reviewer-box" style="margin-bottom:24px;">
+            <div class="status-reviewer-icon selesai">
+                <i class="fa fa-circle-check"></i>
+            </div>
+            <div style="flex:1;">
+                <div style="font-weight:700;color:#111;margin-bottom:2px;">Review Selesai</div>
+                <div style="font-size:0.85rem;color:#555;">
+                    Reviewer: <strong>{{ $reviewerData->nama ?? $proposal->nim_nid_reviewer }}</strong>
+                </div>
+                @if($hasilReview && $hasilReview->catatan)
+                <div style="margin-top:8px;background:#f9f9f9;border:1px solid #e5e5e5;border-radius:8px;padding:10px 14px;font-size:0.85rem;color:#444;font-style:italic;">
+                    "{{ $hasilReview->catatan }}"
+                </div>
+                @endif
+                @if($hasilReview && $hasilReview->file_tinjauan)
+                <div style="margin-top:8px;">
+                    <a href="{{ asset('storage/'.$hasilReview->file_tinjauan) }}" target="_blank"
+                        style="font-size:0.8rem;color:#735C00;font-weight:600;text-decoration:none;">
+                        <i class="fa fa-file-pdf text-danger me-1"></i> Lihat File Tinjauan
+                    </a>
+                </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- USULAN PEMBIMBING --}}
+        <div class="section-title">Usulan Pembimbing</div>
+        <div class="section-sub">Daftar dosen yang diusulkan mahasiswa — verifikasi satu per satu.</div>
+
+        <div class="dosen-grid">
+            {{-- Usulan 1 --}}
+            <div class="dosen-card">
+                <div class="dosen-label">Usulan Pembimbing 1</div>
+                @if($proposal->usulan_dosen1_nama)
+                <div style="display:flex;align-items:center;margin-bottom:4px;">
+                    <span class="icon-user"><i class="fa fa-user"></i></span>
+                    <div>
+                        <div class="dosen-nama">{{ $proposal->usulan_dosen1_nama }}</div>
+                        <div class="dosen-nidn">NIDN. {{ $proposal->usulan_dosen1_nidn }}</div>
+                    </div>
+                </div>
+                <div class="dosen-tanggal mb-2">
+                    Diusulkan pada<br>
+                    {{ $proposal->usulan_dosen1_tanggal ? \Carbon\Carbon::parse($proposal->usulan_dosen1_tanggal)->translatedFormat('d M Y') : '-' }}
+                </div>
+                @php $s1 = strtolower($proposal->usulan_dosen1_status ?? 'menunggu'); @endphp
+                @if($s1 == 'disetujui')
+                    <span class="badge-disetujui">Disetujui</span>
+                @elseif($s1 == 'ditolak')
+                    <span class="badge-ditolak">Ditolak</span>
+                @else
+                    <button type="button" class="badge-menunggu"
+                        onclick="bukaModal(1,'{{ addslashes($proposal->usulan_dosen1_nama) }}','{{ $proposal->usulan_dosen1_nidn }}','{{ $proposal->nim_nid }}','{{ addslashes($proposal->nama) }}')">
+                        Menunggu Verifikasi
+                    </button>
+                @endif
+                @else
+                    <span class="text-muted">-</span>
+                @endif
+            </div>
+
+            {{-- Usulan 2 --}}
+            <div class="dosen-card">
+                <div class="dosen-label">Usulan Pembimbing 2</div>
+                @if($proposal->usulan_dosen2_nama)
+                <div style="display:flex;align-items:center;margin-bottom:4px;">
+                    <span class="icon-user"><i class="fa fa-user"></i></span>
+                    <div>
+                        <div class="dosen-nama">{{ $proposal->usulan_dosen2_nama }}</div>
+                        <div class="dosen-nidn">NIDN. {{ $proposal->usulan_dosen2_nidn }}</div>
+                    </div>
+                </div>
+                <div class="dosen-tanggal mb-2">
+                    Diusulkan pada<br>
+                    {{ $proposal->usulan_dosen2_tanggal ? \Carbon\Carbon::parse($proposal->usulan_dosen2_tanggal)->translatedFormat('d M Y') : '-' }}
+                </div>
+                @php $s2 = strtolower($proposal->usulan_dosen2_status ?? 'menunggu'); @endphp
+                @if($s2 == 'disetujui')
+                    <span class="badge-disetujui">Disetujui</span>
+                @elseif($s2 == 'ditolak')
+                    <span class="badge-ditolak">Ditolak</span>
+                @else
+                    <button type="button" class="badge-menunggu"
+                        onclick="bukaModal(2,'{{ addslashes($proposal->usulan_dosen2_nama) }}','{{ $proposal->usulan_dosen2_nidn }}','{{ $proposal->nim_nid }}','{{ addslashes($proposal->nama) }}')">
+                        Menunggu Verifikasi
+                    </button>
+                @endif
+                @else
+                    <span class="text-muted">-</span>
+                @endif
+            </div>
+        </div>
+
+        {{-- DOSEN PEMBIMBING --}}
+        <div class="section-title">Dosen Pembimbing</div>
+        <div class="section-sub">Dosen Pembimbing yang telah ditetapkan untuk Tugas Akhir ini.</div>
+
+        <div class="dosen-grid">
+            {{-- Pembimbing 1 --}}
+            <div class="dosen-card">
+                <div class="dosen-label">Pembimbing 1</div>
+                @if($proposal->dosen1_nama)
+                <button type="button" class="btn-ubah"
+                    data-urutan="1"
+                    data-nama="{{ addslashes($proposal->dosen1_nama) }}"
+                    data-nidn="{{ $proposal->dosen1_nidn }}"
+                    data-nidn-lain="{{ $proposal->dosen2_nidn }}"
+                    onclick="bukaModalUbah(this)">✏ Ubah Pembimbing</button>
+                <div style="display:flex;align-items:center;margin-bottom:4px;">
+                    <span class="icon-user"><i class="fa fa-user"></i></span>
+                    <div>
+                        <div class="dosen-nama">{{ $proposal->dosen1_nama }}</div>
+                        <div class="dosen-nidn">NIDN. {{ $proposal->dosen1_nidn }}</div>
+                    </div>
+                </div>
+                <div class="dosen-tanggal">Ditetapkan pada<br>{{ $proposal->dosen1_tanggal ? \Carbon\Carbon::parse($proposal->dosen1_tanggal)->translatedFormat('d M Y') : '-' }}</div>
+                @else
+                <div style="display:flex;align-items:center;margin-bottom:8px;">
+                    <span class="icon-user"><i class="fa fa-user"></i></span>
+                    <span class="text-muted" style="font-size:0.9rem;">[Menunggu verifikasi]</span>
+                </div>
+                <div class="dosen-tanggal">Ditetapkan pada<br>-</div>
+                @endif
+            </div>
+
+            {{-- Pembimbing 2 --}}
+            <div class="dosen-card">
+                <div class="dosen-label">Pembimbing 2</div>
+                @if($proposal->dosen2_nama)
+                <button type="button" class="btn-ubah"
+                    data-urutan="2"
+                    data-nama="{{ addslashes($proposal->dosen2_nama) }}"
+                    data-nidn="{{ $proposal->dosen2_nidn }}"
+                    data-nidn-lain="{{ $proposal->dosen1_nidn }}"
+                    onclick="bukaModalUbah(this)">✏ Ubah Pembimbing</button>
+                <div style="display:flex;align-items:center;margin-bottom:4px;">
+                    <span class="icon-user"><i class="fa fa-user"></i></span>
+                    <div>
+                        <div class="dosen-nama">{{ $proposal->dosen2_nama }}</div>
+                        <div class="dosen-nidn">NIDN. {{ $proposal->dosen2_nidn }}</div>
+                    </div>
+                </div>
+                <div class="dosen-tanggal">Ditetapkan pada<br>{{ $proposal->dosen2_tanggal ? \Carbon\Carbon::parse($proposal->dosen2_tanggal)->translatedFormat('d M Y') : '-' }}</div>
+                @else
+                <div style="display:flex;align-items:center;margin-bottom:8px;">
+                    <span class="icon-user"><i class="fa fa-user"></i></span>
+                    <span class="text-muted" style="font-size:0.9rem;">[Menunggu verifikasi]</span>
+                </div>
+                <div class="dosen-tanggal">Ditetapkan pada<br>-</div>
+                @endif
+            </div>
+        </div>
+
+    @endif
+    {{-- end kondisi status --}}
+
+    {{-- FOOTER --}}
     <div class="footer-btn">
         <a href="/proposal" class="btn-kembali">Kembali</a>
-        <button id="btnLanjutkan" type="button"
-            class="{{ $isSelesai ? 'hidden' : '' }}"
-            style="background:#FFE083;color:#6C5700;border:none;padding:10px 24px;border-radius:20px;font-size:0.9rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;"
-            onclick="handleLanjutkan()">
-            Simpan dan lanjutkan ke reviewer →
-        </button>
-        <form id="formLanjutkan" action="{{ url('/proposal/'.$proposal->id.'/lanjutkan') }}" method="POST" style="display:none;">
-            @csrf
-        </form>
     </div>
 
 </div>
 
-{{-- ══════════════════════════════════════════════ --}}
-{{-- MODAL VERIFIKASI — NEW DESIGN                  --}}
-{{-- ══════════════════════════════════════════════ --}}
+{{-- ══════════════════════════════════════════════
+     MODAL VERIFIKASI USULAN PEMBIMBING
+     (hanya muncul saat status selesai)
+════════════════════════════════════════════════ --}}
 <div id="modalVerifikasi" class="modal-overlay">
     <div class="modal-box-new">
 
@@ -857,7 +699,6 @@
             @csrf
             <input type="hidden" name="aksi" value="acc">
 
-            {{-- NIM & Nama — 2 kolom --}}
             <div class="modal-row2">
                 <div class="modal-field">
                     <label class="modal-lbl">NIM</label>
@@ -869,13 +710,12 @@
                 </div>
             </div>
 
-            {{-- Usulan Dosen --}}
             <div class="modal-field" style="margin-bottom:16px;">
                 <label class="modal-lbl">Usulan Pembimbing <span id="modalUrutanLabel2">1</span></label>
                 <div class="usulan-row">
                     <div class="usulan-inp-wrap">
                         <i class="fa fa-user usulan-inp-icon"></i>
-                        <input type="text" id="modalUsulanDosen" readonly class="usulan-inp" id="usulanInp">
+                        <input type="text" id="modalUsulanDosen" readonly class="usulan-inp">
                     </div>
                     <button type="button" class="btn-acc" onclick="konfirmasiAcc()">
                         <i class="fa fa-check"></i>
@@ -887,7 +727,6 @@
                 <div id="errorMsgUsulan" class="error-msg"></div>
             </div>
 
-            {{-- Catatan Verifikasi --}}
             <div class="catatan-box">
                 <i class="fa fa-circle-info catatan-box-icon"></i>
                 <div>
@@ -902,13 +741,11 @@
             </div>
         </form>
 
-        {{-- Section Tolak (dropdown pengganti) --}}
         <div id="sectionTolak" class="section-tolak-new">
             <form id="formTolak" method="POST" action="">
                 @csrf
                 <input type="hidden" name="aksi" value="tolak">
 
-                {{-- NIM & Nama --}}
                 <div class="modal-row2" style="margin-bottom:16px;">
                     <div class="modal-field">
                         <label class="modal-lbl">NIM</label>
@@ -920,7 +757,6 @@
                     </div>
                 </div>
 
-                {{-- Usulan dosen — dengan border merah --}}
                 <div class="modal-field" style="margin-bottom:6px;">
                     <label class="modal-lbl">Usulan Pembimbing <span id="modalUrutanLabel3">1</span></label>
                     <div class="usulan-row">
@@ -935,20 +771,18 @@
                     <div class="error-msg show" id="errorKuota">Kuota dosen penuh atau tidak bersedia.</div>
                 </div>
 
-                {{-- Dropdown pengganti --}}
                 <div class="modal-field" style="margin-bottom:16px;">
-                    <label class="modal-lbl">Pembimbing <span id="modalUrutanLabel4">1</span></label>
+                    <label class="modal-lbl">Pembimbing Pengganti <span id="modalUrutanLabel4">1</span></label>
                     <select name="dosen_pengganti" class="modal-select" id="selectPengganti">
                         <option value="">-- Pilih Dosen --</option>
                         @foreach($dosenList as $d)
-                        @if($d->nim_nid != $proposal->dosen1_nidn && $d->nim_nid != $proposal->dosen2_nidn)
-                        <option value="{{ $d->nim_nid }}">{{ $d->nim_nid }} - {{ $d->nama }}</option>
-                        @endif
+                            @if($d->nim_nid != $proposal->dosen1_nidn && $d->nim_nid != $proposal->dosen2_nidn)
+                            <option value="{{ $d->nim_nid }}">{{ $d->nim_nid }} - {{ $d->nama }}</option>
+                            @endif
                         @endforeach
                     </select>
                 </div>
 
-                {{-- Catatan --}}
                 <div class="catatan-box">
                     <i class="fa fa-circle-info catatan-box-icon"></i>
                     <div>
@@ -967,9 +801,9 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════ --}}
-{{-- MODAL UBAH PEMBIMBING                          --}}
-{{-- ══════════════════════════════════════════════ --}}
+{{-- ══════════════════════════════════════════════
+     MODAL UBAH PEMBIMBING
+════════════════════════════════════════════════ --}}
 <div id="modalUbah" class="modal-overlay">
     <div class="modal-box-ubah">
         <button class="modal-close-btn" onclick="tutupModalUbah()">✕</button>
@@ -996,54 +830,9 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════ --}}
-{{-- POPUPS                                         --}}
-{{-- ══════════════════════════════════════════════ --}}
-
-<div id="popupLanjutkan" class="popup-overlay">
-    <div class="popup-box">
-        <div class="popup-icon-wrap confirm">❓</div>
-        <div class="popup-title">Konfirmasi</div>
-        <div class="popup-msg">Apakah Anda yakin ingin meneruskan proposal ini ke reviewer?</div>
-        <div class="popup-btn-row">
-            <button class="popup-btn batal" onclick="tutupPopup('popupLanjutkan')">Batal</button>
-            <button class="popup-btn kirim" onclick="submitLanjutkan()">Kirim</button>
-        </div>
-    </div>
-</div>
-
-<div id="popupDosenKurang" class="popup-overlay">
-    <div class="popup-box">
-        <div class="popup-icon-wrap warning">✕</div>
-        <div class="popup-title">Gagal!</div>
-        <div class="popup-msg" id="popupDosenKurangMsg">Dosen Pembimbing 1 dan 2 wajib diisi sebelum melanjutkan.</div>
-        <div class="popup-btn-row">
-            <button class="popup-btn ok" onclick="tutupPopup('popupDosenKurang')">OK</button>
-        </div>
-    </div>
-</div>
-
-<div id="popupLanjutkanBerhasil" class="popup-overlay">
-    <div class="popup-box">
-        <div class="popup-icon-wrap success">✓</div>
-        <div class="popup-title">Berhasil!</div>
-        <div class="popup-msg">Proposal Berhasil Diteruskan ke Reviewer.</div>
-        <div class="popup-btn-row">
-            <button class="popup-btn ok" onclick="window.location.href='/proposal'">OK</button>
-        </div>
-    </div>
-</div>
-
-<div id="popupLanjutkanGagal" class="popup-overlay">
-    <div class="popup-box">
-        <div class="popup-icon-wrap error">✕</div>
-        <div class="popup-title">Gagal!</div>
-        <div class="popup-msg">Gagal Mengirimkan ke Reviewer. Silakan coba lagi.</div>
-        <div class="popup-btn-row">
-            <button class="popup-btn ok" onclick="tutupPopup('popupLanjutkanGagal')">OK</button>
-        </div>
-    </div>
-</div>
+{{-- ══════════════════════════════════════════════
+     SEMUA POPUP
+════════════════════════════════════════════════ --}}
 
 <div id="popupKonfirmasiAcc" class="popup-overlay">
     <div class="popup-box">
@@ -1104,14 +893,12 @@
 </div>
 
 @php
-$dosen1Nama = $proposal->dosen1_nama;
-$dosen2Nama = $proposal->dosen2_nama;
+$dosen1Nama = $proposal->dosen1_nama ?? null;
+$dosen2Nama = $proposal->dosen2_nama ?? null;
 @endphp
 
 <script>
     const semuaDosen = @json($dosenList);
-    const dosen1NamaServer = @json($dosen1Nama);
-    const dosen2NamaServer = @json($dosen2Nama);
 
     function bukaPopup(id) {
         document.getElementById(id).classList.add('active');
@@ -1121,63 +908,22 @@ $dosen2Nama = $proposal->dosen2_nama;
         document.getElementById(id).classList.remove('active');
     }
 
-    function tampilkanBtnLanjutkan() {
-        var btn = document.getElementById('btnLanjutkan');
-        if (btn) btn.classList.remove('hidden');
-    }
-
-    function handleLanjutkan() {
-        if (!dosen1NamaServer && !dosen2NamaServer) {
-            document.getElementById('popupDosenKurangMsg').innerText = 'Dosen Pembimbing 1 dan 2 wajib diisi sebelum melanjutkan ke reviewer.';
-            bukaPopup('popupDosenKurang');
-            return;
-        }
-        if (!dosen1NamaServer) {
-            document.getElementById('popupDosenKurangMsg').innerText = 'Dosen Pembimbing 1 wajib diisi sebelum melanjutkan ke reviewer.';
-            bukaPopup('popupDosenKurang');
-            return;
-        }
-        if (!dosen2NamaServer) {
-            document.getElementById('popupDosenKurangMsg').innerText = 'Dosen Pembimbing 2 wajib diisi sebelum melanjutkan ke reviewer.';
-            bukaPopup('popupDosenKurang');
-            return;
-        }
-        bukaPopup('popupLanjutkan');
-    }
-
-    function submitLanjutkan() {
-        tutupPopup('popupLanjutkan');
-        var form = document.getElementById('formLanjutkan');
-        fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(function(res) {
-                res.ok ? bukaPopup('popupLanjutkanBerhasil') : bukaPopup('popupLanjutkanGagal');
-            })
-            .catch(function() {
-                bukaPopup('popupLanjutkanGagal');
-            });
-    }
-
-    // ── Modal Verifikasi ──
+    // ── Modal Verifikasi Usulan ──
     function bukaModal(urutan, nama, nidn, nimMhs, namaMhs) {
-        document.getElementById('modalUrutanLabel').innerText = urutan;
+        document.getElementById('modalUrutanLabel').innerText  = urutan;
         document.getElementById('modalUrutanLabel2').innerText = urutan;
         document.getElementById('modalUrutanLabel3').innerText = urutan;
         document.getElementById('modalUrutanLabel4').innerText = urutan;
-        document.getElementById('modalNim').value = nimMhs;
-        document.getElementById('modalNama').value = namaMhs;
-        document.getElementById('modalNimTolak').value = nimMhs;
-        document.getElementById('modalNamaTolak').value = namaMhs;
-        document.getElementById('modalUsulanDosen').value = nidn + ' - ' + nama;
+
+        document.getElementById('modalNim').value            = nimMhs;
+        document.getElementById('modalNama').value           = namaMhs;
+        document.getElementById('modalNimTolak').value       = nimMhs;
+        document.getElementById('modalNamaTolak').value      = namaMhs;
+        document.getElementById('modalUsulanDosen').value    = nidn + ' - ' + nama;
         document.getElementById('modalUsulanDosenTolak').value = nidn + ' - ' + nama;
 
         var baseUrl = "{{ url('/proposal/'.$proposal->id.'/tetapkan') }}/" + urutan;
-        document.getElementById('formAcc').action = baseUrl;
+        document.getElementById('formAcc').action  = baseUrl;
         document.getElementById('formTolak').action = baseUrl;
 
         sembunyikanDropdown();
@@ -1185,12 +931,12 @@ $dosen2Nama = $proposal->dosen2_nama;
     }
 
     function tampilkanDropdown() {
-        document.getElementById('formAcc').style.display = 'none';
+        document.getElementById('formAcc').style.display      = 'none';
         document.getElementById('sectionTolak').style.display = 'block';
     }
 
     function sembunyikanDropdown() {
-        document.getElementById('formAcc').style.display = 'block';
+        document.getElementById('formAcc').style.display      = 'block';
         document.getElementById('sectionTolak').style.display = 'none';
     }
 
@@ -1211,18 +957,14 @@ $dosen2Nama = $proposal->dosen2_nama;
         tutupModal();
         var form = document.getElementById('formAcc');
         fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(function(res) {
-                res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal');
-            })
-            .catch(function() {
-                bukaPopup('popupPembimbingGagal');
-            });
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(res) {
+            res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal');
+        })
+        .catch(function() { bukaPopup('popupPembimbingGagal'); });
     }
 
     function konfirmasiTolak() {
@@ -1236,29 +978,25 @@ $dosen2Nama = $proposal->dosen2_nama;
         tutupModal();
         var form = document.getElementById('formTolak');
         fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(function(res) {
-                res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal');
-            })
-            .catch(function() {
-                bukaPopup('popupPembimbingGagal');
-            });
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(res) {
+            res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal');
+        })
+        .catch(function() { bukaPopup('popupPembimbingGagal'); });
     }
 
-    // ── Modal Ubah ──
+    // ── Modal Ubah Pembimbing ──
     function bukaModalUbah(btn) {
-        var urutan = btn.getAttribute('data-urutan');
-        var nama = btn.getAttribute('data-nama');
-        var nidn = btn.getAttribute('data-nidn');
+        var urutan   = btn.getAttribute('data-urutan');
+        var nama     = btn.getAttribute('data-nama');
+        var nidn     = btn.getAttribute('data-nidn');
         var nidnLain = btn.getAttribute('data-nidn-lain');
 
-        document.getElementById('ubahUrutanLabel').innerText = urutan;
-        document.getElementById('ubahDosenSekarang').value = nidn + ' - ' + nama;
+        document.getElementById('ubahUrutanLabel').innerText    = urutan;
+        document.getElementById('ubahDosenSekarang').value      = nidn + ' - ' + nama;
 
         var url = "{{ url('/proposal/'.$proposal->id.'/ubah-pembimbing') }}/" + urutan;
         document.getElementById('formUbah').action = url;
@@ -1268,12 +1006,11 @@ $dosen2Nama = $proposal->dosen2_nama;
         semuaDosen.forEach(function(d) {
             if (d.nim_nid === nidnLain) return;
             var opt = document.createElement('option');
-            opt.value = d.nim_nid;
+            opt.value       = d.nim_nid;
             opt.textContent = d.nim_nid + ' - ' + d.nama;
             select.appendChild(opt);
         });
 
-        tampilkanBtnLanjutkan();
         document.getElementById('modalUbah').style.display = 'flex';
     }
 
@@ -1296,18 +1033,14 @@ $dosen2Nama = $proposal->dosen2_nama;
         tutupModalUbah();
         var form = document.getElementById('formUbah');
         fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(function(res) {
-                res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal');
-            })
-            .catch(function() {
-                bukaPopup('popupPembimbingGagal');
-            });
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(res) {
+            res.ok ? bukaPopup('popupPembimbingBerhasil') : bukaPopup('popupPembimbingGagal');
+        })
+        .catch(function() { bukaPopup('popupPembimbingGagal'); });
     }
 </script>
 

@@ -29,15 +29,35 @@
     $isPembimbing = in_array('pembimbing',  $rolesDb);
     $isPenguji    = in_array('penguji',     $rolesDb);
 
-    // tambah route penguji
     $proposalUrl  = $isKoor ? route('proposal.index') : ($isReviewer ? route('reviewer.proposal') : ($isPenguji ? route('proposal.penguji') : '#'));
     $pengajuanUrl = $isKoor ? route('pengajuan') : '#';
     $bimbinganUrl = $isPembimbing ? route('dosen.bimbingan.index') : '#';
-    $penilaianUrl = $isPenguji
-    ? route('penilaian.index')
-    : ($isPembimbing
+
+    // ── CEK APAKAH PEMBIMBING PUNYA MAHASISWA BIMBINGAN YANG LOLOS ADMINISTRASI ──
+    $punyaMahasiswaBimbingan = false;
+    if ($isPembimbing) {
+        $punyaMahasiswaBimbingan = \Illuminate\Support\Facades\DB::table('proposal as p')
+            ->join('dosen_pembimbing as dp', function($join) use ($nimSesi) {
+                $join->on('dp.proposal_id', '=', 'p.id')
+                     ->where('dp.nim_nid_dosen', '=', $nimSesi);
+            })
+            ->join('pengajuan_seminars as psem',
+                \Illuminate\Support\Facades\DB::raw('psem.mahasiswa_id COLLATE utf8mb4_unicode_ci'),
+                '=',
+                \Illuminate\Support\Facades\DB::raw('p.nim_nid COLLATE utf8mb4_unicode_ci')
+            )
+            ->where('psem.status_administrasi', 'Lolos Administrasi')
+            ->exists();
+    }
+
+    // ── LOGIKA PENILAIAN URL (sama persis seperti sidebar) ──
+    $penilaianUrl = ($isPembimbing && $punyaMahasiswaBimbingan)
         ? route('penilaian.pembimbing.index')
-        : '#');
+        : ($isPenguji
+            ? route('penilaian.index')
+            : ($isPembimbing
+                ? route('penilaian.pembimbing.index')
+                : '#'));
 
     $adaPengajuanBaru = $isKoor
         ? \Illuminate\Support\Facades\DB::table('pengajuan_judul')->where('status', 'menunggu verifikasi')->exists()

@@ -10,13 +10,11 @@ class ProposalController extends Controller
     // =====================================================
     // CEK KOORDINATOR HELPER
     // =====================================================
-    // SESUDAH
     private function isKoordinator()
     {
         $user = session('user');
         if (!$user) return false;
 
-        // Admin langsung lolos
         if (strtolower(trim($user->role)) === 'admin') return true;
 
         return DB::table('dosen_roles')
@@ -40,8 +38,7 @@ class ProposalController extends Controller
     }
 
     // =====================================================
-    // QUERY BUILDER HELPER: join standar proposal + semua relasi dosen
-    // (dipakai berulang di detail & verifikasi)
+    // QUERY BUILDER HELPER
     // =====================================================
     private function baseProposalQuery()
     {
@@ -90,6 +87,7 @@ class ProposalController extends Controller
             return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
         }
 
+        // ── DATA TAB 1: Penetapan Dosen Pembimbing ──
         $query = $this->baseProposalQuery()
             ->select([
                 'proposal.id',
@@ -99,6 +97,7 @@ class ProposalController extends Controller
                 'proposal.file_proposal',
                 'proposal.tanggal_pengajuan',
                 'proposal.status',
+                'proposal.nim_nid_reviewer',
 
                 'du1.nama as usulan_dosen1_nama',
                 'du1.nim_nid as usulan_dosen1_nidn',
@@ -134,11 +133,183 @@ class ProposalController extends Controller
 
         $proposals = $query->orderBy('proposal.tanggal_pengajuan', 'asc')->get();
 
-        return view('pengajuan.proposal_dosen', compact('proposals'));
+        // ── DATA TAB 2: Penetapan Reviewer ──
+
+        // Daftar semua dosen reviewer + hitung berapa proposal yang mereka handle
+        $dosenReviewerList = DB::table('users')
+            ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
+            ->where('dosen_roles.role_dosen', 'reviewer')
+            ->select('users.nim_nid', 'users.nama')
+            ->distinct()
+            ->get()
+            ->map(function ($dosen) {
+                $jumlahProposal = DB::table('proposal')
+                    ->where('nim_nid_reviewer', $dosen->nim_nid)
+                    ->whereIn('status', ['menunggu_review', 'selesai'])
+                    ->count();
+
+                $dosen->jumlah_proposal = $jumlahProposal;
+                $dosen->sudah_ditugaskan = $jumlahProposal > 0;
+                return $dosen;
+            });
+
+        // Daftar mahasiswa (proposal) yang belum punya reviewer
+        $mahasiswaBelumReviewer = DB::table('proposal')
+            ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
+            ->whereNull('proposal.nim_nid_reviewer')
+            ->where('proposal.status', 'menunggu_verifikasi')
+            ->select([
+                'proposal.id',
+                'proposal.nim_nid',
+                'mhs.nama',
+                'proposal.judul',
+                'proposal.tanggal_pengajuan',
+                'proposal.status',
+            ])
+            ->orderBy('proposal.tanggal_pengajuan', 'asc')
+            ->get();
+
+        // List reviewer untuk dropdown di modal (dari sisi mahasiswa)
+        $reviewerListDropdown = DB::table('users')
+            ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
+            ->where('dosen_roles.role_dosen', 'reviewer')
+            ->select('users.nim_nid', 'users.nama')
+            ->distinct()
+            ->get();
+
+        return view('pengajuan.proposal_dosen', compact(
+            'proposals',
+            'dosenReviewerList',
+            'mahasiswaBelumReviewer',
+            'reviewerListDropdown'
+        ));
     }
 
     // =====================================================
-    // INDEX PENGUJI (READ ONLY) ← TAMBAHAN BARU
+    // KELOLA REVIEWER — halaman kelola penugasan 1 dosen reviewer
+    // =====================================================
+    public function kelolaReviewer($nimReviewer)
+    {
+        $user = session('user');
+        if (!$user) return redirect('/login')->with('error', 'Silakan login dulu!');
+
+        if (!$this->isKoordinator()) {
+            return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
+        }
+
+        // Cek apakah dosen ini punya role reviewer
+        $dosen = DB::table('users')
+            ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
+            ->where('users.nim_nid', $nimReviewer)
+            ->where('dosen_roles.role_dosen', 'reviewer')
+            ->select('users.nim_nid', 'users.nama')
+            ->first();
+
+        if (!$dosen) {
+            return redirect('/proposal?tab=reviewer')->with('error', 'Dosen reviewer tidak ditemukan!');
+        }
+
+        // Mahasiswa yang sudah ditugaskan ke reviewer ini
+        $mahasiswaReviewer = DB::table('proposal')
+            ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
+            ->where('proposal.nim_nid_reviewer', $nimReviewer)
+            ->whereIn('proposal.status', ['menunggu_review', 'selesai'])
+            ->select([
+                'proposal.id',
+                'proposal.nim_nid',
+                'mhs.nama',
+                'proposal.judul',
+                'proposal.status',
+                'proposal.tanggal_pengajuan',
+            ])
+            ->orderBy('proposal.tanggal_pengajuan', 'asc')
+            ->get();
+
+        // Mahasiswa yang BELUM punya reviewer (untuk modal tambah)
+        $mahasiswaBelumReviewer = DB::table('proposal')
+            ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
+            ->whereNull('proposal.nim_nid_reviewer')
+            ->where('proposal.status', 'menunggu_verifikasi')
+            ->select([
+                'proposal.id',
+                'proposal.nim_nid',
+                'mhs.nama',
+                'proposal.judul',
+            ])
+            ->orderBy('proposal.tanggal_pengajuan', 'asc')
+            ->get();
+
+        return view('pengajuan.kelola_reviewer', compact(
+            'dosen',
+            'mahasiswaReviewer',
+            'mahasiswaBelumReviewer'
+        ));
+    }
+
+    // =====================================================
+    // TAMBAH MAHASISWA KE REVIEWER — dari halaman kelola
+    // (assign banyak mahasiswa sekaligus ke 1 reviewer)
+    // =====================================================
+    public function tambahMahasiswaReviewer(Request $request, $nimReviewer)
+    {
+        $user = session('user');
+        if (!$user) return redirect('/login')->with('error', 'Silakan login dulu!');
+
+        if (!$this->isKoordinator()) {
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['message' => 'Akses ditolak'], 403);
+            }
+            return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
+        }
+
+        $request->validate(['proposal_ids' => 'required|array']);
+
+        foreach ($request->proposal_ids as $proposalId) {
+            DB::table('proposal')->where('id', $proposalId)->update([
+                'nim_nid_reviewer' => $nimReviewer,
+                'status'           => 'menunggu_review',
+                'updated_at'       => now(),
+            ]);
+        }
+
+        if (request()->ajax() || request()->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response()->json(['message' => 'Berhasil'], 200);
+        }
+
+        return redirect('/proposal/reviewer/' . $nimReviewer . '/kelola')
+            ->with('success', count($request->proposal_ids) . ' mahasiswa berhasil ditambahkan!');
+    }
+
+    // =====================================================
+    // REMOVE REVIEWER — hapus penugasan reviewer dari proposal
+    // =====================================================
+    public function removeReviewer(Request $request, $id)
+    {
+        $user = session('user');
+        if (!$user) return redirect('/login')->with('error', 'Silakan login dulu!');
+
+        if (!$this->isKoordinator()) {
+            if (request()->ajax() || request()->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json(['message' => 'Akses ditolak'], 403);
+            }
+            return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
+        }
+
+        DB::table('proposal')->where('id', $id)->update([
+            'nim_nid_reviewer' => null,
+            'status'           => 'menunggu_verifikasi',
+            'updated_at'       => now(),
+        ]);
+
+        if (request()->ajax() || request()->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response()->json(['message' => 'Berhasil'], 200);
+        }
+
+        return back()->with('success', 'Penugasan reviewer berhasil dihapus!');
+    }
+
+    // =====================================================
+    // INDEX PENGUJI (READ ONLY)
     // =====================================================
     public function indexPenguji()
     {
@@ -197,6 +368,7 @@ class ProposalController extends Controller
                 'proposal.file_proposal',
                 'proposal.tanggal_pengajuan',
                 'proposal.status',
+                'proposal.nim_nid_reviewer',
 
                 'du1.nama as usulan_dosen1_nama',
                 'du1.nim_nid as usulan_dosen1_nidn',
@@ -228,7 +400,6 @@ class ProposalController extends Controller
             return redirect('/proposal')->with('error', 'Data tidak ditemukan!');
         }
 
-        // Hanya dosen berole pembimbing yang ditampilkan di dropdown
         $dosenList = $this->getDosenPembimbingList();
 
         return view('pengajuan.proposal_verifikasi_dosen', compact('proposal', 'dosenList'));
@@ -255,6 +426,7 @@ class ProposalController extends Controller
                 'proposal.file_proposal',
                 'proposal.tanggal_pengajuan',
                 'proposal.status',
+                'proposal.nim_nid_reviewer',
 
                 'du1.nama as usulan_dosen1_nama',
                 'du1.nim_nid as usulan_dosen1_nidn',
@@ -281,14 +453,40 @@ class ProposalController extends Controller
             return redirect('/proposal')->with('error', 'Data tidak ditemukan!');
         }
 
-        // Hanya dosen berole pembimbing yang ditampilkan di dropdown
         $dosenList = $this->getDosenPembimbingList();
 
         return view('pengajuan.proposal_verifikasi_dosen', compact('proposal', 'dosenList'));
     }
 
     // =====================================================
-    // PROSES VERIFIKASI
+    // ASSIGN REVIEWER
+    // =====================================================
+    public function assignReviewer(Request $request, $id)
+    {
+        $user = session('user');
+        if (!$user) return redirect('/login')->with('error', 'Silakan login dulu!');
+
+        if (!$this->isKoordinator()) {
+            return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
+        }
+
+        $request->validate(['nim_nid_reviewer' => 'required']);
+
+        DB::table('proposal')->where('id', $id)->update([
+            'nim_nid_reviewer' => $request->nim_nid_reviewer,
+            'status'           => 'menunggu_review',
+            'updated_at'       => now(),
+        ]);
+
+        if ($request->filled('redirect_to_list')) {
+            return redirect('/proposal?tab=reviewer')->with('success', 'Reviewer berhasil ditetapkan!');
+        }
+
+        return redirect('/proposal/' . $id)->with('success', 'Reviewer berhasil ditetapkan!');
+    }
+
+    // =====================================================
+    // PROSES VERIFIKASI (tetapkan dosbing — setelah review)
     // =====================================================
     public function prosesVerifikasi(Request $request, $id)
     {
@@ -389,6 +587,7 @@ class ProposalController extends Controller
                 'urutan'            => $urutan,
                 'tanggal_penetapan' => now()->toDateString(),
             ]);
+
         } elseif ($aksi === 'tolak') {
 
             $request->validate([
@@ -413,6 +612,7 @@ class ProposalController extends Controller
                 'urutan'            => $urutan,
                 'tanggal_penetapan' => now()->toDateString(),
             ]);
+
         } else {
             return redirect()->back()->with('error', 'Aksi tidak valid!');
         }
@@ -426,37 +626,6 @@ class ProposalController extends Controller
 
         return redirect('/proposal/' . $id . '/verifikasi')
             ->with('success', 'Pembimbing ' . $urutan . ' berhasil ditetapkan!');
-    }
-
-    // =====================================================
-    // LANJUTKAN KE REVIEWER
-    // =====================================================
-    public function lanjutkanKeReviewer(Request $request, $id)
-    {
-        $user = session('user');
-        if (!$user) return redirect('/login')->with('error', 'Silakan login dulu!');
-
-        if (!$this->isKoordinator()) {
-            return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
-        }
-
-        $jumlah = DB::table('dosen_pembimbing')
-            ->where('proposal_id', $id)
-            ->count();
-
-        if ($jumlah < 2) {
-            return redirect()->back()->with('error', 'Kedua dosen pembimbing harus ditetapkan terlebih dahulu!');
-        }
-
-        DB::table('proposal')
-            ->where('id', $id)
-            ->update([
-                'status'     => 'menunggu_review',
-                'updated_at' => now(),
-            ]);
-
-        return redirect('/proposal')
-            ->with('success', 'Proposal berhasil diteruskan ke reviewer!');
     }
 
     // =====================================================
@@ -498,5 +667,36 @@ class ProposalController extends Controller
 
         return redirect('/proposal/' . $id)
             ->with('success', 'Pembimbing ' . $urutan . ' berhasil diubah!');
+    }
+
+    // =====================================================
+    // LANJUTKAN KE REVIEWER
+    // =====================================================
+    public function lanjutkanKeReviewer(Request $request, $id)
+    {
+        $user = session('user');
+        if (!$user) return redirect('/login')->with('error', 'Silakan login dulu!');
+
+        if (!$this->isKoordinator()) {
+            return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
+        }
+
+        $jumlah = DB::table('dosen_pembimbing')
+            ->where('proposal_id', $id)
+            ->count();
+
+        if ($jumlah < 2) {
+            return redirect()->back()->with('error', 'Kedua dosen pembimbing harus ditetapkan terlebih dahulu!');
+        }
+
+        DB::table('proposal')
+            ->where('id', $id)
+            ->update([
+                'status'     => 'menunggu_review',
+                'updated_at' => now(),
+            ]);
+
+        return redirect('/proposal')
+            ->with('success', 'Proposal berhasil diteruskan ke reviewer!');
     }
 }

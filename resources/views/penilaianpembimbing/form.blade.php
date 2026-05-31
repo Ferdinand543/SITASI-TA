@@ -181,7 +181,8 @@ $totalMaksA = array_sum(array_column($komponenA, 'maks'));
                         class="nilai-input-a"
                         style="width:70px;padding:8px 10px;border:1.5px solid #E5E7EB;border-radius:8px;
                                font-size:0.88rem;font-weight:700;text-align:center;color:#374151;outline:none;"
-                        placeholder="0" oninput="hitungTotal()">
+                        placeholder="0"
+                        oninput="clampNilai(this); hitungTotal()">
                 @endif
             </div>
         </div>
@@ -242,7 +243,8 @@ $totalMaksB = array_sum(array_column($komponenB, 'maks'));
                         class="nilai-input-b"
                         style="width:70px;padding:8px 10px;border:1.5px solid #E5E7EB;border-radius:8px;
                                font-size:0.88rem;font-weight:700;text-align:center;color:#374151;outline:none;"
-                        placeholder="0" oninput="hitungTotal()">
+                        placeholder="0"
+                        oninput="clampNilai(this); hitungTotal()">
                 @endif
             </div>
         </div>
@@ -391,18 +393,13 @@ $totalMaksB = array_sum(array_column($komponenB, 'maks'));
 {{-- MODAL KONFIRMASI SUBMIT --}}
 <div id="modalKonfirmasi" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;align-items:center;justify-content:center;">
     <div style="background:#fff;border-radius:20px;padding:32px;max-width:440px;width:90%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.15);">
-
-        {{-- IKON --}}
         <div style="width:56px;height:56px;background:#FFFBEB;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
             <i class="fa fa-paper-plane" style="font-size:1.4rem;color:#92741A;"></i>
         </div>
         <h5 style="font-weight:800;color:#111827;margin-bottom:4px;">Submit Penilaian?</h5>
         <p style="font-size:0.82rem;color:#9ca3af;margin-bottom:20px;">Pastikan nilai berikut sudah benar sebelum disubmit.</p>
 
-        {{-- RINGKASAN NILAI --}}
         <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:14px;padding:18px 20px;margin-bottom:16px;text-align:left;">
-
-            {{-- Baris Skor A --}}
             <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px dashed #FDE68A;margin-bottom:10px;">
                 <div>
                     <div style="font-size:0.8rem;font-weight:700;color:#92741A;">Skor A</div>
@@ -413,8 +410,6 @@ $totalMaksB = array_sum(array_column($komponenB, 'maks'));
                     <span id="modalMaksA" style="font-size:0.78rem;color:#9ca3af;font-weight:600;">/ {{ $totalMaksA }}</span>
                 </div>
             </div>
-
-            {{-- Baris Skor B --}}
             <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px dashed #FDE68A;margin-bottom:12px;">
                 <div>
                     <div style="font-size:0.8rem;font-weight:700;color:#92741A;">Skor B</div>
@@ -425,8 +420,6 @@ $totalMaksB = array_sum(array_column($komponenB, 'maks'));
                     <span id="modalMaksB" style="font-size:0.78rem;color:#9ca3af;font-weight:600;">/ {{ $totalMaksB }}</span>
                 </div>
             </div>
-
-            {{-- Total Nilai Akhir --}}
             <div style="display:flex;justify-content:space-between;align-items:center;">
                 <div style="font-size:0.88rem;font-weight:800;color:#735C00;">Total Nilai Akhir</div>
                 <div style="display:flex;align-items:baseline;gap:4px;">
@@ -439,8 +432,6 @@ $totalMaksB = array_sum(array_column($komponenB, 'maks'));
         <p style="font-size:0.78rem;color:#9ca3af;margin-bottom:20px;">
             Penilaian yang sudah disubmit masih bisa diedit selama deadline belum berakhir.
         </p>
-
-        {{-- TOMBOL AKSI --}}
         <div style="display:flex;gap:10px;justify-content:center;">
             <button onclick="tutupModal()"
                 style="padding:10px 24px;border:1.5px solid #D1D5DB;border-radius:10px;background:#fff;font-weight:600;color:#6b7280;cursor:pointer;">
@@ -451,11 +442,32 @@ $totalMaksB = array_sum(array_column($komponenB, 'maks'));
                 Ya, Submit
             </button>
         </div>
-
     </div>
 </div>
 
 <script>
+    // ✅ FIXED: clamp nilai agar tidak bisa melebihi max atau kurang dari min
+    function clampNilai(input) {
+        const min = parseInt(input.min) || 1;
+        const max = parseInt(input.max) || 100;
+        let val = parseInt(input.value);
+
+        if (isNaN(val) || input.value === '') return; // biarkan kosong dulu saat ngetik
+
+        if (val > max) {
+            input.value = max;
+            // Flash border merah sebentar sebagai feedback
+            input.style.borderColor = '#dc2626';
+            input.style.color = '#dc2626';
+            setTimeout(() => {
+                input.style.borderColor = '#E5E7EB';
+                input.style.color = '#374151';
+            }, 600);
+        } else if (val < min) {
+            input.value = min;
+        }
+    }
+
     function hitungTotal() {
         let sumA = 0, sumB = 0;
         document.querySelectorAll('.nilai-input-a').forEach(i => sumA += parseInt(i.value || 0));
@@ -481,17 +493,12 @@ $totalMaksB = array_sum(array_column($komponenB, 'maks'));
             alert('Harap pilih kelayakan mahasiswa terlebih dahulu.');
             return;
         }
-
-        // Ambil nilai terkini dari halaman
-        const skorA     = document.getElementById('totalA').textContent.trim();
-        const skorB     = document.getElementById('totalB').textContent.trim();
+        const skorA      = document.getElementById('totalA').textContent.trim();
+        const skorB      = document.getElementById('totalB').textContent.trim();
         const nilaiAkhir = document.getElementById('nilaiAkhir').textContent.trim();
-
-        // Isi ke dalam modal
-        document.getElementById('modalSkorA').textContent     = skorA;
-        document.getElementById('modalSkorB').textContent     = skorB;
+        document.getElementById('modalSkorA').textContent      = skorA;
+        document.getElementById('modalSkorB').textContent      = skorB;
         document.getElementById('modalNilaiAkhir').textContent = nilaiAkhir;
-
         document.getElementById('modalKonfirmasi').style.display = 'flex';
     }
 
