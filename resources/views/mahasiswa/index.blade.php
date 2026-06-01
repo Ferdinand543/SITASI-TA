@@ -836,9 +836,9 @@
             </a>
 
             {{-- CARD DAFTAR SEMINAR --}}
-            <a href="#" class="menu-card-item">
+            <a href="{{ route('seminar.daftar') }}" class="menu-card-item">
                 <div class="card-icon-wrap">
-                    <img src="{{ asset('images/mahasiswa.jpeg') }}" alt="Daftar Seminar">
+                    <img src="{{ asset('images/seminar.jpeg') }}" alt="Daftar Seminar">
                 </div>
                 <div class="card-text">
                     <h6>Daftar Seminar</h6>
@@ -849,7 +849,7 @@
             {{-- CARD NILAI --}}
             <a href="#" class="menu-card-item">
                 <div class="card-icon-wrap">
-                    <img src="{{ asset('images/penilaian.jpeg') }}" alt="Nilai">
+                    <img src="{{ asset('images/nilai.jpeg') }}" alt="Nilai">
                 </div>
                 <div class="card-text">
                     <h6>Nilai</h6>

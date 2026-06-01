@@ -199,11 +199,11 @@
             <a href="{{ url('/bimbingan') }}" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
                 <i class="fa-solid fa-comments"></i> Riwayat Bimbingan
             </a>
-            <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
+            <a href="{{ route('seminar.daftar') }}" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
                 <i class="fa-solid fa-rectangle-list"></i> Daftar Seminar
             </a>
             <div class="nav-label">Akademik</div>
-            <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
+            <a href="{{ route('mahasiswa.hasil.penilaian') }}" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
                 <i class="fa-solid fa-star"></i> Nilai
             </a>
             <a href="{{ route('jadwal.index') }}" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
@@ -381,7 +381,7 @@
             <a href="/admin/bimbingan" class="sidebar-link {{ request()->is('admin/bimbingan') || request()->is('admin/bimbingan/*') ? 'active' : '' }}">
                 <i class="fa-regular fa-clock"></i> Riwayat Bimbingan
             </a>
-            <a href="#" class="sidebar-link">
+            <a href="{{ route('admin.seminar.index') }}" class="sidebar-link">
                 <i class="fa-solid fa-user-graduate"></i> Administrasi Seminar
             </a>
             <div class="nav-label">MASTER DATA</div>

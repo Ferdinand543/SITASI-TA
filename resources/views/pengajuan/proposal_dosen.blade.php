@@ -371,7 +371,7 @@ $reviewerDataJs = $reviewerListDropdown->map(function($rv) {
                    onclick="gantiTab('pembimbing')"
                    id="hero-btn-pembimbing"
                    class="{{ $activeTab === 'pembimbing' ? 'btn-hero-primary' : 'btn-hero-outline' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/></svg>
+                    <i class="fa fa-user-check"></i>
                     Penetapan Dosen Pembimbing
                 </a>
 
@@ -380,7 +380,7 @@ $reviewerDataJs = $reviewerListDropdown->map(function($rv) {
                    onclick="gantiTab('reviewer')"
                    id="hero-btn-reviewer"
                    class="{{ $activeTab === 'reviewer' ? 'btn-hero-primary' : 'btn-hero-outline' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/></svg>
+                    <i class="fa fa-user-shield"></i>
                     Penetapan Reviewer
                     @if($mahasiswaBelumReviewer->count() > 0)
                         <span style="background:#ef4444;color:#fff;border-radius:20px;font-size:0.7rem;padding:1px 7px;font-weight:700;">
@@ -392,7 +392,7 @@ $reviewerDataJs = $reviewerListDropdown->map(function($rv) {
                 {{-- Tombol Review Proposal (hanya untuk reviewer/admin) --}}
                 @if($isReviewer)
                 <a href="{{ route('reviewer.proposal') }}" class="btn-hero-outline">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/></svg>
+                    <i class="fa fa-file-circle-check"></i>
                     Review Proposal
                 </a>
                 @endif
@@ -414,11 +414,11 @@ $reviewerDataJs = $reviewerListDropdown->map(function($rv) {
     {{-- TAB NAVIGATION — disembunyikan, switching tetap jalan lewat tombol hero di atas --}}
     <div class="tab-nav" style="display:none;">
         <button class="tab-btn {{ $activeTab === 'pembimbing' ? 'active' : '' }}" onclick="gantiTab('pembimbing')">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/></svg>
+            <i class="fa fa-user-check"></i>
             Penetapan Dosen Pembimbing
         </button>
         <button class="tab-btn {{ $activeTab === 'reviewer' ? 'active' : '' }}" onclick="gantiTab('reviewer')">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/></svg>
+            <i class="fa fa-user-shield"></i>
             Penetapan Reviewer
             @if($mahasiswaBelumReviewer->count() > 0)
                 <span style="background:#ef4444;color:#fff;border-radius:20px;font-size:0.7rem;padding:1px 7px;font-weight:700;">
@@ -489,7 +489,7 @@ $reviewerDataJs = $reviewerListDropdown->map(function($rv) {
                         <option value="menunggu_verifikasi" {{ request('status')=='menunggu_verifikasi'?'selected':'' }}>Menunggu Verifikasi</option>
                         <option value="menunggu_review"     {{ request('status')=='menunggu_review'?'selected':'' }}>Menunggu Review</option>
                         <option value="selesai"             {{ request('status')=='selesai'?'selected':'' }}>Selesai</option>
-                        <option value="ditolak"             {{ request('status')=='ditolak'?'selected':'' }}>Ditolak</option>
+                        
                     </select>
                     <button type="button" class="btn-reset" onclick="window.location.href='{{ url('/proposal?tab=pembimbing') }}'">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
@@ -509,7 +509,7 @@ $reviewerDataJs = $reviewerListDropdown->map(function($rv) {
                     <option value="">Semua Status</option>
                     <option value="menunggu_verifikasi">Menunggu Verifikasi</option>
                     <option value="selesai">Selesai</option>
-                    <option value="ditolak">Ditolak</option>
+                    
                 </select>
                 <button type="button" class="btn-reset" onclick="resetFilter()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>

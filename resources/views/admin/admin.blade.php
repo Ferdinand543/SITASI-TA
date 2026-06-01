@@ -592,7 +592,7 @@ body {
                             <i class="fa-solid fa-magnifying-glass" style="font-size:12px;"></i>
                             <input type="text" placeholder="Cari nama..." id="searchSeminar" onkeyup="filterTable('tableSeminar','searchSeminar')">
                         </div>
-                        <a href="#" class="btn-lihat-semua">Lihat Semua</a>
+                        <a href="{{ route('admin.seminar.index') }}" class="btn-lihat-semua">Lihat Semua</a>
                     </div>
                 </div>
                 <div class="table-responsive">

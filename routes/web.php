@@ -19,7 +19,11 @@ use App\Http\Controllers\AdminMahasiswaController;
 use App\Http\Controllers\JadwalAkademikController;
 use App\Http\Controllers\AdminProposalController;
 use App\Http\Controllers\AdminjudulController;
-use App\Http\Controllers\PenilaianController; // ← TAMBAHAN
+use App\Http\Controllers\PenilaianController;
+use App\Http\Controllers\PenilaianPembimbingController;
+use App\Http\Controllers\DaftarSeminarController;
+use App\Http\Controllers\AdminSeminarController;
+use App\Http\Controllers\HasilPenilaianMahasiswaController;
 
 
 // ROOT
@@ -212,11 +216,11 @@ Route::get('/mahasiswa', function () {
 // PROFIL
 // =====================================================
 
-Route::get('/admin/profil_admin_tu',           [AuthController::class, 'profilAdmin'])->name('admin.profil_admin_tu');
-Route::get('/mahasiswa/profil',       [AuthController::class, 'profilMahasiswa'])->name('mahasiswa.profil');
-Route::post('/mahasiswa/profil/foto', [AuthController::class, 'uploadFotoMahasiswa'])->name('mahasiswa.profil.foto');
-Route::get('/dosen/profil',           [AuthController::class, 'profilDosen'])->name('dosen.profil');
-Route::post('/dosen/profil/foto',     [AuthController::class, 'uploadFotoDosen'])->name('dosen.profil.foto');
+Route::get('/admin/profil_admin_tu',      [AuthController::class, 'profilAdmin'])->name('admin.profil_admin_tu');
+Route::get('/mahasiswa/profil',           [AuthController::class, 'profilMahasiswa'])->name('mahasiswa.profil');
+Route::post('/mahasiswa/profil/foto',     [AuthController::class, 'uploadFotoMahasiswa'])->name('mahasiswa.profil.foto');
+Route::get('/dosen/profil',               [AuthController::class, 'profilDosen'])->name('dosen.profil');
+Route::post('/dosen/profil/foto',         [AuthController::class, 'uploadFotoDosen'])->name('dosen.profil.foto');
 
 
 // =====================================================
@@ -229,6 +233,7 @@ Route::get('/panduan-ta/admin',         [PanduanTAController::class, 'admin'])->
 Route::get('/panduan-ta/download/{id}', [PanduanTAController::class, 'download'])->name('panduan-ta.download');
 Route::get('/admin/panduan-ta/create',  [PanduanTAController::class, 'create'])->name('panduan.create');
 Route::post('/admin/panduan-ta/store',  [PanduanTAController::class, 'store'])->name('panduan.store');
+Route::delete('/panduan-ta/{id}',       [PanduanTAController::class, 'destroy'])->name('panduan.destroy');
 
 
 // =====================================================
@@ -274,19 +279,21 @@ Route::get('/proposal/penguji', [ProposalController::class, 'indexPenguji'])->na
 
 // =====================================================
 // PROPOSAL TA-1 — KOORDINATOR
+// URUTAN PENTING: static route HARUS di atas route {id}!
 // =====================================================
 
 Route::get('/proposal',                                [ProposalController::class, 'index'])->name('proposal.index');
 Route::get('/proposal/{id}/verifikasi',                [ProposalController::class, 'verifikasi'])->name('proposal.verifikasi');
 Route::post('/proposal/{id}/verifikasi',               [ProposalController::class, 'prosesVerifikasi'])->name('proposal.prosesVerifikasi');
 Route::post('/proposal/{id}/tetapkan/{urutan}',        [ProposalController::class, 'tetapkanUsulan'])->name('proposal.tetapkan');
+Route::post('/proposal/{id}/lanjutkan',                [ProposalController::class, 'lanjutkanKeReviewer'])->name('proposal.lanjutkan');
 Route::post('/proposal/{id}/assign-reviewer',          [ProposalController::class, 'assignReviewer'])->name('proposal.assignReviewer');
 Route::post('/proposal/{id}/ubah-pembimbing/{urutan}', [ProposalController::class, 'ubahPembimbing'])->name('proposal.ubahPembimbing');
+Route::post('/proposal/{id}/remove-reviewer',          [ProposalController::class, 'removeReviewer'])->name('proposal.remove.reviewer');
 
-// ✅ TAMBAHAN: Kelola reviewer — HARUS di atas route /proposal/{id} !
+// HARUS di atas /proposal/{id} !
 Route::get('/proposal/reviewer/{nimReviewer}/kelola',            [ProposalController::class, 'kelolaReviewer'])->name('proposal.kelola.reviewer');
 Route::post('/proposal/reviewer/{nimReviewer}/tambah-mahasiswa', [ProposalController::class, 'tambahMahasiswaReviewer'])->name('proposal.tambah.mahasiswa.reviewer');
-Route::post('/proposal/{id}/remove-reviewer',                    [ProposalController::class, 'removeReviewer'])->name('proposal.remove.reviewer');
 
 Route::get('/proposal/{id}',                           [ProposalController::class, 'detail'])->name('proposal.detail');
 
@@ -312,10 +319,10 @@ Route::resource('jadwal-akademik', JadwalAkademikController::class);
 // RIWAYAT BIMBINGAN — DOSEN
 // =====================================================
 
-Route::get('/dosen/bimbingan',                          [DosenBimbinganController::class, 'index'])->name('dosen.bimbingan.index');
-Route::put('/dosen/bimbingan/proposal/{id}/status',     [DosenBimbinganController::class, 'updateStatusProposal'])->name('dosen.bimbingan.proposal.status');
-Route::get('/dosen/bimbingan/mahasiswa/{nim}',          [DosenBimbinganController::class, 'detailMahasiswa'])->name('dosen.bimbingan.detail');
-Route::get('/dosen/proposal/{id}/lihat',                [DosenBimbinganController::class, 'lihatProposal'])->name('dosen.proposal.lihat');
+Route::get('/dosen/bimbingan',                      [DosenBimbinganController::class, 'index'])->name('dosen.bimbingan.index');
+Route::put('/dosen/bimbingan/proposal/{id}/status', [DosenBimbinganController::class, 'updateStatusProposal'])->name('dosen.bimbingan.proposal.status');
+Route::get('/dosen/bimbingan/mahasiswa/{nim}',      [DosenBimbinganController::class, 'detailMahasiswa'])->name('dosen.bimbingan.detail');
+Route::get('/dosen/proposal/{id}/lihat',            [DosenBimbinganController::class, 'lihatProposal'])->name('dosen.proposal.lihat');
 
 
 // =====================================================
@@ -323,13 +330,11 @@ Route::get('/dosen/proposal/{id}/lihat',                [DosenBimbinganControlle
 // URUTAN PENTING: static route dulu, baru dynamic route!
 // =====================================================
 
-Route::get('/admin/bimbingan',                          [AdminBimbinganController::class, 'index'])->name('admin.bimbingan.index');
-Route::put('/admin/bimbingan/proposal/{id}/status',     [AdminBimbinganController::class, 'updateStatusProposal'])->name('admin.bimbingan.proposal.status');
-Route::get('/admin/proposal/{id}/lihat',                [AdminBimbinganController::class, 'lihatProposal'])->name('admin.proposal.lihat');
-
-// ✅ FIX URUTAN: route "dosen" (static) HARUS di atas route {nim}/{nim_nid_dosen} (dynamic)
-Route::get('/admin/bimbingan/dosen/{nim_nid}',          [AdminBimbinganController::class, 'detailDosen'])->name('admin.bimbingan.dosen');
-Route::get('/admin/bimbingan/{nim}/{nim_nid_dosen}',    [AdminBimbinganController::class, 'detailMahasiswa'])->name('admin.bimbingan.detail');
+Route::get('/admin/bimbingan',                       [AdminBimbinganController::class, 'index'])->name('admin.bimbingan.index');
+Route::put('/admin/bimbingan/proposal/{id}/status',  [AdminBimbinganController::class, 'updateStatusProposal'])->name('admin.bimbingan.proposal.status');
+Route::get('/admin/proposal/{id}/lihat',             [AdminBimbinganController::class, 'lihatProposal'])->name('admin.proposal.lihat');
+Route::get('/admin/bimbingan/dosen/{nim_nid}',       [AdminBimbinganController::class, 'detailDosen'])->name('admin.bimbingan.dosen');
+Route::get('/admin/bimbingan/{nim}/{nim_nid_dosen}', [AdminBimbinganController::class, 'detailMahasiswa'])->name('admin.bimbingan.detail');
 
 
 // =====================================================
@@ -377,10 +382,10 @@ Route::delete('/admin/mahasiswa/{nim_nid}',   [AdminMahasiswaController::class, 
 // =====================================================
 
 Route::prefix('admin')->group(function () {
-    Route::get('/proposal',                [AdminProposalController::class, 'index'])->name('admin.proposal.index');
-    Route::get('/proposal/{id}',           [AdminProposalController::class, 'show'])->name('admin.proposal.detail');
-    Route::post('/proposal/{id}/approve',  [AdminProposalController::class, 'approve'])->name('admin.proposal.approve');
-    Route::post('/proposal/{id}/reject',   [AdminProposalController::class, 'reject'])->name('admin.proposal.reject');
+    Route::get('/proposal',               [AdminProposalController::class, 'index'])->name('admin.proposal.index');
+    Route::get('/proposal/{id}',          [AdminProposalController::class, 'show'])->name('admin.proposal.detail');
+    Route::post('/proposal/{id}/approve', [AdminProposalController::class, 'approve'])->name('admin.proposal.approve');
+    Route::post('/proposal/{id}/reject',  [AdminProposalController::class, 'reject'])->name('admin.proposal.reject');
 });
 
 
@@ -392,6 +397,18 @@ Route::prefix('admin')->group(function () {
     Route::get('/judul',              [AdminjudulController::class, 'index'])->name('admin.judul.index');
     Route::get('/judul/{id}',         [AdminjudulController::class, 'show'])->name('admin.judul.show');
     Route::post('/judul/{id}/proses', [AdminjudulController::class, 'proses'])->name('admin.judul.proses');
+});
+
+
+// =====================================================
+// SEMINAR — ADMIN
+// =====================================================
+
+Route::prefix('admin')->group(function () {
+    Route::get('/seminar',                  [AdminSeminarController::class, 'index'])->name('admin.seminar.index');
+    Route::get('/seminar/{id}',             [AdminSeminarController::class, 'show'])->name('admin.seminar.show');
+    Route::post('/seminar/{id}/verifikasi', [AdminSeminarController::class, 'verifikasi'])->name('admin.seminar.verifikasi');
+    Route::post('/seminar/{id}/jadwalkan',  [AdminSeminarController::class, 'jadwalkan'])->name('admin.seminar.jadwalkan');
 });
 
 
@@ -411,8 +428,6 @@ Route::get('/register-admin', function () {
 
 Route::post('/register-admin', [AuthController::class, 'register']);
 
-Route::delete('/panduan-ta/{id}', [PanduanTAController::class, 'destroy'])->name('panduan.destroy');
-
 
 // =====================================================
 // PENILAIAN SEMINAR — DOSEN PENGUJI
@@ -423,7 +438,7 @@ Route::get('/penilaian/{proposalId}/form',   [PenilaianController::class, 'form'
 Route::post('/penilaian/{proposalId}/store', [PenilaianController::class, 'store'])->name('penilaian.store');
 Route::get('/penilaian/{proposalId}/show',   [PenilaianController::class, 'show'])->name('penilaian.show');
 
-use App\Http\Controllers\PenilaianPembimbingController; // ← TAMBAHAN
+
 // =====================================================
 // PENILAIAN SEMINAR — DOSEN PEMBIMBING
 // =====================================================
@@ -432,3 +447,25 @@ Route::get('/penilaian-pembimbing',                     [PenilaianPembimbingCont
 Route::get('/penilaian-pembimbing/{proposalId}/form',   [PenilaianPembimbingController::class, 'form'])->name('penilaian.pembimbing.form');
 Route::post('/penilaian-pembimbing/{proposalId}/store', [PenilaianPembimbingController::class, 'store'])->name('penilaian.pembimbing.store');
 Route::get('/penilaian-pembimbing/{proposalId}/show',   [PenilaianPembimbingController::class, 'show'])->name('penilaian.pembimbing.show');
+
+
+// =====================================================
+// DAFTAR SEMINAR — MAHASISWA
+// URUTAN PENTING: static route HARUS di atas {id}!
+// =====================================================
+
+Route::get('/seminar',              [DaftarSeminarController::class, 'index'])->name('seminar.daftar');
+Route::get('/seminar/ajukan',       [DaftarSeminarController::class, 'create'])->name('seminar.create');
+Route::post('/seminar/ajukan',      [DaftarSeminarController::class, 'store'])->name('seminar.store');
+Route::post('/seminar/draft',       [DaftarSeminarController::class, 'saveDraft'])->name('seminar.draft');
+Route::get('/seminar/{id}/edit',    [DaftarSeminarController::class, 'edit'])->name('seminar.edit');
+Route::get('/seminar/{id}',         [DaftarSeminarController::class, 'show'])->name('seminar.show');
+Route::get('/seminar/{id}/daftar',  [DaftarSeminarController::class, 'formDaftar'])->name('seminar.formDaftar');
+Route::post('/seminar/{id}/daftar', [DaftarSeminarController::class, 'submitDaftar'])->name('seminar.submitDaftar');
+
+
+// =====================================================
+// HASIL PENILAIAN — MAHASISWA
+// =====================================================
+
+Route::get('/mahasiswa/hasil-penilaian', [HasilPenilaianMahasiswaController::class, 'index'])->name('mahasiswa.hasil.penilaian');
