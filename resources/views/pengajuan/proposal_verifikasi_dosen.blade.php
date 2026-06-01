@@ -396,7 +396,7 @@
          STATUS: belum ada reviewer
          → tampilkan form ASSIGN REVIEWER
     ────────────────────────────────────── --}}
-    @if(!$sudahPunyaReviewer && $stProposal !== 'selesai')
+    @if(!$sudahPunyaReviewer && $stProposal !== 'selesai' && $stProposal !== 'menunggu_verifikasi')
 
         <div class="section-title">Penugasan Reviewer</div>
         <div class="section-sub">Pilih dosen reviewer untuk mengevaluasi proposal ini sebelum ditetapkan pembimbingnya.</div>
@@ -509,7 +509,7 @@
          STATUS: selesai
          → reviewer udah review, koor tetapkan dosbing
     ────────────────────────────────────── --}}
-    @elseif($stProposal === 'selesai')
+    @elseif($stProposal === 'selesai' || $stProposal === 'menunggu_verifikasi')
 
         {{-- Info reviewer yang sudah mereview --}}
         @php
@@ -679,6 +679,16 @@
     {{-- FOOTER --}}
     <div class="footer-btn">
         <a href="/proposal" class="btn-kembali">Kembali</a>
+
+        @if($stProposal === 'menunggu_verifikasi')
+        <form method="POST" action="{{ url('/proposal/'.$proposal->id.'/simpan') }}" style="margin:0;">
+            @csrf
+            <button type="submit"
+                style="background:#FACC15;color:#333;border:none;padding:10px 28px;border-radius:20px;font-size:0.9rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;">
+                Simpan Penetapan Pembimbing <span>→</span>
+            </button>
+        </form>
+        @endif
     </div>
 
 </div>

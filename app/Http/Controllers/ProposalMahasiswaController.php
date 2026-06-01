@@ -63,7 +63,7 @@ class ProposalMahasiswaController extends Controller
                 'judul'             => $request->judul,
                 'file_proposal'     => $filePath,
                 'tanggal_pengajuan' => $request->tanggal_pengajuan,
-                'status'            => 'menunggu_verifikasi',
+                'status'            => 'menunggu_review',
             ]);
 
             UsulanPembimbing::create([

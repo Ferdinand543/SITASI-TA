@@ -43,7 +43,7 @@ class ReviewerController extends Controller
                     ->where('tp.nim_nid_reviewer', '=', $nimReviewer);
             })
             // ↓ Filter hanya proposal yang ditugaskan ke reviewer ini
-            ->whereIn('proposal.status', ['menunggu_review', 'selesai'])
+            ->whereIn('proposal.status', ['menunggu_review', 'menunggu_verifikasi', 'selesai'])
             ->where('proposal.nim_nid_reviewer', $nimReviewer)
             ->select([
                 'proposal.id',
@@ -57,7 +57,6 @@ class ReviewerController extends Controller
                 'tp.catatan',
                 'tp.file_tinjauan',
                 'tp.tanggal_tinjauan',
-                // Join dosbing sengaja dihapus karena belum ditetapkan saat review
             ]);
 
         if ($request->filled('status_review')) {
@@ -114,7 +113,6 @@ class ReviewerController extends Controller
                 $join->on('tp.proposal_id', '=', 'proposal.id')
                     ->where('tp.nim_nid_reviewer', '=', $nimReviewer);
             })
-            // ↓ Pastikan reviewer hanya bisa lihat proposal yang ditugaskan ke dia
             ->where('proposal.id', $id)
             ->where('proposal.nim_nid_reviewer', $nimReviewer)
             ->select([
@@ -129,7 +127,6 @@ class ReviewerController extends Controller
                 'tp.catatan',
                 'tp.file_tinjauan',
                 'tp.tanggal_tinjauan',
-                // Join dosbing sengaja dihapus karena belum ditetapkan saat review
             ])
             ->first();
 
@@ -190,10 +187,11 @@ class ReviewerController extends Controller
             ]);
         }
 
-        // Update status proposal jadi selesai setelah direview
+        // ✅ FIX: setelah reviewer selesai review → menunggu_verifikasi (bukan selesai)
+        // supaya koordinator bisa tetapkan dosbing
         DB::table('proposal')
             ->where('id', $id)
-            ->update(['status' => 'selesai', 'updated_at' => now()]);
+            ->update(['status' => 'menunggu_verifikasi', 'updated_at' => now()]);
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json(['success' => true]);

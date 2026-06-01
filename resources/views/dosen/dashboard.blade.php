@@ -64,9 +64,15 @@
         : false;
 
     $jumlahMenungguProposal = $isKoor
-        ? \Illuminate\Support\Facades\DB::table('proposal')->where('status', 'menunggu_verifikasi')->count()
+        ? \Illuminate\Support\Facades\DB::table('proposal')
+            ->whereIn('status', ['menunggu_review', 'menunggu_verifikasi'])
+            ->count()
         : ($isReviewer
-            ? \Illuminate\Support\Facades\DB::table('proposal')->where('status', 'menunggu_review')->count()
+            ? \Illuminate\Support\Facades\DB::table('proposal')
+                ->where('status', 'menunggu_review')
+                ->whereNotNull('nim_nid_reviewer')
+                ->where('nim_nid_reviewer', $nimSesi)
+                ->count()
             : 0);
 
     // ── BADGE BIMBINGAN: nyala kalau ada bimbingan baru ATAU proposal pending ──
@@ -169,7 +175,7 @@
             @if($isPenguji || $isPembimbing)
                 <a href="{{ $penilaianUrl }}" class="text-decoration-none text-dark">
                     <div class="card shadow-sm h-100 border-0 p-3 menu-card">
-                        <img src="{{ asset('images/penilaian.jpeg') }}" class="menu-img mb-3">
+                        <img src="{{ asset('images/nilai.jpeg') }}" class="menu-img mb-3">
                         <h6 class="fw-bold">Penilaian</h6>
                         <p class="text-muted small mb-0">Kelola Penilaian Seminar</p>
                     </div>

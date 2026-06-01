@@ -7,25 +7,17 @@ use Illuminate\Support\Facades\DB;
 
 class ProposalController extends Controller
 {
-    // =====================================================
-    // CEK KOORDINATOR HELPER
-    // =====================================================
     private function isKoordinator()
     {
         $user = session('user');
         if (!$user) return false;
-
         if (strtolower(trim($user->role)) === 'admin') return true;
-
         return DB::table('dosen_roles')
             ->where('nim_nid', $user->nim_nid)
             ->where('role_dosen', 'koordinator')
             ->exists();
     }
 
-    // =====================================================
-    // HELPER: ambil dosen yang punya role pembimbing saja
-    // =====================================================
     private function getDosenPembimbingList()
     {
         return DB::table('users')
@@ -37,32 +29,25 @@ class ProposalController extends Controller
             ->get();
     }
 
-    // =====================================================
-    // QUERY BUILDER HELPER
-    // =====================================================
     private function baseProposalQuery()
     {
         return DB::table('proposal')
             ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
-
             ->leftJoin('usulan_pembimbing as up1', function ($join) {
                 $join->on('up1.proposal_id', '=', 'proposal.id')
                     ->where('up1.urutan', '=', 1);
             })
             ->leftJoin('users as du1', 'up1.nim_nid_dosen', '=', 'du1.nim_nid')
-
             ->leftJoin('usulan_pembimbing as up2', function ($join) {
                 $join->on('up2.proposal_id', '=', 'proposal.id')
                     ->where('up2.urutan', '=', 2);
             })
             ->leftJoin('users as du2', 'up2.nim_nid_dosen', '=', 'du2.nim_nid')
-
             ->leftJoin('dosen_pembimbing as dp1', function ($join) {
                 $join->on('dp1.proposal_id', '=', 'proposal.id')
                     ->where('dp1.urutan', '=', 1);
             })
             ->leftJoin('users as dd1', 'dp1.nim_nid_dosen', '=', 'dd1.nim_nid')
-
             ->leftJoin('dosen_pembimbing as dp2', function ($join) {
                 $join->on('dp2.proposal_id', '=', 'proposal.id')
                     ->where('dp2.urutan', '=', 2);
@@ -70,9 +55,6 @@ class ProposalController extends Controller
             ->leftJoin('users as dd2', 'dp2.nim_nid_dosen', '=', 'dd2.nim_nid');
     }
 
-    // =====================================================
-    // INDEX
-    // =====================================================
     public function index(Request $request)
     {
         $user = session('user');
@@ -87,7 +69,6 @@ class ProposalController extends Controller
             return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
         }
 
-        // ── DATA TAB 1: Penetapan Dosen Pembimbing ──
         $query = $this->baseProposalQuery()
             ->select([
                 'proposal.id',
@@ -98,18 +79,14 @@ class ProposalController extends Controller
                 'proposal.tanggal_pengajuan',
                 'proposal.status',
                 'proposal.nim_nid_reviewer',
-
                 'du1.nama as usulan_dosen1_nama',
                 'du1.nim_nid as usulan_dosen1_nidn',
                 'up1.status as usulan_dosen1_status',
-
                 'du2.nama as usulan_dosen2_nama',
                 'du2.nim_nid as usulan_dosen2_nidn',
                 'up2.status as usulan_dosen2_status',
-
                 'dd1.nama as dosen1_nama',
                 'dd1.nim_nid as dosen1_nidn',
-
                 'dd2.nama as dosen2_nama',
                 'dd2.nim_nid as dosen2_nidn',
             ]);
@@ -133,9 +110,6 @@ class ProposalController extends Controller
 
         $proposals = $query->orderBy('proposal.tanggal_pengajuan', 'asc')->get();
 
-        // ── DATA TAB 2: Penetapan Reviewer ──
-
-        // Daftar semua dosen reviewer + hitung berapa proposal yang mereka handle
         $dosenReviewerList = DB::table('users')
             ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
             ->where('dosen_roles.role_dosen', 'reviewer')
@@ -147,17 +121,15 @@ class ProposalController extends Controller
                     ->where('nim_nid_reviewer', $dosen->nim_nid)
                     ->whereIn('status', ['menunggu_review', 'selesai'])
                     ->count();
-
-                $dosen->jumlah_proposal = $jumlahProposal;
+                $dosen->jumlah_proposal  = $jumlahProposal;
                 $dosen->sudah_ditugaskan = $jumlahProposal > 0;
                 return $dosen;
             });
 
-        // Daftar mahasiswa (proposal) yang belum punya reviewer
         $mahasiswaBelumReviewer = DB::table('proposal')
             ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
             ->whereNull('proposal.nim_nid_reviewer')
-            ->where('proposal.status', 'menunggu_verifikasi')
+            ->whereIn('proposal.status', ['menunggu_verifikasi', 'menunggu_review'])
             ->select([
                 'proposal.id',
                 'proposal.nim_nid',
@@ -169,7 +141,6 @@ class ProposalController extends Controller
             ->orderBy('proposal.tanggal_pengajuan', 'asc')
             ->get();
 
-        // List reviewer untuk dropdown di modal (dari sisi mahasiswa)
         $reviewerListDropdown = DB::table('users')
             ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
             ->where('dosen_roles.role_dosen', 'reviewer')
@@ -185,9 +156,6 @@ class ProposalController extends Controller
         ));
     }
 
-    // =====================================================
-    // KELOLA REVIEWER — halaman kelola penugasan 1 dosen reviewer
-    // =====================================================
     public function kelolaReviewer($nimReviewer)
     {
         $user = session('user');
@@ -197,7 +165,6 @@ class ProposalController extends Controller
             return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
         }
 
-        // Cek apakah dosen ini punya role reviewer
         $dosen = DB::table('users')
             ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
             ->where('users.nim_nid', $nimReviewer)
@@ -209,7 +176,6 @@ class ProposalController extends Controller
             return redirect('/proposal?tab=reviewer')->with('error', 'Dosen reviewer tidak ditemukan!');
         }
 
-        // Mahasiswa yang sudah ditugaskan ke reviewer ini
         $mahasiswaReviewer = DB::table('proposal')
             ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
             ->where('proposal.nim_nid_reviewer', $nimReviewer)
@@ -225,11 +191,10 @@ class ProposalController extends Controller
             ->orderBy('proposal.tanggal_pengajuan', 'asc')
             ->get();
 
-        // Mahasiswa yang BELUM punya reviewer (untuk modal tambah)
         $mahasiswaBelumReviewer = DB::table('proposal')
             ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
             ->whereNull('proposal.nim_nid_reviewer')
-            ->where('proposal.status', 'menunggu_verifikasi')
+            ->whereIn('proposal.status', ['menunggu_verifikasi', 'menunggu_review'])
             ->select([
                 'proposal.id',
                 'proposal.nim_nid',
@@ -246,10 +211,6 @@ class ProposalController extends Controller
         ));
     }
 
-    // =====================================================
-    // TAMBAH MAHASISWA KE REVIEWER — dari halaman kelola
-    // (assign banyak mahasiswa sekaligus ke 1 reviewer)
-    // =====================================================
     public function tambahMahasiswaReviewer(Request $request, $nimReviewer)
     {
         $user = session('user');
@@ -280,9 +241,6 @@ class ProposalController extends Controller
             ->with('success', count($request->proposal_ids) . ' mahasiswa berhasil ditambahkan!');
     }
 
-    // =====================================================
-    // REMOVE REVIEWER — hapus penugasan reviewer dari proposal
-    // =====================================================
     public function removeReviewer(Request $request, $id)
     {
         $user = session('user');
@@ -297,7 +255,7 @@ class ProposalController extends Controller
 
         DB::table('proposal')->where('id', $id)->update([
             'nim_nid_reviewer' => null,
-            'status'           => 'menunggu_verifikasi',
+            'status'           => 'menunggu_review',
             'updated_at'       => now(),
         ]);
 
@@ -308,9 +266,6 @@ class ProposalController extends Controller
         return back()->with('success', 'Penugasan reviewer berhasil dihapus!');
     }
 
-    // =====================================================
-    // INDEX PENGUJI (READ ONLY)
-    // =====================================================
     public function indexPenguji()
     {
         $user = session('user');
@@ -345,9 +300,6 @@ class ProposalController extends Controller
         return view('pengajuan.proposal_penguji', compact('proposals'));
     }
 
-    // =====================================================
-    // DETAIL
-    // =====================================================
     public function detail($id)
     {
         $user = session('user');
@@ -369,25 +321,20 @@ class ProposalController extends Controller
                 'proposal.tanggal_pengajuan',
                 'proposal.status',
                 'proposal.nim_nid_reviewer',
-
                 'du1.nama as usulan_dosen1_nama',
                 'du1.nim_nid as usulan_dosen1_nidn',
                 'up1.status as usulan_dosen1_status',
                 'up1.tanggal_usulan as usulan_dosen1_tanggal',
-
                 'du2.nama as usulan_dosen2_nama',
                 'du2.nim_nid as usulan_dosen2_nidn',
                 'up2.status as usulan_dosen2_status',
                 'up2.tanggal_usulan as usulan_dosen2_tanggal',
-
                 'dd1.nama as dosen1_nama',
                 'dd1.nim_nid as dosen1_nidn',
                 'dp1.tanggal_penetapan as dosen1_tanggal',
-
                 'dd2.nama as dosen2_nama',
                 'dd2.nim_nid as dosen2_nidn',
                 'dp2.tanggal_penetapan as dosen2_tanggal',
-
                 'tp.catatan as tinjauan_catatan',
                 'tp.file_tinjauan',
                 'tp.tanggal_tinjauan',
@@ -405,9 +352,6 @@ class ProposalController extends Controller
         return view('pengajuan.proposal_verifikasi_dosen', compact('proposal', 'dosenList'));
     }
 
-    // =====================================================
-    // VERIFIKASI
-    // =====================================================
     public function verifikasi($id)
     {
         $user = session('user');
@@ -418,6 +362,7 @@ class ProposalController extends Controller
         }
 
         $proposal = $this->baseProposalQuery()
+            ->leftJoin('tinjauan_proposal as tp', 'tp.proposal_id', '=', 'proposal.id')
             ->select([
                 'proposal.id',
                 'proposal.nim_nid',
@@ -427,24 +372,23 @@ class ProposalController extends Controller
                 'proposal.tanggal_pengajuan',
                 'proposal.status',
                 'proposal.nim_nid_reviewer',
-
                 'du1.nama as usulan_dosen1_nama',
                 'du1.nim_nid as usulan_dosen1_nidn',
                 'up1.status as usulan_dosen1_status',
                 'up1.tanggal_usulan as usulan_dosen1_tanggal',
-
                 'du2.nama as usulan_dosen2_nama',
                 'du2.nim_nid as usulan_dosen2_nidn',
                 'up2.status as usulan_dosen2_status',
                 'up2.tanggal_usulan as usulan_dosen2_tanggal',
-
                 'dd1.nama as dosen1_nama',
                 'dd1.nim_nid as dosen1_nidn',
                 'dp1.tanggal_penetapan as dosen1_tanggal',
-
                 'dd2.nama as dosen2_nama',
                 'dd2.nim_nid as dosen2_nidn',
                 'dp2.tanggal_penetapan as dosen2_tanggal',
+                'tp.catatan as tinjauan_catatan',
+                'tp.file_tinjauan',
+                'tp.tanggal_tinjauan',
             ])
             ->where('proposal.id', $id)
             ->first();
@@ -458,9 +402,6 @@ class ProposalController extends Controller
         return view('pengajuan.proposal_verifikasi_dosen', compact('proposal', 'dosenList'));
     }
 
-    // =====================================================
-    // ASSIGN REVIEWER
-    // =====================================================
     public function assignReviewer(Request $request, $id)
     {
         $user = session('user');
@@ -485,9 +426,6 @@ class ProposalController extends Controller
         return redirect('/proposal/' . $id)->with('success', 'Reviewer berhasil ditetapkan!');
     }
 
-    // =====================================================
-    // PROSES VERIFIKASI (tetapkan dosbing — setelah review)
-    // =====================================================
     public function prosesVerifikasi(Request $request, $id)
     {
         $user = session('user');
@@ -539,16 +477,13 @@ class ProposalController extends Controller
         DB::table('proposal')
             ->where('id', $id)
             ->update([
-                'status'     => 'menunggu_verifikasi',
+                'status'     => 'selesai',
                 'updated_at' => now(),
             ]);
 
         return redirect('/proposal')->with('success', 'Dosen pembimbing berhasil ditetapkan!');
     }
 
-    // =====================================================
-    // TETAPKAN USULAN
-    // =====================================================
     public function tetapkanUsulan(Request $request, $id, $urutan)
     {
         $user = session('user');
@@ -617,6 +552,7 @@ class ProposalController extends Controller
             return redirect()->back()->with('error', 'Aksi tidak valid!');
         }
 
+        // ✅ DIUBAH: status tetap menunggu_verifikasi, bukan selesai
         DB::table('proposal')
             ->where('id', $id)
             ->update([
@@ -628,9 +564,6 @@ class ProposalController extends Controller
             ->with('success', 'Pembimbing ' . $urutan . ' berhasil ditetapkan!');
     }
 
-    // =====================================================
-    // UBAH PEMBIMBING
-    // =====================================================
     public function ubahPembimbing(Request $request, $id, $urutan)
     {
         $user = session('user');
@@ -658,6 +591,7 @@ class ProposalController extends Controller
             'tanggal_penetapan' => now()->toDateString(),
         ]);
 
+        // ✅ DIUBAH: status tetap menunggu_verifikasi, bukan selesai
         DB::table('proposal')
             ->where('id', $id)
             ->update([
@@ -665,13 +599,38 @@ class ProposalController extends Controller
                 'updated_at' => now(),
             ]);
 
-        return redirect('/proposal/' . $id)
+        return redirect('/proposal/' . $id . '/verifikasi')
             ->with('success', 'Pembimbing ' . $urutan . ' berhasil diubah!');
     }
 
-    // =====================================================
-    // LANJUTKAN KE REVIEWER
-    // =====================================================
+    // ✅ METHOD BARU: simpan penetapan final → status jadi selesai
+    public function simpanPenetapan($id)
+    {
+        $user = session('user');
+        if (!$user) return redirect('/login')->with('error', 'Silakan login dulu!');
+
+        if (!$this->isKoordinator()) {
+            return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
+        }
+
+        $jumlah = DB::table('dosen_pembimbing')
+            ->where('proposal_id', $id)
+            ->count();
+
+        if ($jumlah < 2) {
+            return redirect()->back()->with('error', 'Kedua dosen pembimbing harus ditetapkan terlebih dahulu!');
+        }
+
+        DB::table('proposal')
+            ->where('id', $id)
+            ->update([
+                'status'     => 'selesai',
+                'updated_at' => now(),
+            ]);
+
+        return redirect('/proposal')->with('success', 'Penetapan dosen pembimbing berhasil disimpan!');
+    }
+
     public function lanjutkanKeReviewer(Request $request, $id)
     {
         $user = session('user');

@@ -289,7 +289,8 @@ Route::post('/proposal/{id}/tetapkan/{urutan}',        [ProposalController::clas
 Route::post('/proposal/{id}/lanjutkan',                [ProposalController::class, 'lanjutkanKeReviewer'])->name('proposal.lanjutkan');
 Route::post('/proposal/{id}/assign-reviewer',          [ProposalController::class, 'assignReviewer'])->name('proposal.assignReviewer');
 Route::post('/proposal/{id}/ubah-pembimbing/{urutan}', [ProposalController::class, 'ubahPembimbing'])->name('proposal.ubahPembimbing');
-Route::post('/proposal/{id}/remove-reviewer',          [ProposalController::class, 'removeReviewer'])->name('proposal.remove.reviewer');
+Route::post('/proposal/{id}/simpan',                   [ProposalController::class, 'simpanPenetapan'])->name('proposal.simpan');
+Route::match(['POST', 'DELETE'], '/proposal/{id}/remove-reviewer', [ProposalController::class, 'removeReviewer'])->name('proposal.remove.reviewer');
 
 // HARUS di atas /proposal/{id} !
 Route::get('/proposal/reviewer/{nimReviewer}/kelola',            [ProposalController::class, 'kelolaReviewer'])->name('proposal.kelola.reviewer');
