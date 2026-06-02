@@ -73,12 +73,27 @@
 
         @php
         $sudahDiverifikasi = strtolower($pengajuan->status) !== 'menunggu verifikasi';
-        $judulDisetujui = $pengajuan->judul_disetujui;
+        $judulDisetujui    = $pengajuan->judul_disetujui;
 
         $juduls = [
-            1 => ['judul' => $pengajuan->judul_1, 'topik' => $pengajuan->topik_1 ?? '-', 'mitra' => $pengajuan->mitra_1 ?? '-'],
-            2 => ['judul' => $pengajuan->judul_2, 'topik' => $pengajuan->topik_2 ?? '-', 'mitra' => $pengajuan->mitra_2 ?? '-'],
-            3 => ['judul' => $pengajuan->judul_3, 'topik' => $pengajuan->topik_3 ?? '-', 'mitra' => $pengajuan->mitra_3 ?? '-'],
+            1 => [
+                'judul'   => $pengajuan->judul_1,
+                'topik'   => $pengajuan->topik_1   ?? '-',
+                'mitra'   => $pengajuan->mitra_1   ?? '-',
+                'catatan' => $pengajuan->catatan_1 ?? '',
+            ],
+            2 => [
+                'judul'   => $pengajuan->judul_2,
+                'topik'   => $pengajuan->topik_2   ?? '-',
+                'mitra'   => $pengajuan->mitra_2   ?? '-',
+                'catatan' => $pengajuan->catatan_2 ?? '',
+            ],
+            3 => [
+                'judul'   => $pengajuan->judul_3,
+                'topik'   => $pengajuan->topik_3   ?? '-',
+                'mitra'   => $pengajuan->mitra_3   ?? '-',
+                'catatan' => $pengajuan->catatan_3 ?? '',
+            ],
         ];
         @endphp
 
@@ -108,6 +123,40 @@
                     Mitra: {{ $j['mitra'] }}
                 </span>
             </div>
+
+            {{-- ==============================
+                 CATATAN
+            ============================== --}}
+            @if(!$sudahDiverifikasi)
+                {{-- MODE INPUT: bisa diisi saat verifikasi --}}
+                <div class="catatan-wrap">
+                    <label class="catatan-label" for="catatan_{{ $no }}">
+                        <i class="fa fa-pen-to-square"></i>
+                        Catatan <span class="catatan-opsional">(opsional)</span>
+                    </label>
+                    <textarea
+                        class="catatan-input"
+                        id="catatanInput{{ $no }}"
+                        name="catatan_{{ $no }}"
+                        placeholder="Tulis catatan atau alasan keputusan untuk judul ini..."
+                        rows="2"
+                        maxlength="500"></textarea>
+                    <div class="catatan-counter"><span id="counter{{ $no }}">0</span>/500</div>
+                </div>
+            @else
+                {{-- MODE READONLY: tampilkan catatan yang sudah disimpan --}}
+                @if(!empty($j['catatan']))
+                <div class="catatan-wrap catatan-readonly">
+                    <div class="catatan-label">
+                        <i class="fa fa-comment-dots"></i>
+                        Catatan 
+                    </div>
+                    <div class="catatan-isi">{{ $j['catatan'] }}</div>
+                </div>
+                @endif
+            @endif
+            {{-- ============================== --}}
+
             <div class="judul-aksi" id="aksi{{ $no }}">
                 @if($sudahDiverifikasi)
                     @if($isDisetujui)
@@ -154,7 +203,7 @@
         <div class="popup-title" id="popupTitle">Berhasil!</div>
         <div class="popup-text" id="popupText">Judul berhasil dipilih</div>
         <button class="popup-btn" id="popupOkBtn" onclick="closePopup()">OK</button>
-        <div id="confirmArea" style="display:none; margin-top:12px; display:none;">
+        <div id="confirmArea" style="display:none; margin-top:12px;">
             <button class="popup-btn" onclick="lanjutkanAksi()">Ya, Lanjutkan</button>
             <button class="popup-btn btn-batal" onclick="closePopup()">Batal</button>
         </div>
@@ -162,11 +211,15 @@
 </div>
 
 <style>
+    .main-content {
+        padding: 0 !important;
+    }
+
     body { background: #F5F5F5; }
 
     .wrapper-page {
-        max-width: 860px;
-        margin: 0 auto;
+        max-width: 100%;
+        margin: 0;
         padding: 36px 24px 100px;
     }
 
@@ -208,7 +261,7 @@
     /* INFO GRID */
     .info-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 12px;
         margin-bottom: 20px;
     }
@@ -221,6 +274,8 @@
         display: flex;
         align-items: center;
         gap: 14px;
+        min-width: 0; 
+        overflow: hidden;
     }
     .info-icon {
         width: 38px; height: 38px;
@@ -242,6 +297,9 @@
         font-size: 1rem;
         font-weight: 600;
         color: #111;
+        white-space: nowrap;
+        overflow: hidden;  
+        text-overflow: ellipsis; 
     }
     .status-menunggu  { color: #D97706; }
     .status-disetujui { color: #16A34A; }
@@ -343,6 +401,70 @@
         font-size: 0.8rem;
         color: #6B7280;
     }
+
+    /* ==============================
+       CATATAN
+    ============================== */
+    .catatan-wrap {
+        margin-bottom: 14px;
+        margin-top: 2px;
+    }
+    .catatan-label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #6B7280;
+        margin-bottom: 6px;
+    }
+    .catatan-opsional {
+        font-weight: 400;
+        color: #9CA3AF;
+        font-size: 0.75rem;
+    }
+    .catatan-input {
+        width: 100%;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 0.82rem;
+        color: #374151;
+        resize: none;
+        background: #FAFAFA;
+        transition: border-color 0.15s, background 0.15s;
+        font-family: inherit;
+        line-height: 1.5;
+    }
+    .catatan-input:focus {
+        outline: none;
+        border-color: #F4B400;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(244,180,0,0.08);
+    }
+    .catatan-input::placeholder { color: #BFC7D2; }
+    .catatan-counter {
+        text-align: right;
+        font-size: 0.72rem;
+        color: #9CA3AF;
+        margin-top: 4px;
+    }
+
+    /* Readonly catatan (sudah diverifikasi) */
+    .catatan-readonly .catatan-label {
+        color: #6B7280;
+    }
+    .catatan-isi {
+        background: #F9FAFB;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 0.82rem;
+        color: #374151;
+        line-height: 1.6;
+        white-space: pre-wrap;
+    }
+    /* ============================== */
 
     .judul-aksi {
         display: flex;
@@ -454,16 +576,25 @@
 </style>
 
 <script>
-    let aksiDipilih = null;
+    let aksiDipilih  = null;
     let nomorDipilih = null;
-    let statusJudul = { 1: '', 2: '', 3: '' };
+    let statusJudul  = { 1: '', 2: '', 3: '' };
+
+    // ── Counter karakter catatan ──
+    [1, 2, 3].forEach(function (no) {
+        const el = document.getElementById('catatanInput' + no);
+        if (!el) return;
+        el.addEventListener('input', function () {
+            document.getElementById('counter' + no).textContent = this.value.length;
+        });
+    });
 
     function showPopup(type, text) {
         const wrap  = document.getElementById('popupIconWrap');
         const icon  = document.getElementById('popupIcon');
         const title = document.getElementById('popupTitle');
-        document.getElementById('popupOkBtn').style.display = 'inline-block';
-        document.getElementById('confirmArea').style.display = 'none';
+        document.getElementById('popupOkBtn').style.display    = 'inline-block';
+        document.getElementById('confirmArea').style.display   = 'none';
         if (type === 'success') {
             wrap.className  = 'popup-icon-wrap success';
             icon.innerHTML  = '✓';
@@ -478,7 +609,8 @@
     }
 
     function showConfirm(jenis, no) {
-        aksiDipilih = jenis; nomorDipilih = no;
+        aksiDipilih  = jenis;
+        nomorDipilih = no;
         const wrap  = document.getElementById('popupIconWrap');
         const icon  = document.getElementById('popupIcon');
         wrap.className  = 'popup-icon-wrap confirm';
@@ -487,9 +619,9 @@
         document.getElementById('popupText').innerHTML  = jenis === 'setuju'
             ? 'Apakah anda yakin menyetujui judul ini?'
             : 'Apakah anda yakin menolak judul ini?';
-        document.getElementById('popupOkBtn').style.display = 'none';
+        document.getElementById('popupOkBtn').style.display  = 'none';
         document.getElementById('confirmArea').style.display = 'block';
-        document.getElementById('popupBg').style.display = 'flex';
+        document.getElementById('popupBg').style.display     = 'flex';
     }
 
     function closePopup() {
@@ -497,16 +629,16 @@
     }
 
     function setuju(no) { showConfirm('setuju', no); }
-    function tolak(no)  { showConfirm('tolak', no);  }
+    function tolak(no)  { showConfirm('tolak',  no); }
 
     function lanjutkanAksi() {
-        const no = nomorDipilih;
-        const card = document.getElementById('card' + no);
+        const no    = nomorDipilih;
+        const card  = document.getElementById('card'  + no);
         const badge = document.getElementById('badge' + no);
 
         if (aksiDipilih === 'setuju') {
             statusJudul[no] = 'setuju';
-            card.className = card.className.replace(/border-\w+/, 'border-green');
+            card.className  = card.className.replace(/border-\w+/, 'border-green');
             badge.className = 'usulan-badge badge-approved';
             badge.innerHTML = 'Usulan ' + no + ' · Approved';
             document.getElementById('aksi' + no).innerHTML =
@@ -514,7 +646,7 @@
             showPopup('success', 'Judul berhasil dipilih.');
         } else {
             statusJudul[no] = 'tolak';
-            card.className = card.className.replace(/border-\w+/, 'border-red');
+            card.className  = card.className.replace(/border-\w+/, 'border-red');
             badge.className = 'usulan-badge badge-rejected';
             badge.innerHTML = 'Usulan ' + no + ' · Rejected';
             document.getElementById('aksi' + no).innerHTML =
@@ -525,23 +657,28 @@
 
     function resetJudul(no) {
         statusJudul[no] = '';
-        const card  = document.getElementById('card' + no);
+        const card  = document.getElementById('card'  + no);
         const badge = document.getElementById('badge' + no);
-        card.className = card.className.replace(/border-\w+/, 'border-yellow');
+        card.className  = card.className.replace(/border-\w+/, 'border-yellow');
         badge.className = 'usulan-badge badge-pending';
         badge.innerHTML = 'Usulan ' + no + ' · Pending';
         document.getElementById('aksi' + no).innerHTML =
             '<button type="button" class="btn-setuju" onclick="setuju(' + no + ')"><i class="fa fa-check"></i> Setujui</button>' +
-            '<button type="button" class="btn-tolak"  onclick="tolak(' + no + ')"><i class="fa fa-xmark"></i> Tolak</button>';
+            '<button type="button" class="btn-tolak"  onclick="tolak('  + no + ')"><i class="fa fa-xmark"></i> Tolak</button>';
+        // Reset counter juga
+        const catatanEl = document.getElementById('catatanInput' + no);
+        if (catatanEl) {
+            document.getElementById('counter' + no).textContent = catatanEl.value.length;
+        }
     }
 
     function simpanData() {
         let jumlahSetuju = 0, masihKosong = false, judulDipilih = '';
         for (let i = 1; i <= 3; i++) {
-            if (statusJudul[i] === '') { masihKosong = true; }
+            if (statusJudul[i] === '')       { masihKosong = true; }
             if (statusJudul[i] === 'setuju') { jumlahSetuju++; judulDipilih = i; }
         }
-        if (masihKosong) { showPopup('error', 'Semua judul harus diberi keputusan.'); return; }
+        if (masihKosong)     { showPopup('error', 'Semua judul harus diberi keputusan.'); return; }
         if (jumlahSetuju > 1) { showPopup('error', 'Hanya boleh 1 judul yang disetujui.'); return; }
         document.getElementById('judul_disetujui').value = judulDipilih;
         document.getElementById('formVerifikasi').submit();

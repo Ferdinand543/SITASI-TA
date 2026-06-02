@@ -132,7 +132,10 @@ class PengajuanController extends Controller
         // VALIDASI
         // =========================
         $request->validate([
-            'judul_disetujui' => 'nullable'
+            'judul_disetujui' => 'nullable',
+            'catatan_1'       => 'nullable|string|max:500',
+            'catatan_2'       => 'nullable|string|max:500',
+            'catatan_3'       => 'nullable|string|max:500',
         ]);
 
         // =========================
@@ -172,9 +175,12 @@ class PengajuanController extends Controller
         DB::table('pengajuan_judul')
             ->where('id', $id)
             ->update([
-                'status'           => $status,
-                'judul_disetujui'  => $judulDipilih,
-                'updated_at'       => now()
+                'status'          => $status,
+                'judul_disetujui' => $judulDipilih,
+                'catatan_1'       => $request->catatan_1,
+                'catatan_2'       => $request->catatan_2,
+                'catatan_3'       => $request->catatan_3,
+                'updated_at'      => now()
             ]);
 
         // =========================

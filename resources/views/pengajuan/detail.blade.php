@@ -199,6 +199,32 @@
         color: var(--neutral);
     }
 
+    /* ── CATATAN KOORDINATOR ── */
+    .catatan-koor {
+        margin-top: 16px;
+        background: #FFFBEA;
+        border: 1px solid #FDE68A;
+        border-radius: 10px;
+        padding: 12px 16px;
+    }
+
+    .catatan-koor-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #92400E;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .catatan-koor-isi {
+        font-size: 13px;
+        color: #78350F;
+        line-height: 1.6;
+        white-space: pre-wrap;
+    }
+
     @media (max-width: 640px) {
         .info-grid { grid-template-columns: 1fr; }
         .judul-meta { grid-template-columns: 1fr; }
@@ -297,9 +323,9 @@
     {{-- JUDUL CARDS --}}
     @php
         $judulList = [
-            ['nomor' => 1, 'judul' => $pengajuan->judul_1, 'topik' => $pengajuan->topik_1, 'mitra' => $pengajuan->mitra_1 ?? null],
-            ['nomor' => 2, 'judul' => $pengajuan->judul_2, 'topik' => $pengajuan->topik_2, 'mitra' => $pengajuan->mitra_2 ?? null],
-            ['nomor' => 3, 'judul' => $pengajuan->judul_3, 'topik' => $pengajuan->topik_3, 'mitra' => $pengajuan->mitra_3 ?? null],
+            ['nomor' => 1, 'judul' => $pengajuan->judul_1, 'topik' => $pengajuan->topik_1, 'mitra' => $pengajuan->mitra_1 ?? null, 'catatan' => $pengajuan->catatan_1 ?? ''],
+            ['nomor' => 2, 'judul' => $pengajuan->judul_2, 'topik' => $pengajuan->topik_2, 'mitra' => $pengajuan->mitra_2 ?? null, 'catatan' => $pengajuan->catatan_2 ?? ''],
+            ['nomor' => 3, 'judul' => $pengajuan->judul_3, 'topik' => $pengajuan->topik_3, 'mitra' => $pengajuan->mitra_3 ?? null, 'catatan' => $pengajuan->catatan_3 ?? ''],
         ];
 
         $statusUtama    = strtolower($pengajuan->status);
@@ -356,6 +382,18 @@
                     <div class="meta-item-value">{{ $item['mitra'] ?? '-' }}</div>
                 </div>
             </div>
+
+            {{-- CATATAN DARI KOORDINATOR (hanya tampil kalau ada isinya) --}}
+            @if(!empty($item['catatan']))
+            <div class="catatan-koor">
+                <div class="catatan-koor-label">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    Catatan 
+                </div>
+                <div class="catatan-koor-isi">{{ $item['catatan'] }}</div>
+            </div>
+            @endif
+
         </div>
     @endforeach
 
