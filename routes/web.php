@@ -324,7 +324,7 @@ Route::get('/dosen/bimbingan',                      [DosenBimbinganController::c
 Route::put('/dosen/bimbingan/proposal/{id}/status', [DosenBimbinganController::class, 'updateStatusProposal'])->name('dosen.bimbingan.proposal.status');
 Route::get('/dosen/bimbingan/mahasiswa/{nim}',      [DosenBimbinganController::class, 'detailMahasiswa'])->name('dosen.bimbingan.detail');
 Route::get('/dosen/proposal/{id}/lihat',            [DosenBimbinganController::class, 'lihatProposal'])->name('dosen.proposal.lihat');
-
+Route::post('/dosen/bimbingan/proposal/{id}/track', [DosenBimbinganController::class, 'trackBuka'])->name('dosen.bimbingan.proposal.track');
 
 // =====================================================
 // RIWAYAT BIMBINGAN — ADMIN

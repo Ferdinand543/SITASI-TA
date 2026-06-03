@@ -14,12 +14,7 @@ class DosenBimbinganController extends Controller
         $dosen    = session('user');
         $nidDosen = $dosen->nim_nid;
 
-        // ✅ FIX: Otomatis mark semua bimbingan 'Baru Dikirim' jadi 'Sudah Dilihat'
-        // saat dosen buka halaman Riwayat Bimbingan → badge di dashboard langsung ilang
-        DB::table('bimbingan')
-            ->where('dosen_nid', $nidDosen)
-            ->where('status', 'Baru Dikirim')
-            ->update(['status' => 'Sudah Dilihat', 'updated_at' => now()]);
+        // ❌ DIHAPUS: auto-mark bimbingan (ini yang bikin status langsung berubah pas halaman dibuka)
 
         $proposalIds = DB::table('dosen_pembimbing')
             ->where('nim_nid_dosen', $nidDosen)
@@ -29,11 +24,10 @@ class DosenBimbinganController extends Controller
             ->whereIn('id', $proposalIds)
             ->pluck('nim_nid');
 
-        // TAB 1 — Proposal Bimbingan (filter per dosen juga)
         $proposalList = DB::table('pengajuan_proposal_bimbingan as ppb')
             ->join('users as u', 'u.nim_nid', '=', 'ppb.nim_nid')
             ->whereIn('ppb.nim_nid', $nimMahasiswaList)
-            ->where('ppb.dosen_nid', $nidDosen) // ✅ hanya proposal yang ditujukan ke dosen ini
+            ->where('ppb.dosen_nid', $nidDosen)
             ->select(
                 'ppb.id',
                 'ppb.nim_nid',
@@ -47,9 +41,6 @@ class DosenBimbinganController extends Controller
             ->orderBy('ppb.created_at', 'desc')
             ->get();
 
-        // TAB 2 — Mahasiswa Bimbingan
-        // ✅ Filter dari tabel bimbingan, bukan dosen_pembimbing
-        // Jadi Rose hanya muncul di Jennie kalau Rose pernah bimbingan ke Jennie
         $mahasiswaList = DB::table('bimbingan as b')
             ->join('users as u', 'u.nim_nid', '=', 'b.nim_nid')
             ->where('b.dosen_nid', $nidDosen)
@@ -77,10 +68,6 @@ class DosenBimbinganController extends Controller
         return redirect()->back()->with('success', 'Status proposal berhasil diperbarui.');
     }
 
-    /**
-     * Dipanggil saat dosen klik Preview PDF.
-     * Otomatis update status → 'sudah_dilihat', lalu buka file PDF.
-     */
     public function lihatProposal($id)
     {
         if (!session('user')) return redirect('/login');
@@ -96,6 +83,47 @@ class DosenBimbinganController extends Controller
         }
 
         return redirect(asset('uploads/proposal/' . $proposal->file_proposal));
+    }
+
+    // ✅ BARU: dipanggil via AJAX tiap dosen klik salah satu chip dokumen/link
+    public function trackBuka(Request $request, $id)
+    {
+        if (!session('user')) return response()->json(['ok' => false], 401);
+
+        $proposal = DB::table('pengajuan_proposal_bimbingan')->where('id', $id)->first();
+
+        if (!$proposal || $proposal->status !== 'pending') {
+            return response()->json(['ok' => true, 'status' => $proposal->status ?? 'not_found']);
+        }
+
+        $decoded    = json_decode($proposal->file_proposal, true);
+        $files      = $decoded['files'] ?? [];
+        $links      = $decoded['links'] ?? [];
+        $totalAset  = count($files) + count($links);
+
+        // Kalau format lama (plain string, bukan JSON array), total = 1
+        if (!is_array($decoded)) {
+            $totalAset = 1;
+        }
+
+        $sessionKey = 'opened_proposal_' . $id;
+        $opened     = session($sessionKey, []);
+        $index      = $request->input('index');
+
+        if ($index && !in_array($index, $opened)) {
+            $opened[] = $index;
+            session([$sessionKey => $opened]);
+        }
+
+        if ($totalAset > 0 && count($opened) >= $totalAset) {
+            DB::table('pengajuan_proposal_bimbingan')
+                ->where('id', $id)
+                ->update(['status' => 'sudah_dilihat', 'updated_at' => now()]);
+
+            return response()->json(['ok' => true, 'status' => 'sudah_dilihat']);
+        }
+
+        return response()->json(['ok' => true, 'status' => 'pending', 'opened' => count($opened), 'total' => $totalAset]);
     }
 
     public function detailMahasiswa($nim)

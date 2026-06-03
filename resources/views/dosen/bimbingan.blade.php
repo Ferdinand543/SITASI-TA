@@ -77,20 +77,20 @@
     }
 
     .tab-btn.active {
-    background: #FFE083;
-    color: #6C5700;
-    border-color: #D1C6AB;
+        background: #FFE083;
+        color: #6C5700;
+        border-color: #D1C6AB;
     }
 
-.tab-btn.inactive {
-    background: #FFFFFF;
-    color: #6C5700;
-    border-color: #D1C6AB;
+    .tab-btn.inactive {
+        background: #FFFFFF;
+        color: #6C5700;
+        border-color: #D1C6AB;
     }
 
-.tab-btn.inactive:hover {
-    background: #FFF8DC;
-    border-color: #6C5700;
+    .tab-btn.inactive:hover {
+        background: #FFF8DC;
+        border-color: #6C5700;
     }
 
     .count-chip {
@@ -284,46 +284,65 @@
         color: var(--neutral);
     }
 
-    .file-wrap {
+    /* ── Dokumen chips ── */
+    .dok-list {
         display: flex;
         flex-direction: column;
-        gap: 3px;
+        gap: 4px;
+        min-width: 160px;
     }
 
-    .file-chip {
+    .dok-chip {
         display: inline-flex;
         align-items: center;
         gap: 6px;
         padding: 5px 10px;
         border-radius: 8px;
-        background: #FEF2F2;
-        border: 1px solid #FECACA;
         font-size: 11.5px;
         font-weight: 600;
-        color: #DC2626;
         text-decoration: none;
         transition: .2s;
         width: fit-content;
+        max-width: 200px;
+        overflow: hidden;
     }
 
-    .file-chip:hover {
+    .dok-chip span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* file chip — merah muda */
+    .dok-chip-file {
+        background: #FEF2F2;
+        border: 1px solid #FECACA;
+        color: #DC2626;
+    }
+
+    .dok-chip-file:hover {
         background: #FEE2E2;
+        color: #DC2626;
     }
 
-    .preview-link {
-        font-size: 11px;
+    /* link chip — biru muda */
+    .dok-chip-link {
+        background: #EFF6FF;
+        border: 1px solid #BFDBFE;
+        color: #1D4ED8;
+    }
+
+    .dok-chip-link:hover {
+        background: #DBEAFE;
+        color: #1D4ED8;
+    }
+
+    .dok-empty {
         color: #9CA3AF;
-        text-decoration: none;
-        padding-left: 4px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
+        font-size: 12px;
     }
 
-    .preview-link:hover {
-        color: var(--gold);
-    }
-
+    /* ── badge status ── */
     .badge {
         display: inline-flex;
         align-items: center;
@@ -392,17 +411,9 @@
     }
 
     @media (max-width: 600px) {
-        .hero {
-            padding: 24px 20px;
-        }
-
-        .hero-title {
-            font-size: 22px;
-        }
-
-        .filter-bar {
-            flex-direction: column;
-        }
+        .hero { padding: 24px 20px; }
+        .hero-title { font-size: 22px; }
+        .filter-bar { flex-direction: column; }
     }
 </style>
 
@@ -478,12 +489,40 @@
                             <th>Nama Mahasiswa</th>
                             <th>Tanggal Upload</th>
                             <th>Judul Proposal</th>
-                            <th>File Proposal</th>
+                            <th>Dokumen</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($proposalList as $i => $p)
+                        @php
+                            $rawFiles = [];
+                            $rawLinks = [];
+
+                            if ($p->file_proposal) {
+                                $decoded = json_decode($p->file_proposal, true);
+                                if (is_array($decoded)) {
+                                    $rawFiles = $decoded['files'] ?? [];
+                                    $rawLinks = $decoded['links'] ?? [];
+                                } else {
+                                    // format lama: plain filename string
+                                    $rawFiles = [$p->file_proposal];
+                                }
+                            }
+
+                            $extIcon = function(string $name): string {
+                                $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+                                return match($ext) {
+                                    'pdf'                               => '📄',
+                                    'doc', 'docx'                       => '📝',
+                                    'xls', 'xlsx'                       => '📊',
+                                    'ppt', 'pptx'                       => '📑',
+                                    'jpg', 'jpeg', 'png', 'gif', 'webp' => '🖼️',
+                                    'zip', 'rar', '7z'                  => '🗜️',
+                                    default                             => '📎',
+                                };
+                            };
+                        @endphp
                         <tr data-nama="{{ strtolower($p->nama_mahasiswa) }}"
                             data-judul="{{ strtolower($p->judul) }}"
                             data-status="{{ $p->status }}">
@@ -499,35 +538,45 @@
                                 {{ \Carbon\Carbon::parse($p->tanggal_pengajuan)->translatedFormat('d M Y') }}
                             </td>
                             <td style="max-width:200px;font-size:12.5px;">{{ Str::limit($p->judul, 50) }}</td>
+
+                            {{-- ── KOLOM DOKUMEN ── --}}
                             <td>
-                                @if($p->file_proposal)
-                                <div class="file-wrap">
-                                    <a href="#"
-                                       data-id="{{ $p->id }}"
-                                       data-url="{{ route('dosen.proposal.lihat', $p->id) }}"
-                                       onclick="lihatPDF(this)"
-                                       class="file-chip">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                        </svg>
-                                        {{ Str::limit($p->file_proposal, 22) }}
-                                    </a>
-                                    <a href="#"
-                                       data-id="{{ $p->id }}"
-                                       data-url="{{ route('dosen.proposal.lihat', $p->id) }}"
-                                       onclick="lihatPDF(this)"
-                                       class="preview-link">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="2" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                                        </svg>
-                                        Preview
-                                    </a>
-                                </div>
+                                @if(empty($rawFiles) && empty($rawLinks))
+                                    <span class="dok-empty">—</span>
                                 @else
-                                <span style="color:#9CA3AF;font-size:12px;">—</span>
+                                    <div class="dok-list">
+                                        {{-- FILE CHIPS: tiap klik kirim AJAX trackBuka --}}
+                                        @foreach($rawFiles as $fIdx => $fileName)
+                                            <a href="{{ asset('uploads/proposal/' . $fileName) }}"
+                                               target="_blank"
+                                               class="dok-chip dok-chip-file"
+                                               title="{{ $fileName }}"
+                                               onclick="trackBuka({{ $p->id }}, 'file_{{ $fIdx }}', this)">
+                                                <span style="flex-shrink:0;">{{ $extIcon($fileName) }}</span>
+                                                <span>{{ Str::limit(pathinfo($fileName, PATHINFO_BASENAME), 22) }}</span>
+                                            </a>
+                                        @endforeach
+
+                                        {{-- LINK CHIPS: tiap klik kirim AJAX trackBuka --}}
+                                        @foreach($rawLinks as $lIdx => $link)
+                                            @php
+                                                $host  = parse_url($link, PHP_URL_HOST) ?? $link;
+                                                $label = Str::limit($host, 20);
+                                            @endphp
+                                            <a href="{{ $link }}"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="dok-chip dok-chip-link"
+                                               title="{{ $link }}"
+                                               onclick="trackBuka({{ $p->id }}, 'link_{{ $lIdx }}', this)">
+                                                <span style="flex-shrink:0;">🔗</span>
+                                                <span>{{ $label }}</span>
+                                            </a>
+                                        @endforeach
+                                    </div>
                                 @endif
                             </td>
+
                             <td>
                                 @if($p->status === 'pending')
                                 <span class="badge badge-pending">⏳ Baru Dikirim</span>
@@ -626,25 +675,6 @@
 </div>
 
 <script>
-    function lihatPDF(el) {
-        var id  = el.dataset.id;
-        var url = el.dataset.url;
-        window.open(url, '_blank');
-
-        var rows = document.querySelectorAll('#tabelProposal tbody tr');
-        rows.forEach(function(row) {
-            var link = row.querySelector('a[data-id]');
-            if (link && link.dataset.id === id) {
-                var badge = row.querySelector('.badge');
-                if (badge && row.dataset.status === 'pending') {
-                    badge.className = 'badge badge-dilihat';
-                    badge.textContent = '✓ Sudah Dilihat';
-                    row.dataset.status = 'sudah_dilihat';
-                }
-            }
-        });
-    }
-
     function switchTab(tab) {
         document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
         document.querySelectorAll('.tab-btn').forEach(function(b) {
@@ -684,6 +714,35 @@
     function resetMahasiswa() {
         document.getElementById('searchMahasiswa').value = '';
         filterMahasiswa();
+    }
+
+    // ── TRACK BUKA: dipanggil tiap dosen klik chip file/link ──
+    // Kalau semua file+link di proposal itu sudah dibuka → badge otomatis berubah jadi "Sudah Dilihat"
+    function trackBuka(proposalId, index, el) {
+        fetch('/dosen/bimbingan/proposal/' + proposalId + '/track', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ index: index })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'sudah_dilihat') {
+                // Cari baris tabel yang sama dengan chip yang diklik
+                var row   = el.closest('tr');
+                var badge = row.querySelector('.badge');
+                if (badge) {
+                    badge.className       = 'badge badge-dilihat';
+                    badge.innerHTML       = '✓ Sudah Dilihat';
+                    row.dataset.status    = 'sudah_dilihat';
+                }
+            }
+        })
+        .catch(function() {
+            // Fetch gagal pun tidak masalah, file tetap terbuka di tab baru
+        });
     }
 </script>
 

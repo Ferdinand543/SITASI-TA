@@ -149,6 +149,13 @@
         display: block;
     }
 
+    .form-label-opt {
+        font-size: 11px;
+        color: #9CA3AF;
+        font-weight: 400;
+        margin-left: 4px;
+    }
+
     .form-control {
         width: 100%;
         padding: 9px 12px;
@@ -189,15 +196,6 @@
         background: #FEF3C7;
     }
 
-    .dropzone input[type=file] {
-        position: absolute;
-        inset: 0;
-        opacity: 0;
-        cursor: pointer;
-        width: 100%;
-        height: 100%;
-    }
-
     .dropzone-icon {
         font-size: 28px;
         margin-bottom: 6px;
@@ -213,6 +211,119 @@
         font-size: 11px;
         color: #9CA3AF;
         margin-top: 3px;
+        line-height: 1.5;
+    }
+
+    /* File preview list */
+    .file-list {
+        margin-top: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #F9FAFB;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        padding: 7px 10px;
+        font-size: 11.5px;
+        color: var(--neutral);
+    }
+
+    .file-item-icon { font-size: 14px; flex-shrink: 0; }
+
+    .file-item-name {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .file-item-remove {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: none;
+        background: #FEE2E2;
+        color: #EF4444;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        line-height: 1;
+        padding: 0;
+        font-family: inherit;
+    }
+
+    .file-item-remove:hover { background: #FECACA; }
+
+    /* Link rows */
+    .link-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+
+    .link-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .link-row .form-control {
+        margin: 0;
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .btn-remove-link {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        border: 1.5px solid #FEE2E2;
+        background: #FFF5F5;
+        color: #EF4444;
+        font-size: 15px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-family: inherit;
+        transition: .2s;
+        padding: 0;
+    }
+
+    .btn-remove-link:hover { background: #FEE2E2; }
+
+    .btn-add-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gold);
+        background: none;
+        border: 1.5px dashed var(--gold-border);
+        border-radius: 7px;
+        padding: 6px 12px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: .2s;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-add-link:hover {
+        background: var(--gold-lt);
+        border-color: var(--gold);
     }
 
     .btn-kirim {
@@ -300,9 +411,7 @@
         white-space: nowrap;
     }
 
-    .filter-select:focus {
-        border-color: var(--gold);
-    }
+    .filter-select:focus { border-color: var(--gold); }
 
     .btn-reset {
         padding: 8px 14px;
@@ -327,9 +436,7 @@
         color: var(--gold);
     }
 
-    .tabel-scroll {
-        overflow-x: auto;
-    }
+    .tabel-scroll { overflow-x: auto; }
 
     table {
         width: 100%;
@@ -353,13 +460,8 @@
         transition: background .15s;
     }
 
-    tbody tr:last-child {
-        border-bottom: none;
-    }
-
-    tbody tr:hover {
-        background: #FAFBFF;
-    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #FAFBFF; }
 
     tbody td {
         padding: 13px 16px;
@@ -443,9 +545,7 @@
         padding: 20px;
     }
 
-    .modal-overlay.show {
-        display: flex;
-    }
+    .modal-overlay.show { display: flex; }
 
     .modal-box {
         background: #fff;
@@ -459,15 +559,8 @@
     }
 
     @keyframes modalIn {
-        from {
-            transform: scale(.95) translateY(10px);
-            opacity: 0;
-        }
-
-        to {
-            transform: scale(1) translateY(0);
-            opacity: 1;
-        }
+        from { transform: scale(.95) translateY(10px); opacity: 0; }
+        to   { transform: scale(1) translateY(0);      opacity: 1; }
     }
 
     .modal-head {
@@ -512,9 +605,7 @@
         color: var(--neutral);
     }
 
-    .modal-body {
-        padding: 20px 24px;
-    }
+    .modal-body { padding: 20px 24px; }
 
     .modal-row {
         display: grid;
@@ -522,9 +613,7 @@
         gap: 14px;
     }
 
-    .modal-row.full {
-        grid-template-columns: 1fr;
-    }
+    .modal-row.full { grid-template-columns: 1fr; }
 
     .modal-foot {
         padding: 16px 24px;
@@ -589,9 +678,7 @@
         cursor: pointer;
     }
 
-    .modal-dropzone-icon {
-        font-size: 30px;
-    }
+    .modal-dropzone-icon { font-size: 30px; }
 
     .modal-dropzone-text {
         font-size: 12.5px;
@@ -607,25 +694,13 @@
     }
 
     @media (max-width: 900px) {
-        .bimb-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .upload-card {
-            position: static;
-        }
+        .bimb-grid { grid-template-columns: 1fr; }
+        .upload-card { position: static; }
     }
 
     @media (max-width: 600px) {
-        .tabel-search {
-            max-width: 100%;
-            width: 100%;
-        }
-
-        .tabel-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
+        .tabel-search { max-width: 100%; width: 100%; }
+        .tabel-header { flex-direction: column; align-items: flex-start; }
     }
 </style>
 
@@ -649,21 +724,30 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#D97706" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
         </svg>
-        <span>Unggah proposal terlebih dahulu untuk ditinjau dosen pembimbing sebelum mengisi riwayat bimbingan. Pastikan file dalam format PDF untuk memudahkan proses <em>preview</em> oleh dosen.</span>
+        <span>Unggah dokumen pendukung bimbingan Anda (opsional). Dapat berupa file PDF, Word, Excel, PPT, foto, atau link Google Drive / YouTube.</span>
     </div>
 
     <div class="bimb-grid">
 
-        {{-- UPLOAD CARD --}}
+        {{-- UPLOAD DOKUMEN CARD --}}
         <div class="upload-card">
             <div class="upload-card-title">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#C9A227" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                 </svg>
-                Upload Proposal
+                Upload Dokumen
             </div>
+
+            @if(session('proposal_success'))
+                <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:10px 12px;font-size:12px;color:#15803D;margin-bottom:12px;">
+                    ✅ {{ session('proposal_success') }}
+                </div>
+            @endif
+
             <form action="{{ route('bimbingan.proposal.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+
+                {{-- FIELD-FIELD ASLI TETAP ADA SEMUA --}}
                 <div class="form-group">
                     <label class="form-label">NIM</label>
                     <input type="text" class="form-control" value="{{ $user->nim_nid }}" readonly>
@@ -681,7 +765,7 @@
                     <input type="text" name="judul" class="form-control" placeholder="Masukkan judul proposal lengkap..." required>
                 </div>
 
-                {{-- ✅ FIX: Dosen pembimbing sekarang muncul dari $dosenList yang sudah difix --}}
+                {{-- Dosen pembimbing dari $dosenList --}}
                 <div class="form-group">
                     <label class="form-label">Dosen Pembimbing</label>
                     <select name="dosen_nid" class="form-control">
@@ -694,16 +778,47 @@
                     </select>
                 </div>
 
+                {{-- ── DIUBAH: Multi-file upload (semua format, bisa lebih dari 1) ── --}}
                 <div class="form-group">
-                    <label class="form-label">File Proposal (PDF/DOC/DOCX)</label>
-                    <div class="dropzone" id="dropzoneUpload">
-                        <input type="file" name="file_proposal" accept=".pdf,.doc,.docx" onchange="updateDropzone(this,'dropzoneUpload')">
+                    <label class="form-label">
+                        File Dokumen
+                        <span class="form-label-opt">(opsional, bisa lebih dari satu)</span>
+                    </label>
+                    <div class="dropzone" id="dropzoneMulti" onclick="document.getElementById('inputFileDokumen').click()">
+                        <input type="file"
+                               id="inputFileDokumen"
+                               name="file_dokumen[]"
+                               accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.zip,.rar"
+                               multiple
+                               style="display:none;"
+                               onchange="handleMultiFile(this)">
                         <div class="dropzone-icon">☁️</div>
-                        <div class="dropzone-text" id="dropzoneUploadText">Klik untuk unggah atau seret file</div>
-                        <div class="dropzone-hint">Maksimal ukuran file 10MB</div>
+                        <div class="dropzone-text">Klik untuk unggah atau seret file</div>
+                        <div class="dropzone-hint">PDF, Word, Excel, PPT, Foto, ZIP • Bisa pilih beberapa sekaligus<br>Maksimal ukuran file 10MB</div>
                     </div>
+                    <div class="file-list" id="fileList"></div>
                 </div>
-                <button type="submit" class="btn-kirim">Kirim Proposal</button>
+
+                {{-- ── BARU: Multi-link (opsional) ── --}}
+                <div class="form-group">
+                    <label class="form-label">
+                        Link Dokumen
+                        <span class="form-label-opt">(opsional, bisa lebih dari satu)</span>
+                    </label>
+                    <div class="link-list" id="linkList">
+                        <div class="link-row">
+                            <input type="text" name="links[]" class="form-control" placeholder="https://drive.google.com/... atau link lainnya">
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add-link" onclick="tambahLink()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Tambah Link
+                    </button>
+                </div>
+
+                <button type="submit" class="btn-kirim">Kirim Dokumen</button>
             </form>
         </div>
 
@@ -811,7 +926,6 @@
                 <div class="form-group modal-row full" style="margin-bottom:14px;">
                     <div>
                         <label class="form-label">Dosen Pembimbing</label>
-                        {{-- ✅ FIX: pakai $semuaDosen dari controller (= $dosenList yang sudah difix) --}}
                         <select name="dosen_nid" class="form-control">
                             <option value="">-- Pilih Pembimbing --</option>
                             @forelse($semuaDosen as $dosen)
@@ -883,6 +997,7 @@
 </div>
 
 <script>
+    // ── Modal bimbingan ──
     function bukaModal() {
         document.getElementById('modalOverlay').classList.add('show');
         document.body.style.overflow = 'hidden';
@@ -906,7 +1021,7 @@
 
     function lihatDetail(foto) {
         const modal = document.getElementById('modalFoto');
-        const img = document.getElementById('fotoPreview');
+        const img   = document.getElementById('fotoPreview');
         const noMsg = document.getElementById('noFotoMsg');
 
         if (foto && foto !== '' && foto !== 'null') {
@@ -927,7 +1042,7 @@
     }
 
     function filterTabel() {
-        const q = document.getElementById('searchInput').value.toLowerCase();
+        const q      = document.getElementById('searchInput').value.toLowerCase();
         const status = document.getElementById('filterStatus').value;
         document.querySelectorAll('#tabelBimbingan tbody tr:not(.empty-row)').forEach(row => {
             const match = (!q || (row.dataset.topik || '').includes(q)) && (!status || row.dataset.status === status);
@@ -939,6 +1054,81 @@
         document.getElementById('searchInput').value = '';
         document.getElementById('filterStatus').value = '';
         filterTabel();
+    }
+
+    // ── Multi-file upload ──
+    let dt = new DataTransfer();
+
+    function getFileIcon(name) {
+        const ext = name.split('.').pop().toLowerCase();
+        const map = {
+            pdf: '📄', doc: '📝', docx: '📝',
+            xls: '📊', xlsx: '📊',
+            ppt: '📑', pptx: '📑',
+            jpg: '🖼️', jpeg: '🖼️', png: '🖼️',
+            zip: '🗜️', rar: '🗜️',
+        };
+        return map[ext] || '📎';
+    }
+
+    function renderFileList() {
+        const list = document.getElementById('fileList');
+        list.innerHTML = '';
+        Array.from(dt.files).forEach((file, idx) => {
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.innerHTML = `
+                <span class="file-item-icon">${getFileIcon(file.name)}</span>
+                <span class="file-item-name" title="${file.name}">${file.name}</span>
+                <button type="button" class="file-item-remove" onclick="hapusFile(${idx})" title="Hapus">×</button>
+            `;
+            list.appendChild(item);
+        });
+        // Sync ke input file agar ikut tersubmit
+        document.getElementById('inputFileDokumen').files = dt.files;
+    }
+
+    function handleMultiFile(input) {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    let adaYangGede = false;
+
+    Array.from(input.files).forEach(f => {
+        if (f.size > maxSize) {
+            adaYangGede = true;
+        } else {
+            dt.items.add(f);
+        }
+    });
+
+    if (adaYangGede) {
+        alert('⚠️ Beberapa file melebihi 10MB dan tidak ditambahkan. Silakan pilih file yang lebih kecil.');
+    }
+
+    renderFileList();
+    }
+
+    function hapusFile(idx) {
+        const dtBaru = new DataTransfer();
+        Array.from(dt.files).forEach((f, i) => { if (i !== idx) dtBaru.items.add(f); });
+        dt = dtBaru;
+        renderFileList();
+    }
+
+    // ── Multi-link ──
+    function tambahLink() {
+        const list = document.getElementById('linkList');
+        const row  = document.createElement('div');
+        row.className = 'link-row';
+        row.innerHTML = `
+            <input type="text" name="links[]" class="form-control" placeholder="https://drive.google.com/... atau link lainnya">
+            <button type="button" class="btn-remove-link" onclick="hapusLink(this)" title="Hapus">×</button>
+        `;
+        list.appendChild(row);
+        row.querySelector('input').focus();
+    }
+
+    function hapusLink(btn) {
+        btn.closest('.link-row').remove();
     }
 </script>
 

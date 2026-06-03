@@ -86,7 +86,7 @@ class BimbinganController extends Controller
         return redirect()->back()->with('success', 'Riwayat bimbingan berhasil ditambahkan!');
     }
 
-    // UPLOAD PROPOSAL (sidebar)
+    // UPLOAD DOKUMEN (sidebar) — mendukung multi-file + multi-link, semua opsional
     public function storeProposal(Request $request)
     {
         if (!session('user')) return redirect('/login');
@@ -94,30 +94,50 @@ class BimbinganController extends Controller
         $user = session('user');
         $nim  = $user->nim_nid;
 
-        $filePath = null;
-        if ($request->hasFile('file_proposal')) {
-            $file     = $request->file('file_proposal');
-            $fileName = 'proposal_' . $nim . '_' . time() . '.' . $file->getClientOriginalExtension();
+        // Kumpulkan semua file path yang diunggah
+        $uploadedFiles = [];
+        if ($request->hasFile('file_dokumen')) {
+            foreach ($request->file('file_dokumen') as $file) {
+                $fileName = 'dokumen_' . $nim . '_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-            if (!file_exists(public_path('uploads/proposal'))) {
-                mkdir(public_path('uploads/proposal'), 0755, true);
+                if (!file_exists(public_path('uploads/proposal'))) {
+                    mkdir(public_path('uploads/proposal'), 0755, true);
+                }
+
+                $file->move(public_path('uploads/proposal'), $fileName);
+                $uploadedFiles[] = $fileName;
             }
+        }
 
-            $file->move(public_path('uploads/proposal'), $fileName);
-            $filePath = $fileName;
+        // Kumpulkan semua link yang diisi (filter yang kosong)
+        $links = [];
+        if ($request->has('links')) {
+            $links = array_filter($request->input('links', []), fn($l) => !empty(trim($l)));
+            $links = array_values($links);
+        }
+
+        // Gabungkan files dan links menjadi JSON untuk disimpan di kolom file_proposal
+        $fileProposalData = json_encode([
+            'files' => $uploadedFiles,
+            'links' => $links,
+        ]);
+
+        // Hanya simpan jika ada file atau link yang diisi
+        if (empty($uploadedFiles) && empty($links)) {
+            return redirect()->back()->with('proposal_error', 'Silakan unggah minimal satu file atau masukkan satu link.');
         }
 
         DB::table('pengajuan_proposal_bimbingan')->insert([
             'nim_nid'           => $nim,
-            'dosen_nid'         => $request->dosen_nid, 
-            'judul'             => $request->judul,
-            'tanggal_pengajuan' => $request->tanggal_pengajuan,
-            'file_proposal'     => $filePath,
+            'dosen_nid'         => $request->dosen_nid,
+            'judul'             => $request->judul ?? '-',
+            'tanggal_pengajuan' => $request->tanggal_pengajuan ?? now()->toDateString(),
+            'file_proposal'     => $fileProposalData,
             'status'            => 'pending',
             'created_at'        => now(),
             'updated_at'        => now(),
         ]);
 
-        return redirect()->back()->with('proposal_success', 'Proposal berhasil dikirim!');
+        return redirect()->back()->with('proposal_success', 'Dokumen berhasil dikirim!');
     }
 }
