@@ -1000,27 +1000,21 @@ document.addEventListener("DOMContentLoaded", function () {
     let prevVal1 = "";
     let prevVal2 = "";
 
+    // ── PERUBAHAN: hide option yang sudah dipilih di dropdown lawan ──
     function syncDosbing() {
         const val1 = dosbing1.value;
         const val2 = dosbing2.value;
 
-        // Reset semua option dulu biar ga numpuk disable
-        Array.from(dosbing2.options).forEach(opt => opt.disabled = false);
-        Array.from(dosbing1.options).forEach(opt => opt.disabled = false);
+        // Tampilkan semua option dulu, lalu sembunyikan yang bentrok
+        Array.from(dosbing2.options).forEach(opt => {
+            opt.hidden   = (opt.value !== "" && opt.value === val1);
+            opt.disabled = opt.hidden;
+        });
 
-        // Disable di dosbing2 option yang udah dipilih di dosbing1
-        if (val1) {
-            Array.from(dosbing2.options).forEach(opt => {
-                if (opt.value === val1) opt.disabled = true;
-            });
-        }
-
-        // Disable di dosbing1 option yang udah dipilih di dosbing2
-        if (val2) {
-            Array.from(dosbing1.options).forEach(opt => {
-                if (opt.value === val2) opt.disabled = true;
-            });
-        }
+        Array.from(dosbing1.options).forEach(opt => {
+            opt.hidden   = (opt.value !== "" && opt.value === val2);
+            opt.disabled = opt.hidden;
+        });
     }
 
     dosbing1.addEventListener("change", function () {
