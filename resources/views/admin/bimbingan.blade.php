@@ -62,7 +62,6 @@ body { background: var(--bg); }
 .tab-btn.inactive { background: #FFFFFF; color: #6C5700; }
 .tab-btn.inactive:hover { background: #FFF8DC; border-color: #6C5700; }
 
-/* COUNT BADGE di dalam tombol */
 .count-chip {
     display: inline-flex;
     align-items: center;
@@ -159,19 +158,50 @@ tbody td { padding: 15px 18px; font-size: 13px; color: var(--neutral); vertical-
 }
 .mhs-nama { font-weight: 700; color: var(--neutral); }
 
-/* FILE CHIP */
-.file-wrap { display: flex; flex-direction: column; gap: 3px; }
-.file-chip {
-    display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 8px;
-    background: #FEF2F2; border: 1px solid #FECACA; font-size: 11.5px; font-weight: 600;
-    color: #DC2626; text-decoration: none; transition: .2s; width: fit-content;
+/* ── DOK CHIP ── */
+.dok-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 160px;
 }
-.file-chip:hover { background: #FEE2E2; }
-.preview-link {
-    font-size: 11px; color: #9CA3AF; text-decoration: none;
-    padding-left: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer;
+
+.dok-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: .2s;
+    width: fit-content;
+    max-width: 200px;
+    overflow: hidden;
 }
-.preview-link:hover { color: var(--gold); }
+
+.dok-chip span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dok-chip-file {
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    color: #DC2626;
+}
+.dok-chip-file:hover { background: #FEE2E2; color: #DC2626; }
+
+.dok-chip-link {
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    color: #1D4ED8;
+}
+.dok-chip-link:hover { background: #DBEAFE; color: #1D4ED8; }
+
+.dok-empty { color: #9CA3AF; font-size: 12px; }
 
 /* BADGE */
 .badge {
@@ -248,9 +278,7 @@ tbody td { padding: 15px 18px; font-size: 13px; color: var(--neutral); vertical-
 </div>
 @endif
 
-{{-- ══════════════════════════════════════════════════
-     TAB 1 — PROPOSAL BIMBINGAN
-══════════════════════════════════════════════════ --}}
+{{-- ══ TAB 1 — PROPOSAL BIMBINGAN ══ --}}
 <div class="tab-panel active" id="panel-proposal">
     <div class="main-card">
 
@@ -284,15 +312,45 @@ tbody td { padding: 15px 18px; font-size: 13px; color: var(--neutral); vertical-
                         <th>Nama Mahasiswa</th>
                         <th>Tanggal Upload</th>
                         <th>Judul Proposal</th>
-                        <th>File Proposal</th>
+                        <th>Dokumen</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($proposalList as $i => $p)
+                    @php
+                        $rawFiles = [];
+                        $rawLinks = [];
+
+                        if ($p->file_proposal) {
+                            $decoded = json_decode($p->file_proposal, true);
+                            if (is_array($decoded)) {
+                                $rawFiles = $decoded['files'] ?? [];
+                                $rawLinks = $decoded['links'] ?? [];
+                            } else {
+                                $rawFiles = [$p->file_proposal];
+                            }
+                        }
+
+                        $extIcon = function(string $name): string {
+                            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+                            return match($ext) {
+                                'pdf'                               => '📄',
+                                'doc', 'docx'                       => '📝',
+                                'xls', 'xlsx'                       => '📊',
+                                'ppt', 'pptx'                       => '📑',
+                                'jpg', 'jpeg', 'png', 'gif', 'webp' => '🖼️',
+                                'zip', 'rar', '7z'                  => '🗜️',
+                                default                             => '📎',
+                            };
+                        };
+
+                        // ── pakai status_admin untuk badge & filter admin ──
+                        $statusAdmin = $p->status_admin ?? 'pending';
+                    @endphp
                     <tr data-nama="{{ strtolower($p->nama_mahasiswa) }}"
                         data-judul="{{ strtolower($p->judul) }}"
-                        data-status="{{ $p->status }}">
+                        data-status="{{ $statusAdmin }}">
 
                         <td style="color:#94a3b8;font-weight:600;">{{ $i + 1 }}</td>
 
@@ -315,31 +373,50 @@ tbody td { padding: 15px 18px; font-size: 13px; color: var(--neutral); vertical-
                             {{ Str::limit($p->judul, 60) }}
                         </td>
 
+                        {{-- ── KOLOM DOKUMEN ── --}}
                         <td>
-                            @if($p->file_proposal)
-                            <div class="file-wrap">
-                                <a href="#" onclick="lihatPDF({{ $p->id }}, '{{ route('admin.proposal.lihat', $p->id) }}')" class="file-chip">
-                                    <i class="fa-regular fa-file-pdf" style="font-size:13px;"></i>
-                                    {{ Str::limit($p->file_proposal, 22) }}
-                                </a>
-                                <a href="#" onclick="lihatPDF({{ $p->id }}, '{{ route('admin.proposal.lihat', $p->id) }}')" class="preview-link">
-                                    <i class="fa-regular fa-eye" style="font-size:11px;"></i> Preview
-                                </a>
-                            </div>
+                            @if(empty($rawFiles) && empty($rawLinks))
+                                <span class="dok-empty">—</span>
                             @else
-                            <span style="color:#9CA3AF;font-size:12px;">—</span>
+                                <div class="dok-list">
+                                    @foreach($rawFiles as $fIdx => $fileName)
+                                        <a href="{{ asset('uploads/proposal/' . $fileName) }}"
+                                           target="_blank"
+                                           class="dok-chip dok-chip-file"
+                                           title="{{ $fileName }}"
+                                           onclick="trackBuka({{ $p->id }}, 'file_{{ $fIdx }}', this)">
+                                            <span style="flex-shrink:0;">{{ $extIcon($fileName) }}</span>
+                                            <span>{{ Str::limit(pathinfo($fileName, PATHINFO_BASENAME), 22) }}</span>
+                                        </a>
+                                    @endforeach
+
+                                    @foreach($rawLinks as $lIdx => $link)
+                                        @php
+                                            $host  = parse_url($link, PHP_URL_HOST) ?? $link;
+                                            $label = Str::limit($host, 20);
+                                        @endphp
+                                        <a href="{{ $link }}"
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           class="dok-chip dok-chip-link"
+                                           title="{{ $link }}"
+                                           onclick="trackBuka({{ $p->id }}, 'link_{{ $lIdx }}', this)">
+                                            <span style="flex-shrink:0;">🔗</span>
+                                            <span>{{ $label }}</span>
+                                        </a>
+                                    @endforeach
+                                </div>
                             @endif
                         </td>
 
+                        {{-- ── BADGE pakai status_admin ── --}}
                         <td>
-                            @if($p->status === 'pending')
+                            @if($statusAdmin === 'pending')
                                 <span class="badge badge-baru">BARU DIKIRIM</span>
-                            @elseif($p->status === 'sudah_dilihat')
+                            @elseif($statusAdmin === 'sudah_dilihat')
                                 <span class="badge badge-dilihat">SUDAH DILIHAT</span>
-                            @elseif($p->status === 'ditolak')
-                                <span class="badge badge-ditolak">DITOLAK</span>
                             @else
-                                <span class="badge badge-baru">{{ strtoupper($p->status) }}</span>
+                                <span class="badge badge-baru">{{ strtoupper($statusAdmin) }}</span>
                             @endif
                         </td>
 
@@ -358,9 +435,7 @@ tbody td { padding: 15px 18px; font-size: 13px; color: var(--neutral); vertical-
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════
-     TAB 2 — DAFTAR DOSEN + JUMLAH MAHASISWA BIMBINGAN
-══════════════════════════════════════════════════ --}}
+{{-- ══ TAB 2 — DAFTAR DOSEN ══ --}}
 <div class="tab-panel" id="panel-dosen">
     <div class="main-card">
 
@@ -435,21 +510,6 @@ tbody td { padding: 15px 18px; font-size: 13px; color: var(--neutral); vertical-
 </div>
 
 <script>
-function lihatPDF(id, url) {
-    window.open(url, '_blank');
-    document.querySelectorAll('#tabelProposal tbody tr').forEach(row => {
-        const links = row.querySelectorAll('a[onclick]');
-        if (links.length && links[0].getAttribute('onclick').includes('(' + id + ',')) {
-            const badge = row.querySelector('.badge');
-            if (badge && row.dataset.status === 'pending') {
-                badge.className = 'badge badge-dilihat';
-                badge.textContent = 'SUDAH DILIHAT';
-                row.dataset.status = 'sudah_dilihat';
-            }
-        }
-    });
-}
-
 function switchTab(tab) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('inactive'); });
@@ -486,6 +546,32 @@ function filterDosen() {
 function resetDosen() {
     document.getElementById('searchDosen').value = '';
     filterDosen();
+}
+
+// ── TRACK BUKA: tiap admin klik chip → kalau semua sudah dibuka, badge otomatis "SUDAH DILIHAT" ──
+// Pakai status_admin di DB, tidak mengganggu status dosen sama sekali
+function trackBuka(proposalId, index, el) {
+    fetch('/admin/bimbingan/proposal/' + proposalId + '/track', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ index: index })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.status === 'sudah_dilihat') {
+            var row   = el.closest('tr');
+            var badge = row.querySelector('.badge');
+            if (badge) {
+                badge.className    = 'badge badge-dilihat';
+                badge.textContent  = 'SUDAH DILIHAT';
+                row.dataset.status = 'sudah_dilihat';
+            }
+        }
+    })
+    .catch(function() {});
 }
 </script>
 

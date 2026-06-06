@@ -18,7 +18,7 @@ class AdminBimbinganController extends Controller
             ->leftJoin('users as dosen', 'dosen.nim_nid', '=', 'ppb.dosen_nid')
             ->select(
                 'ppb.id', 'ppb.nim_nid', 'ppb.judul', 'ppb.tanggal_pengajuan',
-                'ppb.file_proposal', 'ppb.status', 'ppb.created_at',
+                'ppb.file_proposal', 'ppb.status', 'ppb.status_admin', 'ppb.created_at',
                 'mhs.nama as nama_mahasiswa', 'dosen.nama as nama_dosen'
             )
             ->orderBy('ppb.created_at', 'desc')
@@ -73,7 +73,6 @@ class AdminBimbinganController extends Controller
                 'mhs.nim_nid',
                 'mhs.nama as nama_mahasiswa',
                 'mhs.angkatan',
-                // ✅ hanya ngitung bimbingan ke dosen ini saja
                 DB::raw('(SELECT COUNT(*) FROM bimbingan WHERE nim_nid = mhs.nim_nid AND dosen_nid = dp.nim_nid_dosen) as total_bimbingan')
             )
             ->orderBy('mhs.nama')
@@ -89,7 +88,6 @@ class AdminBimbinganController extends Controller
         $mahasiswa = DB::table('users')->where('nim_nid', $nim)->first();
         $dosen     = DB::table('users')->where('nim_nid', $nim_nid_dosen)->first();
 
-        // ✅ filter bimbingan hanya ke dosen yang dipilih
         $bimbingan = DB::table('bimbingan as b')
             ->leftJoin('users as dosen', 'dosen.nim_nid', '=', 'b.dosen_nid')
             ->where('b.nim_nid', $nim)
@@ -119,5 +117,48 @@ class AdminBimbinganController extends Controller
         if (!session('user')) return redirect('/login');
         DB::table('bimbingan')->where('id', $id)->update(['status' => 'Sudah Dilihat']);
         return redirect()->back()->with('success', 'Status bimbingan berhasil diperbarui.');
+    }
+
+    // ── TRACK BUKA: dipanggil via AJAX tiap admin klik salah satu chip dokumen/link ──
+    // Pakai status_admin (kolom terpisah) supaya tidak mengganggu status dosen
+    public function trackBuka(Request $request, $id)
+    {
+        if (!session('user')) return response()->json(['ok' => false], 401);
+
+        $proposal = DB::table('pengajuan_proposal_bimbingan')->where('id', $id)->first();
+
+        if (!$proposal || $proposal->status_admin !== 'pending') {
+            return response()->json(['ok' => true, 'status' => $proposal->status_admin ?? 'not_found']);
+        }
+
+        $decoded   = json_decode($proposal->file_proposal, true);
+        $files     = is_array($decoded) ? ($decoded['files'] ?? []) : [$proposal->file_proposal];
+        $links     = is_array($decoded) ? ($decoded['links'] ?? []) : [];
+        $totalAset = count($files) + count($links);
+        if ($totalAset === 0) $totalAset = 1;
+
+        $sessionKey = 'admin_opened_proposal_' . $id;
+        $opened     = session($sessionKey, []);
+        $index      = $request->input('index');
+
+        if ($index && !in_array($index, $opened)) {
+            $opened[] = $index;
+            session([$sessionKey => $opened]);
+        }
+
+        if (count($opened) >= $totalAset) {
+            DB::table('pengajuan_proposal_bimbingan')
+                ->where('id', $id)
+                ->update(['status_admin' => 'sudah_dilihat', 'updated_at' => now()]);
+
+            return response()->json(['ok' => true, 'status' => 'sudah_dilihat']);
+        }
+
+        return response()->json([
+            'ok'     => true,
+            'status' => 'pending',
+            'opened' => count($opened),
+            'total'  => $totalAset,
+        ]);
     }
 }

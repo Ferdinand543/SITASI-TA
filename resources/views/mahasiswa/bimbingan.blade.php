@@ -693,6 +693,50 @@
         margin-top: 3px;
     }
 
+    /* ── TOAST NOTIFIKASI ── */
+    .toast-notif {
+        position: fixed;
+        bottom: 36px;
+        left: 50%;
+        transform: translateX(-50%) translateY(16px);
+        z-index: 9999;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 20px;
+        border-radius: 14px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+        font-size: 13.5px;
+        font-weight: 600;
+        max-width: 480px;
+        width: max-content;
+        opacity: 0;
+        transition: opacity .3s ease, transform .3s ease;
+        pointer-events: none;
+    }
+    .toast-notif.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+        pointer-events: auto;
+    }
+    .toast-notif.toast-warning {
+        background: #FFFBEB;
+        border: 1.5px solid #FDE68A;
+        color: #92400E;
+    }
+    .toast-notif-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .toast-notif-close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        color: #92400E;
+        padding: 0;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
     @media (max-width: 900px) {
         .bimb-grid { grid-template-columns: 1fr; }
         .upload-card { position: static; }
@@ -701,6 +745,8 @@
     @media (max-width: 600px) {
         .tabel-search { max-width: 100%; width: 100%; }
         .tabel-header { flex-direction: column; align-items: flex-start; }
+        .toast-notif { left: 16px; right: 16px; bottom: 20px; transform: none; max-width: unset; width: auto; }
+        .toast-notif.show { transform: none; }
     }
 </style>
 
@@ -747,7 +793,6 @@
             <form action="{{ route('bimbingan.proposal.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
-                {{-- FIELD-FIELD ASLI TETAP ADA SEMUA --}}
                 <div class="form-group">
                     <label class="form-label">NIM</label>
                     <input type="text" class="form-control" value="{{ $user->nim_nid }}" readonly>
@@ -765,7 +810,6 @@
                     <input type="text" name="judul" class="form-control" placeholder="Masukkan judul proposal lengkap..." required>
                 </div>
 
-                {{-- Dosen pembimbing dari $dosenList --}}
                 <div class="form-group">
                     <label class="form-label">Dosen Pembimbing</label>
                     <select name="dosen_nid" class="form-control">
@@ -778,7 +822,6 @@
                     </select>
                 </div>
 
-                {{-- ── DIUBAH: Multi-file upload (semua format, bisa lebih dari 1) ── --}}
                 <div class="form-group">
                     <label class="form-label">
                         File Dokumen
@@ -799,7 +842,6 @@
                     <div class="file-list" id="fileList"></div>
                 </div>
 
-                {{-- ── BARU: Multi-link (opsional) ── --}}
                 <div class="form-group">
                     <label class="form-label">
                         Link Dokumen
@@ -890,6 +932,14 @@
         </div>
 
     </div>
+
+    {{-- ── TOAST NOTIFIKASI ── --}}
+    <div class="toast-notif toast-warning" id="toastNotif">
+        <span class="toast-notif-icon">⚠️</span>
+        <span id="toastMsg">Pesan notifikasi</span>
+        <button class="toast-notif-close" onclick="tutupToast()">×</button>
+    </div>
+
 </div>
 
 {{-- MODAL TAMBAH BIMBINGAN --}}
@@ -1056,6 +1106,19 @@
         filterTabel();
     }
 
+    // ── TOAST NOTIFIKASI ──
+    function tampilToast(pesan) {
+        const toast = document.getElementById('toastNotif');
+        document.getElementById('toastMsg').textContent = pesan;
+        toast.classList.add('show');
+        clearTimeout(window._toastTimer);
+        window._toastTimer = setTimeout(() => toast.classList.remove('show'), 6000);
+    }
+
+    function tutupToast() {
+        document.getElementById('toastNotif').classList.remove('show');
+    }
+
     // ── Multi-file upload ──
     let dt = new DataTransfer();
 
@@ -1084,27 +1147,27 @@
             `;
             list.appendChild(item);
         });
-        // Sync ke input file agar ikut tersubmit
         document.getElementById('inputFileDokumen').files = dt.files;
     }
 
     function handleMultiFile(input) {
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    let adaYangGede = false;
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        let adaYangGede = false;
 
-    Array.from(input.files).forEach(f => {
-        if (f.size > maxSize) {
-            adaYangGede = true;
-        } else {
-            dt.items.add(f);
+        Array.from(input.files).forEach(f => {
+            if (f.size > maxSize) {
+                adaYangGede = true;
+            } else {
+                dt.items.add(f);
+            }
+        });
+
+        if (adaYangGede) {
+            // ── DIGANTI: pakai toast bukan alert ──
+            tampilToast('Beberapa file melebihi 10MB dan tidak ditambahkan. Silakan pilih file yang lebih kecil.');
         }
-    });
 
-    if (adaYangGede) {
-        alert('⚠️ Beberapa file melebihi 10MB dan tidak ditambahkan. Silakan pilih file yang lebih kecil.');
-    }
-
-    renderFileList();
+        renderFileList();
     }
 
     function hapusFile(idx) {

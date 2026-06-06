@@ -334,6 +334,7 @@ Route::post('/dosen/bimbingan/proposal/{id}/track', [DosenBimbinganController::c
 Route::get('/admin/bimbingan',                       [AdminBimbinganController::class, 'index'])->name('admin.bimbingan.index');
 Route::put('/admin/bimbingan/proposal/{id}/status',  [AdminBimbinganController::class, 'updateStatusProposal'])->name('admin.bimbingan.proposal.status');
 Route::get('/admin/proposal/{id}/lihat',             [AdminBimbinganController::class, 'lihatProposal'])->name('admin.proposal.lihat');
+Route::post('/admin/bimbingan/proposal/{id}/track',  [AdminBimbinganController::class, 'trackBuka'])->name('admin.proposal.track');
 Route::get('/admin/bimbingan/dosen/{nim_nid}',       [AdminBimbinganController::class, 'detailDosen'])->name('admin.bimbingan.dosen');
 Route::get('/admin/bimbingan/{nim}/{nim_nid_dosen}', [AdminBimbinganController::class, 'detailMahasiswa'])->name('admin.bimbingan.detail');
 
