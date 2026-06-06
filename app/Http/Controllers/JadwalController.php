@@ -16,6 +16,17 @@ class JadwalController extends Controller
         $role = $user->role;
 
         // =====================================================
+        // ✅ CEK APAKAH DOSEN INI KOORDINATOR
+        // =====================================================
+        $isKoordinator = false;
+        if ($role === 'dosen') {
+            $isKoordinator = DB::table('dosen_roles')
+                ->where('nim_nid', $nim)
+                ->where('role_dosen', 'koordinator') // sesuai typo di database
+                ->exists();
+        }
+
+        // =====================================================
         // ✅ AUTO UPDATE STATUS — PALING ATAS SEBELUM SEMUA QUERY
         // =====================================================
         $today = now()->toDateString();
@@ -59,6 +70,13 @@ class JadwalController extends Controller
         $akanDatang   = DB::table('jadwal_akademik')->where('status', 'Akan Datang')->count();
         $berlangsung  = DB::table('jadwal_akademik')->where('status', 'Berlangsung')->count();
         $selesaiCount = DB::table('jadwal_akademik')->where('status', 'Selesai')->count();
+
+        // =====================================================
+        // ✅ JUMLAH MAHASISWA — untuk card Siap Dijadwalkan
+        // =====================================================
+        $jumlahMahasiswaSiapSeminar = DB::table('users')
+            ->where('role', 'mahasiswa')
+            ->count();
 
         // =====================================================
         // TIMELINE — hanya untuk mahasiswa
@@ -137,7 +155,8 @@ class JadwalController extends Controller
 
         return view('jadwal', compact(
             'jadwal', 'terdekat', 'timeline', 'progressPersen',
-            'user', 'role', 'totalJadwal', 'akanDatang', 'berlangsung', 'selesaiCount'
+            'user', 'role', 'totalJadwal', 'akanDatang', 'berlangsung', 'selesaiCount',
+            'isKoordinator', 'jumlahMahasiswaSiapSeminar'
         ));
     }
 }

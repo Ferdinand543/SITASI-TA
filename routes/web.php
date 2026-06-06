@@ -22,7 +22,7 @@ use App\Http\Controllers\AdminjudulController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\PenilaianPembimbingController;
 use App\Http\Controllers\DaftarSeminarController;
-use App\Http\Controllers\AdminSeminarController;
+use App\Http\Controllers\jadwalseminarcontroller;
 use App\Http\Controllers\HasilPenilaianMahasiswaController;
 
 
@@ -255,7 +255,7 @@ Route::post('/pengajuan/proses/{id}',    [PengajuanController::class, 'prosesVer
 
 
 // =====================================================
-// PROPOSAL TA-1 — FILE SERVE (harus di atas route {id}!)
+// PROPOSAL TA-1 — FILE SERVE
 // =====================================================
 
 Route::get('/proposal/file/{id}', [AdminProposalController::class, 'serveFile'])->name('proposal.file');
@@ -279,7 +279,6 @@ Route::get('/proposal/penguji', [ProposalController::class, 'indexPenguji'])->na
 
 // =====================================================
 // PROPOSAL TA-1 — KOORDINATOR
-// URUTAN PENTING: static route HARUS di atas route {id}!
 // =====================================================
 
 Route::get('/proposal',                                [ProposalController::class, 'index'])->name('proposal.index');
@@ -292,11 +291,10 @@ Route::post('/proposal/{id}/ubah-pembimbing/{urutan}', [ProposalController::clas
 Route::post('/proposal/{id}/simpan',                   [ProposalController::class, 'simpanPenetapan'])->name('proposal.simpan');
 Route::match(['POST', 'DELETE'], '/proposal/{id}/remove-reviewer', [ProposalController::class, 'removeReviewer'])->name('proposal.remove.reviewer');
 
-// HARUS di atas /proposal/{id} !
 Route::get('/proposal/reviewer/{nimReviewer}/kelola',            [ProposalController::class, 'kelolaReviewer'])->name('proposal.kelola.reviewer');
 Route::post('/proposal/reviewer/{nimReviewer}/tambah-mahasiswa', [ProposalController::class, 'tambahMahasiswaReviewer'])->name('proposal.tambah.mahasiswa.reviewer');
 
-Route::get('/proposal/{id}',                           [ProposalController::class, 'detail'])->name('proposal.detail');
+Route::get('/proposal/{id}', [ProposalController::class, 'detail'])->name('proposal.detail');
 
 
 // =====================================================
@@ -326,9 +324,9 @@ Route::get('/dosen/bimbingan/mahasiswa/{nim}',      [DosenBimbinganController::c
 Route::get('/dosen/proposal/{id}/lihat',            [DosenBimbinganController::class, 'lihatProposal'])->name('dosen.proposal.lihat');
 Route::post('/dosen/bimbingan/proposal/{id}/track', [DosenBimbinganController::class, 'trackBuka'])->name('dosen.bimbingan.proposal.track');
 
+
 // =====================================================
 // RIWAYAT BIMBINGAN — ADMIN
-// URUTAN PENTING: static route dulu, baru dynamic route!
 // =====================================================
 
 Route::get('/admin/bimbingan',                       [AdminBimbinganController::class, 'index'])->name('admin.bimbingan.index');
@@ -403,15 +401,18 @@ Route::prefix('admin')->group(function () {
 
 
 // =====================================================
-// SEMINAR — ADMIN
+// SEMINAR — ADMIN & KOORDINATOR
 // =====================================================
 
-Route::prefix('admin')->group(function () {
-    Route::get('/seminar',                  [AdminSeminarController::class, 'index'])->name('admin.seminar.index');
-    Route::get('/seminar/{id}',             [AdminSeminarController::class, 'show'])->name('admin.seminar.show');
-    Route::post('/seminar/{id}/verifikasi', [AdminSeminarController::class, 'verifikasi'])->name('admin.seminar.verifikasi');
-    Route::post('/seminar/{id}/jadwalkan',  [AdminSeminarController::class, 'jadwalkan'])->name('admin.seminar.jadwalkan');
-});
+// ✅ URUTAN PENTING: /massal harus di atas /{id}
+Route::get('/kelola-seminar/massal',          [jadwalseminarcontroller::class, 'formMassal'])->name('jadwalseminar.massal.form');
+Route::post('/kelola-seminar/massal',         [jadwalseminarcontroller::class, 'simpanMassal'])->name('jadwalseminar.massal.simpan');
+Route::get('/kelola-seminar/mahasiswa',       [jadwalseminarcontroller::class, 'getMahasiswaBelumJadwal'])->name('jadwalseminar.mahasiswa');
+Route::get('/kelola-seminar',                 [jadwalseminarcontroller::class, 'index'])->name('admin.seminar.index');
+Route::post('/kelola-seminar/{id}/jadwalkan', [jadwalseminarcontroller::class, 'jadwalkan'])->name('admin.seminar.jadwalkan');
+Route::post('/kelola-seminar/{id}/hapus',     [jadwalseminarcontroller::class, 'hapusJadwal'])->name('admin.seminar.hapus');
+Route::get('/kelola-seminar/{id}/detail', [jadwalseminarcontroller::class, 'detail'])->name('jadwalseminar.detail');
+Route::delete('/kelola-seminar/{id}/hapus', [JadwalSeminarController::class, 'hapus'])->name('jadwalseminar.hapus');
 
 
 // =====================================================
@@ -453,7 +454,6 @@ Route::get('/penilaian-pembimbing/{proposalId}/show',   [PenilaianPembimbingCont
 
 // =====================================================
 // DAFTAR SEMINAR — MAHASISWA
-// URUTAN PENTING: static route HARUS di atas {id}!
 // =====================================================
 
 Route::get('/seminar',              [DaftarSeminarController::class, 'index'])->name('seminar.daftar');
