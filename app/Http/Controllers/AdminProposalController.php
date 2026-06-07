@@ -14,13 +14,11 @@ class AdminProposalController extends Controller
             ->join('users', 'proposal.nim_nid', '=', 'users.nim_nid')
             ->leftJoin('tinjauan_proposal', 'proposal.id', '=', 'tinjauan_proposal.proposal_id')
             ->leftJoin('users as reviewer', 'tinjauan_proposal.nim_nid_reviewer', '=', 'reviewer.nim_nid')
-            // Join dosen pembimbing 1
             ->leftJoin('dosen_pembimbing as dp1', function ($join) {
                 $join->on('dp1.proposal_id', '=', 'proposal.id')
                      ->where('dp1.urutan', '=', 1);
             })
             ->leftJoin('users as dd1', 'dp1.nim_nid_dosen', '=', 'dd1.nim_nid')
-            // Join dosen pembimbing 2
             ->leftJoin('dosen_pembimbing as dp2', function ($join) {
                 $join->on('dp2.proposal_id', '=', 'proposal.id')
                      ->where('dp2.urutan', '=', 2);
@@ -58,19 +56,23 @@ class AdminProposalController extends Controller
 
         $proposals = $query->paginate(10)->withQueryString();
 
-        $totalProposal   = DB::table('proposal')->count();
-        $belumDireview   = DB::table('proposal')->whereIn('status', ['menunggu_verifikasi', 'menunggu_review'])->count();
-        $menungguReview  = DB::table('proposal')->where('status', 'menunggu_review')->count();
-        $selesaiDireview = DB::table('proposal')->where('status', 'selesai')->count();
-        $ditolak         = DB::table('proposal')->where('status', 'ditolak')->count();
+        $totalProposal          = DB::table('proposal')->count();
+        $menungguVerifikasi     = DB::table('proposal')->where('status', 'menunggu_verifikasi')->count();
+        $menungguReview         = DB::table('proposal')->where('status', 'menunggu_review')->count();
+        $belumDireview          = $menungguVerifikasi + $menungguReview;
+        $selesaiDireview        = DB::table('proposal')->where('status', 'selesai')->count();
+        $ditolak                = DB::table('proposal')->where('status', 'ditolak')->count();
+        $countPenetapanReviewer = $menungguVerifikasi;
 
         return view('admin.proposal.index', compact(
             'proposals',
             'totalProposal',
             'belumDireview',
+            'menungguVerifikasi',
             'menungguReview',
             'selesaiDireview',
-            'ditolak'
+            'ditolak',
+            'countPenetapanReviewer'
         ));
     }
 

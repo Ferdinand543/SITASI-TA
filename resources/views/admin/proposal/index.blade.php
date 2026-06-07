@@ -33,6 +33,7 @@
         background: transparent; color: #4a3000; border: 1.5px solid #d4a01e;
         border-radius: 10px; padding: 10px 20px; font-size: 0.84rem; font-weight: 700;
         text-decoration: none; display: inline-flex; align-items: center; gap: 7px; transition: 0.2s;
+        position: relative;
     }
     .btn-hero-outline:hover { background: rgba(212,160,30,0.1); color: #4a3000; }
 
@@ -48,7 +49,6 @@
         display: grid; gap: 1px; background: #e5e7eb; border-radius: 16px;
         overflow: hidden; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
-    .stat-row.cols-4 { grid-template-columns: repeat(4,1fr); }
     .stat-card { background:#fff; padding:20px 24px; display:flex; align-items:center; gap:14px; }
     .stat-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .stat-icon.blue   { background:#eff6ff; }
@@ -136,8 +136,6 @@
     .empty-state-sub   { font-size:0.82rem; color:#94a3b8; }
 
     .pagination-wrap { display:flex; justify-content:flex-end; padding:16px 20px; border-top:1px solid #f0f0f0; }
-
-    
 </style>
 
 <div class="container-fluid px-4 page-wrap">
@@ -156,24 +154,49 @@
             </h2>
             <p>Verifikasi dan tetapkan dosen pembimbing tugas akhir mahasiswa untuk menjamin kualitas akademik.</p>
             <div class="hero-btn-group">
+
+                {{-- BUTTON 1: Penetapan Dosen Pembimbing --}}
                 <a href="{{ url('/proposal') }}" class="btn-hero-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/>
                     </svg>
                     Penetapan Dosen Pembimbing
                 </a>
+
+                {{-- BUTTON 2: Penetapan Reviewer --}}
+                <a href="{{ url('/proposal?tab=reviewer') }}" class="btn-hero-outline">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                        <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+                        <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                    </svg>
+                    Penetapan Reviewer
+                    @if($countPenetapanReviewer > 0)
+                        <span style="
+                            position:absolute; top:-8px; right:-8px;
+                            background:#ef4444; color:#fff;
+                            font-size:0.65rem; font-weight:800;
+                            border-radius:999px; min-width:18px; height:18px;
+                            display:flex; align-items:center; justify-content:center;
+                            padding:0 4px; border:2px solid #fff;
+                        ">{{ $countPenetapanReviewer }}</span>
+                    @endif
+                </a>
+
+                {{-- BUTTON 3: Review Proposal --}}
                 <a href="{{ route('reviewer.proposal') }}" class="btn-hero-outline">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
                     </svg>
                     Review Proposal
                 </a>
+
             </div>
         </div>
     </div>
 
-    {{-- STAT CARDS — admin: 5 kolom --}}
-    <div class="stat-row mb-4 cols-4">
+    {{-- STAT CARDS — 5 kolom, pisah verifikasi & review --}}
+    <div class="stat-row mb-4" style="grid-template-columns: repeat(5,1fr);">
         <div class="stat-card">
             <div class="stat-icon blue">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#2563eb" viewBox="0 0 16 16">
@@ -185,6 +208,7 @@
                 <div class="stat-label">Total Proposal</div>
             </div>
         </div>
+
         <div class="stat-card">
             <div class="stat-icon yellow">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#ca8a04" viewBox="0 0 16 16">
@@ -193,10 +217,11 @@
                 </svg>
             </div>
             <div>
-                <div class="stat-num">{{ $belumDireview }}</div>
-                <div class="stat-label">Menunggu Verifikasi / Review</div>
+                <div class="stat-num">{{ $menungguVerifikasi }}</div>
+                <div class="stat-label">Menunggu Verifikasi</div>
             </div>
         </div>
+
         <div class="stat-card">
             <div class="stat-icon sky">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#0369a1" viewBox="0 0 16 16">
@@ -208,6 +233,7 @@
                 <div class="stat-label">Menunggu Review</div>
             </div>
         </div>
+
         <div class="stat-card">
             <div class="stat-icon green">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#16a34a" viewBox="0 0 16 16">
@@ -217,6 +243,18 @@
             <div>
                 <div class="stat-num">{{ $selesaiDireview }}</div>
                 <div class="stat-label">Selesai</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon red">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#dc2626" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="stat-num">{{ $ditolak }}</div>
+                <div class="stat-label">Ditolak</div>
             </div>
         </div>
     </div>
@@ -275,17 +313,12 @@
                     <td class="center" style="color:#94a3b8; font-weight:600;">
                         {{ $proposals->firstItem() + $i }}
                     </td>
-
                     <td style="white-space:nowrap;">
                         {{ \Carbon\Carbon::parse($p->created_at)->format('d M Y') }}
                     </td>
-
                     <td style="font-family:monospace; font-size:0.82rem;">{{ $p->nim_nid }}</td>
-
                     <td style="font-weight:600;">{{ $p->nama_mahasiswa }}</td>
-
                     <td style="max-width:200px; line-height:1.5;">{{ $p->judul }}</td>
-
                     <td>
                         @if($p->file_proposal)
                         <a href="{{ route('proposal.file', $p->id) }}" target="_blank" class="file-pill">
@@ -298,8 +331,6 @@
                         <span style="color:#cbd5e1;">-</span>
                         @endif
                     </td>
-
-                    {{-- Pembimbing 1 --}}
                     <td style="min-width:180px;">
                         @if(!empty($p->dosen1_nama))
                             <div class="dosen-name">{{ $p->dosen1_nama }}</div>
@@ -309,8 +340,6 @@
                             <span style="color:#cbd5e1;">-</span>
                         @endif
                     </td>
-
-                    {{-- Pembimbing 2 --}}
                     <td style="min-width:180px;">
                         @if(!empty($p->dosen2_nama))
                             <div class="dosen-name">{{ $p->dosen2_nama }}</div>
@@ -320,7 +349,6 @@
                             <span style="color:#cbd5e1;">-</span>
                         @endif
                     </td>
-
                     <td class="center">
                         @if($status === 'menunggu_verifikasi')
                             <span class="status-pill sp-menunggu-verifikasi">Menunggu Verifikasi</span>
@@ -334,8 +362,6 @@
                             <span style="color:#94a3b8; font-size:0.82rem;">{{ $p->status }}</span>
                         @endif
                     </td>
-
-                    {{-- AKSI: Verifikasi jika menunggu_verifikasi, Detail untuk status lain --}}
                     <td class="center">
                         <div class="action-group">
                             @if($status === 'menunggu_verifikasi')
