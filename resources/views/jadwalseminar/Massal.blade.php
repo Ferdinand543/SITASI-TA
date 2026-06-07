@@ -72,13 +72,13 @@
         margin-bottom: 14px;
     }
     .peserta-title { font-size: 14px; font-weight: 800; color: var(--neutral); display: flex; align-items: center; gap: 8px; }
-   .btn-tambah {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 16px; background: #FDE047; color: #713F12;
-    border: 1px solid #FACC15; border-radius: 10px; font-size: 13px; font-weight: 700;
-    cursor: pointer; font-family: inherit; transition: background .2s;
-}
-.btn-tambah:hover { background: #FACC15; color: #713F12; }
+    .btn-tambah {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 8px 16px; background: #FDE047; color: #713F12;
+        border: 1px solid #FACC15; border-radius: 10px; font-size: 13px; font-weight: 700;
+        cursor: pointer; font-family: inherit; transition: background .2s;
+    }
+    .btn-tambah:hover { background: #FACC15; color: #713F12; }
 
     .peserta-item {
         border: 1.5px solid var(--border); border-radius: 12px;
@@ -108,15 +108,22 @@
     .nama-display.filled { background: var(--green-lt); border-color: var(--green-border); font-weight: 600; }
 
     .conflict-msg {
-        margin-top: 8px; padding: 8px 12px; background: var(--danger-lt);
+        margin-top: 8px; padding: 10px 12px; background: var(--danger-lt);
         border: 1px solid var(--danger-border); border-radius: 8px;
-        font-size: 12px; color: var(--danger); display: flex; align-items: center; gap: 6px;
+        font-size: 12px; color: var(--danger); display: flex; align-items: flex-start; gap: 6px;
+        line-height: 1.5;
     }
+    .conflict-msg svg { flex-shrink: 0; margin-top: 1px; }
+
     .conflict-global {
         padding: 12px 16px; background: var(--danger-lt); border: 1px solid var(--danger-border);
         border-radius: 10px; font-size: 13px; color: var(--danger);
-        display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+        display: flex; align-items: flex-start; gap: 8px; margin-bottom: 16px;
+        line-height: 1.5;
     }
+    .conflict-global svg { flex-shrink: 0; margin-top: 1px; }
+    .conflict-global-list { margin-top: 6px; padding-left: 4px; }
+    .conflict-global-list li { margin-bottom: 2px; font-size: 12px; }
 
     .empty-peserta {
         text-align: center; padding: 40px 20px; border: 2px dashed var(--border);
@@ -130,13 +137,13 @@
         display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px;
     }
     .btn-submit {
-    padding: 11px 28px; background: #FDE047; color: #713F12;
-    border: 1px solid #FACC15; border-radius: 10px; font-size: 14px; font-weight: 700;
-    cursor: pointer; font-family: inherit; transition: background .2s;
-    display: inline-flex; align-items: center; gap: 8px;
-}
-.btn-submit:hover { background: #FACC15; color: #713F12; }
-.btn-submit:disabled { background: #D1D5DB; color: #9CA3AF; border-color: #D1D5DB; cursor: not-allowed; }
+        padding: 11px 28px; background: #FDE047; color: #713F12;
+        border: 1px solid #FACC15; border-radius: 10px; font-size: 14px; font-weight: 700;
+        cursor: pointer; font-family: inherit; transition: background .2s;
+        display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-submit:hover { background: #FACC15; color: #713F12; }
+    .btn-submit:disabled { background: #D1D5DB; color: #9CA3AF; border-color: #D1D5DB; cursor: not-allowed; }
     .btn-cancel-form {
         padding: 11px 20px; background: #fff; color: var(--muted);
         border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px;
@@ -196,12 +203,12 @@
     .modal-selected-count { font-size: 13px; color: var(--muted); }
     .modal-selected-count span { font-weight: 800; color: var(--neutral); }
     .btn-tambahkan {
-    padding: 9px 20px; background: #FDE047; color: #713F12;
-    border: 1px solid #FACC15; border-radius: 10px; font-size: 13px; font-weight: 700;
-    cursor: pointer; font-family: inherit; transition: background .2s;
-    display: inline-flex; align-items: center; gap: 6px;
-}
-.btn-tambahkan:hover { background: #FACC15; color: #713F12; }
+        padding: 9px 20px; background: #FDE047; color: #713F12;
+        border: 1px solid #FACC15; border-radius: 10px; font-size: 13px; font-weight: 700;
+        cursor: pointer; font-family: inherit; transition: background .2s;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-tambahkan:hover { background: #FACC15; color: #713F12; }
     .btn-batal-modal {
         padding: 9px 16px; background: #fff; color: var(--muted);
         border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px;
@@ -221,7 +228,6 @@
         z-index: 99999; align-items: center; justify-content: center;
     }
     .popup-overlay.active { display: flex; }
-
     .popup-box {
         background: #fff; border-radius: 24px; padding: 40px 36px 32px;
         width: 100%; max-width: 360px; text-align: center;
@@ -231,7 +237,6 @@
         from { transform: scale(.88); opacity: 0; }
         to   { transform: scale(1);   opacity: 1; }
     }
-
     .popup-icon {
         width: 80px; height: 80px; border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
@@ -240,10 +245,8 @@
     .popup-icon.confirm { background: #FEF3C7; border: 3px solid #F5D97A; color: #C9A227; font-size: 40px; }
     .popup-icon.success { background: #F0FDF4; border: 3px solid #BBF7D0; }
     .popup-icon.error   { background: #FEF2F2; border: 3px solid #FECACA; }
-
     .popup-icon.success svg { width: 40px; height: 40px; stroke: #16A34A; stroke-width: 2.5; fill: none; }
     .popup-icon.error svg   { width: 40px; height: 40px; stroke: #EF4444; stroke-width: 2.5; fill: none; }
-
     .popup-title { font-size: 20px; font-weight: 800; color: var(--neutral); margin-bottom: 10px; }
     .popup-msg { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
     .popup-target-name {
@@ -257,30 +260,25 @@
         border-radius: 8px; padding: 8px 12px; margin-bottom: 20px;
         text-align: left; display: none;
     }
-
     .popup-actions { display: flex; gap: 10px; justify-content: center; }
-
     .btn-popup-ok {
         padding: 10px 40px; background: var(--gold); color: #fff;
         border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
         cursor: pointer; font-family: inherit; transition: background .2s;
     }
     .btn-popup-ok:hover { background: #b8911f; }
-
     .btn-popup-batal {
         padding: 10px 24px; background: #F3F4F6; color: var(--muted);
         border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
         cursor: pointer; font-family: inherit; transition: background .2s;
     }
     .btn-popup-batal:hover { background: #E5E7EB; }
-
     .btn-popup-simpan {
         padding: 10px 24px; background: var(--gold); color: #fff;
         border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
         cursor: pointer; font-family: inherit; transition: background .2s;
     }
     .btn-popup-simpan:hover { background: #b8911f; }
-
     .btn-popup-hapus {
         padding: 10px 24px; background: var(--danger); color: #fff;
         border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
@@ -347,11 +345,15 @@
                 </button>
             </div>
 
+            {{-- Banner konflik global --}}
             <div id="conflictGlobal" class="conflict-global" style="display:none;">
                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
                 </svg>
-                <span id="conflictGlobalMsg"></span>
+                <div>
+                    <div style="font-weight:700;margin-bottom:4px;">Deteksi Tabrakan Waktu</div>
+                    <div id="conflictGlobalList"></div>
+                </div>
             </div>
 
             <div id="pesertaList">
@@ -409,7 +411,7 @@
     </div>
 </div>
 
-{{-- POPUP — KONFIRMASI SIMPAN --}}
+{{-- POPUP KONFIRMASI SIMPAN --}}
 <div class="popup-overlay" id="popupKonfirmasi">
     <div class="popup-box">
         <div class="popup-icon confirm">?</div>
@@ -422,7 +424,7 @@
     </div>
 </div>
 
-{{-- POPUP — BERHASIL SIMPAN --}}
+{{-- POPUP BERHASIL SIMPAN --}}
 <div class="popup-overlay" id="popupBerhasil">
     <div class="popup-box">
         <div class="popup-icon success">
@@ -438,7 +440,7 @@
     </div>
 </div>
 
-{{-- POPUP — GAGAL SIMPAN --}}
+{{-- POPUP GAGAL SIMPAN --}}
 <div class="popup-overlay" id="popupGagal">
     <div class="popup-box">
         <div class="popup-icon error">
@@ -455,7 +457,7 @@
     </div>
 </div>
 
-{{-- POPUP — KONFIRMASI HAPUS PESERTA --}}
+{{-- POPUP KONFIRMASI HAPUS PESERTA --}}
 <div class="popup-overlay" id="popupKonfirmasiHapus">
     <div class="popup-box">
         <div class="popup-icon confirm">?</div>
@@ -469,7 +471,7 @@
     </div>
 </div>
 
-{{-- POPUP — BERHASIL HAPUS PESERTA --}}
+{{-- POPUP BERHASIL HAPUS PESERTA --}}
 <div class="popup-overlay" id="popupBerhasilHapus">
     <div class="popup-box">
         <div class="popup-icon success">
@@ -485,7 +487,7 @@
     </div>
 </div>
 
-{{-- POPUP — GAGAL HAPUS PESERTA --}}
+{{-- POPUP GAGAL HAPUS PESERTA --}}
 <div class="popup-overlay" id="popupGagalHapus">
     <div class="popup-box">
         <div class="popup-icon error">
@@ -673,8 +675,9 @@
                             onchange="updateWaktu(${i}, 'selesai', this.value)" required>
                     </div>
                 </div>
+                {{-- Pesan konflik per mahasiswa --}}
                 <div id="conflict-msg-${i}" style="display:none;" class="conflict-msg">
-                    <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"/>
                     </svg>
                     <span></span>
@@ -698,9 +701,17 @@
         return h * 60 + m;
     }
 
+    // ✅ FUNGSI CONFLICT YANG DIPERBAIKI
+    // - Hanya item yang tubrukan yang dapat peringatan merah
+    // - Pesan per item menyebutkan nama mahasiswa yang tubrukan
+    // - Banner global menampilkan daftar pasangan yang tubrukan
     function checkConflicts() {
         let hasConflict = false;
-        const conflicts = new Array(pesertaData.length).fill(false);
+
+        // conflictWith[i] = array nama mahasiswa yang tubrukan dengan i
+        const conflictWith = pesertaData.map(() => []);
+        // pasangan yang tubrukan untuk banner global
+        const conflictPairs = [];
 
         for (let i = 0; i < pesertaData.length; i++) {
             const mulaiI   = timeToMinutes(pesertaData[i].waktu_mulai);
@@ -713,59 +724,73 @@
                 if (!mulaiJ || !selesaiJ) continue;
 
                 if (mulaiI < selesaiJ && selesaiI > mulaiJ) {
-                    conflicts[i] = true;
-                    conflicts[j] = true;
-                    hasConflict  = true;
+                    hasConflict = true;
+                    // ✅ catat siapa yang tubrukan dengan siapa
+                    conflictWith[i].push(pesertaData[j].nama);
+                    conflictWith[j].push(pesertaData[i].nama);
+                    conflictPairs.push(
+                        `Mahasiswa ${i + 1} (${pesertaData[i].nama}) ↔ Mahasiswa ${j + 1} (${pesertaData[j].nama})`
+                    );
                 }
             }
         }
 
+        // Update tampilan per mahasiswa
         pesertaData.forEach((p, i) => {
             const item  = document.getElementById(`peserta-item-${i}`);
             const msgEl = document.getElementById(`conflict-msg-${i}`);
             if (!item || !msgEl) return;
 
-            if (conflicts[i]) {
+            if (conflictWith[i].length > 0) {
+                // ✅ hanya yang tubrukan yang merah
                 item.classList.add('conflict');
                 msgEl.style.display = 'flex';
-                msgEl.querySelector('span').textContent = 'Sesi ini tumpang tindih dengan sesi lain.';
+                // ✅ sebutkan nama mahasiswa yang tubrukan
+                const namaList = conflictWith[i].join(', ');
+                msgEl.querySelector('span').textContent =
+                    'Jadwal sesi ini bertabrakan dengan: ' + namaList + '. Harap sesuaikan jam mulai atau selesai.';
             } else {
+                // ✅ yang tidak tubrukan tetap normal
                 item.classList.remove('conflict');
                 msgEl.style.display = 'none';
             }
         });
 
-        const globalEl  = document.getElementById('conflictGlobal');
-        const globalMsg = document.getElementById('conflictGlobalMsg');
+        // Update banner global
+        const globalEl   = document.getElementById('conflictGlobal');
+        const globalList = document.getElementById('conflictGlobalList');
         if (hasConflict) {
             globalEl.style.display = 'flex';
-            globalMsg.textContent = 'Deteksi Tabrakan Waktu: Beberapa sesi memiliki jadwal yang bersinggungan. Harap perbaiki sebelum menyimpan.';
+            // ✅ tampilkan daftar pasangan yang tubrukan
+            globalList.innerHTML =
+                '<ul class="conflict-global-list">' +
+                conflictPairs.map(p => `<li>${p}</li>`).join('') +
+                '</ul>';
         } else {
             globalEl.style.display = 'none';
+            globalList.innerHTML = '';
         }
 
         return hasConflict;
     }
 
     function updateSubmitBtn() {
-    const btn     = document.getElementById('btnSubmit');
-    const tanggal = document.getElementById('inputTanggal').value.trim();
-    const ruang   = document.getElementById('inputRuang').value.trim();
+        const btn     = document.getElementById('btnSubmit');
+        const tanggal = document.getElementById('inputTanggal').value.trim();
+        const ruang   = document.getElementById('inputRuang').value.trim();
 
-    if (pesertaData.length === 0) { btn.disabled = true; return; }
-    if (!tanggal || !ruang) { btn.disabled = true; return; }
+        if (pesertaData.length === 0) { btn.disabled = true; return; }
+        if (!tanggal || !ruang) { btn.disabled = true; return; }
 
-    const semuaWaktuLengkap = pesertaData.every(p => p.waktu_mulai !== '' && p.waktu_selesai !== '');
-    if (!semuaWaktuLengkap) { btn.disabled = true; return; }
+        const semuaWaktuLengkap = pesertaData.every(p => p.waktu_mulai !== '' && p.waktu_selesai !== '');
+        if (!semuaWaktuLengkap) { btn.disabled = true; return; }
 
-    if (checkConflicts()) { btn.disabled = true; return; }
+        if (checkConflicts()) { btn.disabled = true; return; }
 
-    btn.disabled = false;
-}
+        btn.disabled = false;
+    }
 
-    // ============================================================
-    // POPUP — KONFIRMASI SIMPAN
-    // ============================================================
+    // POPUP KONFIRMASI SIMPAN
     function bukaPopupKonfirmasi() {
         if (checkConflicts()) {
             showPopupGagal('Terdapat konflik waktu antar sesi. Harap perbaiki terlebih dahulu.');
@@ -829,11 +854,7 @@
         if (e.target === this) tutupPopupGagal();
     });
 
-    // ============================================================
-    // POPUP — KONFIRMASI HAPUS PESERTA
-    // PERBAIKAN: simpan index ke variabel lokal sebelum tutup popup,
-    // karena tutupPopupKonfirmasiHapus() me-reset hapusTargetIndex = null
-    // ============================================================
+    // POPUP KONFIRMASI HAPUS PESERTA
     function bukaPopupKonfirmasiHapus(index) {
         hapusTargetIndex = index;
         const nama = pesertaData[index].nama + ' (' + pesertaData[index].mahasiswa_id + ')';
@@ -851,8 +872,8 @@
     });
 
     function konfirmasiHapusPeserta() {
-        const targetIndex = hapusTargetIndex; // ← simpan dulu sebelum tutup popup
-        tutupPopupKonfirmasiHapus();          // ← ini yang reset hapusTargetIndex = null
+        const targetIndex = hapusTargetIndex;
+        tutupPopupKonfirmasiHapus();
 
         try {
             if (targetIndex === null || targetIndex < 0 || targetIndex >= pesertaData.length) {
