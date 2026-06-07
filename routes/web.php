@@ -24,6 +24,7 @@ use App\Http\Controllers\PenilaianPembimbingController;
 use App\Http\Controllers\DaftarSeminarController;
 use App\Http\Controllers\jadwalseminarcontroller;
 use App\Http\Controllers\HasilPenilaianMahasiswaController;
+use App\Http\Controllers\KelolaPengujiController;
 
 
 // ROOT
@@ -404,15 +405,14 @@ Route::prefix('admin')->group(function () {
 // SEMINAR — ADMIN & KOORDINATOR
 // =====================================================
 
-// ✅ URUTAN PENTING: /massal harus di atas /{id}
 Route::get('/kelola-seminar/massal',          [jadwalseminarcontroller::class, 'formMassal'])->name('jadwalseminar.massal.form');
 Route::post('/kelola-seminar/massal',         [jadwalseminarcontroller::class, 'simpanMassal'])->name('jadwalseminar.massal.simpan');
 Route::get('/kelola-seminar/mahasiswa',       [jadwalseminarcontroller::class, 'getMahasiswaBelumJadwal'])->name('jadwalseminar.mahasiswa');
 Route::get('/kelola-seminar',                 [jadwalseminarcontroller::class, 'index'])->name('admin.seminar.index');
 Route::post('/kelola-seminar/{id}/jadwalkan', [jadwalseminarcontroller::class, 'jadwalkan'])->name('admin.seminar.jadwalkan');
 Route::post('/kelola-seminar/{id}/hapus',     [jadwalseminarcontroller::class, 'hapusJadwal'])->name('admin.seminar.hapus');
-Route::get('/kelola-seminar/{id}/detail', [jadwalseminarcontroller::class, 'detail'])->name('jadwalseminar.detail');
-Route::delete('/kelola-seminar/{id}/hapus', [JadwalSeminarController::class, 'hapus'])->name('jadwalseminar.hapus');
+Route::get('/kelola-seminar/{id}/detail',     [jadwalseminarcontroller::class, 'detail'])->name('jadwalseminar.detail');
+Route::delete('/kelola-seminar/{id}/hapus',   [JadwalSeminarController::class, 'hapus'])->name('jadwalseminar.hapus');
 
 
 // =====================================================
@@ -471,3 +471,13 @@ Route::post('/seminar/{id}/daftar', [DaftarSeminarController::class, 'submitDaft
 // =====================================================
 
 Route::get('/mahasiswa/hasil-penilaian', [HasilPenilaianMahasiswaController::class, 'index'])->name('mahasiswa.hasil.penilaian');
+
+
+// =====================================================
+// KELOLA DOSEN PENGUJI — KOORDINATOR
+// =====================================================
+
+Route::get('/dosen/penguji', [KelolaPengujiController::class, 'index'])->name('dosen.penguji.index');
+Route::get('/dosen/penguji/{nim_nid}', [KelolaPengujiController::class, 'show'])->name('penguji.show');
+Route::post('/dosen/penguji/{nim_nid}/tetapkan', [KelolaPengujiController::class, 'tetapkan'])->name('penguji.tetapkan');
+

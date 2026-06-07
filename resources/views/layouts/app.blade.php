@@ -228,7 +228,6 @@
             $isPembimbing = in_array('pembimbing', $rolesDb);
             $isPenguji    = in_array('penguji', $rolesDb);
 
-            // Cek apakah pembimbing punya mahasiswa bimbingan yang lolos administrasi
             $punyaMahasiswaBimbingan = false;
             if ($isPembimbing) {
                 $punyaMahasiswaBimbingan = DB::table('proposal as p')
@@ -295,12 +294,6 @@
 
             <div class="nav-label">Akademik</div>
 
-            {{-- Nilai:
-                 Pembimbing + punya mahasiswa bimbingan lolos → form pembimbing
-                 Pembimbing tapi belum ada bimbingan + penguji → form penguji
-                 Penguji murni → form penguji
-                 Bukan keduanya → locked
-            --}}
             @if($isPembimbing && $punyaMahasiswaBimbingan)
             <a href="{{ route('penilaian.pembimbing.index') }}"
                 class="sidebar-link {{ request()->routeIs('penilaian.pembimbing.*') ? 'active' : '' }}">
@@ -334,6 +327,17 @@
             @else
             <button class="sidebar-link sidebar-link-locked" onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator.')">
                 <i class="fa-solid fa-users"></i> Mahasiswa
+            </button>
+            @endif
+
+            {{-- Kelola Dosen Penguji (khusus Koordinator) --}}
+            @if($isKoor)
+            <a href="{{ route('dosen.penguji.index') }}" class="sidebar-link {{ request()->is('dosen/penguji*') ? 'active' : '' }}">
+                <i class="fa-solid fa-user-tie"></i> Kelola Dosen Penguji
+            </a>
+            @else
+            <button class="sidebar-link sidebar-link-locked" onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator.')">
+                <i class="fa-solid fa-user-tie"></i> Kelola Dosen Penguji
             </button>
             @endif
 
