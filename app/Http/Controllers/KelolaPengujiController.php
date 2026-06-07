@@ -25,6 +25,114 @@ class KelolaPengujiController extends Controller
         return view('KoorNetapinPenguji.index', compact('dosenPenguji'));
     }
 
+    public function mahasiswa()
+    {
+        if (!session('user')) return redirect('/login');
+
+        // Semua mahasiswa yang lolos administrasi & menunggu jadwal
+        $mahasiswaList = DB::table('pengajuan_seminars as ps')
+            ->join('users as u', 'u.nim_nid', '=', 'ps.mahasiswa_id')
+            ->where('ps.status_administrasi', 'Lolos Administrasi')
+            ->where('ps.status_seminar', 'Menunggu Jadwal')
+            ->select('u.nim_nid', 'u.nama', 'ps.judul_ta', 'ps.id as pengajuan_id', 'ps.mahasiswa_id')
+            ->get()
+            ->map(function ($mhs) {
+                // Angkatan dari 4 digit pertama NIM
+                $mhs->angkatan = substr($mhs->nim_nid, 0, 4);
+
+                // Pembimbing
+                $proposal = DB::table('proposal')
+                    ->where('nim_nid', $mhs->mahasiswa_id)
+                    ->latest()
+                    ->first();
+
+                $mhs->pembimbing1 = null;
+                $mhs->pembimbing2 = null;
+
+                if ($proposal) {
+                    $pb1 = DB::table('dosen_pembimbing')->where('proposal_id', $proposal->id)->where('urutan', 1)->first();
+                    $pb2 = DB::table('dosen_pembimbing')->where('proposal_id', $proposal->id)->where('urutan', 2)->first();
+                    $mhs->pembimbing1 = $pb1 ? DB::table('users')->where('nim_nid', $pb1->nim_nid_dosen)->value('nama') : null;
+                    $mhs->pembimbing2 = $pb2 ? DB::table('users')->where('nim_nid', $pb2->nim_nid_dosen)->value('nama') : null;
+                }
+
+                // Penguji
+                $mhs->penguji1 = DB::table('dosen_penguji_seminar as dps')
+                    ->join('users as u', DB::raw('u.nim_nid COLLATE utf8mb4_general_ci'), '=', 'dps.nim_nid_dosen')
+                    ->where('dps.pengajuan_seminar_id', $mhs->pengajuan_id)
+                    ->where('dps.urutan', 1)
+                    ->value('u.nama');
+
+                $mhs->penguji2 = DB::table('dosen_penguji_seminar as dps')
+                    ->join('users as u', DB::raw('u.nim_nid COLLATE utf8mb4_general_ci'), '=', 'dps.nim_nid_dosen')
+                    ->where('dps.pengajuan_seminar_id', $mhs->pengajuan_id)
+                    ->where('dps.urutan', 2)
+                    ->value('u.nama');
+
+                return $mhs;
+            });
+
+        // Daftar dosen penguji untuk dropdown
+        $dosenList = DB::table('dosen_roles as dr')
+            ->join('users as u', 'u.nim_nid', '=', 'dr.nim_nid')
+            ->where('dr.role_dosen', 'penguji')
+            ->select('u.nim_nid', 'u.nama')
+            ->get()
+            ->map(function ($dosen) {
+                $dosen->jumlah_mahasiswa = DB::table('dosen_penguji_seminar')
+                    ->where('nim_nid_dosen', $dosen->nim_nid)
+                    ->count();
+                return $dosen;
+            });
+
+        // Mahasiswa belum ditetapkan per dosen (untuk modal, dikirim sebagai JSON)
+        // Key: nim_nid dosen, Value: array mahasiswa yang bisa ditugaskan ke dosen tsb
+        $mahasiswaBelumDitetapkanPerDosen = [];
+
+        foreach ($dosenList as $dosen) {
+            $sudahDitetapkanIds = DB::table('dosen_penguji_seminar')
+                ->where('nim_nid_dosen', $dosen->nim_nid)
+                ->pluck('pengajuan_seminar_id')
+                ->toArray();
+
+            $belum = DB::table('pengajuan_seminars as ps')
+                ->join('users as u', 'u.nim_nid', '=', 'ps.mahasiswa_id')
+                ->where('ps.status_administrasi', 'Lolos Administrasi')
+                ->where('ps.status_seminar', 'Menunggu Jadwal')
+                ->select('u.nim_nid', 'u.nama', 'ps.judul_ta', 'ps.id as pengajuan_id')
+                ->get()
+                ->map(function ($mhs) use ($dosen, $sudahDitetapkanIds) {
+                    // Cek apakah dosen ini sudah jadi penguji mahasiswa ini
+                    $sudahJadiPenguji = DB::table('dosen_penguji_seminar')
+                        ->where('pengajuan_seminar_id', $mhs->pengajuan_id)
+                        ->where('nim_nid_dosen', $dosen->nim_nid)
+                        ->exists();
+
+                    if ($sudahJadiPenguji) return null;
+
+                    $existing = DB::table('dosen_penguji_seminar')
+                        ->where('pengajuan_seminar_id', $mhs->pengajuan_id)
+                        ->get();
+
+                    $mhs->jumlah_penguji = $existing->count();
+                    $mhs->ada_penguji1   = $existing->where('urutan', 1)->count() > 0;
+                    $mhs->ada_penguji2   = $existing->where('urutan', 2)->count() > 0;
+
+                    return $mhs;
+                })
+                ->filter(fn($mhs) => $mhs !== null && $mhs->jumlah_penguji < 2)
+                ->values();
+
+            $mahasiswaBelumDitetapkanPerDosen[$dosen->nim_nid] = $belum;
+        }
+
+        return view('KoorNetapinPenguji.mahasiswa', compact(
+            'mahasiswaList',
+            'dosenList',
+            'mahasiswaBelumDitetapkanPerDosen'
+        ));
+    }
+
     public function show($nim_nid)
     {
         if (!session('user')) return redirect('/login');
@@ -38,7 +146,6 @@ class KelolaPengujiController extends Controller
             ->select('u.nim_nid', 'u.nama', 'ps.judul_ta', 'ps.id as pengajuan_id', 'ps.mahasiswa_id', 'dps.urutan')
             ->get()
             ->map(function ($mhs) {
-                // Ambil proposal mahasiswa ini
                 $proposal = DB::table('proposal')
                     ->where('nim_nid', $mhs->mahasiswa_id)
                     ->latest()
@@ -48,24 +155,12 @@ class KelolaPengujiController extends Controller
                 $mhs->pembimbing2 = null;
 
                 if ($proposal) {
-                    $pb1 = DB::table('dosen_pembimbing')
-                        ->where('proposal_id', $proposal->id)
-                        ->where('urutan', 1)
-                        ->first();
-                    $pb2 = DB::table('dosen_pembimbing')
-                        ->where('proposal_id', $proposal->id)
-                        ->where('urutan', 2)
-                        ->first();
-
-                    $mhs->pembimbing1 = $pb1
-                        ? DB::table('users')->where('nim_nid', $pb1->nim_nid_dosen)->value('nama')
-                        : null;
-                    $mhs->pembimbing2 = $pb2
-                        ? DB::table('users')->where('nim_nid', $pb2->nim_nid_dosen)->value('nama')
-                        : null;
+                    $pb1 = DB::table('dosen_pembimbing')->where('proposal_id', $proposal->id)->where('urutan', 1)->first();
+                    $pb2 = DB::table('dosen_pembimbing')->where('proposal_id', $proposal->id)->where('urutan', 2)->first();
+                    $mhs->pembimbing1 = $pb1 ? DB::table('users')->where('nim_nid', $pb1->nim_nid_dosen)->value('nama') : null;
+                    $mhs->pembimbing2 = $pb2 ? DB::table('users')->where('nim_nid', $pb2->nim_nid_dosen)->value('nama') : null;
                 }
 
-                // Ambil penguji 1 dan 2 mahasiswa ini
                 $mhs->penguji1 = DB::table('dosen_penguji_seminar as dps')
                     ->join('users as u', DB::raw('u.nim_nid COLLATE utf8mb4_general_ci'), '=', 'dps.nim_nid_dosen')
                     ->where('dps.pengajuan_seminar_id', $mhs->pengajuan_id)
@@ -91,9 +186,13 @@ class KelolaPengujiController extends Controller
             ->select('u.nim_nid', 'u.nama', 'ps.judul_ta', 'ps.id as pengajuan_id')
             ->get()
             ->map(function ($mhs) {
-                $mhs->jumlah_penguji = DB::table('dosen_penguji_seminar')
+                $existing = DB::table('dosen_penguji_seminar')
                     ->where('pengajuan_seminar_id', $mhs->pengajuan_id)
-                    ->count();
+                    ->get();
+
+                $mhs->jumlah_penguji = $existing->count();
+                $mhs->ada_penguji1   = $existing->where('urutan', 1)->count() > 0;
+                $mhs->ada_penguji2   = $existing->where('urutan', 2)->count() > 0;
                 return $mhs;
             })
             ->filter(fn($mhs) => $mhs->jumlah_penguji < 2)
@@ -106,31 +205,47 @@ class KelolaPengujiController extends Controller
     {
         if (!session('user')) return redirect('/login');
 
-        $pengajuanIds = request('pengajuan_ids', []);
+        $penugasan = request('penugasan', []);
 
-        if (empty($pengajuanIds)) {
+        if (empty($penugasan)) {
             return redirect()->back()->with('error', 'Pilih minimal 1 mahasiswa.');
         }
 
-        foreach ($pengajuanIds as $pengajuanId) {
-            $jumlahPenguji = DB::table('dosen_penguji_seminar')
-                ->where('pengajuan_seminar_id', $pengajuanId)
-                ->count();
+        foreach ($penugasan as $item) {
+            $pengajuanId = $item['pengajuan_id'] ?? null;
+            $urutan      = (int)($item['urutan'] ?? 0);
+
+            if (!$pengajuanId || !in_array($urutan, [1, 2])) continue;
 
             $sudahAda = DB::table('dosen_penguji_seminar')
                 ->where('pengajuan_seminar_id', $pengajuanId)
                 ->where('nim_nid_dosen', $nim_nid)
                 ->exists();
 
-            if (!$sudahAda && $jumlahPenguji < 2) {
+            $slotTerisi = DB::table('dosen_penguji_seminar')
+                ->where('pengajuan_seminar_id', $pengajuanId)
+                ->where('urutan', $urutan)
+                ->exists();
+
+            $jumlahPenguji = DB::table('dosen_penguji_seminar')
+                ->where('pengajuan_seminar_id', $pengajuanId)
+                ->count();
+
+            if (!$sudahAda && !$slotTerisi && $jumlahPenguji < 2) {
                 DB::table('dosen_penguji_seminar')->insert([
                     'pengajuan_seminar_id' => $pengajuanId,
                     'nim_nid_dosen'        => $nim_nid,
-                    'urutan'               => $jumlahPenguji + 1,
+                    'urutan'               => $urutan,
                     'created_at'           => now(),
                     'updated_at'           => now(),
                 ]);
             }
+        }
+
+        // Kalau request dari halaman mahasiswa, redirect balik ke sana
+        $from = request('_from', 'dosen');
+        if ($from === 'mahasiswa') {
+            return redirect()->route('penguji.mahasiswa.index')->with('success', 'Mahasiswa berhasil ditetapkan.');
         }
 
         return redirect()->route('penguji.show', $nim_nid)->with('success', 'Mahasiswa berhasil ditetapkan.');

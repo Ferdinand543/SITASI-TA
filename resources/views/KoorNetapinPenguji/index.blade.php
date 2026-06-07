@@ -155,10 +155,10 @@
 
 {{-- TAB --}}
 <div style="display:flex;gap:10px;margin-bottom:20px;">
-    <a href="#" class="tab-btn active">
+    <a href="{{ route('dosen.penguji.index') }}" class="tab-btn active">
         <i class="fa-solid fa-user-tie"></i> Dosen Penguji
     </a>
-    <a href="#" class="tab-btn">
+    <a href="{{ route('penguji.mahasiswa.index') }}" class="tab-btn">
         <i class="fa-solid fa-user-graduate"></i> Mahasiswa
     </a>
 </div>

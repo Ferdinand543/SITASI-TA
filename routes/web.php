@@ -473,11 +473,12 @@ Route::post('/seminar/{id}/daftar', [DaftarSeminarController::class, 'submitDaft
 Route::get('/mahasiswa/hasil-penilaian', [HasilPenilaianMahasiswaController::class, 'index'])->name('mahasiswa.hasil.penilaian');
 
 
-// =====================================================
+/// =====================================================
 // KELOLA DOSEN PENGUJI — KOORDINATOR
 // =====================================================
 
 Route::get('/dosen/penguji', [KelolaPengujiController::class, 'index'])->name('dosen.penguji.index');
+Route::get('/dosen/penguji/mahasiswa', [KelolaPengujiController::class, 'mahasiswa'])->name('penguji.mahasiswa.index'); // ← TAMBAHIN INI
 Route::get('/dosen/penguji/{nim_nid}', [KelolaPengujiController::class, 'show'])->name('penguji.show');
 Route::post('/dosen/penguji/{nim_nid}/tetapkan', [KelolaPengujiController::class, 'tetapkan'])->name('penguji.tetapkan');
 
