@@ -76,21 +76,24 @@ class jadwalseminarcontroller extends Controller
             }
         }
 
-        $totalMenunggu = DB::table('pengajuan_seminars')
-            ->where('is_draft', 0)
-            ->where('status_seminar', 'Menunggu Jadwal')
-            ->count();
-
-        $totalDijadwalkan = DB::table('pengajuan_seminars')
-            ->where('is_draft', 0)
-            ->where('status_seminar', 'Sudah Dijadwalkan')
-            ->count();
-
         $today = now()->toDateString();
 
-        $totalHariIni = DB::table('pengajuan_seminars')
-            ->where('is_draft', 0)
-            ->where('tanggal_seminar', $today)
+        $totalMenunggu = DB::table('pengajuan_seminars as ps')
+            ->join('users as u', DB::raw('u.nim_nid COLLATE utf8mb4_unicode_ci'), '=', DB::raw('ps.mahasiswa_id COLLATE utf8mb4_unicode_ci'))
+            ->where('ps.is_draft', 0)
+            ->where('ps.status_seminar', 'Menunggu Jadwal')
+            ->count();
+
+        $totalDijadwalkan = DB::table('pengajuan_seminars as ps')
+            ->join('users as u', DB::raw('u.nim_nid COLLATE utf8mb4_unicode_ci'), '=', DB::raw('ps.mahasiswa_id COLLATE utf8mb4_unicode_ci'))
+            ->where('ps.is_draft', 0)
+            ->where('ps.status_seminar', 'Sudah Dijadwalkan')
+            ->count();
+
+        $totalHariIni = DB::table('pengajuan_seminars as ps')
+            ->join('users as u', DB::raw('u.nim_nid COLLATE utf8mb4_unicode_ci'), '=', DB::raw('ps.mahasiswa_id COLLATE utf8mb4_unicode_ci'))
+            ->where('ps.is_draft', 0)
+            ->where('ps.tanggal_seminar', $today)
             ->count();
 
         $seminarHariIni = DB::table('pengajuan_seminars as ps')
@@ -110,6 +113,9 @@ class jadwalseminarcontroller extends Controller
         ));
     }
 
+    // =====================================================
+    // SIMPAN JADWAL (1 MAHASISWA) — dengan popup berhasil/gagal
+    // =====================================================
     public function jadwalkan(Request $request, $id)
     {
         $request->validate([
@@ -119,31 +125,43 @@ class jadwalseminarcontroller extends Controller
             'ruang'           => 'required',
         ]);
 
-        DB::table('pengajuan_seminars')->where('id', $id)->update([
-            'tanggal_seminar' => $request->tanggal_seminar,
-            'waktu_mulai'     => $request->waktu_mulai,
-            'waktu_selesai'   => $request->waktu_selesai,
-            'ruang'           => $request->ruang,
-            'status_seminar'  => 'Sudah Dijadwalkan',
-            'updated_at'      => now(),
-        ]);
+        try {
+            DB::table('pengajuan_seminars')->where('id', $id)->update([
+                'tanggal_seminar' => $request->tanggal_seminar,
+                'waktu_mulai'     => $request->waktu_mulai,
+                'waktu_selesai'   => $request->waktu_selesai,
+                'ruang'           => $request->ruang,
+                'status_seminar'  => 'Sudah Dijadwalkan',
+                'updated_at'      => now(),
+            ]);
 
-        return redirect()->route('admin.seminar.index')
-            ->with('success', 'Jadwal seminar berhasil ditetapkan!');
+            return redirect()->route('jadwalseminar.detail', $id)
+                ->with('simpan_berhasil', true);
+
+        } catch (\Exception $e) {
+            return redirect()->route('jadwalseminar.detail', $id)
+                ->with('simpan_gagal', true);
+        }
     }
 
+    // =====================================================
+    // HAPUS JADWAL — dengan popup berhasil/gagal
+    // =====================================================
     public function hapusJadwal($id)
     {
-        DB::table('pengajuan_seminars')->where('id', $id)->update([
-            'tanggal_seminar' => null,
-            'waktu_mulai'     => null,
-            'waktu_selesai'   => null,
-            'ruang'           => null,
-            'status_seminar'  => 'Menunggu Jadwal',
-            'updated_at'      => now(),
-        ]);
-
-        return redirect()->back()->with('success', 'Jadwal seminar berhasil dihapus!');
+        try {
+            DB::table('pengajuan_seminars')->where('id', $id)->update([
+                'tanggal_seminar' => null,
+                'waktu_mulai'     => null,
+                'waktu_selesai'   => null,
+                'ruang'           => null,
+                'status_seminar'  => 'Menunggu Jadwal',
+                'updated_at'      => now(),
+            ]);
+            return redirect()->back()->with('hapus_berhasil', true);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('hapus_gagal', true);
+        }
     }
 
     // =====================================================
@@ -156,7 +174,7 @@ class jadwalseminarcontroller extends Controller
     }
 
     // =====================================================
-    // GET MAHASISWA BELUM DIJADWAL (untuk popup)
+    // GET MAHASISWA BELUM DIJADWAL (untuk popup tambah mahasiswa)
     // =====================================================
     public function getMahasiswaBelumJadwal(Request $request)
     {

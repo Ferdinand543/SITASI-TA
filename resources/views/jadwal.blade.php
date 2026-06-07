@@ -89,14 +89,15 @@
     }
     .siap-jadwal-title { font-size: 16px; font-weight: 800; color: var(--neutral); margin-bottom: 4px; }
     .siap-jadwal-desc { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 480px; }
-    .siap-jadwal-btn {
-        display: inline-flex; align-items: center; gap: 6px;
-        margin-top: 14px; padding: 9px 18px;
-        background: var(--gold); color: #fff;
-        border-radius: 10px; font-size: 13px; font-weight: 700;
-        text-decoration: none; transition: background .2s;
-    }
-    .siap-jadwal-btn:hover { background: #b8911f; color: #fff; }
+   .siap-jadwal-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 14px; padding: 9px 18px;
+    background: #FDE047; color: #713F12;
+    border: 1px solid #FACC15;
+    border-radius: 10px; font-size: 13px; font-weight: 700;
+    text-decoration: none; transition: background .2s;
+}
+.siap-jadwal-btn:hover { background: #FACC15; color: #713F12; }
     .siap-jadwal-badge {
         text-align: center; background: var(--gold-lt);
         border: 1.5px solid var(--gold-border); border-radius: 14px;

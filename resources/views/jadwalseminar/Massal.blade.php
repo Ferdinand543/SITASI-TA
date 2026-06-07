@@ -67,19 +67,18 @@
     }
     .form-input:focus { border-color: var(--gold); background: #fff; }
 
-    /* Peserta */
     .peserta-header {
         display: flex; align-items: center; justify-content: space-between;
         margin-bottom: 14px;
     }
     .peserta-title { font-size: 14px; font-weight: 800; color: var(--neutral); display: flex; align-items: center; gap: 8px; }
-    .btn-tambah {
-        display: inline-flex; align-items: center; gap: 6px;
-        padding: 8px 16px; background: var(--gold); color: #fff;
-        border: none; border-radius: 10px; font-size: 13px; font-weight: 700;
-        cursor: pointer; font-family: inherit; transition: background .2s;
-    }
-    .btn-tambah:hover { background: #b8911f; }
+   .btn-tambah {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; background: #FDE047; color: #713F12;
+    border: 1px solid #FACC15; border-radius: 10px; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: background .2s;
+}
+.btn-tambah:hover { background: #FACC15; color: #713F12; }
 
     .peserta-item {
         border: 1.5px solid var(--border); border-radius: 12px;
@@ -100,7 +99,6 @@
     .btn-hapus-peserta:hover { background: var(--danger-lt); }
 
     .peserta-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; }
-    .nama-input-wrap { position: relative; }
     .nama-display {
         width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
         border-radius: 10px; font-size: 13px; font-family: inherit;
@@ -132,13 +130,13 @@
         display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px;
     }
     .btn-submit {
-        padding: 11px 28px; background: var(--gold); color: #fff;
-        border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
-        cursor: pointer; font-family: inherit; transition: background .2s;
-        display: inline-flex; align-items: center; gap: 8px;
-    }
-    .btn-submit:hover { background: #b8911f; }
-    .btn-submit:disabled { background: #D1D5DB; cursor: not-allowed; }
+    padding: 11px 28px; background: #FDE047; color: #713F12;
+    border: 1px solid #FACC15; border-radius: 10px; font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: background .2s;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-submit:hover { background: #FACC15; color: #713F12; }
+.btn-submit:disabled { background: #D1D5DB; color: #9CA3AF; border-color: #D1D5DB; cursor: not-allowed; }
     .btn-cancel-form {
         padding: 11px 20px; background: #fff; color: var(--muted);
         border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px;
@@ -148,7 +146,6 @@
     }
     .btn-cancel-form:hover { border-color: var(--danger); color: var(--danger); }
 
-    /* MODAL POPUP */
     .modal-overlay {
         display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45);
         z-index: 9999; align-items: center; justify-content: center;
@@ -199,30 +196,102 @@
     .modal-selected-count { font-size: 13px; color: var(--muted); }
     .modal-selected-count span { font-weight: 800; color: var(--neutral); }
     .btn-tambahkan {
-        padding: 9px 20px; background: var(--gold); color: #fff;
-        border: none; border-radius: 10px; font-size: 13px; font-weight: 700;
-        cursor: pointer; font-family: inherit; transition: background .2s;
-        display: inline-flex; align-items: center; gap: 6px;
-    }
-    .btn-tambahkan:hover { background: #b8911f; }
+    padding: 9px 20px; background: #FDE047; color: #713F12;
+    border: 1px solid #FACC15; border-radius: 10px; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: background .2s;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-tambahkan:hover { background: #FACC15; color: #713F12; }
     .btn-batal-modal {
         padding: 9px 16px; background: #fff; color: var(--muted);
         border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px;
         font-weight: 600; cursor: pointer; font-family: inherit; transition: all .2s;
     }
     .btn-batal-modal:hover { border-color: var(--danger); color: var(--danger); }
-
     .modal-empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; }
     .modal-loading { text-align: center; padding: 30px; color: var(--muted); font-size: 13px; }
-
     .checkbox-custom {
         width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--border);
         cursor: pointer; accent-color: var(--gold);
     }
 
+    .popup-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,.50);
+        z-index: 99999; align-items: center; justify-content: center;
+    }
+    .popup-overlay.active { display: flex; }
+
+    .popup-box {
+        background: #fff; border-radius: 24px; padding: 40px 36px 32px;
+        width: 100%; max-width: 360px; text-align: center;
+        box-shadow: 0 24px 64px rgba(0,0,0,.18); animation: popupIn .25s ease;
+    }
+    @keyframes popupIn {
+        from { transform: scale(.88); opacity: 0; }
+        to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .popup-icon {
+        width: 80px; height: 80px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 20px;
+    }
+    .popup-icon.confirm { background: #FEF3C7; border: 3px solid #F5D97A; color: #C9A227; font-size: 40px; }
+    .popup-icon.success { background: #F0FDF4; border: 3px solid #BBF7D0; }
+    .popup-icon.error   { background: #FEF2F2; border: 3px solid #FECACA; }
+
+    .popup-icon.success svg { width: 40px; height: 40px; stroke: #16A34A; stroke-width: 2.5; fill: none; }
+    .popup-icon.error svg   { width: 40px; height: 40px; stroke: #EF4444; stroke-width: 2.5; fill: none; }
+
+    .popup-title { font-size: 20px; font-weight: 800; color: var(--neutral); margin-bottom: 10px; }
+    .popup-msg { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+    .popup-target-name {
+        font-size: 14px; font-weight: 700; color: var(--neutral);
+        background: #F3F4F6; border-radius: 8px; padding: 8px 14px;
+        margin: -12px 0 20px; display: inline-block;
+    }
+    .popup-cause {
+        font-size: 12px; color: var(--danger);
+        background: var(--danger-lt); border: 1px solid var(--danger-border);
+        border-radius: 8px; padding: 8px 12px; margin-bottom: 20px;
+        text-align: left; display: none;
+    }
+
+    .popup-actions { display: flex; gap: 10px; justify-content: center; }
+
+    .btn-popup-ok {
+        padding: 10px 40px; background: var(--gold); color: #fff;
+        border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
+        cursor: pointer; font-family: inherit; transition: background .2s;
+    }
+    .btn-popup-ok:hover { background: #b8911f; }
+
+    .btn-popup-batal {
+        padding: 10px 24px; background: #F3F4F6; color: var(--muted);
+        border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+        cursor: pointer; font-family: inherit; transition: background .2s;
+    }
+    .btn-popup-batal:hover { background: #E5E7EB; }
+
+    .btn-popup-simpan {
+        padding: 10px 24px; background: var(--gold); color: #fff;
+        border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
+        cursor: pointer; font-family: inherit; transition: background .2s;
+    }
+    .btn-popup-simpan:hover { background: #b8911f; }
+
+    .btn-popup-hapus {
+        padding: 10px 24px; background: var(--danger); color: #fff;
+        border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
+        cursor: pointer; font-family: inherit; transition: background .2s;
+    }
+    .btn-popup-hapus:hover { background: #DC2626; }
+
     @media (max-width: 700px) {
         .peserta-grid { grid-template-columns: 1fr; }
         .form-row { grid-template-columns: 1fr; }
+        .popup-box { margin: 0 16px; padding: 32px 24px 24px; }
     }
 </style>
 
@@ -243,7 +312,6 @@
     <form method="POST" action="{{ route('jadwalseminar.massal.simpan') }}" id="formMassal">
         @csrf
 
-        {{-- INFO SEMINAR --}}
         <div class="card">
             <div class="card-title">
                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -254,16 +322,15 @@
             <div class="form-row">
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="form-label">Tanggal Seminar <span style="color:var(--danger)">*</span></label>
-                    <input type="date" name="tanggal_seminar" id="inputTanggal" class="form-input" required>
+                    <input type="date" name="tanggal_seminar" id="inputTanggal" class="form-input" required onchange="updateSubmitBtn()">
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="form-label">Ruangan Seminar <span style="color:var(--danger)">*</span></label>
-                    <input type="text" name="ruang" id="inputRuang" class="form-input" placeholder="contoh: Ruang Rapat Utama - Gedung A" required>
+                    <input type="text" name="ruang" id="inputRuang" class="form-input" placeholder="contoh: Ruang Rapat Utama - Gedung A" required oninput="updateSubmitBtn()">
                 </div>
             </div>
         </div>
 
-        {{-- PESERTA SEMINAR --}}
         <div class="card">
             <div class="peserta-header">
                 <div class="peserta-title">
@@ -298,7 +365,7 @@
 
         <div class="form-actions">
             <a href="{{ route('admin.seminar.index') }}" class="btn-cancel-form">Batal</a>
-            <button type="submit" class="btn-submit" id="btnSubmit" disabled>
+            <button type="button" class="btn-submit" id="btnSubmit" disabled onclick="bukaPopupKonfirmasi()">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                 </svg>
@@ -342,18 +409,122 @@
     </div>
 </div>
 
-<script>
-    // ============================================================
-    // STATE
-    // ============================================================
-    let allMahasiswa = [];      // data dari API
-    let selected = new Set();   // id yang dipilih di modal
-    let pesertaData = [];       // peserta yang sudah ditambahkan ke form
-    let searchTimer;
+{{-- POPUP — KONFIRMASI SIMPAN --}}
+<div class="popup-overlay" id="popupKonfirmasi">
+    <div class="popup-box">
+        <div class="popup-icon confirm">?</div>
+        <div class="popup-title">Konfirmasi</div>
+        <div class="popup-msg">Apakah Anda yakin ingin menyimpan jadwal seminar?</div>
+        <div class="popup-actions">
+            <button type="button" class="btn-popup-batal" onclick="tutupPopupKonfirmasi()">Batal</button>
+            <button type="button" class="btn-popup-simpan" onclick="submitForm()">Simpan Jadwal</button>
+        </div>
+    </div>
+</div>
 
-    // ============================================================
-    // FETCH DATA MAHASISWA BELUM DIJADWAL
-    // ============================================================
+{{-- POPUP — BERHASIL SIMPAN --}}
+<div class="popup-overlay" id="popupBerhasil">
+    <div class="popup-box">
+        <div class="popup-icon success">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+            </svg>
+        </div>
+        <div class="popup-title">Berhasil!</div>
+        <div class="popup-msg">Jadwal seminar berhasil disimpan.</div>
+        <div class="popup-actions">
+            <button type="button" class="btn-popup-ok" onclick="popupBerhasilOk()">OK</button>
+        </div>
+    </div>
+</div>
+
+{{-- POPUP — GAGAL SIMPAN --}}
+<div class="popup-overlay" id="popupGagal">
+    <div class="popup-box">
+        <div class="popup-icon error">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </div>
+        <div class="popup-title">Gagal!</div>
+        <div class="popup-msg">Jadwal seminar gagal disimpan.</div>
+        <div class="popup-cause" id="popupGagalCause"></div>
+        <div class="popup-actions">
+            <button type="button" class="btn-popup-ok" onclick="tutupPopupGagal()">Ok</button>
+        </div>
+    </div>
+</div>
+
+{{-- POPUP — KONFIRMASI HAPUS PESERTA --}}
+<div class="popup-overlay" id="popupKonfirmasiHapus">
+    <div class="popup-box">
+        <div class="popup-icon confirm">?</div>
+        <div class="popup-title">Hapus Peserta?</div>
+        <div class="popup-msg">Anda akan menghapus peserta berikut dari daftar seminar:</div>
+        <div class="popup-target-name" id="popupHapusNama">—</div>
+        <div class="popup-actions">
+            <button type="button" class="btn-popup-batal" onclick="tutupPopupKonfirmasiHapus()">Batal</button>
+            <button type="button" class="btn-popup-simpan" onclick="konfirmasiHapusPeserta()">Hapus</button>
+        </div>
+    </div>
+</div>
+
+{{-- POPUP — BERHASIL HAPUS PESERTA --}}
+<div class="popup-overlay" id="popupBerhasilHapus">
+    <div class="popup-box">
+        <div class="popup-icon success">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+            </svg>
+        </div>
+        <div class="popup-title">Berhasil!</div>
+        <div class="popup-msg">Peserta berhasil dihapus dari daftar seminar.</div>
+        <div class="popup-actions">
+            <button type="button" class="btn-popup-ok" onclick="tutupPopupBerhasilHapus()">OK</button>
+        </div>
+    </div>
+</div>
+
+{{-- POPUP — GAGAL HAPUS PESERTA --}}
+<div class="popup-overlay" id="popupGagalHapus">
+    <div class="popup-box">
+        <div class="popup-icon error">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </div>
+        <div class="popup-title">Gagal!</div>
+        <div class="popup-msg">Peserta gagal dihapus dari daftar seminar.</div>
+        <div class="popup-cause" id="popupGagalHapusCause"></div>
+        <div class="popup-actions">
+            <button type="button" class="btn-popup-ok" onclick="tutupPopupGagalHapus()">Ok</button>
+        </div>
+    </div>
+</div>
+
+@if(session('success'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('popupBerhasil').classList.add('active');
+    });
+</script>
+@endif
+
+@if(session('error'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        showPopupGagal(@json(session('error')));
+    });
+</script>
+@endif
+
+<script>
+    let allMahasiswa     = [];
+    let selected         = new Set();
+    let pesertaData      = [];
+    let searchTimer;
+    let hapusTargetIndex = null;
+
     async function fetchMahasiswa(search = '') {
         const url = '{{ route("jadwalseminar.mahasiswa") }}' + (search ? '?search=' + encodeURIComponent(search) : '');
         try {
@@ -364,9 +535,6 @@
         }
     }
 
-    // ============================================================
-    // MODAL
-    // ============================================================
     async function bukaModal() {
         document.getElementById('modalTambah').classList.add('active');
         document.getElementById('modalSearch').value = '';
@@ -383,10 +551,9 @@
 
     function renderModalList(search) {
         const list = document.getElementById('modalList');
-        // filter: belum ada di pesertaData
         const sudahAdaIds = new Set(pesertaData.map(p => p.id));
         const filtered = allMahasiswa.filter(m => {
-            const notAdded = !sudahAdaIds.has(m.id);
+            const notAdded    = !sudahAdaIds.has(m.id);
             const matchSearch = !search ||
                 m.nama.toLowerCase().includes(search.toLowerCase()) ||
                 m.mahasiswa_id.toLowerCase().includes(search.toLowerCase());
@@ -451,7 +618,6 @@
         updateSubmitBtn();
     }
 
-    // Modal search
     document.getElementById('modalSearch').addEventListener('input', function () {
         clearTimeout(searchTimer);
         const val = this.value;
@@ -465,13 +631,8 @@
         if (e.target === this) tutupModal();
     });
 
-    // ============================================================
-    // RENDER PESERTA DI FORM
-    // ============================================================
     function renderPesertaList() {
         const container = document.getElementById('pesertaList');
-        const empty = document.getElementById('emptyPeserta');
-
         if (pesertaData.length === 0) {
             container.innerHTML = `
                 <div class="empty-peserta" id="emptyPeserta">
@@ -487,7 +648,7 @@
                 <input type="hidden" name="peserta[${i}][id]" value="${p.id}">
                 <div class="peserta-item-header">
                     <div class="peserta-label">Mahasiswa ${i + 1}</div>
-                    <button type="button" class="btn-hapus-peserta" onclick="hapusPeserta(${i})">
+                    <button type="button" class="btn-hapus-peserta" onclick="bukaPopupKonfirmasiHapus(${i})">
                         <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
                         </svg>
@@ -524,12 +685,6 @@
         checkConflicts();
     }
 
-    function hapusPeserta(index) {
-        pesertaData.splice(index, 1);
-        renderPesertaList();
-        updateSubmitBtn();
-    }
-
     function updateWaktu(index, type, value) {
         if (type === 'mulai') pesertaData[index].waktu_mulai = value;
         else pesertaData[index].waktu_selesai = value;
@@ -537,9 +692,6 @@
         updateSubmitBtn();
     }
 
-    // ============================================================
-    // CEK KONFLIK WAKTU
-    // ============================================================
     function timeToMinutes(t) {
         if (!t) return null;
         const [h, m] = t.split(':').map(Number);
@@ -551,27 +703,25 @@
         const conflicts = new Array(pesertaData.length).fill(false);
 
         for (let i = 0; i < pesertaData.length; i++) {
-            const mulaiI = timeToMinutes(pesertaData[i].waktu_mulai);
+            const mulaiI   = timeToMinutes(pesertaData[i].waktu_mulai);
             const selesaiI = timeToMinutes(pesertaData[i].waktu_selesai);
             if (!mulaiI || !selesaiI) continue;
 
             for (let j = i + 1; j < pesertaData.length; j++) {
-                const mulaiJ = timeToMinutes(pesertaData[j].waktu_mulai);
+                const mulaiJ   = timeToMinutes(pesertaData[j].waktu_mulai);
                 const selesaiJ = timeToMinutes(pesertaData[j].waktu_selesai);
                 if (!mulaiJ || !selesaiJ) continue;
 
-                // overlap check
                 if (mulaiI < selesaiJ && selesaiI > mulaiJ) {
                     conflicts[i] = true;
                     conflicts[j] = true;
-                    hasConflict = true;
+                    hasConflict  = true;
                 }
             }
         }
 
-        // Update UI per peserta
         pesertaData.forEach((p, i) => {
-            const item = document.getElementById(`peserta-item-${i}`);
+            const item  = document.getElementById(`peserta-item-${i}`);
             const msgEl = document.getElementById(`conflict-msg-${i}`);
             if (!item || !msgEl) return;
 
@@ -585,8 +735,7 @@
             }
         });
 
-        // Global conflict banner
-        const globalEl = document.getElementById('conflictGlobal');
+        const globalEl  = document.getElementById('conflictGlobal');
         const globalMsg = document.getElementById('conflictGlobalMsg');
         if (hasConflict) {
             globalEl.style.display = 'flex';
@@ -598,22 +747,147 @@
         return hasConflict;
     }
 
-    // ============================================================
-    // SUBMIT BUTTON STATE
-    // ============================================================
     function updateSubmitBtn() {
-        const btn = document.getElementById('btnSubmit');
-        btn.disabled = pesertaData.length === 0;
-    }
+    const btn     = document.getElementById('btnSubmit');
+    const tanggal = document.getElementById('inputTanggal').value.trim();
+    const ruang   = document.getElementById('inputRuang').value.trim();
+
+    if (pesertaData.length === 0) { btn.disabled = true; return; }
+    if (!tanggal || !ruang) { btn.disabled = true; return; }
+
+    const semuaWaktuLengkap = pesertaData.every(p => p.waktu_mulai !== '' && p.waktu_selesai !== '');
+    if (!semuaWaktuLengkap) { btn.disabled = true; return; }
+
+    if (checkConflicts()) { btn.disabled = true; return; }
+
+    btn.disabled = false;
+}
 
     // ============================================================
-    // PREVENT SUBMIT SAAT ADA KONFLIK
+    // POPUP — KONFIRMASI SIMPAN
     // ============================================================
-    document.getElementById('formMassal').addEventListener('submit', function (e) {
+    function bukaPopupKonfirmasi() {
         if (checkConflicts()) {
-            e.preventDefault();
-            alert('Terdapat konflik waktu antar sesi. Harap perbaiki terlebih dahulu.');
+            showPopupGagal('Terdapat konflik waktu antar sesi. Harap perbaiki terlebih dahulu.');
+            return;
         }
+        document.getElementById('popupKonfirmasi').classList.add('active');
+    }
+
+    function tutupPopupKonfirmasi() {
+        document.getElementById('popupKonfirmasi').classList.remove('active');
+    }
+
+    document.getElementById('popupKonfirmasi').addEventListener('click', function (e) {
+        if (e.target === this) tutupPopupKonfirmasi();
+    });
+
+    function submitForm() {
+        tutupPopupKonfirmasi();
+        const form     = document.getElementById('formMassal');
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(async res => {
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && data.success !== false) {
+                document.getElementById('popupBerhasil').classList.add('active');
+            } else {
+                showPopupGagal(data.message || data.error || 'Terjadi kesalahan pada server.');
+            }
+        })
+        .catch(() => {
+            showPopupGagal('Tidak dapat terhubung ke server. Periksa koneksi Anda.');
+        });
+    }
+
+    function popupBerhasilOk() {
+        document.getElementById('popupBerhasil').classList.remove('active');
+        window.location.href = '{{ route("admin.seminar.index") }}';
+    }
+
+    document.getElementById('popupBerhasil').addEventListener('click', function (e) {
+        if (e.target === this) popupBerhasilOk();
+    });
+
+    function showPopupGagal(cause) {
+        const causeEl = document.getElementById('popupGagalCause');
+        causeEl.textContent   = cause || '';
+        causeEl.style.display = cause ? 'block' : 'none';
+        document.getElementById('popupGagal').classList.add('active');
+    }
+
+    function tutupPopupGagal() {
+        document.getElementById('popupGagal').classList.remove('active');
+    }
+
+    document.getElementById('popupGagal').addEventListener('click', function (e) {
+        if (e.target === this) tutupPopupGagal();
+    });
+
+    // ============================================================
+    // POPUP — KONFIRMASI HAPUS PESERTA
+    // PERBAIKAN: simpan index ke variabel lokal sebelum tutup popup,
+    // karena tutupPopupKonfirmasiHapus() me-reset hapusTargetIndex = null
+    // ============================================================
+    function bukaPopupKonfirmasiHapus(index) {
+        hapusTargetIndex = index;
+        const nama = pesertaData[index].nama + ' (' + pesertaData[index].mahasiswa_id + ')';
+        document.getElementById('popupHapusNama').textContent = nama;
+        document.getElementById('popupKonfirmasiHapus').classList.add('active');
+    }
+
+    function tutupPopupKonfirmasiHapus() {
+        document.getElementById('popupKonfirmasiHapus').classList.remove('active');
+        hapusTargetIndex = null;
+    }
+
+    document.getElementById('popupKonfirmasiHapus').addEventListener('click', function (e) {
+        if (e.target === this) tutupPopupKonfirmasiHapus();
+    });
+
+    function konfirmasiHapusPeserta() {
+        const targetIndex = hapusTargetIndex; // ← simpan dulu sebelum tutup popup
+        tutupPopupKonfirmasiHapus();          // ← ini yang reset hapusTargetIndex = null
+
+        try {
+            if (targetIndex === null || targetIndex < 0 || targetIndex >= pesertaData.length) {
+                throw new Error('Index tidak valid.');
+            }
+            pesertaData.splice(targetIndex, 1);
+            renderPesertaList();
+            updateSubmitBtn();
+            document.getElementById('popupBerhasilHapus').classList.add('active');
+        } catch (err) {
+            showPopupGagalHapus('Gagal menghapus peserta: ' + err.message);
+        }
+    }
+
+    function tutupPopupBerhasilHapus() {
+        document.getElementById('popupBerhasilHapus').classList.remove('active');
+    }
+
+    document.getElementById('popupBerhasilHapus').addEventListener('click', function (e) {
+        if (e.target === this) tutupPopupBerhasilHapus();
+    });
+
+    function showPopupGagalHapus(cause) {
+        const causeEl = document.getElementById('popupGagalHapusCause');
+        causeEl.textContent   = cause || '';
+        causeEl.style.display = cause ? 'block' : 'none';
+        document.getElementById('popupGagalHapus').classList.add('active');
+    }
+
+    function tutupPopupGagalHapus() {
+        document.getElementById('popupGagalHapus').classList.remove('active');
+    }
+
+    document.getElementById('popupGagalHapus').addEventListener('click', function (e) {
+        if (e.target === this) tutupPopupGagalHapus();
     });
 </script>
 

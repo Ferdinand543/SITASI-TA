@@ -50,11 +50,12 @@
     }
     .alert-banner-text { font-size: 13px; color: #92400E; display: flex; align-items: center; gap: 10px; }
     .alert-banner-btn {
-        padding: 9px 18px; background: var(--gold); color: #fff;
-        border-radius: 10px; font-size: 13px; font-weight: 700;
-        text-decoration: none; white-space: nowrap; transition: background .2s;
-    }
-    .alert-banner-btn:hover { background: #b8911f; color: #fff; }
+    padding: 9px 18px; background: #FDE047; color: #713F12;
+    border: 1px solid #FACC15;
+    border-radius: 10px; font-size: 13px; font-weight: 700;
+    text-decoration: none; white-space: nowrap; transition: background .2s;
+}
+.alert-banner-btn:hover { background: #FACC15; color: #713F12; }
 
     .filter-card {
         background: var(--white); border-radius: var(--radius); padding: 14px 18px;
@@ -94,14 +95,17 @@
         border: 1px solid var(--gold-border); border-radius: 8px;
         font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
         transition: all .2s; white-space: nowrap; text-decoration: none;
+        display: inline-flex; align-items: center;
     }
     .btn-atur:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
     .btn-icon {
         width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border);
         background: #fff; cursor: pointer; display: inline-flex; align-items: center;
         justify-content: center; transition: all .2s; color: var(--muted);
+        text-decoration: none;
     }
     .btn-icon:hover { border-color: #f87171; color: #ef4444; background: #fef2f2; }
+    .btn-icon.edit { color: var(--muted); }
     .btn-icon.edit:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-lt); }
 
     .dosen-list { display: flex; flex-direction: column; gap: 3px; }
@@ -143,45 +147,52 @@
     }
     .btn-back:hover { border-color: var(--gold); color: var(--gold); }
 
-    .modal-overlay {
-        display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4);
-        z-index: 9999; align-items: center; justify-content: center;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal-box {
-        background: #fff; border-radius: 20px; padding: 28px;
-        width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,.15);
-    }
-    .modal-title { font-size: 17px; font-weight: 800; color: var(--neutral); margin-bottom: 4px; }
-    .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
-    .form-group { margin-bottom: 16px; }
-    .form-label { display: block; font-size: 12px; font-weight: 700; color: var(--neutral); margin-bottom: 6px; }
-    .form-input {
-        width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
-        border-radius: 8px; font-size: 13px; outline: none; font-family: inherit;
-        transition: border .2s; box-sizing: border-box;
-    }
-    .form-input:focus { border-color: var(--gold); }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-    .btn-submit {
-        flex: 1; padding: 10px; background: var(--gold); color: #fff;
-        border: none; border-radius: 10px; font-size: 13px; font-weight: 700;
-        cursor: pointer; font-family: inherit; transition: background .2s;
-    }
-    .btn-submit:hover { background: #b8911f; }
-    .btn-cancel {
-        padding: 10px 20px; background: #fff; color: var(--muted);
-        border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px;
-        font-weight: 600; cursor: pointer; font-family: inherit; transition: all .2s;
-    }
-    .btn-cancel:hover { border-color: #f87171; color: #ef4444; }
-
     .alert-success {
         background: #F0FDF4; border: 1px solid #BBF7D0; color: #15803D;
         border-radius: 10px; padding: 12px 16px; margin-bottom: 16px;
         font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;
     }
+
+    /* ===================== POPUP ===================== */
+    .popup-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,.45); z-index: 9999;
+        align-items: center; justify-content: center;
+    }
+    .popup-overlay.active { display: flex; }
+    .popup-box {
+        background: #fff; border-radius: 20px; padding: 40px 32px;
+        width: 100%; max-width: 360px; text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,.18); animation: popIn .2s ease;
+    }
+    @keyframes popIn {
+        from { transform: scale(.85); opacity: 0; }
+        to   { transform: scale(1);   opacity: 1; }
+    }
+
+    /* ✅ DIUBAH: setiap popup punya warna icon sendiri */
+    .popup-icon {
+        width: 80px; height: 80px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 24px;
+    }
+    .popup-icon.berhasil  { background: #fff;     border: 2.5px solid #22C55E; }
+    .popup-icon.konfirmasi { background: #FEF9EC; border: 3px solid #F5D97A; }
+    .popup-icon.gagal     { background: #fff;     border: 2.5px solid #EF4444; }
+
+    .popup-title { font-size: 22px; font-weight: 800; color: var(--neutral); margin-bottom: 10px; }
+    .popup-msg   { font-size: 13.5px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+    .popup-actions { display: flex; gap: 10px; justify-content: center; }
+    .popup-btn {
+        padding: 11px 32px; border-radius: 10px; font-size: 14px; font-weight: 700;
+        cursor: pointer; font-family: inherit; border: none; transition: all .2s;
+    }
+    .popup-btn.ok     { background: var(--gold); color: #fff; min-width: 120px; }
+    .popup-btn.ok:hover { background: #b8911f; }
+    .popup-btn.batal  { background: #E5E7EB; color: #374151; }
+    .popup-btn.batal:hover { background: #D1D5DB; }
+    .popup-btn.konfirm { background: var(--gold); color: #fff; }
+    .popup-btn.konfirm:hover { background: #b8911f; }
 
     @media (max-width: 900px) { .seminar-grid { grid-template-columns: 1fr; } .stat-row { grid-template-columns: 1fr; } }
 </style>
@@ -289,8 +300,6 @@
                                         {{ $s->judul_ta ?? '-' }}
                                     </div>
                                 </td>
-
-                                {{-- KOLOM PEMBIMBING --}}
                                 <td>
                                     @if(!empty($s->pembimbing))
                                         <div class="dosen-list">
@@ -305,8 +314,6 @@
                                         <span style="color:var(--muted);">-</span>
                                     @endif
                                 </td>
-
-                                {{-- KOLOM PENGUJI --}}
                                 <td>
                                     @if(!empty($s->penguji))
                                         <div class="dosen-list">
@@ -321,7 +328,6 @@
                                         <span style="color:var(--muted);">Belum Ditentukan</span>
                                     @endif
                                 </td>
-
                                 <td style="font-size:12px;white-space:nowrap;">
                                     @if($s->tanggal_seminar)
                                         <div style="font-weight:600;">
@@ -356,26 +362,21 @@
                                 <td>
                                     <div style="display:flex;align-items:center;gap:6px;">
                                         @if(!$s->tanggal_seminar)
-                                        <a href="{{ route('jadwalseminar.detail', $s->id) }}" class="btn-atur">
-                                            Atur Jadwal
-                                        </a>
+                                            <a href="{{ route('jadwalseminar.detail', $s->id) }}" class="btn-atur">
+                                                Atur Jadwal
+                                            </a>
                                         @else
-                                        <button class="btn-icon edit"
-                                            onclick="bukaModal({{ $s->id }}, '{{ $s->nama }}', '{{ $s->tanggal_seminar }}', '{{ $s->waktu_mulai }}', '{{ $s->waktu_selesai }}', '{{ $s->ruang }}')"
-                                            title="Edit Jadwal">
-                                            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z"/>
-                                            </svg>
-                                        </button>
-                                        <form method="POST" action="{{ route('jadwalseminar.hapus', $s->id) }}"
-                                            onsubmit="return confirm('Hapus jadwal seminar ini?')" style="display:inline;">
-                                            @csrf
-                                            <button type="submit" class="btn-icon" title="Hapus Jadwal">
+                                            <a href="{{ route('jadwalseminar.detail', $s->id) }}" class="btn-icon edit" title="Edit Jadwal">
+                                                <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z"/>
+                                                </svg>
+                                            </a>
+                                            <button type="button" class="btn-icon" title="Hapus Jadwal"
+                                                onclick="konfirmasiHapus({{ $s->id }}, '{{ addslashes($s->nama) }}')">
                                                 <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
                                                 </svg>
                                             </button>
-                                        </form>
                                         @endif
                                     </div>
                                 </td>
@@ -438,38 +439,78 @@
     </div>
 </div>
 
-{{-- MODAL --}}
-<div class="modal-overlay" id="modalJadwal">
-    <div class="modal-box">
-        <div class="modal-title">Tetapkan Jadwal Seminar</div>
-        <div class="modal-sub" id="modalNamaMhs">—</div>
-        <form method="POST" id="formJadwal">
-            @csrf
-            <div class="form-group">
-                <label class="form-label">Tanggal Seminar</label>
-                <input type="date" name="tanggal_seminar" id="inputTanggal" class="form-input" required>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Waktu Mulai</label>
-                    <input type="time" name="waktu_mulai" id="inputMulai" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Waktu Selesai</label>
-                    <input type="time" name="waktu_selesai" id="inputSelesai" class="form-input" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Ruang</label>
-                <input type="text" name="ruang" id="inputRuang" class="form-input" placeholder="contoh: Ruang 302" required>
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel" onclick="tutupModal()">Batal</button>
-                <button type="submit" class="btn-submit">Simpan Jadwal</button>
-            </div>
-        </form>
+{{-- ===================== POPUP KONFIRMASI HAPUS ===================== --}}
+<div class="popup-overlay" id="popupKonfirmasi">
+    <div class="popup-box">
+        {{-- ✅ lingkaran kuning, tanda tanya merah --}}
+        <div class="popup-icon konfirmasi">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <text x="11" y="27" font-size="26" font-weight="900" fill="#EF4444" font-family="Arial">?</text>
+            </svg>
+        </div>
+        <div class="popup-title">Konfirmasi</div>
+        <div class="popup-msg" id="popupKonfirmasiMsg">Apakah Anda yakin ingin menghapus jadwal seminar ini?</div>
+        <div class="popup-actions">
+            <button class="popup-btn batal" onclick="tutupPopup('popupKonfirmasi')">Batal</button>
+            <button class="popup-btn konfirm" onclick="eksekusiHapus()">Hapus</button>
+        </div>
     </div>
 </div>
+
+{{-- ===================== POPUP BERHASIL ===================== --}}
+<div class="popup-overlay" id="popupBerhasil">
+    <div class="popup-box">
+        {{-- ✅ lingkaran hijau, centang hijau — persis gambar --}}
+        <div class="popup-icon berhasil">
+            <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="#22C55E" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+        <div class="popup-title">Berhasil!</div>
+        <div class="popup-msg">Jadwal seminar mahasiswa berhasil dihapus.</div>
+        <div class="popup-actions">
+            <button class="popup-btn ok" onclick="tutupBerhasil()">OK</button>
+        </div>
+    </div>
+</div>
+
+{{-- ===================== POPUP GAGAL ===================== --}}
+<div class="popup-overlay" id="popupGagal">
+    <div class="popup-box">
+        {{-- lingkaran merah, x merah --}}
+        <div class="popup-icon gagal">
+            <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="#EF4444" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </div>
+        <div class="popup-title">Gagal!</div>
+        <div class="popup-msg">Jadwal seminar gagal dihapus. Silakan coba lagi.</div>
+        <div class="popup-actions">
+            <button class="popup-btn ok" onclick="tutupPopup('popupGagal')">OK</button>
+        </div>
+    </div>
+</div>
+
+{{-- Form hapus tersembunyi --}}
+<form id="formHapus" method="POST" style="display:none;">
+    @csrf
+</form>
+
+@if(session('hapus_berhasil'))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('popupBerhasil').classList.add('active');
+    });
+</script>
+@endif
+
+@if(session('hapus_gagal'))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('popupGagal').classList.add('active');
+    });
+</script>
+@endif
 
 <script>
     let searchTimer;
@@ -488,22 +529,34 @@
         window.location.href = url.toString();
     }
 
-    function bukaModal(id, nama, tanggal = '', mulai = '', selesai = '', ruang = '') {
-        document.getElementById('modalNamaMhs').textContent = nama;
-        document.getElementById('formJadwal').action = '/kelola-seminar/' + id + '/jadwalkan';
-        document.getElementById('inputTanggal').value = tanggal;
-        document.getElementById('inputMulai').value   = mulai ? mulai.substring(0, 5) : '';
-        document.getElementById('inputSelesai').value = selesai ? selesai.substring(0, 5) : '';
-        document.getElementById('inputRuang').value   = ruang;
-        document.getElementById('modalJadwal').classList.add('active');
+    let hapusUrl = '';
+
+    function konfirmasiHapus(id, nama) {
+        hapusUrl = '/kelola-seminar/' + id + '/hapus';
+        document.getElementById('popupKonfirmasiMsg').textContent =
+            'Apakah Anda yakin ingin menghapus jadwal seminar ' + nama + '?';
+        document.getElementById('popupKonfirmasi').classList.add('active');
     }
 
-    function tutupModal() {
-        document.getElementById('modalJadwal').classList.remove('active');
+    function eksekusiHapus() {
+        const form = document.getElementById('formHapus');
+        form.action = hapusUrl;
+        tutupPopup('popupKonfirmasi');
+        form.submit();
     }
 
-    document.getElementById('modalJadwal').addEventListener('click', function (e) {
-        if (e.target === this) tutupModal();
+    function tutupPopup(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+
+    function tutupBerhasil() {
+        tutupPopup('popupBerhasil');
+    }
+
+    document.querySelectorAll('.popup-overlay').forEach(function(overlay) {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
     });
 </script>
 

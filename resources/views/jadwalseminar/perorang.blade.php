@@ -22,25 +22,13 @@
         --green-border: #BBF7D0;
     }
 
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-    }
+    html, body { height: 100%; margin: 0; padding: 0; }
 
-    /* Pastikan wrapper konten utama (dari layouts.app) juga full height */
-    body > div,
-    .app-wrapper,
-    .main-content,
-    [class*="content"] {
-        min-height: 100%;
-    }
+    body > div, .app-wrapper, .main-content, [class*="content"] { min-height: 100%; }
 
     .wrap {
-        background: var(--bg);
-        min-height: 100vh;
-        padding: 28px 32px 40px;
-        box-sizing: border-box;
+        background: var(--bg); min-height: 100vh;
+        padding: 28px 32px 40px; box-sizing: border-box;
     }
 
     .page-title { font-size: 22px; font-weight: 800; color: var(--neutral); margin-bottom: 4px; }
@@ -66,15 +54,11 @@
     }
     .section-label svg { color: var(--gold); }
 
-    /* 3 KOLOM UTAMA */
     .main-grid {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr 1.2fr;
-        gap: 32px;
-        align-items: start;
+        display: grid; grid-template-columns: 1.2fr 1fr 1.2fr;
+        gap: 32px; align-items: start;
     }
 
-    /* KOLOM KIRI - INFO MAHASISWA */
     .mhs-field { margin-bottom: 14px; }
     .mhs-field:last-child { margin-bottom: 0; }
     .mhs-field label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; }
@@ -84,8 +68,8 @@
         min-height: 40px; display: flex; align-items: center;
     }
     .mhs-value.judul {
-        align-items: flex-start; font-weight: 400; line-height: 1.6; min-height: 80px;
-        font-size: 12.5px;
+        align-items: flex-start; font-weight: 400; line-height: 1.6;
+        min-height: 80px; font-size: 12.5px;
     }
     .mhs-nama-row { display: flex; align-items: center; gap: 8px; }
     .mhs-nama-row .mhs-value { flex: 1; }
@@ -96,7 +80,6 @@
     }
     .nim-angkatan { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-    /* KOLOM TENGAH - DOSEN */
     .dosen-group-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 10px; }
     .dosen-group { margin-bottom: 20px; }
     .dosen-group:last-child { margin-bottom: 0; }
@@ -115,7 +98,6 @@
     .dosen-nama { font-size: 13px; font-weight: 600; color: var(--neutral); }
     .dosen-empty { font-size: 12px; color: var(--muted); font-style: italic; padding: 10px 0; }
 
-    /* KOLOM KANAN - DETAIL PELAKSANAAN */
     .pelaksanaan-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 14px; }
     .form-group { margin-bottom: 14px; }
     .form-group:last-child { margin-bottom: 0; }
@@ -128,17 +110,14 @@
     .form-input:focus { border-color: var(--gold); background: #fff; }
     .jam-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-    /* ACTIONS */
-    .form-actions {
-        display: flex; gap: 12px; justify-content: flex-end; margin-top: 4px;
-    }
-    .btn-submit {
-        padding: 11px 32px; background: var(--gold); color: #fff;
-        border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
-        cursor: pointer; font-family: inherit; transition: background .2s;
-        display: inline-flex; align-items: center; gap: 8px;
-    }
-    .btn-submit:hover { background: #b8911f; }
+    .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 4px; }
+   .btn-submit {
+    padding: 11px 32px; background: #FDE047; color: #713F12;
+    border: 1px solid #FACC15; border-radius: 10px; font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: background .2s;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-submit:hover { background: #FACC15; color: #713F12; }
     .btn-cancel-link {
         padding: 11px 20px; background: #fff; color: var(--muted);
         border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px;
@@ -147,11 +126,38 @@
     }
     .btn-cancel-link:hover { border-color: var(--danger); color: var(--danger); }
 
-    .alert-success {
-        background: var(--green-lt); border: 1px solid var(--green-border); color: var(--green);
-        border-radius: 10px; padding: 12px 16px; margin-bottom: 16px;
-        font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+    /* ===================== POPUP ===================== */
+    .popup-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,.45); z-index: 9999;
+        align-items: center; justify-content: center;
     }
+    .popup-overlay.active { display: flex; }
+    .popup-box {
+        background: #fff; border-radius: 20px; padding: 40px 32px;
+        width: 100%; max-width: 360px; text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,.18); animation: popIn .2s ease;
+    }
+    @keyframes popIn {
+        from { transform: scale(.85); opacity: 0; }
+        to   { transform: scale(1);   opacity: 1; }
+    }
+    .popup-icon {
+        width: 80px; height: 80px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 24px;
+    }
+    .popup-icon.berhasil { background: #fff; border: 2.5px solid #22C55E; }
+    .popup-icon.gagal    { background: #fff; border: 2.5px solid #EF4444; }
+    .popup-title { font-size: 22px; font-weight: 800; color: var(--neutral); margin-bottom: 10px; }
+    .popup-msg   { font-size: 13.5px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+    .popup-actions { display: flex; gap: 10px; justify-content: center; }
+    .popup-btn {
+        padding: 11px 32px; border-radius: 10px; font-size: 14px; font-weight: 700;
+        cursor: pointer; font-family: inherit; border: none; transition: all .2s;
+    }
+    .popup-btn.ok { background: var(--gold); color: #fff; min-width: 120px; }
+    .popup-btn.ok:hover { background: #b8911f; }
 
     @media (max-width: 900px) {
         .main-grid { grid-template-columns: 1fr; }
@@ -161,10 +167,8 @@
     }
 </style>
 
-{{-- Inject style ke parent container biar full height --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Cari semua parent dari .wrap dan paksa min-height: 100%
         let el = document.querySelector('.wrap');
         if (el) {
             let parent = el.parentElement;
@@ -185,15 +189,6 @@
         </svg>
         Kembali
     </a>
-
-    @if(session('success'))
-    <div class="alert-success">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-        </svg>
-        {{ session('success') }}
-    </div>
-    @endif
 
     <div class="page-title">Tetapkan Jadwal Seminar Mahasiswa</div>
     <div class="page-sub">Kelola penjadwalan seminar mahasiswa yang telah menyelesaikan administrasi seminar dan telah memiliki dosen penguji.</div>
@@ -311,5 +306,55 @@
     </form>
 
 </div>
+
+{{-- ===================== POPUP BERHASIL ===================== --}}
+<div class="popup-overlay" id="popupBerhasil">
+    <div class="popup-box">
+        <div class="popup-icon berhasil">
+            <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="#22C55E" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+        <div class="popup-title">Berhasil!</div>
+        <div class="popup-msg">Jadwal seminar mahasiswa berhasil diperbarui.</div>
+        <div class="popup-actions">
+            <button class="popup-btn ok"
+            onclick="window.location.href='{{ route('admin.seminar.index') }}'">
+            OK
+        </button>
+        </div>
+    </div>
+</div>
+
+{{-- ===================== POPUP GAGAL ===================== --}}
+<div class="popup-overlay" id="popupGagal">
+    <div class="popup-box">
+        <div class="popup-icon gagal">
+            <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="#EF4444" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </div>
+        <div class="popup-title">Gagal!</div>
+        <div class="popup-msg">Jadwal seminar gagal diperbarui. Silakan coba lagi.</div>
+        <div class="popup-actions">
+            <button class="popup-btn ok"
+                onclick="document.getElementById('popupGagal').classList.remove('active')">
+                OK
+            </button>
+        </div>
+    </div>
+</div>
+
+{{-- ===================== SCRIPT TRIGGER POPUP ===================== --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        @if(session('simpan_berhasil'))
+            document.getElementById('popupBerhasil').classList.add('active');
+        @endif
+        @if(session('simpan_gagal'))
+            document.getElementById('popupGagal').classList.add('active');
+        @endif
+    });
+</script>
 
 @endsection
