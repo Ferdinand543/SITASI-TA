@@ -131,8 +131,8 @@
         <div class="value">{{ $dosen->nim_nid }}</div>
     </div>
     <div class="info-section">
-        <div class="label">Total Mahasiswa Direview</div>
-        <span class="badge-total">{{ $mahasiswaSudahDitetapkan->count() }} Mahasiswa</span>
+        <div class="label">Total Mahasiswa Diuji</div>
+        <span class="badge-total">{{ $mahasiswaSudahDitetapkan->unique('pengajuan_id')->count() }} Mahasiswa</span>
     </div>
 </div>
 
@@ -305,7 +305,7 @@
                 <div class="modal-dosen-card">
                     <div class="name">{{ $dosen->nama }}</div>
                     <div class="sub">NIDN: {{ $dosen->nim_nid }}</div>
-                    <div class="sub">Jumlah Mahasiswa Saat Ini: {{ $mahasiswaSudahDitetapkan->count() }} Mahasiswa</div>
+                    <div class="sub">Jumlah Mahasiswa Saat Ini: {{ $mahasiswaSudahDitetapkan->unique('pengajuan_id')->count() }} mahasiswa</div>
                 </div>
             </div>
 
