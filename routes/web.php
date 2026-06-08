@@ -22,6 +22,7 @@ use App\Http\Controllers\AdminjudulController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\PenilaianPembimbingController;
 use App\Http\Controllers\DaftarSeminarController;
+use App\Http\Controllers\AdminSeminarController;
 use App\Http\Controllers\jadwalseminarcontroller;
 use App\Http\Controllers\HasilPenilaianMahasiswaController;
 use App\Http\Controllers\KelolaPengujiController;
@@ -402,17 +403,30 @@ Route::prefix('admin')->group(function () {
 
 
 // =====================================================
-// SEMINAR — ADMIN & KOORDINATOR
+// ✅ ADMINISTRASI SEMINAR — ADMIN (halaman verifikasi berkas)
+// route: admin.seminar.index → /admin/seminar
+// =====================================================
+
+Route::prefix('admin')->group(function () {
+    Route::get('/seminar',                  [AdminSeminarController::class, 'index'])->name('admin.seminar.index');
+    Route::get('/seminar/{id}',             [AdminSeminarController::class, 'show'])->name('admin.seminar.show');
+    Route::post('/seminar/{id}/verifikasi', [AdminSeminarController::class, 'verifikasi'])->name('admin.seminar.verifikasi');
+    Route::post('/seminar/{id}/jadwalkan',  [AdminSeminarController::class, 'jadwalkan'])->name('admin.seminar.jadwalkan');
+});
+
+
+// =====================================================
+// ✅ KELOLA JADWAL SEMINAR — ADMIN & KOORDINATOR
+// route: jadwalseminar.index → /kelola-seminar
 // =====================================================
 
 Route::get('/kelola-seminar/massal',          [jadwalseminarcontroller::class, 'formMassal'])->name('jadwalseminar.massal.form');
 Route::post('/kelola-seminar/massal',         [jadwalseminarcontroller::class, 'simpanMassal'])->name('jadwalseminar.massal.simpan');
 Route::get('/kelola-seminar/mahasiswa',       [jadwalseminarcontroller::class, 'getMahasiswaBelumJadwal'])->name('jadwalseminar.mahasiswa');
-Route::get('/kelola-seminar',                 [jadwalseminarcontroller::class, 'index'])->name('admin.seminar.index');
-Route::post('/kelola-seminar/{id}/jadwalkan', [jadwalseminarcontroller::class, 'jadwalkan'])->name('admin.seminar.jadwalkan');
-Route::post('/kelola-seminar/{id}/hapus',     [jadwalseminarcontroller::class, 'hapusJadwal'])->name('admin.seminar.hapus');
+Route::get('/kelola-seminar',                 [jadwalseminarcontroller::class, 'index'])->name('jadwalseminar.index');
 Route::get('/kelola-seminar/{id}/detail',     [jadwalseminarcontroller::class, 'detail'])->name('jadwalseminar.detail');
-Route::delete('/kelola-seminar/{id}/hapus',   [JadwalSeminarController::class, 'hapus'])->name('jadwalseminar.hapus');
+Route::post('/kelola-seminar/{id}/jadwalkan', [jadwalseminarcontroller::class, 'jadwalkan'])->name('jadwalseminar.jadwalkan');
+Route::post('/kelola-seminar/{id}/hapus',     [jadwalseminarcontroller::class, 'hapusJadwal'])->name('jadwalseminar.hapus');
 
 
 // =====================================================
@@ -473,12 +487,11 @@ Route::post('/seminar/{id}/daftar', [DaftarSeminarController::class, 'submitDaft
 Route::get('/mahasiswa/hasil-penilaian', [HasilPenilaianMahasiswaController::class, 'index'])->name('mahasiswa.hasil.penilaian');
 
 
-/// =====================================================
+// =====================================================
 // KELOLA DOSEN PENGUJI — KOORDINATOR
 // =====================================================
 
 Route::get('/dosen/penguji', [KelolaPengujiController::class, 'index'])->name('dosen.penguji.index');
-Route::get('/dosen/penguji/mahasiswa', [KelolaPengujiController::class, 'mahasiswa'])->name('penguji.mahasiswa.index'); // ← TAMBAHIN INI
+Route::get('/dosen/penguji/mahasiswa', [KelolaPengujiController::class, 'mahasiswa'])->name('penguji.mahasiswa.index');
 Route::get('/dosen/penguji/{nim_nid}', [KelolaPengujiController::class, 'show'])->name('penguji.show');
 Route::post('/dosen/penguji/{nim_nid}/tetapkan', [KelolaPengujiController::class, 'tetapkan'])->name('penguji.tetapkan');
-
