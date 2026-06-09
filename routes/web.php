@@ -26,6 +26,7 @@ use App\Http\Controllers\AdminSeminarController;
 use App\Http\Controllers\jadwalseminarcontroller;
 use App\Http\Controllers\HasilPenilaianMahasiswaController;
 use App\Http\Controllers\KelolaPengujiController;
+use App\Http\Controllers\PengujiMahasiswaSeminarController;
 
 
 // ROOT
@@ -403,8 +404,7 @@ Route::prefix('admin')->group(function () {
 
 
 // =====================================================
-// ✅ ADMINISTRASI SEMINAR — ADMIN (halaman verifikasi berkas)
-// route: admin.seminar.index → /admin/seminar
+// ADMINISTRASI SEMINAR — ADMIN
 // =====================================================
 
 Route::prefix('admin')->group(function () {
@@ -416,8 +416,7 @@ Route::prefix('admin')->group(function () {
 
 
 // =====================================================
-// ✅ KELOLA JADWAL SEMINAR — ADMIN & KOORDINATOR
-// route: jadwalseminar.index → /kelola-seminar
+// KELOLA JADWAL SEMINAR — ADMIN & KOORDINATOR
 // =====================================================
 
 Route::get('/kelola-seminar/massal',          [jadwalseminarcontroller::class, 'formMassal'])->name('jadwalseminar.massal.form');
@@ -491,7 +490,14 @@ Route::get('/mahasiswa/hasil-penilaian', [HasilPenilaianMahasiswaController::cla
 // KELOLA DOSEN PENGUJI — KOORDINATOR
 // =====================================================
 
-Route::get('/dosen/penguji', [KelolaPengujiController::class, 'index'])->name('dosen.penguji.index');
-Route::get('/dosen/penguji/mahasiswa', [KelolaPengujiController::class, 'mahasiswa'])->name('penguji.mahasiswa.index');
-Route::get('/dosen/penguji/{nim_nid}', [KelolaPengujiController::class, 'show'])->name('penguji.show');
-Route::post('/dosen/penguji/{nim_nid}/tetapkan', [KelolaPengujiController::class, 'tetapkan'])->name('penguji.tetapkan');
+Route::get('/dosen/penguji',                     [KelolaPengujiController::class, 'index'])->name('dosen.penguji.index');
+Route::get('/dosen/penguji/mahasiswa',            [KelolaPengujiController::class, 'mahasiswa'])->name('penguji.mahasiswa.index');
+Route::get('/dosen/penguji/{nim_nid}',            [KelolaPengujiController::class, 'show'])->name('penguji.show');
+Route::post('/dosen/penguji/{nim_nid}/tetapkan',  [KelolaPengujiController::class, 'tetapkan'])->name('penguji.tetapkan');
+
+
+// =====================================================
+// MAHASISWA SEMINAR — DOSEN PENGUJI
+// =====================================================
+
+Route::get('/dosen/mahasiswa-seminar', [PengujiMahasiswaSeminarController::class, 'mahasiswaSeminar'])->name('dosen.mahasiswa.seminar');

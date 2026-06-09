@@ -292,6 +292,17 @@
                 <i class="fa-solid fa-rectangle-list"></i> Daftar Seminar
             </a>
 
+            {{-- Mahasiswa Seminar (khusus Penguji) --}}
+            @if($isPenguji || $isPembimbing)
+            <a href="{{ route('dosen.mahasiswa.seminar') }}" class="sidebar-link {{ request()->routeIs('dosen.mahasiswa.seminar') ? 'active' : '' }}">
+                <i class="fa-solid fa-user-graduate"></i> Mahasiswa Seminar
+            </a>
+            @else
+            <button class="sidebar-link sidebar-link-locked" onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Penguji.')">
+                <i class="fa-solid fa-user-graduate"></i> Mahasiswa Seminar
+            </button>
+            @endif
+
             <div class="nav-label">Akademik</div>
 
             @if($isPembimbing && $punyaMahasiswaBimbingan)
@@ -321,7 +332,7 @@
 
             {{-- Mahasiswa (khusus Koordinator) --}}
             @if($isKoor)
-            <a href="{{ route('dosen.mahasiswa') }}" class="sidebar-link {{ request()->is('dosen/mahasiswa*') ? 'active' : '' }}">
+            <a href="{{ route('dosen.mahasiswa') }}" class="sidebar-link {{ request()->routeIs('dosen.mahasiswa') ? 'active' : '' }}">
                 <i class="fa-solid fa-users"></i> Mahasiswa
             </a>
             @else
@@ -332,7 +343,7 @@
 
             {{-- Kelola Dosen Penguji (khusus Koordinator) --}}
             @if($isKoor)
-            <a href="{{ route('dosen.penguji.index') }}" class="sidebar-link {{ request()->is('dosen/penguji*') ? 'active' : '' }}">
+            <a href="{{ route('dosen.penguji.index') }}" class="sidebar-link {{ request()->routeIs('dosen.penguji.index') || request()->routeIs('penguji.show') || request()->routeIs('penguji.tetapkan') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-tie"></i> Kelola Dosen Penguji
             </a>
             @else
