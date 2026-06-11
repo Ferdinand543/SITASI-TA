@@ -445,131 +445,6 @@
         font-size: 14px;
     }
 
-    /* MODAL */
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, .5);
-        z-index: 1060;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .modal-overlay.show {
-        display: flex;
-    }
-
-    .modal-box {
-        background: #fff;
-        border-radius: 20px;
-        padding: 28px;
-        max-width: 480px;
-        width: 100%;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, .15);
-    }
-
-    .modal-title {
-        font-size: 17px;
-        font-weight: 800;
-        color: var(--neutral);
-        margin-bottom: 4px;
-    }
-
-    .modal-sub {
-        font-size: 13px;
-        color: var(--muted);
-        margin-bottom: 20px;
-    }
-
-    .modal-form-group {
-        margin-bottom: 14px;
-    }
-
-    .modal-form-group label {
-        font-size: 11.5px;
-        font-weight: 700;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: .4px;
-        display: block;
-        margin-bottom: 6px;
-    }
-
-    .modal-input {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1.5px solid var(--border);
-        border-radius: 8px;
-        font-size: 13px;
-        outline: none;
-        font-family: inherit;
-        transition: border .2s;
-        background: #FAFAFA;
-        box-sizing: border-box;
-    }
-
-    .modal-input:focus {
-        border-color: var(--gold);
-        background: #fff;
-    }
-
-    .modal-textarea {
-        min-height: 80px;
-        resize: vertical;
-    }
-
-    .modal-select {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1.5px solid var(--border);
-        border-radius: 8px;
-        font-size: 13px;
-        outline: none;
-        font-family: inherit;
-        background: #FAFAFA;
-        cursor: pointer;
-        box-sizing: border-box;
-    }
-
-    .modal-select:focus {
-        border-color: var(--gold);
-    }
-
-    .modal-footer {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-        margin-top: 20px;
-    }
-
-    .btn-modal-cancel {
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 600;
-        background: #F3F4F6;
-        color: var(--muted);
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-modal-ok {
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 700;
-        background: #FFE083;
-        color: #7C5C00;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-modal-ok:hover {
-        background: #fdd835;
-    }
-
     @media (max-width: 900px) {
         .stat-grid {
             grid-template-columns: repeat(2, 1fr);
@@ -590,7 +465,6 @@
     {{-- STAT CARDS --}}
     <div class="stat-grid">
 
-        {{-- Total --}}
         <div class="stat-card">
             <div class="stat-card-top">
                 <div class="stat-card-icon" style="background:#F3F4F6;">
@@ -604,14 +478,12 @@
             <div class="stat-card-sub">Total Pengajuan</div>
         </div>
 
-        {{-- Pending --}}
         <div class="stat-card">
             <div class="stat-card-top">
                 <div class="stat-card-icon" style="background:#FFFBEB;position:relative;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="#92400E" width="20" height="20">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25Z" />
                     </svg>
-                    {{-- jam kecil overlay --}}
                     <span style="position:absolute;bottom:6px;right:6px;background:#FFFBEB;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#92400E" width="10" height="10">
                             <circle cx="12" cy="12" r="9" />
@@ -625,7 +497,6 @@
             <div class="stat-card-sub">Menunggu Verifikasi</div>
         </div>
 
-        {{-- Verified --}}
         <div class="stat-card">
             <div class="stat-card-top">
                 <div class="stat-card-icon" style="background:#F0FDF4;">
@@ -639,12 +510,11 @@
             <div class="stat-card-sub">Lolos Administrasi</div>
         </div>
 
-        {{-- Scheduled --}}
         <div class="stat-card">
             <div class="stat-card-top">
                 <div class="stat-card-icon" style="background:#EFF6FF;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="#1D4ED8" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
                     </svg>
                 </div>
                 <span class="stat-card-label" style="color:#1D4ED8;">Scheduled</span>
@@ -662,7 +532,8 @@
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.35-4.35" />
             </svg>
-            <input type="text" id="searchInput" class="search-input" placeholder="Cari NIM atau Nama..." autocomplete="off">
+            <input type="text" id="searchInput" class="search-input"
+                placeholder="Cari NIM atau Nama..." autocomplete="off">
         </div>
         <select id="filterAdm" class="filter-select" onchange="applyFilter()">
             <option value="">Semua Status Administrasi</option>
@@ -674,14 +545,8 @@
             <option value="">Semua Status Seminar</option>
             <option value="belum daftar seminar">Belum Daftar</option>
             <option value="menunggu jadwal">Menunggu Jadwal</option>
-            <option value="jadwal ditetapkan">Terjadwal</option>
+            <option value="sudah dijadwalkan">Sudah Dijadwalkan</option>
             <option value="selesai">Selesai</option>
-        </select>
-        <select id="filterAngkatan" class="filter-select" onchange="applyFilter()">
-            <option value="">Semua Angkatan</option>
-            @foreach($angkatanList as $a)
-            <option value="{{ $a }}">{{ $a }}</option>
-            @endforeach
         </select>
         <button type="button" class="btn-reset" onclick="resetFilter()">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -718,8 +583,7 @@
                     <tr
                         data-search="{{ strtolower($p->mahasiswa_id . ' ' . ($p->mahasiswa->nama ?? '')) }}"
                         data-adm="{{ strtolower($p->status_administrasi) }}"
-                        data-seminar="{{ strtolower($p->status_seminar) }}"
-                        data-angkatan="{{ $p->mahasiswa->angkatan ?? '' }}">
+                        data-seminar="{{ strtolower($p->status_seminar) }}">
                         <td>
                             <div class="tgl-label">{{ \Carbon\Carbon::parse($p->created_at)->format('d M Y') }}</div>
                             <div class="tgl-sub">{{ \Carbon\Carbon::parse($p->created_at)->format('H:i') }} WIB</div>
@@ -767,8 +631,8 @@
                             @endif
                         </td>
                         <td>
-                            @if($p->status_seminar === 'Jadwal ditetapkan')
-                            <span class="badge-sm badge-jadwal">Terjadwal</span>
+                            @if($p->status_seminar === 'Sudah Dijadwalkan')
+                            <span class="badge-sm badge-jadwal">Sudah Dijadwalkan</span>
                             @elseif($p->status_seminar === 'Menunggu Jadwal')
                             <span class="badge-sm badge-menunggu-jadwal">Menunggu Jadwal</span>
                             @elseif($p->status_seminar === 'Selesai')
@@ -801,7 +665,7 @@
                     @endforelse
                 </tbody>
             </table>
-            <div id="noResult" style="display:none; text-align:center; padding:56px; color:var(--muted); font-size:14px;">
+            <div id="noResult" style="display:none;text-align:center;padding:56px;color:var(--muted);font-size:14px;">
                 <div style="font-size:28px;margin-bottom:8px;">🔍</div>
                 Tidak ada data yang sesuai filter
             </div>
@@ -811,11 +675,9 @@
 </div>
 
 <script>
-    // ══ CLIENT-SIDE FILTER ══
     const searchInput = document.getElementById('searchInput');
     const filterAdm = document.getElementById('filterAdm');
     const filterSeminar = document.getElementById('filterSeminar');
-    const filterAngkatan = document.getElementById('filterAngkatan');
     const tableBody = document.getElementById('tableBody');
     const noResult = document.getElementById('noResult');
 
@@ -823,7 +685,6 @@
         const q = searchInput.value.toLowerCase().trim();
         const adm = filterAdm.value.toLowerCase();
         const seminar = filterSeminar.value.toLowerCase();
-        const angkatan = filterAngkatan.value;
 
         const rows = tableBody.querySelectorAll('tr[data-search]');
         let visible = 0;
@@ -832,9 +693,8 @@
             const matchSearch = !q || row.dataset.search.includes(q);
             const matchAdm = !adm || row.dataset.adm === adm;
             const matchSeminar = !seminar || row.dataset.seminar === seminar;
-            const matchAngkatan = !angkatan || row.dataset.angkatan === angkatan;
 
-            if (matchSearch && matchAdm && matchSeminar && matchAngkatan) {
+            if (matchSearch && matchAdm && matchSeminar) {
                 row.style.display = '';
                 visible++;
             } else {
@@ -849,7 +709,6 @@
         searchInput.value = '';
         filterAdm.value = '';
         filterSeminar.value = '';
-        filterAngkatan.value = '';
         applyFilter();
     }
 
@@ -857,21 +716,6 @@
     searchInput.addEventListener('input', function() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(applyFilter, 200);
-    });
-
-    // ══ MODAL VERIFIKASI ══
-    function bukaModalVerif(id, nama) {
-        document.getElementById('modalVerifSub').textContent = 'Mahasiswa: ' + nama;
-        document.getElementById('formVerif').action = '/admin/seminar/' + id + '/verifikasi';
-        document.getElementById('modalVerif').classList.add('show');
-    }
-
-    function tutupModalVerif() {
-        document.getElementById('modalVerif').classList.remove('show');
-    }
-
-    document.getElementById('modalVerif').addEventListener('click', function(e) {
-        if (e.target === this) tutupModalVerif();
     });
 </script>
 

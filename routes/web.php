@@ -27,7 +27,7 @@ use App\Http\Controllers\jadwalseminarcontroller;
 use App\Http\Controllers\HasilPenilaianMahasiswaController;
 use App\Http\Controllers\KelolaPengujiController;
 use App\Http\Controllers\PengujiMahasiswaSeminarController;
-
+use App\Http\Controllers\ImportMahasiswaController;
 
 // ROOT
 Route::get('/', fn() => redirect('/login'));
@@ -501,3 +501,6 @@ Route::post('/dosen/penguji/{nim_nid}/tetapkan',  [KelolaPengujiController::clas
 // =====================================================
 
 Route::get('/dosen/mahasiswa-seminar', [PengujiMahasiswaSeminarController::class, 'mahasiswaSeminar'])->name('dosen.mahasiswa.seminar');
+
+Route::get('/admin/mahasiswa/import/template', [ImportMahasiswaController::class, 'template'])->name('mahasiswa.import.template');
+Route::post('/admin/mahasiswa/import',         [ImportMahasiswaController::class, 'import'])->name('mahasiswa.import');

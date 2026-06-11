@@ -183,12 +183,7 @@
 
 <div class="wrap">
 
-    <a href="{{ route('admin.seminar.index') }}" class="btn-back">
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
-        </svg>
-        Kembali
-    </a>
+   
 
     <div class="page-title">Tetapkan Jadwal Seminar Mahasiswa</div>
     <div class="page-sub">Kelola penjadwalan seminar mahasiswa yang telah menyelesaikan administrasi seminar dan telah memiliki dosen penguji.</div>
@@ -294,7 +289,7 @@
 
         {{-- ACTIONS --}}
         <div class="form-actions">
-            <a href="{{ route('admin.seminar.index') }}" class="btn-cancel-link">Kembali</a>
+            <a href="{{ route('jadwalseminar.index') }}" class="btn-cancel-link">Kembali</a>
             <button type="submit" class="btn-submit">
                 <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
@@ -319,7 +314,7 @@
         <div class="popup-msg">Jadwal seminar mahasiswa berhasil diperbarui.</div>
         <div class="popup-actions">
             <button class="popup-btn ok"
-            onclick="window.location.href='{{ route('admin.seminar.index') }}'">
+            onclick="window.location.href='{{ route('jadwalseminar.index') }}'">
             OK
         </button>
         </div>

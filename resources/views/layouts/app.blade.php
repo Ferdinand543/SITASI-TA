@@ -43,31 +43,45 @@
             transition: transform 0.3s ease, width 0.3s ease;
         }
         .sidebar.collapsed { transform: translateX(-100%); }
+
+        /* ── BRAND: lebih compact ── */
         .sidebar-brand {
-            padding: 18px 20px 14px 20px;
+            padding: 16px 20px 14px 20px;
             border-bottom: 1px solid #f1f5f9;
             display: flex; align-items: center;
             justify-content: space-between; flex-shrink: 0;
         }
         .sidebar-brand .brand-title { font-size: 0.95rem; font-weight: 800; color: #735C00; letter-spacing: -0.3px; }
         .sidebar-brand .brand-subtitle { font-size: 0.65rem; color: #4D4632; margin-top: 1px; }
-        .sidebar-nav { padding: 16px 12px; flex: 1; overflow-y: auto; min-height: 0; }
-        .sidebar-nav::-webkit-scrollbar { width: 4px; }
-        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
-        .sidebar-nav::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 4px; }
-        .sidebar-nav::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
-        .nav-label { font-size: 0.6rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px; padding: 0 8px; margin: 14px 0 6px 0; }
+
+        /* ── NAV: no scroll ── */
+        .sidebar-nav {
+            padding: 10px 12px;
+            flex: 1;
+            overflow-y: hidden;
+            min-height: 0;
+        }
+
+        /* ── NAV LABEL ── */
+        .nav-label {
+            font-size: 0.6rem; font-weight: 700; color: #94a3b8;
+            text-transform: uppercase; letter-spacing: 1.2px;
+            padding: 0 8px; margin: 10px 0 3px 0;
+        }
+
+        /* ── NAV LINK ── */
         .sidebar-link {
             display: flex; align-items: center; gap: 10px;
-            padding: 10px 12px; border-radius: 10px;
+            padding: 8px 12px;
+            border-radius: 10px;
             color: #735C00; text-decoration: none;
             font-size: 0.8rem; font-weight: 600;
-            transition: 0.2s; margin-bottom: 4px;
+            transition: 0.2s; margin-bottom: 1px;
             white-space: nowrap; border: none;
             background: none; width: 100%;
             cursor: pointer; text-align: left;
         }
-        .sidebar-link i { width: 16px; font-size: 0.85rem; text-align: center; flex-shrink: 0; color: #735C00; }
+        .sidebar-link i { width: 16px; font-size: 0.82rem; text-align: center; flex-shrink: 0; color: #735C00; }
         .sidebar-link:hover { background: #FFE083; color: #4D4632; text-decoration: none; }
         .sidebar-link:hover i { color: #4D4632; }
         .sidebar-link.active { background: #FFE083; color: #4D4632; font-weight: 700; }
@@ -75,7 +89,17 @@
         .sidebar-link-locked { opacity: 0.4; filter: grayscale(60%); cursor: pointer; }
         .sidebar-link-locked:hover { background: #fee2e2 !important; color: #dc2626 !important; opacity: 0.7; }
         .sidebar-link-locked:hover i { color: #dc2626 !important; }
-        .sidebar-footer { padding: 14px 12px; border-top: 1px solid #f1f5f9; flex-shrink: 0; }
+
+        /* ── PADDING PER ROLE ── */
+        .role-dosen .sidebar-link { padding: 7px 12px; }
+        .role-admin .sidebar-link,
+        .role-mahasiswa .sidebar-link { padding: 10px 12px; }
+
+        /* ── FOOTER: compact ── */
+        .sidebar-footer {
+            padding: 10px 10px;
+            border-top: 1px solid #f1f5f9; flex-shrink: 0;
+        }
         .sidebar-footer .sidebar-link { color: #dc2626; }
         .sidebar-footer .sidebar-link i { color: #dc2626; }
 
@@ -134,7 +158,7 @@
     </style>
 </head>
 
-<body>
+<body class="role-{{ session('user')->role ?? '' }}">
 
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
@@ -247,7 +271,6 @@
 
             <div class="nav-label">Tugas Akhir</div>
 
-            {{-- Pengajuan Judul --}}
             @if($isKoor)
             <a href="{{ route('pengajuan') }}" class="sidebar-link {{ request()->is('pengajuan*') ? 'active' : '' }}">
                 <i class="fa-solid fa-file-circle-plus"></i> Pengajuan Judul
@@ -258,7 +281,6 @@
             </button>
             @endif
 
-            {{-- Proposal --}}
             @if($isKoor)
             <a href="{{ route('proposal.index') }}" class="sidebar-link {{ request()->is('proposal*') && !request()->is('reviewer*') && !request()->is('proposal/penguji*') ? 'active' : '' }}">
                 <i class="fa-solid fa-file-arrow-up"></i> Proposal
@@ -277,7 +299,6 @@
             </button>
             @endif
 
-            {{-- Riwayat Bimbingan --}}
             @if($isPembimbing)
             <a href="{{ route('dosen.bimbingan.index') }}" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
                 <i class="fa-solid fa-comments"></i> Riwayat Bimbingan
@@ -288,11 +309,8 @@
             </button>
             @endif
 
-            <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
-                <i class="fa-solid fa-rectangle-list"></i> Daftar Seminar
-            </a>
+           
 
-            {{-- Mahasiswa Seminar (khusus Penguji) --}}
             @if($isPenguji || $isPembimbing)
             <a href="{{ route('dosen.mahasiswa.seminar') }}" class="sidebar-link {{ request()->routeIs('dosen.mahasiswa.seminar') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-graduate"></i> Mahasiswa Seminar
@@ -306,18 +324,15 @@
             <div class="nav-label">Akademik</div>
 
             @if($isPembimbing && $punyaMahasiswaBimbingan)
-            <a href="{{ route('penilaian.pembimbing.index') }}"
-                class="sidebar-link {{ request()->routeIs('penilaian.pembimbing.*') ? 'active' : '' }}">
+            <a href="{{ route('penilaian.pembimbing.index') }}" class="sidebar-link {{ request()->routeIs('penilaian.pembimbing.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-star"></i> Nilai
             </a>
             @elseif($isPenguji)
-            <a href="{{ route('penilaian.index') }}"
-                class="sidebar-link {{ request()->is('penilaian*') ? 'active' : '' }}">
+            <a href="{{ route('penilaian.index') }}" class="sidebar-link {{ request()->is('penilaian*') ? 'active' : '' }}">
                 <i class="fa-solid fa-star"></i> Nilai
             </a>
             @elseif($isPembimbing)
-            <a href="{{ route('penilaian.pembimbing.index') }}"
-                class="sidebar-link {{ request()->routeIs('penilaian.pembimbing.*') ? 'active' : '' }}">
+            <a href="{{ route('penilaian.pembimbing.index') }}" class="sidebar-link {{ request()->routeIs('penilaian.pembimbing.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-star"></i> Nilai
             </a>
             @else
@@ -330,7 +345,6 @@
                 <i class="fa-solid fa-calendar-days"></i> Jadwal
             </a>
 
-            {{-- Mahasiswa (khusus Koordinator) --}}
             @if($isKoor)
             <a href="{{ route('dosen.mahasiswa') }}" class="sidebar-link {{ request()->routeIs('dosen.mahasiswa') ? 'active' : '' }}">
                 <i class="fa-solid fa-users"></i> Mahasiswa
@@ -341,7 +355,6 @@
             </button>
             @endif
 
-            {{-- Kelola Dosen Penguji (khusus Koordinator) --}}
             @if($isKoor)
             <a href="{{ route('dosen.penguji.index') }}" class="sidebar-link {{ request()->routeIs('dosen.penguji.index') || request()->routeIs('penguji.show') || request()->routeIs('penguji.tetapkan') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-tie"></i> Kelola Dosen Penguji
@@ -370,9 +383,7 @@
             <a href="#" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
                 <i class="fa-solid fa-comments"></i> Riwayat Bimbingan
             </a>
-            <a href="#" class="sidebar-link {{ request()->is('seminar*') ? 'active' : '' }}">
-                <i class="fa-solid fa-rectangle-list"></i> Daftar Seminar
-            </a>
+            
             <div class="nav-label">Akademik</div>
             <a href="#" class="sidebar-link {{ request()->is('nilai*') ? 'active' : '' }}">
                 <i class="fa-solid fa-star"></i> Nilai
@@ -399,7 +410,7 @@
             <a href="{{ route('admin.seminar.index') }}" class="sidebar-link">
                 <i class="fa-solid fa-user-graduate"></i> Administrasi Seminar
             </a>
-            <div class="nav-label">MASTER DATA</div>
+            <div class="nav-label">Master Data</div>
             <a href="/admin/mahasiswa" class="sidebar-link">
                 <i class="fa-solid fa-database"></i> Data Mahasiswa
             </a>
@@ -473,8 +484,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
+        const sidebar  = document.getElementById('sidebar');
+        const overlay  = document.getElementById('sidebarOverlay');
         const topbarToggle = document.getElementById('topbarToggle');
         const isMobile = () => window.innerWidth <= 768;
 

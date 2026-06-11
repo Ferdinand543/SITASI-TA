@@ -172,7 +172,7 @@ class AdminSeminarController extends Controller
             'waktu_mulai'     => $request->waktu_mulai,
             'waktu_selesai'   => $request->waktu_selesai,
             'ruang'           => $request->ruang,
-            'status_seminar'  => 'Jadwal ditetapkan',
+            'status_seminar'  => 'Sudah Dijadwalkan',
         ]);
 
         return redirect()->back()->with('success', 'Jadwal seminar berhasil ditetapkan.');
