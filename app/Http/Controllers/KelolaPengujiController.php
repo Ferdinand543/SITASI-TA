@@ -33,7 +33,7 @@ class KelolaPengujiController extends Controller
         $mahasiswaList = DB::table('pengajuan_seminars as ps')
             ->join('users as u', 'u.nim_nid', '=', 'ps.mahasiswa_id')
             ->where('ps.status_administrasi', 'Lolos Administrasi')
-            ->where('ps.status_seminar', 'Menunggu Jadwal')
+            
             ->select('u.nim_nid', 'u.nama', 'ps.judul_ta', 'ps.id as pengajuan_id', 'ps.mahasiswa_id')
             ->get()
             ->map(function ($mhs) {

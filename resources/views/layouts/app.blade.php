@@ -131,6 +131,7 @@
         .topbar-user .user-nim { font-size: 0.82rem; font-weight: 700; color: #111827; }
         .topbar-user .user-role { font-size: 0.7rem; color: #374151; font-weight: 500; }
         .topbar-user .user-avatar { width: auto; height: auto; background: transparent; border: none; border-radius: 0; display: flex; align-items: center; justify-content: center; color: #111827; font-size: 1.2rem; padding: 0; }
+        .topbar-user:hover { opacity: 0.75; }
 
         .main-wrapper { margin-left: var(--sidebar-width); padding-top: var(--topbar-height); min-height: 100vh; transition: margin-left 0.3s ease; }
         body.sidebar-collapsed .main-wrapper { margin-left: 0; }
@@ -459,7 +460,15 @@
         </div>
         <div class="topbar-right">
             @if(session('user'))
-            <div class="topbar-user">
+            @php
+            $topbarProfilUrl = match($role ?? '') {
+                'mahasiswa' => route('mahasiswa.profil'),
+                'admin'     => route('admin.profil_admin_tu'),
+                'dosen'     => route('dosen.profil'),
+                default     => '#',
+            };
+            @endphp
+            <a href="{{ $topbarProfilUrl }}" class="topbar-user" style="text-decoration:none;">
                 <div class="user-info">
                     <div class="user-nim">{{ session('user')->nim_nid }}</div>
                     <div class="user-role">{{ ucfirst(session('user')->role) }}</div>
@@ -467,7 +476,7 @@
                 <div class="user-avatar">
                     <i class="fa-solid fa-user" style="font-size:0.9rem;"></i>
                 </div>
-            </div>
+            </a>
             @else
             <a href="/login" class="btn btn-sm btn-outline-dark" style="border-radius:8px;font-size:0.8rem;font-weight:600;">Masuk</a>
             @endif
