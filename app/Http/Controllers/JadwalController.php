@@ -27,6 +27,23 @@ class JadwalController extends Controller
         }
 
         // =====================================================
+        // ✅ CEK APAKAH DOSEN INI PEMBIMBING/PENGUJI AKTIF
+        // (untuk munculkan card "Jadwal Seminar Mahasiswa")
+        // =====================================================
+        $isPembimbingAtauPenguji = false;
+        if ($role === 'dosen') {
+            $adaPembimbing = DB::table('dosen_pembimbing')
+                ->where('nim_nid_dosen', $nim)
+                ->exists();
+
+            $adaPenguji = DB::table('dosen_penguji_seminar')
+                ->where('nim_nid_dosen', $nim)
+                ->exists();
+
+            $isPembimbingAtauPenguji = $adaPembimbing || $adaPenguji;
+        }
+
+        // =====================================================
         // ✅ AUTO UPDATE STATUS — PALING ATAS SEBELUM SEMUA QUERY
         // =====================================================
         $today = now()->toDateString();
@@ -74,8 +91,9 @@ class JadwalController extends Controller
         // =====================================================
         // ✅ JUMLAH MAHASISWA — untuk card Siap Dijadwalkan
         // =====================================================
-        $jumlahMahasiswaSiapSeminar = DB::table('users')
-            ->where('role', 'mahasiswa')
+        $jumlahMahasiswaSiapSeminar = DB::table('pengajuan_seminars')
+            ->where('is_draft', 0)
+            ->whereIn('status_seminar', ['Menunggu Jadwal', 'Sudah Dijadwalkan', 'Selesai'])
             ->count();
 
         // =====================================================
@@ -156,7 +174,8 @@ class JadwalController extends Controller
         return view('jadwal', compact(
             'jadwal', 'terdekat', 'timeline', 'progressPersen',
             'user', 'role', 'totalJadwal', 'akanDatang', 'berlangsung', 'selesaiCount',
-            'isKoordinator', 'jumlahMahasiswaSiapSeminar'
+            'isKoordinator', 'jumlahMahasiswaSiapSeminar',
+            'isPembimbingAtauPenguji'
         ));
     }
 }

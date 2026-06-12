@@ -18,7 +18,7 @@ class PengujiMahasiswaSeminarController extends Controller
             ->join('users as u', 'u.nim_nid', '=', 'ps.mahasiswa_id')
             ->where('dps.nim_nid_dosen', $nimSesi)
             ->where('ps.status_administrasi', 'Lolos Administrasi')
-            ->where('ps.status_seminar', 'Menunggu Jadwal')
+            ->whereIn('ps.status_seminar', ['Menunggu Jadwal', 'Sudah Dijadwalkan', 'Selesai'])
             ->select('u.nim_nid', 'u.nama', 'ps.judul_ta', 'ps.id as pengajuan_id', 'ps.mahasiswa_id')
             ->get();
 
@@ -31,7 +31,7 @@ class PengujiMahasiswaSeminarController extends Controller
             ->join('users as u', 'u.nim_nid', '=', 'ps.mahasiswa_id')
             ->where('dp.nim_nid_dosen', $nimSesi)
             ->where('ps.status_administrasi', 'Lolos Administrasi')
-            ->where('ps.status_seminar', 'Menunggu Jadwal')
+            ->whereIn('ps.status_seminar', ['Menunggu Jadwal', 'Sudah Dijadwalkan', 'Selesai'])
             ->whereExists(function($query) {
                 $query->select(DB::raw(1))
                     ->from('dosen_penguji_seminar')

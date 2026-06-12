@@ -504,3 +504,9 @@ Route::get('/dosen/mahasiswa-seminar', [PengujiMahasiswaSeminarController::class
 
 Route::get('/admin/mahasiswa/import/template', [ImportMahasiswaController::class, 'template'])->name('mahasiswa.import.template');
 Route::post('/admin/mahasiswa/import',         [ImportMahasiswaController::class, 'import'])->name('mahasiswa.import');
+
+// ===== TAMBAHKAN INI DI web.php =====
+// Pastikan App\Http\Controllers\JadwalSeminarMahasiswaController sudah di-import / use namespace
+
+Route::get('/jadwal-seminar-mahasiswa', [App\Http\Controllers\JadwalSeminarMahasiswaController::class, 'index'])
+    ->name('jadwalseminar.mahasiswa.list');

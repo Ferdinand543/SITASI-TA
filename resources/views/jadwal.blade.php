@@ -164,7 +164,7 @@
     .status-selesai { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
     .status-ditutup { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
     .empty-row td { text-align: center; padding: 48px; color: var(--muted); font-size: 14px; }
-    .ringkasan-card { background: var(--white); border-radius: var(--radius); padding: 18px 20px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,.05); }
+    .ringkasan-card { background: var(--white); border-radius: var(--radius); padding: 18px 20px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,.05); margin-bottom: 16px; }
     @media (max-width: 900px) { .jadwal-grid { grid-template-columns: 1fr; } }
 </style>
 
@@ -396,6 +396,33 @@
                     </div>
                 </div>
             </div>
+
+            {{-- CARD JADWAL SEMINAR MAHASISWA: dosen pembimbing/penguji --}}
+            @if($role === 'dosen' && $isPembimbingAtauPenguji)
+            <div class="siap-jadwal-card">
+                <div style="display:flex;align-items:flex-start;gap:16px;">
+                    <div class="siap-jadwal-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#C9A227" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="siap-jadwal-title">Jadwal Seminar Mahasiswa</div>
+                        <div class="siap-jadwal-desc">
+                            Lihat jadwal seminar mahasiswa yang Anda bimbing maupun mahasiswa
+                            yang seminar-nya Anda uji, lengkap dengan judul tugas akhir,
+                            proposal, dan susunan dosen pembimbing/penguji.
+                        </div>
+                        <a href="{{ route('jadwalseminar.mahasiswa.list') }}" class="siap-jadwal-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/>
+                            </svg>
+                            Lihat Jadwal Seminar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endif
 
         </div>
 
