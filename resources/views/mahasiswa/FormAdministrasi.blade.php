@@ -5,12 +5,12 @@
 @section('content')
 
 @php
-$isPerbaikan   = isset($pengajuan) && $pengajuan->status_administrasi === 'Tidak Administrasi';
+$isPerbaikan = isset($pengajuan) && $pengajuan->status_administrasi === 'Tidak Administrasi';
 $statusDokumen = [];
 if ($isPerbaikan && $pengajuan->status_dokumen) {
     $statusDokumen = json_decode($pengajuan->status_dokumen, true) ?? [];
 }
-$isDitolak     = fn($key) => $isPerbaikan ? (($statusDokumen[$key] ?? '') === 'tolak') : true;
+$isDitolak = fn($key) => $isPerbaikan ? (($statusDokumen[$key] ?? '') === 'tolak') : true;
 $disabledField = $isPerbaikan ? 'disabled' : '';
 @endphp
 
@@ -24,19 +24,30 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
         --border: #E5E7EB;
         --bg: #F5F6FA;
     }
+
     body { background: var(--bg); }
+
     .hero-adm {
-        position: relative; overflow: hidden;
+        position: relative;
+        overflow: hidden;
         background: url('{{ asset("images/1.jpeg") }}') right center / auto 100% no-repeat;
         background-color: #fffbe6;
-        border-radius: 20px; padding: 36px 40px 40px;
-        margin-bottom: 24px; min-height: 160px; display: flex; align-items: center;
+        border-radius: 20px;
+        padding: 36px 40px 40px;
+        margin-bottom: 24px;
+        min-height: 160px;
+        display: flex;
+        align-items: center;
     }
+
     .hero-adm::before {
-        content: ''; position: absolute; inset: 0;
+        content: '';
+        position: absolute;
+        inset: 0;
         background: linear-gradient(90deg, #fffbe6 55%, transparent 100%);
         pointer-events: none;
     }
+
     .hero-adm-content { position: relative; z-index: 2; }
     .hero-adm-content h1 { font-size: 32px; font-weight: 800; color: #7C5C00; margin-bottom: 0; }
 
@@ -47,6 +58,7 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
         color: #92400E; font-size: 13.5px;
     }
     .alert-penting strong { display: block; font-weight: 700; margin-bottom: 4px; font-size: 14px; }
+
     .alert-tolak {
         background: #FEF2F2; border: 1px solid #FECACA; border-radius: 14px;
         padding: 16px 20px; margin-bottom: 28px;
@@ -89,6 +101,7 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
     .dok-row:hover { border-color: var(--gold-border); }
     .dok-row.dok-disabled { background: #F9FAFB; border-color: #E5E7EB; opacity: 0.7; pointer-events: none; }
     .dok-row.dok-ditolak { border-color: #FECACA; background: #FEF2F2; border-style: solid; }
+
     .dok-box { border: 1px solid var(--border); border-radius: 12px; padding: 18px; position: relative; transition: border-color .2s, background .2s; }
     .dok-box.dok-disabled { background: #F9FAFB; border-color: #E5E7EB; opacity: 0.7; pointer-events: none; }
     .dok-box.dok-ditolak { border-color: #FECACA; background: #FEF2F2; }
@@ -141,7 +154,7 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
 @if($isPerbaikan)
 <div class="alert-tolak">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20" style="flex-shrink:0;margin-top:1px;">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
     </svg>
     <div>
         <strong>Perbaikan Diperlukan</strong>
@@ -151,7 +164,7 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
 @else
 <div class="alert-penting">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20" style="flex-shrink:0;margin-top:1px;">
-        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
     </svg>
     <div>
         <strong>Peringatan Penting</strong>
@@ -272,7 +285,7 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
                 <div class="{{ $rowClass }}" id="row_{{ $dok['field'] }}">
                     <div class="dok-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="22" height="22">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                         </svg>
                     </div>
                     <div class="dok-info">
@@ -409,7 +422,7 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
             <div class="form-footer">
                 <div class="footer-info">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14" style="vertical-align:middle;margin-right:4px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                     Terakhir disimpan: Hari ini, {{ now()->format('H:i') }} WIB
                 </div>
@@ -417,11 +430,10 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
                     @if(!$isPerbaikan)
                     <button type="button" class="btn-draft" onclick="simpanDraft()">Simpan Draft</button>
                     @endif
-                    {{-- Tombol pakai onclick bukan type=submit --}}
                     <button type="button" class="btn-ajukan" onclick="showKonfirmasi()">
                         {{ $isPerbaikan ? 'Ajukan Ulang' : 'Ajukan Seminar' }}
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="14" height="14">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                         </svg>
                     </button>
                 </div>
@@ -438,7 +450,7 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
                 <div class="status-item" id="step-item-{{ $i }}">
                     <div class="status-dot" id="step-dot-{{ $i }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#fff" width="11" height="11" style="display:none" id="step-check-{{ $i }}">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                         </svg>
                     </div>
                     {{ $step }}
@@ -465,6 +477,24 @@ const fieldWajib = isPerbaikan ? [] : ['semester','dosen_wali','ipk','total_sks'
 const fileWajib  = isPerbaikan
     ? tolakKeys.map(k => ({khs:'file_khs',krs:'file_krs',spp:'file_spp',bimbingan:'file_bimbingan',persetujuan:'file_persetujuan',laporan_doc:'file_laporan_doc',laporan_pdf:'file_laporan_pdf'})[k]).filter(Boolean)
     : ['file_khs','file_krs','file_spp','file_bimbingan','file_persetujuan','file_laporan_doc','file_laporan_pdf'];
+
+const labelFile = {
+    file_khs: 'Transkrip Nilai (KHS)',
+    file_krs: 'Kartu Rencana Studi (KRS)',
+    file_spp: 'Bukti Lunas SPP',
+    file_bimbingan: 'Kartu Bimbingan',
+    file_persetujuan: 'Lembar Persetujuan Pembimbing',
+    file_laporan_doc: 'Laporan TA 1 (Docx)',
+    file_laporan_pdf: 'Laporan TA 1 (PDF)',
+};
+const labelField = {
+    semester: 'Semester',
+    dosen_wali: 'Dosen Wali',
+    ipk: 'IPK',
+    total_sks: 'Total SKS Diambil',
+    sks_semester: 'SKS Semester Berjalan',
+    total_sks_akumulasi: 'Total SKS (KHS + KRS)',
+};
 
 function fileAdaIsi(id) {
     const el     = document.getElementById(id);
@@ -524,12 +554,12 @@ function hapusFile(inputId, targetId, rowId) {
 }
 
 function validasiForm() {
-    // Reset error dulu
     document.querySelectorAll('.err-msg').forEach(el => el.remove());
     fieldWajib.forEach(name => { const el=document.querySelector(`[name="${name}"]`); if(el){el.classList.remove('field-error');el.style.borderColor='';el.style.background='';} });
     fileWajib.forEach(id => { const row=document.getElementById('row_'+id); if(row){row.style.borderColor='';row.style.background='';} });
 
     let valid = true;
+    const missing = [];
 
     for (const name of fieldWajib) {
         const el      = document.querySelector(`[name="${name}"]`);
@@ -543,6 +573,7 @@ function validasiForm() {
                 if (!msg) { msg=document.createElement('span'); msg.className='err-msg'; el.parentElement.appendChild(msg); }
                 msg.textContent = isAngka ? 'Harus diisi dan lebih dari 0' : 'Field ini wajib diisi';
             }
+            missing.push(labelField[name] || name);
             valid = false;
         }
     }
@@ -557,6 +588,7 @@ function validasiForm() {
                 if (!msg) { msg=document.createElement('span'); msg.className='err-msg'; target.appendChild(msg); }
                 msg.textContent = 'Dokumen wajib diunggah';
             }
+            missing.push(labelFile[id] || id);
             valid = false;
         }
     }
@@ -564,14 +596,23 @@ function validasiForm() {
     if (!valid) {
         const f = document.querySelector('.field-error') || document.querySelector('[style*="dc2626"]');
         if (f) f.scrollIntoView({ behavior:'smooth', block:'center' });
+
+        const listHtml = missing.map(m => `<li style="text-align:left;margin-bottom:4px;">${m}</li>`).join('');
+        Swal.fire({
+            title: 'Form Belum Lengkap',
+            html: `<div style="font-size:13px;color:#374151;margin-bottom:8px;">Mohon lengkapi data/dokumen berikut sebelum mengajukan:</div>
+                   <ul style="padding-left:20px;margin:0;font-size:13px;font-weight:600;color:#dc2626;">${listHtml}</ul>`,
+            icon: 'warning',
+            confirmButtonColor: '#FACC15',
+            confirmButtonText: 'Oke, Saya Lengkapi',
+        });
     }
 
     return valid;
 }
 
-// ══ Popup konfirmasi pakai SweetAlert2 (konsisten sama logout) ══
 function showKonfirmasi() {
-    if (!validasiForm()) return; // validasi dulu, kalau gagal stop
+    if (!validasiForm()) return;
 
     Swal.fire({
         title: isPerbaikan ? 'Ajukan Ulang Dokumen?' : 'Kirim Pengajuan Seminar?',

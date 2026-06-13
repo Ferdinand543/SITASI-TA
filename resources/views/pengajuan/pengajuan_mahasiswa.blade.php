@@ -615,10 +615,11 @@
                     </div>
                 </div>
 
-                {{-- Tanggal --}}
+                {{-- Tanggal (otomatis hari ini) --}}
                 <div class="pj-form-group">
                     <label class="pj-form-label">Tanggal</label>
-                    <input type="date" name="tanggal_pengajuan" id="ta_tanggal" class="pj-form-control">
+                    <input type="date" name="tanggal_pengajuan" id="ta_tanggal" class="pj-form-control"
+                        value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" readonly>
                 </div>
 
                 <hr class="divider">
@@ -755,7 +756,7 @@
         // ── Validasi form ──
         const form      = document.getElementById('formPengajuanTA');
         const alertBox  = document.getElementById('errorAlertTA');
-        const wajib     = ['ta_tanggal','ta_judul1','ta_topik1','ta_judul2','ta_topik2','ta_judul3','ta_topik3'];
+        const wajib     = ['ta_judul1','ta_topik1','ta_judul2','ta_topik2','ta_judul3','ta_topik3'];
 
         form.addEventListener('submit', function (e) {
             let valid = true;

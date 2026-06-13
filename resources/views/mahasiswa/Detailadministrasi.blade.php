@@ -806,6 +806,10 @@
         </a>
         @elseif($statusAdm === 'Tidak Administrasi')
         <span style="font-size:12px;color:#991B1B;font-style:italic;font-weight:600;">↑ Upload Ulang File yang Ditolak</span>
+        @elseif($statusAdm === 'Lolos Administrasi' && $pengajuan->status_seminar === 'Menunggu Jadwal')
+        <span style="font-size:12px;color:#92400E;font-style:italic;font-weight:600;">✓ Administrasi Lolos — Menunggu penjadwalan seminar ...</span>
+        @elseif($statusAdm === 'Lolos Administrasi' && in_array($pengajuan->status_seminar, ['Jadwal ditetapkan', 'Sudah Dijadwalkan', 'Selesai']))
+        <a href="{{ route('seminar.show', $pengajuan->id) }}" style="font-size:12px;font-weight:700;color:var(--neutral);">Lihat Jadwal Seminar →</a>
         @else
         <span style="font-size:12px;color:var(--muted);font-style:italic;">Menunggu verifikasi dari admin...</span>
         @endif
