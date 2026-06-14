@@ -214,7 +214,6 @@
         line-height: 1.5;
     }
 
-    /* File preview list */
     .file-list {
         margin-top: 8px;
         display: flex;
@@ -263,7 +262,6 @@
 
     .file-item-remove:hover { background: #FECACA; }
 
-    /* Link rows */
     .link-list {
         display: flex;
         flex-direction: column;
@@ -441,7 +439,7 @@
     table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 700px;
+        min-width: 900px;
     }
 
     thead th {
@@ -506,6 +504,18 @@
         border: 1px solid #BBF7D0;
     }
 
+    .status-tidak-valid {
+        background: #FEF2F2;
+        color: #DC2626;
+        border: 1px solid #FECACA;
+    }
+
+    .status-menunggu {
+        background: #F9FAFB;
+        color: #6B7280;
+        border: 1px solid #E5E7EB;
+    }
+
     .btn-aksi {
         display: inline-flex;
         align-items: center;
@@ -532,6 +542,15 @@
         padding: 48px;
         color: var(--muted);
         font-size: 14px;
+    }
+
+    .catatan-cell {
+        max-width: 160px;
+        font-size: 12px;
+        color: #6B7280;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .modal-overlay {
@@ -693,7 +712,6 @@
         margin-top: 3px;
     }
 
-    /* ── TOAST NOTIFIKASI ── */
     .toast-notif {
         position: fixed;
         bottom: 36px;
@@ -872,8 +890,9 @@
                     <input type="text" class="search-input" id="searchInput" placeholder="Cari topik atau dosen..." oninput="filterTabel()">
                     <select class="filter-select" id="filterStatus" onchange="filterTabel()">
                         <option value="">Semua Status</option>
-                        <option value="Baru Dikirim">Baru Dikirim</option>
-                        <option value="Sudah Dilihat">Sudah Dilihat</option>
+                        <option value="Valid">Valid</option>
+                        <option value="Tidak Valid">Tidak Valid</option>
+                        <option value="">Menunggu</option>
                     </select>
                     <button class="btn-reset" onclick="resetFilter()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -894,12 +913,14 @@
                             <th>Judul</th>
                             <th>Topik Bimbingan</th>
                             <th>Dosen Pembimbing</th>
+                            <th>Status Validasi</th>
+                            <th>Catatan Dosen</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($bimbingan as $i => $b)
-                        <tr data-topik="{{ strtolower($b->topik_bimbingan) }}" data-status="{{ $b->status }}" data-foto="{{ $b->dokumentasi }}">
+                        <tr data-topik="{{ strtolower($b->topik_bimbingan) }}" data-status="{{ $b->status_validasi }}" data-foto="{{ $b->dokumentasi }}">
                             <td>{{ $i + 1 }}</td>
                             <td><span class="badge-pertemuan">{{ str_pad($b->pertemuan_ke, 2, '0', STR_PAD_LEFT) }}</span></td>
                             <td>{{ \Carbon\Carbon::parse($b->tanggal_bimbingan)->translatedFormat('d M Y') }}</td>
@@ -909,6 +930,23 @@
                                 @php $namaD = $dosenList->firstWhere('nim_nid_dosen', (string) $b->dosen_nid); @endphp
                                 {{ $namaD->nama ?? '—' }}
                             </td>
+
+                            {{-- KOLOM BARU: STATUS VALIDASI --}}
+                            <td>
+                                @if($b->status_validasi == 'Valid')
+                                    <span class="status-badge status-dilihat">● Valid</span>
+                                @elseif($b->status_validasi == 'Tidak Valid')
+                                    <span class="status-badge status-tidak-valid">● Tidak Valid</span>
+                                @else
+                                    <span class="status-badge status-menunggu">● Menunggu</span>
+                                @endif
+                            </td>
+
+                            {{-- KOLOM BARU: CATATAN DOSEN --}}
+                            <td class="catatan-cell" title="{{ $b->catatan_dosen ?? '' }}">
+                                {{ $b->catatan_dosen ?? '—' }}
+                            </td>
+
                             <td>
                                 <a href="#" class="btn-aksi" title="Lihat Foto" onclick="lihatDetail('{{ $b->dokumentasi }}')">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -920,7 +958,7 @@
                         </tr>
                         @empty
                         <tr class="empty-row">
-                            <td colspan="7">
+                            <td colspan="9">
                                 <div style="font-size:32px;margin-bottom:8px;">📋</div>
                                 Belum ada riwayat bimbingan
                             </td>
@@ -933,7 +971,7 @@
 
     </div>
 
-    {{-- ── TOAST NOTIFIKASI ── --}}
+    {{-- TOAST NOTIFIKASI --}}
     <div class="toast-notif toast-warning" id="toastNotif">
         <span class="toast-notif-icon">⚠️</span>
         <span id="toastMsg">Pesan notifikasi</span>
@@ -1022,7 +1060,7 @@
 <div class="modal-overlay" id="modalFoto" onclick="tutupModalFoto(event)">
     <div class="modal-box" style="max-width:420px;">
         <div class="modal-head">
-            <button class="modal-close" onclick="document.getElementById('modalFoto').classList.remove('show')">×</button>
+           <button class="modal-close" onclick="document.getElementById('modalFoto').classList.remove('show'); document.body.style.overflow='';">×</button>
             <h5>Dokumentasi Bimbingan</h5>
             <p>Foto dokumentasi saat bimbingan berlangsung.</p>
         </div>
@@ -1047,7 +1085,6 @@
 </div>
 
 <script>
-    // ── Modal bimbingan ──
     function bukaModal() {
         document.getElementById('modalOverlay').classList.add('show');
         document.body.style.overflow = 'hidden';
@@ -1106,7 +1143,6 @@
         filterTabel();
     }
 
-    // ── TOAST NOTIFIKASI ──
     function tampilToast(pesan) {
         const toast = document.getElementById('toastNotif');
         document.getElementById('toastMsg').textContent = pesan;
@@ -1119,7 +1155,6 @@
         document.getElementById('toastNotif').classList.remove('show');
     }
 
-    // ── Multi-file upload ──
     let dt = new DataTransfer();
 
     function getFileIcon(name) {
@@ -1151,7 +1186,7 @@
     }
 
     function handleMultiFile(input) {
-        const maxSize = 10 * 1024 * 1024; // 10MB
+        const maxSize = 10 * 1024 * 1024;
         let adaYangGede = false;
 
         Array.from(input.files).forEach(f => {
@@ -1163,7 +1198,6 @@
         });
 
         if (adaYangGede) {
-            // ── DIGANTI: pakai toast bukan alert ──
             tampilToast('Beberapa file melebihi 10MB dan tidak ditambahkan. Silakan pilih file yang lebih kecil.');
         }
 
@@ -1177,7 +1211,6 @@
         renderFileList();
     }
 
-    // ── Multi-link ──
     function tambahLink() {
         const list = document.getElementById('linkList');
         const row  = document.createElement('div');
