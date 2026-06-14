@@ -147,8 +147,10 @@ class DosenBimbinganController extends Controller
             ->latest('updated_at')
             ->first();
 
-        $judulTA        = $pengajuan->judul_disetujui ?? '-';
-        $totalBimbingan = $bimbingan->count();
+        $judulTA = $pengajuan->judul_disetujui ?? '-';
+
+        // ✅ Total bimbingan & status kelayakan hanya dihitung dari yang sudah divalidasi "Valid"
+        $totalBimbingan = $bimbingan->where('status_validasi', 'Valid')->count();
         $minBimbingan   = 6;
 
         return view('dosen.detail_bimbingan', compact(
@@ -166,5 +168,32 @@ class DosenBimbinganController extends Controller
             ->update(['status' => 'Sudah Dilihat', 'updated_at' => now()]);
 
         return redirect()->back()->with('success', 'Status bimbingan diperbarui.');
+    }
+
+    // ✅ BARU: simpan hasil validasi (Valid / Tidak Valid) dari modal popup dosen
+    public function validasiBimbingan(Request $request, $id)
+    {
+        if (!session('user')) return redirect('/login');
+
+        $statusValidasi = $request->input('status_validasi'); // 'Valid' atau 'Tidak Valid'
+        $catatanDosen   = $request->input('catatan_dosen');
+
+        $data = [
+            'status_validasi' => $statusValidasi,
+            'updated_at'      => now(),
+        ];
+
+        // Catatan dosen hanya diisi kalau status = Tidak Valid
+        if ($statusValidasi === 'Tidak Valid') {
+            $data['catatan_dosen'] = $catatanDosen;
+        } else {
+            $data['catatan_dosen'] = null;
+        }
+
+        DB::table('bimbingan')
+            ->where('id', $id)
+            ->update($data);
+
+        return redirect()->back()->with('success', 'Validasi bimbingan berhasil disimpan.');
     }
 }
