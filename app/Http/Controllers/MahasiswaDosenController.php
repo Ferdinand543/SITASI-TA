@@ -74,7 +74,18 @@ class MahasiswaDosenController extends Controller
             if ($proposalSelesai) $progress += 20;
             if ($daftarSeminar)   $progress += 20;
 
-            $mhs->progress = $progress;
+            // Label tahapan saat ini
+            $progressLabel = match(true) {
+                $daftarSeminar   => 'Seminar Proposal',
+                $proposalSelesai => 'Proposal Disetujui',
+                $adaProposal     => 'Upload Proposal',
+                $judulDisetujui  => 'Judul Disetujui',
+                $adaPengajuan    => 'Pengajuan Judul',
+                default          => 'Belum Mulai',
+            };
+
+            $mhs->progress      = $progress;
+            $mhs->progressLabel = $progressLabel;
             return $mhs;
         });
 

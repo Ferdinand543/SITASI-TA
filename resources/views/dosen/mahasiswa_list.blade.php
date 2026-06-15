@@ -332,44 +332,15 @@ $angkatanTerbanyak = \Illuminate\Support\Facades\DB::table('users')
     }
 
     .mhs-table tbody td {
-        padding: 16px 20px;
+        padding: 20px 20px;
         vertical-align: middle;
     }
 
-    .mhs-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: #FFE083;
-        border: 2px solid #F4E28A;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #735C00;
-        flex-shrink: 0;
-        overflow: hidden;
-    }
-
-    .mhs-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50%;
-    }
-
     .mhs-name {
-        font-size: 0.88rem;
+        font-size: 0.95rem;
         font-weight: 700;
         color: var(--neutral);
         line-height: 1.3;
-    }
-
-    .mhs-email {
-        font-size: 0.74rem;
-        color: var(--muted);
-        margin-top: 2px;
     }
 
     .mhs-nim {
@@ -388,19 +359,14 @@ $angkatanTerbanyak = \Illuminate\Support\Facades\DB::table('users')
         font-weight: 700;
     }
 
-    .mhs-progress-wrap {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
+    /* Progress */
     .mhs-progress-bar-bg {
-        flex: 1;
-        height: 8px;
+        width: 160px;
+        height: 6px;
         background: #F1F5F9;
         border-radius: 99px;
         overflow: hidden;
-        min-width: 80px;
+        margin-bottom: 4px;
     }
 
     .mhs-progress-bar-fill {
@@ -411,11 +377,39 @@ $angkatanTerbanyak = \Illuminate\Support\Facades\DB::table('users')
     }
 
     .mhs-progress-pct {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         font-weight: 700;
+        color: var(--neutral);
+    }
+
+    .mhs-progress-label {
+        font-size: 0.72rem;
         color: var(--muted);
-        min-width: 34px;
-        text-align: right;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    /* Tombol Lihat Detail */
+    .btn-lihat-detail {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 20px;
+        border: 2px solid var(--gold);
+        border-radius: 999px;
+        color: var(--gold);
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-decoration: none;
+        background: transparent;
+        transition: 0.2s;
+        white-space: nowrap;
+    }
+
+    .btn-lihat-detail:hover {
+        background: var(--gold);
+        color: #fff;
+        text-decoration: none;
     }
 
     .mhs-empty {
@@ -581,27 +575,18 @@ $angkatanTerbanyak = \Illuminate\Support\Facades\DB::table('users')
                     <th>NIM</th>
                     <th>Angkatan</th>
                     <th>Progres TA</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($mahasiswaList as $mhs)
                 <tr>
                     <td>
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <div class="mhs-avatar">
-                                @if(isset($mhs->foto) && $mhs->foto)
-                                <img src="{{ asset('storage/' . $mhs->foto) }}" alt="{{ $mhs->nama }}">
-                                @else
-                                {{ strtoupper(substr($mhs->nama, 0, 1)) }}
-                                @endif
-                            </div>
-                            <div>
-                                <div class="mhs-name">{{ $mhs->nama }}</div>
-                                <div class="mhs-email">{{ $mhs->email }}</div>
-                            </div>
-                        </div>
+                        <span class="mhs-name">{{ $mhs->nama }}</span>
                     </td>
-                    <td><span class="mhs-nim">{{ $mhs->nim_nid }}</span></td>
+                    <td>
+                        <span class="mhs-nim">{{ $mhs->nim_nid }}</span>
+                    </td>
                     <td>
                         @if($mhs->angkatan)
                         <span class="mhs-angkatan-badge">{{ $mhs->angkatan }}</span>
@@ -610,12 +595,21 @@ $angkatanTerbanyak = \Illuminate\Support\Facades\DB::table('users')
                         @endif
                     </td>
                     <td>
-                        <div class="mhs-progress-wrap">
-                            <div class="mhs-progress-bar-bg">
-                                <div class="mhs-progress-bar-fill" style="width: {{ $mhs->progress }}%;"></div>
-                            </div>
-                            <span class="mhs-progress-pct">{{ $mhs->progress }}%</span>
+                        <div class="mhs-progress-bar-bg">
+                            <div class="mhs-progress-bar-fill" style="width: {{ $mhs->progress }}%;"></div>
                         </div>
+                        <div class="mhs-progress-pct">{{ $mhs->progress }}%</div>
+                        <div class="mhs-progress-label">{{ $mhs->progressLabel }}</div>
+                    </td>
+                    <td>
+                        <a href="#" class="btn-lihat-detail">
+                            Lihat Detail
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
                     </td>
                 </tr>
                 @endforeach
