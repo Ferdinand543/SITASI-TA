@@ -90,10 +90,16 @@ class JadwalController extends Controller
 
         // =====================================================
         // ✅ JUMLAH MAHASISWA — untuk card Siap Dijadwalkan
+        // ✅ DIUBAH: sekarang ikut syarat sudah ada dosen penguji ditetapkan
         // =====================================================
         $jumlahMahasiswaSiapSeminar = DB::table('pengajuan_seminars')
             ->where('is_draft', 0)
             ->whereIn('status_seminar', ['Menunggu Jadwal', 'Sudah Dijadwalkan', 'Selesai'])
+            ->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                  ->from('dosen_penguji_seminar as dps')
+                  ->whereColumn('dps.pengajuan_seminar_id', 'pengajuan_seminars.id');
+            })
             ->count();
 
         // =====================================================

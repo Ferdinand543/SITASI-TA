@@ -116,11 +116,9 @@
         position: relative; z-index: 1; margin-bottom: 10px; flex-shrink: 0;
     }
     .det-step.done .det-step-icon { background: #22C55E; border-color: #22C55E; }
-    .det-step.active .det-step-icon { background: #FEF9C3; border-color: var(--gold-mid); }
 
     .det-step-label { font-size: 0.7rem; font-weight: 600; color: var(--muted); text-align: center; line-height: 1.3; white-space: pre-line; }
     .det-step.done .det-step-label { color: #16A34A; font-weight: 700; }
-    .det-step.active .det-step-label { color: var(--gold); font-weight: 700; }
 
     /* Bottom Cards */
     .det-bottom { display: flex; gap: 20px; flex-wrap: wrap; }
@@ -242,9 +240,6 @@
                 <div class="det-legend-item" style="color: #16A34A;">
                     <span class="det-legend-dot" style="background: #22C55E;"></span> Selesai
                 </div>
-                <div class="det-legend-item" style="color: #A16207;">
-                    <span class="det-legend-dot" style="background: #FACC15;"></span> Sedang Berjalan
-                </div>
                 <div class="det-legend-item" style="color: #9CA3AF;">
                     <span class="det-legend-dot" style="background: #D1D5DB;"></span> Belum Tercapai
                 </div>
@@ -253,23 +248,23 @@
 
         @php
             $stepList = [
-                ['label' => "Pengajuan\nJudul",  'done' => $steps['adaPengajuan'],    'active' => $steps['adaPengajuan'] && !$steps['judulDisetujui']],
-                ['label' => "Verifikasi\nJudul", 'done' => $steps['judulDisetujui'],  'active' => $steps['judulDisetujui'] && !$steps['adaProposal']],
-                ['label' => "Upload\nProposal",  'done' => $steps['adaProposal'],     'active' => $steps['adaProposal'] && !$steps['proposalSelesai']],
-                ['label' => "Review\nProposal",  'done' => $steps['proposalSelesai'], 'active' => $steps['proposalSelesai'] && !$steps['daftarSeminar']],
-                ['label' => "Seminar\nProposal", 'done' => $steps['daftarSeminar'],   'active' => false],
+                ['label' => "Pengajuan\nJudul",     'done' => $steps['adaPengajuan']],
+                ['label' => "Verifikasi\nJudul",     'done' => $steps['judulDisetujui']],
+                ['label' => "Upload\nProposal",      'done' => $steps['adaProposal']],
+                ['label' => "Penetapan\nPembimbing", 'done' => $steps['adaPembimbing']],
+                ['label' => "Review\nProposal",      'done' => $steps['proposalSelesai']],
+                ['label' => "Bimbingan\nTA",         'done' => $steps['adaBimbingan']],
+                ['label' => "Seminar\nProposal",     'done' => $steps['daftarSeminar']],
             ];
         @endphp
 
         <div class="det-steps">
             @foreach($stepList as $step)
-            @php $cls = $step['done'] ? 'done' : ($step['active'] ? 'active' : ''); @endphp
+            @php $cls = $step['done'] ? 'done' : ''; @endphp
             <div class="det-step {{ $cls }}">
                 <div class="det-step-icon">
                     @if($step['done'])
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    @elseif($step['active'])
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A16207" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     @else
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/></svg>
                     @endif

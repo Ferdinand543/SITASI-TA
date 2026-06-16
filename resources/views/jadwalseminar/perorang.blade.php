@@ -111,13 +111,13 @@
     .jam-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
     .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 4px; }
-   .btn-submit {
-    padding: 11px 32px; background: #FDE047; color: #713F12;
-    border: 1px solid #FACC15; border-radius: 10px; font-size: 14px; font-weight: 700;
-    cursor: pointer; font-family: inherit; transition: background .2s;
-    display: inline-flex; align-items: center; gap: 8px;
-}
-.btn-submit:hover { background: #FACC15; color: #713F12; }
+    .btn-submit {
+        padding: 11px 32px; background: #FDE047; color: #713F12;
+        border: 1px solid #FACC15; border-radius: 10px; font-size: 14px; font-weight: 700;
+        cursor: pointer; font-family: inherit; transition: background .2s;
+        display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-submit:hover { background: #FACC15; color: #713F12; }
     .btn-cancel-link {
         padding: 11px 20px; background: #fff; color: var(--muted);
         border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px;
@@ -135,7 +135,7 @@
     .popup-overlay.active { display: flex; }
     .popup-box {
         background: #fff; border-radius: 20px; padding: 40px 32px;
-        width: 100%; max-width: 360px; text-align: center;
+        width: 100%; max-width: 420px; text-align: center;
         box-shadow: 0 20px 60px rgba(0,0,0,.18); animation: popIn .2s ease;
     }
     @keyframes popIn {
@@ -149,8 +149,9 @@
     }
     .popup-icon.berhasil { background: #fff; border: 2.5px solid #22C55E; }
     .popup-icon.gagal    { background: #fff; border: 2.5px solid #EF4444; }
+    .popup-icon.bentrok  { background: #FEF3C7; border: 3px solid #F5D97A; }
     .popup-title { font-size: 22px; font-weight: 800; color: var(--neutral); margin-bottom: 10px; }
-    .popup-msg   { font-size: 13.5px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+    .popup-msg   { font-size: 13.5px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
     .popup-actions { display: flex; gap: 10px; justify-content: center; }
     .popup-btn {
         padding: 11px 32px; border-radius: 10px; font-size: 14px; font-weight: 700;
@@ -158,6 +159,19 @@
     }
     .popup-btn.ok { background: var(--gold); color: #fff; min-width: 120px; }
     .popup-btn.ok:hover { background: #b8911f; }
+
+    /* List bentrok dosen */
+    .bentrok-list {
+        text-align: left; background: #FEF2F2; border: 1px solid #FECACA;
+        border-radius: 10px; padding: 12px 14px; margin-bottom: 20px;
+    }
+    .bentrok-list-item {
+        font-size: 12px; color: #991B1B; padding: 4px 0;
+        border-bottom: 1px solid #FECACA; display: flex; flex-direction: column; gap: 2px;
+    }
+    .bentrok-list-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .bentrok-dosen-name { font-weight: 700; color: #B91C1C; }
+    .bentrok-detail { font-size: 11px; color: #DC2626; }
 
     @media (max-width: 900px) {
         .main-grid { grid-template-columns: 1fr; }
@@ -183,12 +197,10 @@
 
 <div class="wrap">
 
-   
-
     <div class="page-title">Tetapkan Jadwal Seminar Mahasiswa</div>
     <div class="page-sub">Kelola penjadwalan seminar mahasiswa yang telah menyelesaikan administrasi seminar dan telah memiliki dosen penguji.</div>
 
-    <form method="POST" action="{{ route('admin.seminar.jadwalkan', $seminar->id) }}">
+    <form method="POST" action="{{ route('jadwalseminar.jadwalkan', $seminar->id) }}">
         @csrf
 
         <div class="card">
@@ -314,9 +326,9 @@
         <div class="popup-msg">Jadwal seminar mahasiswa berhasil diperbarui.</div>
         <div class="popup-actions">
             <button class="popup-btn ok"
-            onclick="window.location.href='{{ route('jadwalseminar.index') }}'">
-            OK
-        </button>
+                onclick="window.location.href='{{ route('jadwalseminar.index') }}'">
+                OK
+            </button>
         </div>
     </div>
 </div>
@@ -340,6 +352,36 @@
     </div>
 </div>
 
+{{-- ===================== POPUP BENTROK DOSEN ===================== --}}
+<div class="popup-overlay" id="popupBentrok">
+    <div class="popup-box" style="max-width:480px;">
+        <div class="popup-icon bentrok">
+            <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="#C9A227" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.008v.008H12v-.008Z"/>
+            </svg>
+        </div>
+        <div class="popup-title">Jadwal Bentrok!</div>
+        <div class="popup-msg">Dosen berikut sudah memiliki jadwal seminar di waktu yang sama:</div>
+        <div class="bentrok-list" id="bentrokList">
+            {{-- Diisi oleh PHP --}}
+            @if(session('bentrok_dosen'))
+                @foreach(session('bentrok_dosen') as $k)
+                <div class="bentrok-list-item">
+                    <span class="bentrok-dosen-name">{{ $k['dosen'] }}</span>
+                    <span class="bentrok-detail">Sudah dijadwalkan bersama {{ $k['mahasiswa'] }} pukul {{ $k['jam'] }}</span>
+                </div>
+                @endforeach
+            @endif
+        </div>
+        <div class="popup-actions">
+            <button class="popup-btn ok"
+                onclick="document.getElementById('popupBentrok').classList.remove('active')">
+                Ubah Jadwal
+            </button>
+        </div>
+    </div>
+</div>
+
 {{-- ===================== SCRIPT TRIGGER POPUP ===================== --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -348,6 +390,9 @@
         @endif
         @if(session('simpan_gagal'))
             document.getElementById('popupGagal').classList.add('active');
+        @endif
+        @if(session('bentrok_dosen'))
+            document.getElementById('popupBentrok').classList.add('active');
         @endif
     });
 </script>

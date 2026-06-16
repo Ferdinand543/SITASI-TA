@@ -72,7 +72,7 @@ Route::get('/mahasiswa', function () {
 
     $totalPengajuan = DB::table('pengajuan_judul')->where('nim_nid', $nim)->count();
     $totalProposal  = DB::table('proposal')->where('nim_nid', $nim)->count();
-    $totalBimbingan = DB::table('bimbingan')->where('nim_nid', $nim)->count();
+    $totalBimbingan = DB::table('bimbingan')->where('nim_nid', $nim)->where('status_validasi', 'Valid')->count();
 
     $judulDisetujui = DB::table('pengajuan_judul')
         ->where('nim_nid', $nim)
@@ -189,7 +189,7 @@ Route::get('/mahasiswa', function () {
         ->whereIn('status', ['selesai', 'disetujui'])
         ->exists();
 
-    $prosesBimbingan = DB::table('bimbingan')->where('nim_nid', $nim)->exists();
+    $prosesBimbingan = DB::table('bimbingan')->where('nim_nid', $nim)->where('status_validasi', 'Valid')->exists();
     $seminarProposal = false;
 
     $steps = [
@@ -512,4 +512,3 @@ Route::post('/admin/mahasiswa/import',         [ImportMahasiswaController::class
 
 Route::get('/jadwal-seminar-mahasiswa', [App\Http\Controllers\JadwalSeminarMahasiswaController::class, 'index'])
     ->name('jadwalseminar.mahasiswa.list');
-

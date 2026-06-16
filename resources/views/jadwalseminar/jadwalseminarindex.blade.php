@@ -386,8 +386,8 @@
                                 <td colspan="9">
                                     <div class="empty-state">
                                         <div class="empty-state-icon">📅</div>
-                                        <div class="empty-state-text">Belum ada mahasiswa yang mendaftar seminar</div>
-                                        <div class="empty-state-sub">Data akan muncul setelah mahasiswa mengajukan pendaftaran seminar</div>
+                                        <div class="empty-state-text">Belum ada mahasiswa</div>
+                                        <div class="empty-state-sub">Data akan muncul setelah menetapkan penguji</div>
                                     </div>
                                 </td>
                             </tr>

@@ -29,8 +29,6 @@ class PenilaianController extends Controller
         $this->guardPenguji();
         $nimPenguji = session('user')->nim_nid;
 
-        // ✅ DIFIX: tampilkan mahasiswa yang sudah Lolos Administrasi seminar
-        // pakai COLLATE di join untuk hindari collation mismatch antar tabel
         $proposals = DB::table('proposal as p')
             ->join('users as u', 'u.nim_nid', '=', 'p.nim_nid')
             ->join('pengajuan_seminars as psem',
@@ -38,6 +36,12 @@ class PenilaianController extends Controller
                 '=',
                 DB::raw('p.nim_nid COLLATE utf8mb4_unicode_ci')
             )
+            // ✅ FIX: join ke dosen_penguji_seminar biar cuma mahasiswa
+            // yang dosen ini jadi pengujinya yang muncul
+            ->join('dosen_penguji_seminar as dps', function ($join) use ($nimPenguji) {
+                $join->on('dps.pengajuan_seminar_id', '=', 'psem.id')
+                     ->where('dps.nim_nid_dosen', '=', $nimPenguji);
+            })
             ->where('psem.status_administrasi', 'Lolos Administrasi')
             ->leftJoin('penilaian_seminar as ps', function ($join) use ($nimPenguji) {
                 $join->on('ps.proposal_id', '=', 'p.id')
@@ -49,6 +53,7 @@ class PenilaianController extends Controller
                 'p.judul as judul_ta',
                 'p.status as status_proposal',
                 'u.nama',
+                'dps.urutan as urutan_penguji',
                 'ps.status as status_penilaian',
                 'ps.nilai_akhir',
                 'ps.id as penilaian_id'
@@ -79,16 +84,21 @@ class PenilaianController extends Controller
 
         abort_if(!$proposal, 404);
 
-        // Ambil data dosen penguji
         $dosenPenguji = DB::table('users')
             ->where('nim_nid', $nimPenguji)
             ->first();
 
-        // Baca urutan_penguji dari DB (yang nanti diisi koordinator)
-        $urutan = DB::table('penilaian_seminar')
-            ->where('proposal_id', $proposalId)
-            ->where('nim_nid_penguji', $nimPenguji)
-            ->value('urutan_penguji');
+        // ✅ FIX: ambil urutan dari dosen_penguji_seminar
+        $urutan = DB::table('dosen_penguji_seminar as dps')
+            ->join('pengajuan_seminars as psem', 'psem.id', '=', 'dps.pengajuan_seminar_id')
+            ->join('proposal as p',
+                DB::raw('p.nim_nid COLLATE utf8mb4_unicode_ci'),
+                '=',
+                DB::raw('psem.mahasiswa_id COLLATE utf8mb4_unicode_ci')
+            )
+            ->where('p.id', $proposalId)
+            ->where('dps.nim_nid_dosen', $nimPenguji)
+            ->value('dps.urutan');
 
         $urutanPenguji = $urutan ? 'Penguji ' . $urutan : 'Penguji';
 
@@ -97,7 +107,6 @@ class PenilaianController extends Controller
             ->where('nim_nid_penguji', $nimPenguji)
             ->first();
 
-        // Kalau sudah submitted, cek dulu apakah masih dalam deadline edit
         if ($penilaian && $penilaian->status === 'submitted') {
             $jadwalSeminar = DB::table('jadwal_akademik')
                 ->where('kategori', 'Seminar')
@@ -160,6 +169,18 @@ class PenilaianController extends Controller
                 ->with('error', 'Batas waktu edit penilaian sudah berakhir.');
         }
 
+        // ✅ FIX: ambil urutan dari dosen_penguji_seminar
+        $urutan = DB::table('dosen_penguji_seminar as dps')
+            ->join('pengajuan_seminars as psem', 'psem.id', '=', 'dps.pengajuan_seminar_id')
+            ->join('proposal as p',
+                DB::raw('p.nim_nid COLLATE utf8mb4_unicode_ci'),
+                '=',
+                DB::raw('psem.mahasiswa_id COLLATE utf8mb4_unicode_ci')
+            )
+            ->where('p.id', $proposalId)
+            ->where('dps.nim_nid_dosen', $nimPenguji)
+            ->value('dps.urutan');
+
         $nilaiAkhir = round(
             $request->nilai_teknik_presentasi +
             $request->nilai_dokumentasi +
@@ -172,6 +193,7 @@ class PenilaianController extends Controller
             'nim_nid'                    => $proposal->nim_nid,
             'nim_nid_penguji'            => $nimPenguji,
             'proposal_id'                => (int) $proposalId,
+            'urutan_penguji'             => $urutan ?? 1,
             'nilai_teknik_presentasi'    => $request->nilai_teknik_presentasi,
             'nilai_dokumentasi'          => $request->nilai_dokumentasi,
             'nilai_pemahaman_teori'      => $request->nilai_pemahaman_teori,
