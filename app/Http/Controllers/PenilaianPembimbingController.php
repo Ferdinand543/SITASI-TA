@@ -15,9 +15,6 @@ class PenilaianPembimbingController extends Controller
 
         $nim = session('user')->nim_nid;
 
-        // ✅ FIXED: cek dari dosen_roles (bukan dosen_pembimbing)
-        // dosen_pembimbing adalah tabel relasi mahasiswa-dosen,
-        // sedangkan dosen_roles adalah tabel yang menentukan role dosen
         $isPembimbing = DB::table('dosen_roles')
             ->where('nim_nid', $nim)
             ->where('role_dosen', 'pembimbing')
@@ -31,49 +28,7 @@ class PenilaianPembimbingController extends Controller
     public function index()
     {
         $this->guardPembimbing();
-        $nimPembimbing = session('user')->nim_nid;
-
-        // ✅ Filter mahasiswa yang:
-        // 1. Dibimbing oleh dosen ini → join dosen_pembimbing (dp.nim_nid_dosen = $nimPembimbing)
-        // 2. Sudah Lolos Administrasi → join pengajuan_seminars (status_administrasi = 'Lolos Administrasi')
-        // COLLATE dipakai untuk hindari collation mismatch antar kolom
-        $proposals = DB::table('proposal as p')
-            ->join('users as u', 'u.nim_nid', '=', 'p.nim_nid')
-            ->join('dosen_pembimbing as dp', function ($join) use ($nimPembimbing) {
-                $join->on('dp.proposal_id', '=', 'p.id')
-                     ->where('dp.nim_nid_dosen', '=', $nimPembimbing);
-            })
-            ->join('pengajuan_seminars as psem',
-                DB::raw('psem.mahasiswa_id COLLATE utf8mb4_unicode_ci'),
-                '=',
-                DB::raw('p.nim_nid COLLATE utf8mb4_unicode_ci')
-            )
-            ->where('psem.status_administrasi', 'Lolos Administrasi')
-            ->leftJoin('penilaian_seminar_pembimbing as psp', function ($join) use ($nimPembimbing) {
-                $join->on('psp.proposal_id', '=', 'p.id')
-                     ->where('psp.nim_nid_pembimbing', '=', $nimPembimbing);
-            })
-            ->select(
-                'p.id as proposal_id',
-                'p.nim_nid',
-                'p.judul as judul_ta',
-                'u.nama',
-                'dp.urutan as urutan_pembimbing',
-                'psp.status as status_penilaian',
-                'psp.nilai_akhir',
-                'psp.id as penilaian_id'
-            )
-            ->orderBy('u.nama')
-            ->get();
-
-        $total        = $proposals->count();
-        $belumDinilai = $proposals->whereNull('status_penilaian')->count();
-        $draft        = $proposals->where('status_penilaian', 'draft')->count();
-        $sudahDinilai = $proposals->where('status_penilaian', 'submitted')->count();
-
-        return view('penilaianPembimbing.index', compact(
-            'proposals', 'total', 'belumDinilai', 'draft', 'sudahDinilai'
-        ));
+        return redirect()->route('penilaian.index');
     }
 
     public function form($proposalId)

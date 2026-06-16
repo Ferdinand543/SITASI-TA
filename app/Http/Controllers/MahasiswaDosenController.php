@@ -50,11 +50,20 @@ class MahasiswaDosenController extends Controller
             $proposalSelesai   = DB::table('proposal')->where('nim_nid', $nim)->where('status', 'selesai')->exists();
             $adaBimbingan      = DB::table('bimbingan')->where('nim_nid', $nim)->exists();
 
-            $seminarRow    = DB::table('pengajuan_seminars')->where('mahasiswa_id', $nim)->latest()->first();
-            $daftarSeminar = $seminarRow
+            $seminarRow = DB::table('pengajuan_seminars')->where('mahasiswa_id', $nim)->latest()->first();
+
+            $sudahDaftarSeminar = $seminarRow
                 && $seminarRow->status_administrasi === 'Lolos Administrasi'
                 && $seminarRow->status_seminar !== null
                 && $seminarRow->status_seminar !== 'Belum Daftar Seminar';
+
+            $seminarSelesai = false;
+            if ($sudahDaftarSeminar && $seminarRow->tanggal_seminar && $seminarRow->waktu_selesai) {
+                $waktuSelesai = \Carbon\Carbon::parse($seminarRow->tanggal_seminar . ' ' . $seminarRow->waktu_selesai);
+                $seminarSelesai = $waktuSelesai->isPast();
+            }
+
+            $daftarSeminar = $sudahDaftarSeminar && $seminarSelesai;
 
             $hasil = $this->hitungProgress(compact(
                 'adaPengajuan', 'judulDisetujui', 'adaProposal',
@@ -104,10 +113,10 @@ class MahasiswaDosenController extends Controller
         $proposalSelesai = DB::table('proposal')->where('nim_nid', $nim)->where('status', 'selesai')->exists();
         $adaBimbingan    = DB::table('bimbingan')->where('nim_nid', $nim)->exists();
 
-        $proposal    = DB::table('proposal')->where('nim_nid', $nim)->latest()->first();
+        $proposal      = DB::table('proposal')->where('nim_nid', $nim)->latest()->first();
         $adaPembimbing = false;
-        $pembimbing1 = null;
-        $pembimbing2 = null;
+        $pembimbing1   = null;
+        $pembimbing2   = null;
 
         if ($proposal) {
             $adaPembimbing = DB::table('dosen_pembimbing')->where('proposal_id', $proposal->id)->exists();
@@ -119,10 +128,18 @@ class MahasiswaDosenController extends Controller
 
         $seminar = DB::table('pengajuan_seminars')->where('mahasiswa_id', $nim)->latest()->first();
 
-        $daftarSeminar = $seminar
+        $sudahDaftarSeminar = $seminar
             && $seminar->status_administrasi === 'Lolos Administrasi'
             && $seminar->status_seminar !== null
             && $seminar->status_seminar !== 'Belum Daftar Seminar';
+
+        $seminarSelesai = false;
+        if ($sudahDaftarSeminar && $seminar->tanggal_seminar && $seminar->waktu_selesai) {
+            $waktuSelesai = \Carbon\Carbon::parse($seminar->tanggal_seminar . ' ' . $seminar->waktu_selesai);
+            $seminarSelesai = $waktuSelesai->isPast();
+        }
+
+        $daftarSeminar = $sudahDaftarSeminar && $seminarSelesai;
 
         $hasil = $this->hitungProgress(compact(
             'adaPengajuan', 'judulDisetujui', 'adaProposal',
@@ -158,7 +175,7 @@ class MahasiswaDosenController extends Controller
 
     private function hitungProgress($flags)
     {
-        $order = ['adaPengajuan','judulDisetujui','adaProposal','adaPembimbing','proposalSelesai','adaBimbingan','daftarSeminar'];
+        $order  = ['adaPengajuan','judulDisetujui','adaProposal','adaPembimbing','proposalSelesai','adaBimbingan','daftarSeminar'];
         $points = [14, 14, 14, 14, 14, 15, 15];
         $labels = [
             'adaPengajuan'    => 'Pengajuan Judul',

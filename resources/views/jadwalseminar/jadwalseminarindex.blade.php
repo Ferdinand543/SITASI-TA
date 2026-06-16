@@ -266,10 +266,12 @@
                 <input type="text" id="filterSearch" class="filter-search"
                     placeholder="Search by NIM, Name, or Thesis Title..."
                     value="{{ request('search') }}">
+                {{-- SESUDAH --}}
                 <select id="filterStatus" class="filter-select">
                     <option value="Semua Status" {{ request('status', 'Semua Status') === 'Semua Status' ? 'selected' : '' }}>Semua Status</option>
                     <option value="Menunggu Jadwal" {{ request('status') === 'Menunggu Jadwal' ? 'selected' : '' }}>Menunggu Jadwal</option>
                     <option value="Sudah Dijadwalkan" {{ request('status') === 'Sudah Dijadwalkan' ? 'selected' : '' }}>Sudah Dijadwalkan</option>
+                    <option value="Selesai" {{ request('status') === 'Selesai' ? 'selected' : '' }}>Selesai</option>
                 </select>
             </div>
 

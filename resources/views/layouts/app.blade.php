@@ -625,16 +625,8 @@
 
             <div class="nav-label">Akademik</div>
 
-            @if($isPembimbing && $punyaMahasiswaBimbingan)
-            <a href="{{ route('penilaian.pembimbing.index') }}" class="sidebar-link {{ request()->routeIs('penilaian.pembimbing.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-star"></i> Nilai
-            </a>
-            @elseif($isPenguji)
+            @if($isPenguji || $isPembimbing)
             <a href="{{ route('penilaian.index') }}" class="sidebar-link {{ request()->is('penilaian*') ? 'active' : '' }}">
-                <i class="fa-solid fa-star"></i> Nilai
-            </a>
-            @elseif($isPembimbing)
-            <a href="{{ route('penilaian.pembimbing.index') }}" class="sidebar-link {{ request()->routeIs('penilaian.pembimbing.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-star"></i> Nilai
             </a>
             @else

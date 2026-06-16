@@ -7,6 +7,23 @@ use Illuminate\Support\Facades\DB;
 
 class PenilaianController extends Controller
 {
+    private function guardDosen()
+    {
+        if (!session('user')) {
+            abort(redirect('/login'));
+        }
+
+        $nim = session('user')->nim_nid;
+        $isPengujiOrPembimbing = DB::table('dosen_roles')
+            ->where('nim_nid', $nim)
+            ->whereIn('role_dosen', ['penguji', 'pembimbing'])
+            ->exists();
+
+        if (!$isPengujiOrPembimbing) {
+            abort(403, 'Akses ditolak.');
+        }
+    }
+
     private function guardPenguji()
     {
         if (!session('user')) {
@@ -26,40 +43,73 @@ class PenilaianController extends Controller
 
     public function index()
     {
-        $this->guardPenguji();
-        $nimPenguji = session('user')->nim_nid;
+        $this->guardDosen();
+        $nimDosen = session('user')->nim_nid;
 
-        $proposals = DB::table('proposal as p')
+        // DATA SEBAGAI PENGUJI
+        $asPenguji = DB::table('proposal as p')
             ->join('users as u', 'u.nim_nid', '=', 'p.nim_nid')
             ->join('pengajuan_seminars as psem',
                 DB::raw('psem.mahasiswa_id COLLATE utf8mb4_unicode_ci'),
                 '=',
                 DB::raw('p.nim_nid COLLATE utf8mb4_unicode_ci')
             )
-            // ✅ FIX: join ke dosen_penguji_seminar biar cuma mahasiswa
-            // yang dosen ini jadi pengujinya yang muncul
-            ->join('dosen_penguji_seminar as dps', function ($join) use ($nimPenguji) {
+            ->join('dosen_penguji_seminar as dps', function ($join) use ($nimDosen) {
                 $join->on('dps.pengajuan_seminar_id', '=', 'psem.id')
-                     ->where('dps.nim_nid_dosen', '=', $nimPenguji);
+                     ->where('dps.nim_nid_dosen', '=', $nimDosen);
             })
             ->where('psem.status_administrasi', 'Lolos Administrasi')
-            ->leftJoin('penilaian_seminar as ps', function ($join) use ($nimPenguji) {
+            ->leftJoin('penilaian_seminar as ps', function ($join) use ($nimDosen) {
                 $join->on('ps.proposal_id', '=', 'p.id')
-                     ->where('ps.nim_nid_penguji', '=', $nimPenguji);
+                     ->where('ps.nim_nid_penguji', '=', $nimDosen);
             })
             ->select(
                 'p.id as proposal_id',
                 'p.nim_nid',
                 'p.judul as judul_ta',
-                'p.status as status_proposal',
                 'u.nama',
-                'dps.urutan as urutan_penguji',
+                DB::raw("'penguji' as tipe"),
+                'dps.urutan as urutan_role',
                 'ps.status as status_penilaian',
                 'ps.nilai_akhir',
                 'ps.id as penilaian_id'
             )
             ->orderBy('u.nama')
             ->get();
+
+        // DATA SEBAGAI PEMBIMBING
+        $asPembimbing = DB::table('proposal as p')
+            ->join('users as u', 'u.nim_nid', '=', 'p.nim_nid')
+            ->join('dosen_pembimbing as dp', function ($join) use ($nimDosen) {
+                $join->on('dp.proposal_id', '=', 'p.id')
+                     ->where('dp.nim_nid_dosen', '=', $nimDosen);
+            })
+            ->join('pengajuan_seminars as psem',
+                DB::raw('psem.mahasiswa_id COLLATE utf8mb4_unicode_ci'),
+                '=',
+                DB::raw('p.nim_nid COLLATE utf8mb4_unicode_ci')
+            )
+            ->where('psem.status_administrasi', 'Lolos Administrasi')
+            ->leftJoin('penilaian_seminar_pembimbing as psp', function ($join) use ($nimDosen) {
+                $join->on('psp.proposal_id', '=', 'p.id')
+                     ->where('psp.nim_nid_pembimbing', '=', $nimDosen);
+            })
+            ->select(
+                'p.id as proposal_id',
+                'p.nim_nid',
+                'p.judul as judul_ta',
+                'u.nama',
+                DB::raw("'pembimbing' as tipe"),
+                'dp.urutan as urutan_role',
+                'psp.status as status_penilaian',
+                'psp.nilai_akhir',
+                'psp.id as penilaian_id'
+            )
+            ->orderBy('u.nama')
+            ->get();
+
+        // MERGE
+        $proposals = $asPenguji->concat($asPembimbing)->sortBy('nama')->values();
 
         $total        = $proposals->count();
         $belumDinilai = $proposals->whereNull('status_penilaian')->count();
@@ -88,7 +138,6 @@ class PenilaianController extends Controller
             ->where('nim_nid', $nimPenguji)
             ->first();
 
-        // ✅ FIX: ambil urutan dari dosen_penguji_seminar
         $urutan = DB::table('dosen_penguji_seminar as dps')
             ->join('pengajuan_seminars as psem', 'psem.id', '=', 'dps.pengajuan_seminar_id')
             ->join('proposal as p',
@@ -169,7 +218,6 @@ class PenilaianController extends Controller
                 ->with('error', 'Batas waktu edit penilaian sudah berakhir.');
         }
 
-        // ✅ FIX: ambil urutan dari dosen_penguji_seminar
         $urutan = DB::table('dosen_penguji_seminar as dps')
             ->join('pengajuan_seminars as psem', 'psem.id', '=', 'dps.pengajuan_seminar_id')
             ->join('proposal as p',

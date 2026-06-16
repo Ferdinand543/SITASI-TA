@@ -102,23 +102,40 @@
 
     .det-steps { display: flex; align-items: flex-start; overflow-x: auto; padding-bottom: 8px; }
     .det-step { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 80px; position: relative; }
+
+    /* Garis antar step */
     .det-step:not(:last-child)::after {
         content: ''; position: absolute;
         top: 18px; left: 50%; width: 100%; height: 2px;
         background: #E5E7EB; z-index: 0;
     }
     .det-step.done:not(:last-child)::after { background: #22C55E; }
+    .det-step.current:not(:last-child)::after { background: #E5E7EB; }
 
+    /* Icon step */
     .det-step-icon {
         width: 36px; height: 36px; border-radius: 50%;
         background: #F1F5F9; border: 2px solid #E5E7EB;
-        display: flex; align-items: center; justify-content: center;
+        display: flex; align-items: center;
+        justify-content: center;
         position: relative; z-index: 1; margin-bottom: 10px; flex-shrink: 0;
     }
-    .det-step.done .det-step-icon { background: #22C55E; border-color: #22C55E; }
+    .det-step.done .det-step-icon {
+        background: #22C55E; border-color: #22C55E;
+    }
+    /* Kuning untuk sedang berjalan */
+    .det-step.current .det-step-icon {
+        background: #FACC15; border-color: #F59E0B;
+        box-shadow: 0 0 0 4px rgba(250,204,21,0.2);
+    }
 
-    .det-step-label { font-size: 0.7rem; font-weight: 600; color: var(--muted); text-align: center; line-height: 1.3; white-space: pre-line; }
+    /* Label step */
+    .det-step-label {
+        font-size: 0.7rem; font-weight: 600; color: var(--muted);
+        text-align: center; line-height: 1.3; white-space: pre-line;
+    }
     .det-step.done .det-step-label { color: #16A34A; font-weight: 700; }
+    .det-step.current .det-step-label { color: #A16207; font-weight: 700; }
 
     /* Bottom Cards */
     .det-bottom { display: flex; gap: 20px; flex-wrap: wrap; }
@@ -146,7 +163,6 @@
     .det-jadwal-meta { display: flex; gap: 16px; flex-wrap: wrap; }
     .det-jadwal-meta-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; color: var(--neutral); }
 
-    /* Empty state */
     .det-empty { color: var(--muted); font-size: 0.82rem; font-style: italic; }
     .det-empty-state {
         display: flex; flex-direction: column; align-items: center;
@@ -157,12 +173,8 @@
         background: #F1F5F9; display: flex; align-items: center;
         justify-content: center; margin-bottom: 16px;
     }
-    .det-empty-title {
-        font-size: 0.95rem; font-weight: 700; color: var(--neutral); margin-bottom: 8px;
-    }
-    .det-empty-desc {
-        font-size: 0.78rem; color: var(--muted); line-height: 1.5;
-    }
+    .det-empty-title { font-size: 0.95rem; font-weight: 700; color: var(--neutral); margin-bottom: 8px; }
+    .det-empty-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
 </style>
 
 <div class="det-wrap">
@@ -175,7 +187,6 @@
     {{-- PROFILE OUTER --}}
     <div class="det-profile-outer">
 
-        {{-- KIRI: foto + info --}}
         <div class="det-profile-card">
             @if($mhs->foto)
                 <img src="{{ asset('storage/' . $mhs->foto) }}" class="det-avatar" alt="foto">
@@ -207,7 +218,6 @@
             </div>
         </div>
 
-        {{-- KANAN: dosen pembimbing --}}
         <div class="det-dosbing-card">
             <div class="det-dosbing-label">Dosen Pembimbing</div>
             @if($pembimbing1)
@@ -236,12 +246,16 @@
                 <div class="det-steps-title">Progress Akademik</div>
                 <div class="det-steps-sub">Pelacakan tahapan penyelesaian Tugas Akhir mahasiswa</div>
             </div>
+            {{-- LEGEND: tambahin Sedang Berjalan --}}
             <div class="det-steps-legend">
-                <div class="det-legend-item" style="color: #16A34A;">
-                    <span class="det-legend-dot" style="background: #22C55E;"></span> Selesai
+                <div class="det-legend-item" style="color:#16A34A;">
+                    <span class="det-legend-dot" style="background:#22C55E;"></span> Selesai
                 </div>
-                <div class="det-legend-item" style="color: #9CA3AF;">
-                    <span class="det-legend-dot" style="background: #D1D5DB;"></span> Belum Tercapai
+                <div class="det-legend-item" style="color:#A16207;">
+                    <span class="det-legend-dot" style="background:#FACC15;"></span> Sedang Berjalan
+                </div>
+                <div class="det-legend-item" style="color:#9CA3AF;">
+                    <span class="det-legend-dot" style="background:#D1D5DB;"></span> Belum Tercapai
                 </div>
             </div>
         </div>
@@ -256,16 +270,33 @@
                 ['label' => "Bimbingan\nTA",         'done' => $steps['adaBimbingan']],
                 ['label' => "Seminar\nProposal",     'done' => $steps['daftarSeminar']],
             ];
+
+            // Cari index pertama yang belum done = "sedang berjalan"
+            $currentIndex = -1;
+            foreach ($stepList as $i => $step) {
+                if (!$step['done']) {
+                    $currentIndex = $i;
+                    break;
+                }
+            }
         @endphp
 
         <div class="det-steps">
-            @foreach($stepList as $step)
-            @php $cls = $step['done'] ? 'done' : ''; @endphp
+            @foreach($stepList as $i => $step)
+            @php
+                $isCurrent = ($i === $currentIndex);
+                $cls = $step['done'] ? 'done' : ($isCurrent ? 'current' : '');
+            @endphp
             <div class="det-step {{ $cls }}">
                 <div class="det-step-icon">
                     @if($step['done'])
+                        {{-- Centang hijau --}}
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    @elseif($isCurrent)
+                        {{-- Icon sedang berjalan: jam/spinner kuning --}}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#735C00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     @else
+                        {{-- Abu belum --}}
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/></svg>
                     @endif
                 </div>

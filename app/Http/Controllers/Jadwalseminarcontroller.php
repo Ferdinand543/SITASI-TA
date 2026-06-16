@@ -7,13 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 class jadwalseminarcontroller extends Controller
 {
-    // =====================================================
-    // HELPER: CEK BENTROK DOSEN
-    // Cek apakah ada dosen (dari list nim_nid) yang sudah
-    // terjadwal di tanggal + waktu yang overlap,
-    // kecuali seminar dengan $excludeId (untuk edit).
-    // Return: array ['ada' => bool, 'konflik' => [...]]
-    // =====================================================
     private function cekBentrokDosen(array $nimNidDosen, string $tanggal, string $waktuMulai, string $waktuSelesai, $excludeId = null)
     {
         if (empty($nimNidDosen)) return ['ada' => false, 'konflik' => []];
@@ -21,7 +14,6 @@ class jadwalseminarcontroller extends Controller
         $konflik = [];
 
         foreach ($nimNidDosen as $nimNid) {
-            // Cari seminar lain yang melibatkan dosen ini sebagai PENGUJI
             $bentrokPenguji = DB::table('pengajuan_seminars as ps')
                 ->join('dosen_penguji_seminar as dps', 'dps.pengajuan_seminar_id', '=', 'ps.id')
                 ->join('users as u', DB::raw('u.nim_nid COLLATE utf8mb4_unicode_ci'), '=', DB::raw('ps.mahasiswa_id COLLATE utf8mb4_unicode_ci'))
@@ -44,7 +36,6 @@ class jadwalseminarcontroller extends Controller
                 }
             }
 
-            // Cari seminar lain yang melibatkan dosen ini sebagai PEMBIMBING
             $bentrokPembimbing = DB::table('pengajuan_seminars as ps')
                 ->join('proposal as pr', DB::raw('pr.nim_nid COLLATE utf8mb4_unicode_ci'), '=', DB::raw('ps.mahasiswa_id COLLATE utf8mb4_unicode_ci'))
                 ->join('dosen_pembimbing as dp', 'dp.proposal_id', '=', 'pr.id')
@@ -60,7 +51,6 @@ class jadwalseminarcontroller extends Controller
             foreach ($bentrokPembimbing as $b) {
                 if ($this->isOverlap($waktuMulai, $waktuSelesai, $b->waktu_mulai, $b->waktu_selesai)) {
                     $namaDosen = DB::table('users')->where('nim_nid', $nimNid)->value('nama');
-                    // Hindari duplikat kalau dosen sama sudah masuk dari penguji check
                     $sudahAda = collect($konflik)->contains(fn($k) => $k['dosen'] === ($namaDosen ?? $nimNid) && $k['mahasiswa'] === $b->nama_mahasiswa);
                     if (!$sudahAda) {
                         $konflik[] = [
@@ -76,27 +66,22 @@ class jadwalseminarcontroller extends Controller
         return ['ada' => count($konflik) > 0, 'konflik' => $konflik];
     }
 
-    // Cek apakah dua interval waktu overlap
     private function isOverlap($mulai1, $selesai1, $mulai2, $selesai2): bool
     {
         if (!$mulai1 || !$selesai1 || !$mulai2 || !$selesai2) return false;
-        // Overlap jika: mulai1 < selesai2 AND selesai1 > mulai2
         return $mulai1 < $selesai2 && $selesai1 > $mulai2;
     }
 
-    // Ambil semua nim_nid dosen yang terlibat di seminar tertentu (penguji + pembimbing)
     private function getDosenTerlibat($pengajuanSeminarId, $mahasiswaId): array
     {
         $nimNids = [];
 
-        // Penguji
         $penguji = DB::table('dosen_penguji_seminar')
             ->where('pengajuan_seminar_id', $pengajuanSeminarId)
             ->pluck('nim_nid_dosen')
             ->toArray();
         $nimNids = array_merge($nimNids, $penguji);
 
-        // Pembimbing (ambil dari proposal terakhir mahasiswa)
         $proposal = DB::table('proposal')
             ->where('nim_nid', $mahasiswaId)
             ->latest()
@@ -118,6 +103,25 @@ class jadwalseminarcontroller extends Controller
     public function index(Request $request)
     {
         if (!session('user')) return redirect('/login');
+
+        // ✅ AUTO UPDATE STATUS SEMINAR JADI 'Selesai' KALAU WAKTU SUDAH LEWAT
+        $now = now();
+        DB::table('pengajuan_seminars')
+            ->where('status_seminar', 'Sudah Dijadwalkan')
+            ->whereNotNull('tanggal_seminar')
+            ->whereNotNull('waktu_selesai')
+            ->get()
+            ->each(function ($s) use ($now) {
+                $waktuSelesai = \Carbon\Carbon::parse($s->tanggal_seminar . ' ' . $s->waktu_selesai);
+                if ($now->greaterThan($waktuSelesai)) {
+                    DB::table('pengajuan_seminars')
+                        ->where('id', $s->id)
+                        ->update([
+                            'status_seminar' => 'Selesai',
+                            'updated_at'     => now(),
+                        ]);
+                }
+            });
 
         $query = DB::table('pengajuan_seminars as ps')
             ->join('users as u', DB::raw('u.nim_nid COLLATE utf8mb4_unicode_ci'), '=', DB::raw('ps.mahasiswa_id COLLATE utf8mb4_unicode_ci'))
@@ -231,9 +235,6 @@ class jadwalseminarcontroller extends Controller
         ));
     }
 
-    // =====================================================
-    // SIMPAN JADWAL (1 MAHASISWA) — dengan validasi bentrok
-    // =====================================================
     public function jadwalkan(Request $request, $id)
     {
         $request->validate([
@@ -243,14 +244,11 @@ class jadwalseminarcontroller extends Controller
             'ruang'           => 'required',
         ]);
 
-        // Ambil data seminar yang mau dijadwalkan
         $seminar = DB::table('pengajuan_seminars')->where('id', $id)->first();
         if (!$seminar) abort(404);
 
-        // Kumpulkan semua dosen yang terlibat
         $nimNidDosen = $this->getDosenTerlibat($id, $seminar->mahasiswa_id);
 
-        // Cek bentrok — exclude seminar ini sendiri (untuk edit)
         $cek = $this->cekBentrokDosen(
             $nimNidDosen,
             $request->tanggal_seminar,
@@ -260,7 +258,6 @@ class jadwalseminarcontroller extends Controller
         );
 
         if ($cek['ada']) {
-            // Buat pesan error yang informatif
             $pesanList = collect($cek['konflik'])->map(function ($k) {
                 return "Dosen {$k['dosen']} sudah dijadwalkan bersama mahasiswa {$k['mahasiswa']} pukul {$k['jam']}";
             })->join(' | ');
@@ -289,9 +286,6 @@ class jadwalseminarcontroller extends Controller
         }
     }
 
-    // =====================================================
-    // HAPUS JADWAL
-    // =====================================================
     public function hapusJadwal($id)
     {
         try {
@@ -309,18 +303,12 @@ class jadwalseminarcontroller extends Controller
         }
     }
 
-    // =====================================================
-    // FORM JADWAL MASSAL
-    // =====================================================
     public function formMassal()
     {
         if (!session('user')) return redirect('/login');
         return view('jadwalseminar.massal');
     }
 
-    // =====================================================
-    // GET MAHASISWA BELUM DIJADWAL
-    // =====================================================
     public function getMahasiswaBelumJadwal(Request $request)
     {
         $query = DB::table('pengajuan_seminars as ps')
@@ -340,9 +328,6 @@ class jadwalseminarcontroller extends Controller
         return response()->json($query->get());
     }
 
-    // =====================================================
-    // SIMPAN JADWAL MASSAL — dengan validasi bentrok
-    // =====================================================
     public function simpanMassal(Request $request)
     {
         $request->validate([
@@ -354,10 +339,9 @@ class jadwalseminarcontroller extends Controller
             'peserta.*.waktu_selesai' => 'required',
         ]);
 
-        $tanggal      = $request->tanggal_seminar;
+        $tanggal       = $request->tanggal_seminar;
         $semua_konflik = [];
 
-        // ✅ Validasi bentrok untuk semua peserta sebelum simpan apapun
         foreach ($request->peserta as $peserta) {
             $seminar = DB::table('pengajuan_seminars')->where('id', $peserta['id'])->first();
             if (!$seminar) continue;
@@ -390,7 +374,6 @@ class jadwalseminarcontroller extends Controller
                 ->withInput();
         }
 
-        // Tidak ada konflik, simpan semua
         foreach ($request->peserta as $peserta) {
             DB::table('pengajuan_seminars')->where('id', $peserta['id'])->update([
                 'tanggal_seminar' => $tanggal,
@@ -410,9 +393,6 @@ class jadwalseminarcontroller extends Controller
             ->with('success', 'Jadwal seminar massal berhasil ditetapkan!');
     }
 
-    // =====================================================
-    // DETAIL + FORM JADWAL 1 MAHASISWA
-    // =====================================================
     public function detail($id)
     {
         if (!session('user')) return redirect('/login');

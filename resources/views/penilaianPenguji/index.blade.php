@@ -17,9 +17,7 @@
     </p>
 </div>
 
-{{-- ══════════════════════════════════════════
-     HERO
-══════════════════════════════════════════ --}}
+{{-- HERO --}}
 <div style="
     background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 55%, #FDE68A 100%);
     border-radius: 20px;
@@ -31,7 +29,6 @@
     display: flex;
     align-items: center;
 ">
-    {{-- Dekorasi lingkaran --}}
     <div style="position:absolute;right:-20px;top:-40px;width:230px;height:230px;
                 background:rgba(250,204,21,0.15);border-radius:50%;pointer-events:none;"></div>
     <div style="position:absolute;right:90px;bottom:-50px;width:150px;height:150px;
@@ -47,40 +44,14 @@
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════
-     STAT CARDS
-══════════════════════════════════════════ --}}
+{{-- STAT CARDS --}}
 <div class="row g-3 mb-4">
     @php
     $stats = [
-        [
-            'label' => 'Total Mahasiswa',
-            'val'   => $total,
-            'icon'  => 'fa-users',
-            'color' => '#735C00',
-            'bg'    => '#FFFBEB',
-        ],
-        [
-            'label' => 'Belum Dinilai',
-            'val'   => $belumDinilai,
-            'icon'  => 'fa-calendar-xmark',
-            'color' => '#dc2626',
-            'bg'    => '#FEF2F2',
-        ],
-        [
-            'label' => 'Draft Penilaian',
-            'val'   => $draft,
-            'icon'  => 'fa-file-pen',
-            'color' => '#92741A',
-            'bg'    => '#FEFCE8',
-        ],
-        [
-            'label' => 'Sudah Dinilai',
-            'val'   => $sudahDinilai,
-            'icon'  => 'fa-circle-check',
-            'color' => '#16a34a',
-            'bg'    => '#F0FDF4',
-        ],
+        ['label' => 'Total Mahasiswa', 'val' => $total,        'icon' => 'fa-users',          'color' => '#735C00', 'bg' => '#FFFBEB'],
+        ['label' => 'Belum Dinilai',   'val' => $belumDinilai, 'icon' => 'fa-calendar-xmark', 'color' => '#dc2626', 'bg' => '#FEF2F2'],
+        ['label' => 'Draft Penilaian', 'val' => $draft,        'icon' => 'fa-file-pen',        'color' => '#92741A', 'bg' => '#FEFCE8'],
+        ['label' => 'Sudah Dinilai',   'val' => $sudahDinilai, 'icon' => 'fa-circle-check',   'color' => '#16a34a', 'bg' => '#F0FDF4'],
     ];
     @endphp
 
@@ -95,8 +66,7 @@
                 width:46px; height:46px;
                 background:{{ $s['bg'] }}; border-radius:12px;
                 display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                <i class="fa {{ $s['icon'] }}"
-                   style="font-size:1.1rem;color:{{ $s['color'] }};"></i>
+                <i class="fa {{ $s['icon'] }}" style="font-size:1.1rem;color:{{ $s['color'] }};"></i>
             </div>
             <div>
                 <div style="font-size:1.7rem;font-weight:800;color:{{ $s['color'] }};line-height:1;">
@@ -111,9 +81,7 @@
     @endforeach
 </div>
 
-{{-- ══════════════════════════════════════════
-     FILTER & SEARCH
-══════════════════════════════════════════ --}}
+{{-- FILTER & SEARCH --}}
 <div style="
     background:#fff; border-radius:14px;
     padding:18px 20px; margin-bottom:20px;
@@ -121,8 +89,6 @@
     box-shadow:0 1px 4px rgba(0,0,0,0.04);">
 
     <div class="row g-2 align-items-end">
-
-        {{-- Search --}}
         <div class="col-md-7">
             <div style="position:relative;">
                 <i class="fa fa-search" style="
@@ -139,7 +105,6 @@
             </div>
         </div>
 
-        {{-- Filter status --}}
         <div class="col-md-3">
             <div style="display:flex;flex-direction:column;gap:3px;">
                 <label style="font-size:0.63rem;font-weight:700;color:#9ca3af;
@@ -157,7 +122,6 @@
             </div>
         </div>
 
-        {{-- Reset --}}
         <div class="col-md-2">
             <button onclick="resetFilter()" style="
                 width:100%; padding:10px;
@@ -170,13 +134,10 @@
                 <i class="fa fa-rotate-right"></i> Reset Filter
             </button>
         </div>
-
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════
-     TABEL
-══════════════════════════════════════════ --}}
+{{-- TABEL --}}
 <div style="
     background:#fff; border-radius:14px;
     border:1px solid #f0f0f0;
@@ -193,6 +154,10 @@
                 <th style="padding:14px 20px;font-size:0.7rem;font-weight:700;
                            color:#92741A;text-transform:uppercase;letter-spacing:1px;text-align:left;">
                     Nama Mahasiswa
+                </th>
+                <th style="padding:14px 20px;font-size:0.7rem;font-weight:700;
+                           color:#92741A;text-transform:uppercase;letter-spacing:1px;text-align:left;">
+                    Role
                 </th>
                 <th style="padding:14px 20px;font-size:0.7rem;font-weight:700;
                            color:#92741A;text-transform:uppercase;letter-spacing:1px;text-align:left;">
@@ -229,6 +194,24 @@
                 </td>
 
                 <td style="padding:16px 20px;">
+                    @if($p->tipe === 'pembimbing')
+                        <span style="
+                            background:#EFF6FF;color:#1d4ed8;
+                            padding:5px 14px;border-radius:20px;
+                            font-size:0.78rem;font-weight:600;">
+                            Pembimbing {{ $p->urutan_role }}
+                        </span>
+                    @else
+                        <span style="
+                            background:#F5F3FF;color:#7c3aed;
+                            padding:5px 14px;border-radius:20px;
+                            font-size:0.78rem;font-weight:600;">
+                            Penguji {{ $p->urutan_role }}
+                        </span>
+                    @endif
+                </td>
+
+                <td style="padding:16px 20px;">
                     @if(!$p->status_penilaian)
                         <span style="
                             background:#FEF2F2;color:#dc2626;
@@ -254,37 +237,41 @@
                 </td>
 
                 <td style="padding:16px 20px;text-align:center;">
+                    @php
+                        $routeForm = $p->tipe === 'pembimbing'
+                            ? route('penilaian.pembimbing.form', $p->proposal_id)
+                            : route('penilaian.form', $p->proposal_id);
+                        $routeShow = $p->tipe === 'pembimbing'
+                            ? route('penilaian.pembimbing.show', $p->proposal_id)
+                            : route('penilaian.show', $p->proposal_id);
+                    @endphp
+
                     @if(!$p->status_penilaian)
-                        {{-- Belum Dinilai → Mulai --}}
-                        <a href="{{ route('penilaian.form', $p->proposal_id) }}"
+                        <a href="{{ $routeForm }}"
                             style="
                                 display:inline-flex;align-items:center;gap:6px;
                                 padding:8px 18px;background:#dc2626;color:#fff;
                                 border-radius:10px;font-size:0.82rem;font-weight:700;
-                                text-decoration:none;transition:opacity 0.15s;">
+                                text-decoration:none;">
                             <i class="fa fa-pen-to-square"></i> Mulai Penilaian
                         </a>
-
                     @elseif($p->status_penilaian === 'draft')
-                        {{-- Draft → Lanjutkan --}}
-                        <a href="{{ route('penilaian.form', $p->proposal_id) }}"
+                        <a href="{{ $routeForm }}"
                             style="
                                 display:inline-flex;align-items:center;gap:6px;
                                 padding:8px 18px;background:#92741A;color:#fff;
                                 border-radius:10px;font-size:0.82rem;font-weight:700;
-                                text-decoration:none;transition:opacity 0.15s;">
+                                text-decoration:none;">
                             <i class="fa fa-pencil"></i> Lanjutkan Penilaian
                         </a>
-
                     @else
-                        {{-- Submitted → Lihat --}}
-                        <a href="{{ route('penilaian.show', $p->proposal_id) }}"
+                        <a href="{{ $routeShow }}"
                             style="
                                 display:inline-flex;align-items:center;gap:6px;
                                 padding:8px 18px;background:#fff;color:#374151;
                                 border:1px solid #D1D5DB;border-radius:10px;
                                 font-size:0.82rem;font-weight:700;
-                                text-decoration:none;transition:opacity 0.15s;">
+                                text-decoration:none;">
                             <i class="fa fa-eye"></i> Lihat Penilaian
                         </a>
                     @endif
@@ -292,7 +279,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="4" style="padding:56px;text-align:center;color:#9ca3af;">
+                <td colspan="5" style="padding:56px;text-align:center;color:#9ca3af;">
                     <i class="fa fa-inbox"
                        style="font-size:2.2rem;margin-bottom:12px;display:block;color:#D1D5DB;"></i>
                     <div style="font-weight:600;font-size:0.9rem;">
@@ -304,9 +291,7 @@
         </tbody>
     </table>
 
-    {{-- Empty state setelah filter --}}
-    <div id="emptyFilter" style="
-        display:none;padding:56px;text-align:center;color:#9ca3af;">
+    <div id="emptyFilter" style="display:none;padding:56px;text-align:center;color:#9ca3af;">
         <i class="fa fa-filter"
            style="font-size:2.2rem;margin-bottom:12px;display:block;color:#D1D5DB;"></i>
         <div style="font-weight:600;font-size:0.9rem;">
@@ -317,7 +302,6 @@
 </div>
 
 <script>
-    // ── Search & Filter ──
     const searchInput  = document.getElementById('searchInput');
     const filterStatus = document.getElementById('filterStatus');
 
@@ -354,13 +338,11 @@
     searchInput.addEventListener('input', filterTable);
     filterStatus.addEventListener('change', filterTable);
 
-    // ── Row hover ──
     document.querySelectorAll('.tabel-row').forEach(row => {
         row.addEventListener('mouseenter', () => row.style.background = '#FFFBEB');
         row.addEventListener('mouseleave', () => row.style.background = '');
     });
 
-    // ── Loading overlay ──
     window.addEventListener('load', () => {
         document.getElementById('loadingOverlay').style.display = 'none';
     });

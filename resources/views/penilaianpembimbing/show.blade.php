@@ -106,7 +106,7 @@ else                          { $grade = 'E';  $gradeBg = '#FEF2F2'; $gradeColor
                     <div style="font-size:0.88rem;color:#374151;line-height:1.6;">{{ $proposal->judul_ta }}</div>
                 </div>
                 <div class="col-md-6">
-                    <div style="font-size:0.72rem;font-weight:600;color:#9ca3af;margin-bottom:4px;">DOSEN PENGUJI</div>
+                    <div style="font-size:0.72rem;font-weight:600;color:#9ca3af;margin-bottom:4px;">DOSEN PEMBIMBING</div>
                     <div style="font-size:0.88rem;font-weight:700;color:#374151;">{{ $dosenPembimbing->nama ?? '-' }}</div>
                 </div>
                 <div class="col-md-6">
@@ -211,7 +211,7 @@ else                          { $grade = 'E';  $gradeBg = '#FEF2F2'; $gradeColor
             <div style="font-size:0.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;
                         letter-spacing:1px;margin-bottom:12px;border-left:3px solid #FACC15;padding-left:10px;
                         display:flex;align-items:center;gap:8px;">
-                <i class="fa fa-comment-dots" style="color:#FACC15;"></i> Catatan Dosen Penguji
+                <i class="fa fa-comment-dots" style="color:#FACC15;"></i> Catatan Dosen Pembimbing
             </div>
             @if($penilaian->catatan)
                 <p style="font-size:0.88rem;color:#374151;line-height:1.7;margin:0;
@@ -242,9 +242,9 @@ else                          { $grade = 'E';  $gradeBg = '#FEF2F2'; $gradeColor
             <div style="font-size:0.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;
                         letter-spacing:1px;margin-bottom:10px;">INDEKS PRESTASI</div>
             <div style="font-size:0.75rem;color:#9ca3af;margin-bottom:6px;">Grade</div>
-            <div style="display:inline-block;width:52px;height:52px;border-radius:12px;
+            <div style="display:inline-flex;width:52px;height:52px;border-radius:12px;
                         background:{{ $gradeBg }};
-                        display:flex;align-items:center;justify-content:center;
+                        align-items:center;justify-content:center;
                         font-size:1.6rem;font-weight:800;color:{{ $gradeColor }};
                         margin:0 auto;">
                 {{ $grade }}
@@ -286,8 +286,15 @@ else                          { $grade = 'E';  $gradeBg = '#FEF2F2'; $gradeColor
                        text-decoration:none;">
                 <i class="fa fa-pen"></i> Edit Penilaian
             </a>
+            @else
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;
+                        padding:12px 20px;background:#F3F4F6;color:#9ca3af;
+                        border-radius:12px;font-size:0.88rem;font-weight:700;cursor:not-allowed;">
+                <i class="fa fa-lock"></i> Edit Ditutup
+            </div>
             @endif
-            <a href="{{ route('penilaian.pembimbing.index') }}"
+
+            <a href="{{ route('penilaian.index') }}"
                 style="display:flex;align-items:center;justify-content:center;gap:8px;
                        padding:12px 20px;background:#fff;color:#374151;
                        border:1.5px solid #D1D5DB;border-radius:12px;

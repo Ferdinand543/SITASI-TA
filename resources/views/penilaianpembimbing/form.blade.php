@@ -54,6 +54,14 @@
     </div>
 </div>
 
+{{-- TOMBOL KEMBALI --}}
+<a href="{{ route('penilaian.index') }}" style="
+    display:inline-flex;align-items:center;gap:6px;
+    color:#92741A;font-size:0.85rem;font-weight:600;
+    text-decoration:none;margin-bottom:22px;">
+    <i class="fa fa-arrow-left"></i> Kembali
+</a>
+
 {{-- STATUS BADGE --}}
 @if($isSubmitted)
 <div style="background:#F0FDF4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 18px;
@@ -446,17 +454,15 @@ $totalMaksB = array_sum(array_column($komponenB, 'maks'));
 </div>
 
 <script>
-    // ✅ FIXED: clamp nilai agar tidak bisa melebihi max atau kurang dari min
     function clampNilai(input) {
         const min = parseInt(input.min) || 1;
         const max = parseInt(input.max) || 100;
         let val = parseInt(input.value);
 
-        if (isNaN(val) || input.value === '') return; // biarkan kosong dulu saat ngetik
+        if (isNaN(val) || input.value === '') return;
 
         if (val > max) {
             input.value = max;
-            // Flash border merah sebentar sebagai feedback
             input.style.borderColor = '#dc2626';
             input.style.color = '#dc2626';
             setTimeout(() => {
