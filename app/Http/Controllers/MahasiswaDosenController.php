@@ -65,7 +65,9 @@ class MahasiswaDosenController extends Controller
                 ->exists();
 
             // Step 5: Daftar seminar (+20%) — belum ada tabel, nanti ditambah
-            $daftarSeminar = false;
+            $daftarSeminar = DB::table('pengajuan_seminars')
+                ->where('mahasiswa_id', $nim)
+                ->exists();
 
             $progress = 0;
             if ($adaPengajuan)    $progress += 20;
