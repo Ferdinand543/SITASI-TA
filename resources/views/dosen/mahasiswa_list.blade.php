@@ -602,7 +602,7 @@ $angkatanTerbanyak = \Illuminate\Support\Facades\DB::table('users')
                         <div class="mhs-progress-label">{{ $mhs->progressLabel }}</div>
                     </td>
                     <td>
-                        <a href="#" class="btn-lihat-detail">
+                        <a href="{{ route('dosen.mahasiswa.detail', $mhs->nim_nid) }}" class="btn-lihat-detail">
                             Lihat Detail
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">

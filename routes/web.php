@@ -355,6 +355,7 @@ Route::post('/bimbingan/proposal', [BimbinganController::class, 'storeProposal']
 // =====================================================
 
 Route::get('/dosen/mahasiswa', [MahasiswaDosenController::class, 'index'])->name('dosen.mahasiswa');
+Route::get('/dosen/mahasiswa/{nim}', [MahasiswaDosenController::class, 'show'])->name('dosen.mahasiswa.detail');
 
 
 // =====================================================
@@ -511,3 +512,4 @@ Route::post('/admin/mahasiswa/import',         [ImportMahasiswaController::class
 
 Route::get('/jadwal-seminar-mahasiswa', [App\Http\Controllers\JadwalSeminarMahasiswaController::class, 'index'])
     ->name('jadwalseminar.mahasiswa.list');
+

@@ -14,7 +14,6 @@ class MahasiswaDosenController extends Controller
         $user = session('user');
         $role = strtolower(trim($user->role));
 
-        // Hanya dosen yang boleh akses
         if ($role !== 'dosen') {
             return redirect('/login')->with('error', 'Akses ditolak');
         }
@@ -22,7 +21,6 @@ class MahasiswaDosenController extends Controller
         $search   = $request->get('search', '');
         $angkatan = $request->get('angkatan', '');
 
-        // Ambil semua mahasiswa
         $query = DB::table('users')->where('role', 'mahasiswa');
 
         if ($search) {
@@ -38,36 +36,14 @@ class MahasiswaDosenController extends Controller
 
         $mahasiswaList = $query->orderBy('nama')->get();
 
-        // Hitung progress tiap mahasiswa
         $mahasiswaList = $mahasiswaList->map(function ($mhs) {
             $nim = $mhs->nim_nid;
 
-            // Step 1: Ada pengajuan judul (+20%)
-            $adaPengajuan = DB::table('pengajuan_judul')
-                ->where('nim_nid', $nim)
-                ->exists();
-
-            // Step 2: Judul disetujui (+20%)
-            $judulDisetujui = DB::table('pengajuan_judul')
-                ->where('nim_nid', $nim)
-                ->where('status', 'disetujui')
-                ->exists();
-
-            // Step 3: Upload proposal (+20%)
-            $adaProposal = DB::table('proposal')
-                ->where('nim_nid', $nim)
-                ->exists();
-
-            // Step 4: Proposal disetujui/selesai review (+20%)
-            $proposalSelesai = DB::table('proposal')
-                ->where('nim_nid', $nim)
-                ->where('status', 'selesai')
-                ->exists();
-
-            // Step 5: Daftar seminar (+20%) — belum ada tabel, nanti ditambah
-            $daftarSeminar = DB::table('pengajuan_seminars')
-                ->where('mahasiswa_id', $nim)
-                ->exists();
+            $adaPengajuan    = DB::table('pengajuan_judul')->where('nim_nid', $nim)->exists();
+            $judulDisetujui  = DB::table('pengajuan_judul')->where('nim_nid', $nim)->where('status', 'disetujui')->exists();
+            $adaProposal     = DB::table('proposal')->where('nim_nid', $nim)->exists();
+            $proposalSelesai = DB::table('proposal')->where('nim_nid', $nim)->where('status', 'selesai')->exists();
+            $daftarSeminar   = DB::table('pengajuan_seminars')->where('mahasiswa_id', $nim)->exists();
 
             $progress = 0;
             if ($adaPengajuan)    $progress += 20;
@@ -76,7 +52,6 @@ class MahasiswaDosenController extends Controller
             if ($proposalSelesai) $progress += 20;
             if ($daftarSeminar)   $progress += 20;
 
-            // Label tahapan saat ini
             $progressLabel = match(true) {
                 $daftarSeminar   => 'Seminar Proposal',
                 $proposalSelesai => 'Proposal Disetujui',
@@ -91,7 +66,6 @@ class MahasiswaDosenController extends Controller
             return $mhs;
         });
 
-        // Data untuk filter angkatan
         $angkatanList = DB::table('users')
             ->where('role', 'mahasiswa')
             ->whereNotNull('angkatan')
@@ -109,6 +83,83 @@ class MahasiswaDosenController extends Controller
             'totalAngkatan',
             'search',
             'angkatan'
+        ));
+    }
+
+    public function show($nim)
+    {
+        if (!session('user')) return redirect('/login');
+
+        $user = session('user');
+        if (strtolower(trim($user->role)) !== 'dosen') {
+            return redirect('/login')->with('error', 'Akses ditolak');
+        }
+
+        $mhs = DB::table('users')->where('nim_nid', $nim)->where('role', 'mahasiswa')->first();
+        if (!$mhs) abort(404);
+
+        $adaPengajuan    = DB::table('pengajuan_judul')->where('nim_nid', $nim)->exists();
+        $judulDisetujui  = DB::table('pengajuan_judul')->where('nim_nid', $nim)->where('status', 'disetujui')->exists();
+        $adaProposal     = DB::table('proposal')->where('nim_nid', $nim)->exists();
+        $proposalSelesai = DB::table('proposal')->where('nim_nid', $nim)->where('status', 'selesai')->exists();
+        $daftarSeminar   = DB::table('pengajuan_seminars')->where('mahasiswa_id', $nim)->exists();
+
+        $progress = 0;
+        if ($adaPengajuan)    $progress += 20;
+        if ($judulDisetujui)  $progress += 20;
+        if ($adaProposal)     $progress += 20;
+        if ($proposalSelesai) $progress += 20;
+        if ($daftarSeminar)   $progress += 20;
+
+        $progressLabel = match(true) {
+            $daftarSeminar   => 'Seminar Proposal',
+            $proposalSelesai => 'Proposal Disetujui',
+            $adaProposal     => 'Upload Proposal',
+            $judulDisetujui  => 'Judul Disetujui',
+            $adaPengajuan    => 'Pengajuan Judul',
+            default          => 'Belum Mulai',
+        };
+
+        $judul = DB::table('pengajuan_judul')
+            ->where('nim_nid', $nim)
+            ->where('status', 'disetujui')
+            ->latest('id')
+            ->first();
+
+        $proposal    = DB::table('proposal')->where('nim_nid', $nim)->latest()->first();
+        $pembimbing1 = null;
+        $pembimbing2 = null;
+
+        if ($proposal) {
+            $dosbing1    = DB::table('dosen_pembimbing')->where('proposal_id', $proposal->id)->where('urutan', 1)->first();
+            $dosbing2    = DB::table('dosen_pembimbing')->where('proposal_id', $proposal->id)->where('urutan', 2)->first();
+            $pembimbing1 = $dosbing1 ? DB::table('users')->where('nim_nid', $dosbing1->nim_nid_dosen)->first() : null;
+            $pembimbing2 = $dosbing2 ? DB::table('users')->where('nim_nid', $dosbing2->nim_nid_dosen)->first() : null;
+        }
+
+        $seminar  = DB::table('pengajuan_seminars')->where('mahasiswa_id', $nim)->latest()->first();
+        $penguji1 = null;
+        $penguji2 = null;
+
+        if ($seminar) {
+            $p1       = DB::table('dosen_penguji_seminar')->where('pengajuan_seminar_id', $seminar->id)->where('urutan', 1)->first();
+            $p2       = DB::table('dosen_penguji_seminar')->where('pengajuan_seminar_id', $seminar->id)->where('urutan', 2)->first();
+            $penguji1 = $p1 ? DB::table('users')->where('nim_nid', $p1->nim_nid_dosen)->first() : null;
+            $penguji2 = $p2 ? DB::table('users')->where('nim_nid', $p2->nim_nid_dosen)->first() : null;
+        }
+
+        $steps = [
+            'adaPengajuan'    => $adaPengajuan,
+            'judulDisetujui'  => $judulDisetujui,
+            'adaProposal'     => $adaProposal,
+            'proposalSelesai' => $proposalSelesai,
+            'daftarSeminar'   => $daftarSeminar,
+        ];
+
+        return view('dosen.mahasiswa_detail', compact(
+            'mhs', 'progress', 'progressLabel', 'steps',
+            'judul', 'pembimbing1', 'pembimbing2',
+            'seminar', 'penguji1', 'penguji2'
         ));
     }
 }
