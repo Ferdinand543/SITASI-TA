@@ -369,8 +369,9 @@
                             @elseif(in_array($p->status_seminar, ['Menunggu Jadwal', 'Jadwal ditetapkan', 'Sudah Dijadwalkan', 'Selesai']))
                             <div style="display:flex;flex-direction:column;gap:6px;">
                                 <a href="{{ route('seminar.show', $p->id) }}" class="btn-lihat">Lihat Seminar</a>
-                                <a href="{{ route('berita.acara.unduh') }}" class="btn-lihat" style="color:#C9A227;">
+                                <a href="{{ route('berita.acara.generate') }}" class="btn-lihat" style="color:#C9A227;">
                                     Unduh Berita Acara
+                                </a>
                                 </a>
                             </div>
 

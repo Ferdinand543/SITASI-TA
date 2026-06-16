@@ -522,6 +522,9 @@ Route::get('/jadwal-seminar-mahasiswa', [App\Http\Controllers\JadwalSeminarMahas
 // BERITA ACARA — unduh harus DI ATAS route {filename}
 // =====================================================
 
+Route::get('/berita-acara/generate', [App\Http\Controllers\BeritaAcaraController::class, 'generate'])
+    ->name('berita.acara.generate');
+
 Route::get('/berita-acara/unduh', function () {
     $beritaAcara = \App\Models\BeritaAcaraTemplate::latest()->first();
     if (!$beritaAcara) abort(404);
