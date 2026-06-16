@@ -409,8 +409,13 @@ Route::prefix('admin')->group(function () {
 // ADMINISTRASI SEMINAR — ADMIN
 // =====================================================
 
+// =====================================================
+// ADMINISTRASI SEMINAR — ADMIN
+// =====================================================
+
 Route::prefix('admin')->group(function () {
     Route::get('/seminar',                  [AdminSeminarController::class, 'index'])->name('admin.seminar.index');
+    Route::post('/seminar/berita-acara',    [AdminSeminarController::class, 'uploadBeritaAcara'])->name('admin.seminar.upload-berita-acara');
     Route::get('/seminar/{id}',             [AdminSeminarController::class, 'show'])->name('admin.seminar.show');
     Route::post('/seminar/{id}/verifikasi', [AdminSeminarController::class, 'verifikasi'])->name('admin.seminar.verifikasi');
     Route::post('/seminar/{id}/jadwalkan',  [AdminSeminarController::class, 'jadwalkan'])->name('admin.seminar.jadwalkan');
@@ -512,3 +517,21 @@ Route::post('/admin/mahasiswa/import',         [ImportMahasiswaController::class
 
 Route::get('/jadwal-seminar-mahasiswa', [App\Http\Controllers\JadwalSeminarMahasiswaController::class, 'index'])
     ->name('jadwalseminar.mahasiswa.list');
+
+// =====================================================
+// BERITA ACARA — unduh harus DI ATAS route {filename}
+// =====================================================
+
+Route::get('/berita-acara/unduh', function () {
+    $beritaAcara = \App\Models\BeritaAcaraTemplate::latest()->first();
+    if (!$beritaAcara) abort(404);
+    $path = storage_path('app/public/' . $beritaAcara->file_path);
+    if (!file_exists($path)) abort(404);
+    return response()->download($path, $beritaAcara->nama_file_asli);
+})->name('berita.acara.unduh');
+
+Route::get('/berita-acara/{filename}', function ($filename) {
+    $path = storage_path('app/public/berita-acara/' . $filename);
+    if (!file_exists($path)) abort(404);
+    return response()->file($path);
+})->name('berita.acara.file');
