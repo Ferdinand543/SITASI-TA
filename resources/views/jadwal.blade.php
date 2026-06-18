@@ -89,15 +89,15 @@
     }
     .siap-jadwal-title { font-size: 16px; font-weight: 800; color: var(--neutral); margin-bottom: 4px; }
     .siap-jadwal-desc { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 480px; }
-   .siap-jadwal-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    margin-top: 14px; padding: 9px 18px;
-    background: #FDE047; color: #713F12;
-    border: 1px solid #FACC15;
-    border-radius: 10px; font-size: 13px; font-weight: 700;
-    text-decoration: none; transition: background .2s;
-}
-.siap-jadwal-btn:hover { background: #FACC15; color: #713F12; }
+    .siap-jadwal-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        margin-top: 14px; padding: 9px 18px;
+        background: #FDE047; color: #713F12;
+        border: 1px solid #FACC15;
+        border-radius: 10px; font-size: 13px; font-weight: 700;
+        text-decoration: none; transition: background .2s;
+    }
+    .siap-jadwal-btn:hover { background: #FACC15; color: #713F12; }
     .siap-jadwal-badge {
         text-align: center; background: var(--gold-lt);
         border: 1.5px solid var(--gold-border); border-radius: 14px;
@@ -179,57 +179,6 @@
 
         {{-- KIRI --}}
         <div>
-
-            {{-- TIMELINE: hanya mahasiswa --}}
-            @if($role === 'mahasiswa')
-            <div class="timeline-card">
-                <div class="timeline-card-title">
-                    Timeline Progress
-                    <span class="progress-persen">{{ $progressPersen }}% Selesai</span>
-                </div>
-                <div class="progress-bar-wrap" style="margin-top:10px;">
-                    <div class="progress-bar-fill" style="width:{{ $progressPersen }}%;"></div>
-                </div>
-                <ul class="timeline-list">
-                    @foreach($timeline as $tl)
-                    <li class="timeline-item">
-                        <div class="tl-dot {{ $tl['status'] }}">
-                            @if($tl['status'] === 'selesai')
-                                <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                                </svg>
-                            @elseif($tl['status'] === 'aktif')
-                                <div style="width:6px;height:6px;background:var(--gold);border-radius:50%;"></div>
-                            @elseif($tl['status'] === 'mendatang')
-                                <div style="width:6px;height:6px;background:#D1D5DB;border-radius:50%;"></div>
-                            @endif
-                        </div>
-                        <div>
-                            <div class="tl-label">{{ $tl['label'] }}</div>
-                            @if($tl['keterangan'])
-                                <div class="tl-sub">{{ $tl['keterangan'] }}</div>
-                            @endif
-                            @if($tl['tanggal'])
-                                <div class="tl-sub">
-                                    {{ \Carbon\Carbon::parse($tl['tanggal'])->translatedFormat('d M Y') }}
-                                    @if(!empty($tl['tanggal_selesai']))
-                                        — {{ \Carbon\Carbon::parse($tl['tanggal_selesai'])->translatedFormat('d M Y') }}
-                                    @endif
-                                </div>
-                            @endif
-                            <span class="tl-badge {{ $tl['status'] }}">
-                                @if($tl['status'] === 'selesai') Selesai
-                                @elseif($tl['status'] === 'aktif') Sedang Berlangsung
-                                @elseif($tl['status'] === 'mendatang') Akan Datang
-                                @else Belum Dimulai
-                                @endif
-                            </span>
-                        </div>
-                    </li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
 
             {{-- CARD SIAP DIJADWALKAN: hanya admin & koordinator --}}
             @if($role === 'admin' || $isKoordinator)
@@ -346,6 +295,57 @@
                     </table>
                 </div>
             </div>
+
+            {{-- TIMELINE: hanya mahasiswa — DIPINDAH KE BAWAH --}}
+            @if($role === 'mahasiswa')
+            <div class="timeline-card" style="margin-top:20px;">
+                <div class="timeline-card-title">
+                    Timeline Progress
+                    <span class="progress-persen">{{ $progressPersen }}% Selesai</span>
+                </div>
+                <div class="progress-bar-wrap" style="margin-top:10px;">
+                    <div class="progress-bar-fill" style="width:{{ $progressPersen }}%;"></div>
+                </div>
+                <ul class="timeline-list">
+                    @foreach($timeline as $tl)
+                    <li class="timeline-item">
+                        <div class="tl-dot {{ $tl['status'] }}">
+                            @if($tl['status'] === 'selesai')
+                                <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            @elseif($tl['status'] === 'aktif')
+                                <div style="width:6px;height:6px;background:var(--gold);border-radius:50%;"></div>
+                            @elseif($tl['status'] === 'mendatang')
+                                <div style="width:6px;height:6px;background:#D1D5DB;border-radius:50%;"></div>
+                            @endif
+                        </div>
+                        <div>
+                            <div class="tl-label">{{ $tl['label'] }}</div>
+                            @if($tl['keterangan'])
+                                <div class="tl-sub">{{ $tl['keterangan'] }}</div>
+                            @endif
+                            @if($tl['tanggal'])
+                                <div class="tl-sub">
+                                    {{ \Carbon\Carbon::parse($tl['tanggal'])->translatedFormat('d M Y') }}
+                                    @if(!empty($tl['tanggal_selesai']))
+                                        — {{ \Carbon\Carbon::parse($tl['tanggal_selesai'])->translatedFormat('d M Y') }}
+                                    @endif
+                                </div>
+                            @endif
+                            <span class="tl-badge {{ $tl['status'] }}">
+                                @if($tl['status'] === 'selesai') Selesai
+                                @elseif($tl['status'] === 'aktif') Sedang Berlangsung
+                                @elseif($tl['status'] === 'mendatang') Akan Datang
+                                @else Belum Dimulai
+                                @endif
+                            </span>
+                        </div>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
 
         </div>
 
