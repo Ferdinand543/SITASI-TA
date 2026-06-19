@@ -79,8 +79,7 @@
     .siap-jadwal-card {
         background: var(--white); border-radius: var(--radius); padding: 24px 28px;
         box-shadow: 0 2px 10px rgba(0,0,0,.05); border: 1px solid var(--border);
-        margin-bottom: 20px; display: flex; align-items: center;
-        justify-content: space-between; gap: 20px; flex-wrap: wrap;
+        margin-bottom: 20px; position: relative; padding-right: 140px;
     }
     .siap-jadwal-icon {
         width: 48px; height: 48px; border-radius: 12px;
@@ -101,7 +100,8 @@
     .siap-jadwal-badge {
         text-align: center; background: var(--gold-lt);
         border: 1.5px solid var(--gold-border); border-radius: 14px;
-        padding: 16px 24px; flex-shrink: 0;
+        padding: 12px 20px;
+        position: absolute; top: 16px; right: 20px;
     }
     .siap-jadwal-badge-num { font-size: 32px; font-weight: 900; color: var(--gold); line-height: 1; }
     .siap-jadwal-badge-label { font-size: 11px; font-weight: 700; color: #92400E; margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
@@ -183,6 +183,10 @@
             {{-- CARD SIAP DIJADWALKAN: hanya admin & koordinator --}}
             @if($role === 'admin' || $isKoordinator)
             <div class="siap-jadwal-card">
+                <div class="siap-jadwal-badge">
+                    <div class="siap-jadwal-badge-num">{{ $jumlahMahasiswaSiapSeminar ?? 0 }}</div>
+                    <div class="siap-jadwal-badge-label">Mahasiswa</div>
+                </div>
                 <div style="display:flex;align-items:flex-start;gap:16px;">
                     <div class="siap-jadwal-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#C9A227" stroke-width="2">
@@ -202,10 +206,6 @@
                             Kelola Jadwal Seminar
                         </a>
                     </div>
-                </div>
-                <div class="siap-jadwal-badge">
-                    <div class="siap-jadwal-badge-num">{{ $jumlahMahasiswaSiapSeminar ?? 0 }}</div>
-                    <div class="siap-jadwal-badge-label">Mahasiswa</div>
                 </div>
             </div>
             @endif

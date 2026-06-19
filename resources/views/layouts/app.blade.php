@@ -173,9 +173,29 @@
             padding: 7px 12px;
         }
 
-        .role-admin .sidebar-link,
         .role-mahasiswa .sidebar-link {
             padding: 10px 12px;
+        }
+
+        /* ══ ADMIN ONLY: biar semua menu muat tanpa scroll ══ */
+        .role-admin .sidebar-brand {
+            padding: 13px 18px 11px 18px;
+        }
+
+        .role-admin .sidebar-nav {
+            padding: 8px 12px;
+            overflow-y: hidden;
+        }
+
+        .role-admin .nav-label {
+            margin: 7px 0 2px 0;
+            font-size: 0.59rem;
+        }
+
+        .role-admin .sidebar-link {
+            padding: 7px 10px;
+            font-size: 0.76rem;
+            margin-bottom: 1px;
         }
 
         .sidebar-footer {
@@ -693,7 +713,7 @@
                 ->exists();
             @endphp
 
-            <a href="/admin/judul" class="sidebar-link">
+            <a href="/admin/judul" class="sidebar-link {{ request()->is('admin/judul*') ? 'active' : '' }}">
                 <i class="fa-regular fa-file-lines"></i> Pengajuan Judul
                 @if($notifJudulAdmin)<span class="link-badge-notif"></span>@endif
             </a>
@@ -704,28 +724,27 @@
             <a href="/admin/bimbingan" class="sidebar-link {{ request()->is('admin/bimbingan') || request()->is('admin/bimbingan/*') ? 'active' : '' }}">
                 <i class="fa-regular fa-clock"></i> Riwayat Bimbingan
             </a>
-            <a href="{{ route('admin.seminar.index') }}" class="sidebar-link">
+            <a href="{{ route('admin.seminar.index') }}" class="sidebar-link {{ request()->routeIs('admin.seminar.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-graduate"></i> Administrasi Seminar
                 @if($notifSeminarAdmin)<span class="link-badge-notif"></span>@endif
             </a>
             <a href="{{ route('admin.mahasiswa-seminar') }}" class="sidebar-link {{ request()->routeIs('admin.mahasiswa-seminar') ? 'active' : '' }}">
                 <i class="fa-solid fa-chalkboard-user"></i> Mahasiswa Seminar
             </a>
-            {{-- ══ TAMBAHAN: Menu Mahasiswa Progress ══ --}}
             <a href="{{ route('admin.mahasiswa.progress') }}" class="sidebar-link {{ request()->is('admin/mahasiswa-progress*') ? 'active' : '' }}">
                 <i class="fa-solid fa-users"></i> Mahasiswa
             </a>
             <div class="nav-label">Master Data</div>
-            <a href="/admin/mahasiswa" class="sidebar-link">
+            <a href="/admin/mahasiswa" class="sidebar-link {{ request()->is('admin/mahasiswa') || request()->is('admin/mahasiswa/*') ? 'active' : '' }}">
                 <i class="fa-solid fa-database"></i> Data Mahasiswa
             </a>
-            <a href="/admin/dosen" class="sidebar-link">
+            <a href="/admin/dosen" class="sidebar-link {{ request()->is('admin/dosen*') ? 'active' : '' }}">
                 <i class="fa-solid fa-users"></i> Data Dosen
             </a>
-            <a href="{{ route('jadwal-akademik.index') }}" class="sidebar-link">
+            <a href="{{ route('jadwal-akademik.index') }}" class="sidebar-link {{ request()->routeIs('jadwal-akademik.*') ? 'active' : '' }}">
                 <i class="fa-regular fa-calendar-days"></i> Jadwal
             </a>
-            <a href="/panduan-ta/admin" class="sidebar-link">
+            <a href="/panduan-ta/admin" class="sidebar-link {{ request()->is('panduan-ta/admin*') ? 'active' : '' }}">
                 <i class="fa-regular fa-bookmark"></i> Panduan TA
             </a>
             @endif
