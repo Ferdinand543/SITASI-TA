@@ -744,6 +744,15 @@
             // Fetch gagal pun tidak masalah, file tetap terbuka di tab baru
         });
     }
+
+    // ── BACA ?tab= DARI URL → otomatis buka tab yang sesuai ──
+    document.addEventListener('DOMContentLoaded', function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var tab = urlParams.get('tab');
+        if (tab === 'mahasiswa') {
+            switchTab('mahasiswa');
+        }
+    });
 </script>
 
 @endsection

@@ -404,6 +404,27 @@
             min-width: 400px;
         }
 
+        /* ══ DROPDOWN SIDEBAR ══ */
+        .sidebar-dropdown {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease;
+        }
+        .sidebar-chevron {
+            margin-left: auto;
+            font-size: 0.65rem;
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+        .sidebar-chevron.open {
+            transform: rotate(90deg);
+        }
+        .sidebar-sublink {
+            padding-left: 32px !important;
+            font-size: 0.76rem !important;
+            font-weight: 500 !important;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -573,6 +594,9 @@
                 ? DB::table('bimbingan')->where('dosen_nid', $nimSesi)->where('status', 'Baru Dikirim')->count()
                   + DB::table('pengajuan_proposal_bimbingan')->where('dosen_nid', $nimSesi)->where('status', 'pending')->count()
                 : 0;
+
+            $proposalDropdownOpen = request()->is('proposal*') || request()->is('reviewer*');
+            $bimbinganDropdownOpen = request()->is('dosen/bimbingan*');
             @endphp
 
             <div class="nav-label">Tugas Akhir</div>
@@ -588,36 +612,87 @@
             </button>
             @endif
 
-            @if($isKoor)
-            <a href="{{ route('proposal.index') }}" class="sidebar-link {{ request()->is('proposal*') && !request()->is('reviewer*') && !request()->is('proposal/penguji*') ? 'active' : '' }}">
+            {{-- PROPOSAL DROPDOWN --}}
+            <button class="sidebar-link {{ $proposalDropdownOpen ? 'active' : '' }}"
+                onclick="toggleDropdownProposal()">
                 <i class="fa-solid fa-file-arrow-up"></i> Proposal
                 @if($jumlahMenungguProposalSidebar > 0)<span class="link-badge-notif"></span>@endif
-            </a>
-            @elseif($isReviewer)
-            <a href="{{ route('reviewer.proposal') }}" class="sidebar-link {{ request()->is('reviewer*') ? 'active' : '' }}">
-                <i class="fa-solid fa-file-arrow-up"></i> Proposal
-                @if($jumlahMenungguProposalSidebar > 0)<span class="link-badge-notif"></span>@endif
-            </a>
-            @elseif($isPenguji)
-            <a href="{{ route('proposal.penguji') }}" class="sidebar-link {{ request()->is('proposal/penguji*') ? 'active' : '' }}">
-                <i class="fa-solid fa-file-arrow-up"></i> Proposal
-            </a>
-            @else
-            <button class="sidebar-link sidebar-link-locked" onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator atau Reviewer.')">
-                <i class="fa-solid fa-file-arrow-up"></i> Proposal
+                <i class="fa-solid fa-chevron-right sidebar-chevron {{ $proposalDropdownOpen ? 'open' : '' }}" id="chevron-proposal"></i>
             </button>
-            @endif
+            <div class="sidebar-dropdown" id="dropdown-proposal"
+                style="max-height: {{ $proposalDropdownOpen ? '200px' : '0' }};">
 
+                {{-- Penetapan Dosen Pembimbing: hanya koordinator --}}
+                @if($isKoor)
+                <a href="{{ route('proposal.index') }}?tab=pembimbing"
+                    class="sidebar-link sidebar-sublink {{ request()->is('proposal*') && request()->query('tab') === 'pembimbing' ? 'active' : '' }}">
+                    <i class="fa-solid fa-chalkboard-user"></i> Penetapan Dospem
+                </a>
+                @else
+                <button class="sidebar-link sidebar-sublink sidebar-link-locked"
+                    onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator.')">
+                    <i class="fa-solid fa-chalkboard-user"></i> Penetapan Dospem
+                </button>
+                @endif
+
+                {{-- Penetapan Reviewer: hanya koordinator --}}
+                @if($isKoor)
+                <a href="{{ route('proposal.index') }}?tab=reviewer"
+                    class="sidebar-link sidebar-sublink {{ request()->is('proposal*') && request()->query('tab') === 'reviewer' ? 'active' : '' }}">
+                    <i class="fa-solid fa-user-check"></i> Penetapan Reviewer
+                </a>
+                @else
+                <button class="sidebar-link sidebar-sublink sidebar-link-locked"
+                    onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator.')">
+                    <i class="fa-solid fa-user-check"></i> Penetapan Reviewer
+                </button>
+                @endif
+
+                {{-- Review Proposal: hanya reviewer --}}
+                @if($isReviewer)
+                <a href="{{ route('reviewer.proposal') }}"
+                    class="sidebar-link sidebar-sublink {{ request()->is('reviewer*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-circle-check"></i> Review Proposal
+                    @if($jumlahMenungguProposalSidebar > 0)<span class="link-badge-notif"></span>@endif
+                </a>
+                @else
+                <button class="sidebar-link sidebar-sublink sidebar-link-locked"
+                    onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Reviewer.')">
+                    <i class="fa-solid fa-file-circle-check"></i> Review Proposal
+                </button>
+                @endif
+
+            </div>
+            {{-- END PROPOSAL DROPDOWN --}}
+
+            {{-- BIMBINGAN DROPDOWN --}}
             @if($isPembimbing)
-            <a href="{{ route('dosen.bimbingan.index') }}" class="sidebar-link {{ request()->is('bimbingan*') ? 'active' : '' }}">
+            <button class="sidebar-link {{ $bimbinganDropdownOpen ? 'active' : '' }}"
+                onclick="toggleDropdownBimbingan()">
                 <i class="fa-solid fa-comments"></i> Riwayat Bimbingan
                 @if($jumlahBimbinganBaruSidebar > 0)<span class="link-badge-notif"></span>@endif
-            </a>
+                <i class="fa-solid fa-chevron-right sidebar-chevron {{ $bimbinganDropdownOpen ? 'open' : '' }}" id="chevron-bimbingan"></i>
+            </button>
+            <div class="sidebar-dropdown" id="dropdown-bimbingan"
+                style="max-height: {{ $bimbinganDropdownOpen ? '200px' : '0' }};">
+
+                <a href="{{ route('dosen.bimbingan.index') }}?tab=dokumen"
+                    class="sidebar-link sidebar-sublink {{ $bimbinganDropdownOpen && request()->query('tab') === 'dokumen' ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-lines"></i> Dokumen Bimbingan
+                </a>
+
+                <a href="{{ route('dosen.bimbingan.index') }}?tab=mahasiswa"
+                    class="sidebar-link sidebar-sublink {{ $bimbinganDropdownOpen && request()->query('tab') === 'mahasiswa' ? 'active' : '' }}">
+                    <i class="fa-solid fa-user-graduate"></i> Mahasiswa Bimbingan
+                </a>
+
+            </div>
             @else
             <button class="sidebar-link sidebar-link-locked" onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Pembimbing.')">
                 <i class="fa-solid fa-comments"></i> Riwayat Bimbingan
             </button>
             @endif
+            {{-- END BIMBINGAN DROPDOWN --}}
 
             @if($isPenguji || $isPembimbing)
             <a href="{{ route('dosen.mahasiswa.seminar') }}" class="sidebar-link {{ request()->routeIs('dosen.mahasiswa.seminar') ? 'active' : '' }}">
@@ -866,6 +941,22 @@
         function showSidebarDenied(msg) {
             document.getElementById('popupSidebarMsg').innerText = msg;
             document.getElementById('popupSidebarDenied').style.display = 'flex';
+        }
+
+        function toggleDropdownProposal() {
+            const dd      = document.getElementById('dropdown-proposal');
+            const chevron = document.getElementById('chevron-proposal');
+            const isOpen  = dd.style.maxHeight !== '0px' && dd.style.maxHeight !== '';
+            dd.style.maxHeight = isOpen ? '0' : '200px';
+            chevron.classList.toggle('open', !isOpen);
+        }
+
+        function toggleDropdownBimbingan() {
+            const dd      = document.getElementById('dropdown-bimbingan');
+            const chevron = document.getElementById('chevron-bimbingan');
+            const isOpen  = dd.style.maxHeight !== '0px' && dd.style.maxHeight !== '';
+            dd.style.maxHeight = isOpen ? '0' : '200px';
+            chevron.classList.toggle('open', !isOpen);
         }
 
         function konfirmasiLogout() {
