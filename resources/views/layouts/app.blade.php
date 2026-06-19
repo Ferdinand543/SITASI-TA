@@ -54,7 +54,6 @@
             transform: translateX(-100%);
         }
 
-        /* ── BRAND: lebih compact ── */
         .sidebar-brand {
             padding: 16px 20px 14px 20px;
             border-bottom: 1px solid #f1f5f9;
@@ -77,7 +76,6 @@
             margin-top: 1px;
         }
 
-        /* ── NAV: no scroll ── */
         .sidebar-nav {
             padding: 10px 12px;
             flex: 1;
@@ -85,7 +83,6 @@
             min-height: 0;
         }
 
-        /* ── NAV LABEL ── */
         .nav-label {
             font-size: 0.6rem;
             font-weight: 700;
@@ -96,7 +93,6 @@
             margin: 10px 0 3px 0;
         }
 
-        /* ── NAV LINK ── */
         .sidebar-link {
             display: flex;
             align-items: center;
@@ -162,7 +158,6 @@
             color: #dc2626 !important;
         }
 
-        /* ── NOTIF BADGE SIDEBAR ── */
         .link-badge-notif {
             width: 8px;
             height: 8px;
@@ -174,7 +169,6 @@
             right: 12px;
         }
 
-        /* ── PADDING PER ROLE ── */
         .role-dosen .sidebar-link {
             padding: 7px 12px;
         }
@@ -184,7 +178,6 @@
             padding: 10px 12px;
         }
 
-        /* ── FOOTER: compact ── */
         .sidebar-footer {
             padding: 10px 10px;
             border-top: 1px solid #f1f5f9;
@@ -474,13 +467,11 @@
             @php
             $nimMhs = session('user')->nim_nid;
 
-            // Notif Pengajuan Judul: ada hasil verifikasi (disetujui/ditolak) pada pengajuan judul
             $notifJudulMahasiswa = DB::table('pengajuan_judul')
                 ->where('nim_nid', $nimMhs)
                 ->whereIn('status', ['disetujui', 'ditolak'])
                 ->exists();
 
-            // Notif Proposal: ada hasil review (selesai/ditolak) pada proposal
             $notifProposalMahasiswa = DB::table('proposal')
                 ->where('nim_nid', $nimMhs)
                 ->whereIn('status', ['selesai', 'ditolak'])
@@ -544,12 +535,10 @@
             ->exists();
             }
 
-            // ── NOTIF: Pengajuan Judul (Koordinator) ──
             $adaPengajuanBaruSidebar = $isKoor
                 ? DB::table('pengajuan_judul')->where('status', 'menunggu verifikasi')->exists()
                 : false;
 
-            // ── NOTIF: Proposal (Koordinator/Reviewer) ──
             $jumlahMenungguProposalSidebar = $isKoor
                 ? DB::table('proposal')->whereIn('status', ['menunggu_review', 'menunggu_verifikasi'])->count()
                 : ($isReviewer
@@ -560,7 +549,6 @@
                         ->count()
                     : 0);
 
-            // ── NOTIF: Riwayat Bimbingan (Pembimbing) ──
             $jumlahBimbinganBaruSidebar = $isPembimbing
                 ? DB::table('bimbingan')->where('dosen_nid', $nimSesi)->where('status', 'Baru Dikirim')->count()
                   + DB::table('pengajuan_proposal_bimbingan')->where('dosen_nid', $nimSesi)->where('status', 'pending')->count()
@@ -610,8 +598,6 @@
                 <i class="fa-solid fa-comments"></i> Riwayat Bimbingan
             </button>
             @endif
-
-
 
             @if($isPenguji || $isPembimbing)
             <a href="{{ route('dosen.mahasiswa.seminar') }}" class="sidebar-link {{ request()->routeIs('dosen.mahasiswa.seminar') ? 'active' : '' }}">
@@ -694,17 +680,14 @@
             @if($role === 'admin')
 
             @php
-            // ── NOTIF: Pengajuan Judul ── ada pengajuan menunggu verifikasi
             $notifJudulAdmin = DB::table('pengajuan_judul')
                 ->where('status', 'menunggu verifikasi')
                 ->exists();
 
-            // ── NOTIF: Proposal Mahasiswa ── ada proposal menunggu verifikasi/review
             $notifProposalAdmin = DB::table('proposal')
                 ->whereIn('status', ['menunggu_review', 'menunggu_verifikasi'])
                 ->exists();
 
-            // ── NOTIF: Administrasi Seminar ── ada pendaftaran seminar menunggu verifikasi
             $notifSeminarAdmin = DB::table('pengajuan_seminars')
                 ->where('status_administrasi', 'Menunggu Verifikasi')
                 ->exists();
@@ -727,6 +710,10 @@
             </a>
             <a href="{{ route('admin.mahasiswa-seminar') }}" class="sidebar-link {{ request()->routeIs('admin.mahasiswa-seminar') ? 'active' : '' }}">
                 <i class="fa-solid fa-chalkboard-user"></i> Mahasiswa Seminar
+            </a>
+            {{-- ══ TAMBAHAN: Menu Mahasiswa Progress ══ --}}
+            <a href="{{ route('admin.mahasiswa.progress') }}" class="sidebar-link {{ request()->is('admin/mahasiswa-progress*') ? 'active' : '' }}">
+                <i class="fa-solid fa-users"></i> Mahasiswa
             </a>
             <div class="nav-label">Master Data</div>
             <a href="/admin/mahasiswa" class="sidebar-link">

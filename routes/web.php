@@ -357,6 +357,12 @@ Route::post('/bimbingan/proposal', [BimbinganController::class, 'storeProposal']
 Route::get('/dosen/mahasiswa', [MahasiswaDosenController::class, 'index'])->name('dosen.mahasiswa');
 Route::get('/dosen/mahasiswa/{nim}', [MahasiswaDosenController::class, 'show'])->name('dosen.mahasiswa.detail');
 
+// =====================================================
+// DATA MAHASISWA PROGRESS — ADMIN
+// =====================================================
+
+Route::get('/admin/mahasiswa-progress',      [App\Http\Controllers\AdminMahasiswaProgressController::class, 'index'])->name('admin.mahasiswa.progress');
+Route::get('/admin/mahasiswa-progress/{nim}', [App\Http\Controllers\AdminMahasiswaProgressController::class, 'show'])->name('admin.mahasiswa.progress.detail');
 
 // =====================================================
 // DOSEN CRUD — ADMIN
@@ -514,3 +520,5 @@ Route::get('/jadwal-seminar-mahasiswa', [App\Http\Controllers\JadwalSeminarMahas
     ->name('jadwalseminar.mahasiswa.list');
 
 Route::get('/admin/mahasiswa-seminar', [App\Http\Controllers\AdminMahasiswaSeminarController::class, 'mahasiswaSeminar'])->name('admin.mahasiswa-seminar');
+
+Route::get('/admin/jadwal/seminar-mahasiswa', [App\Http\Controllers\AdminJadwalSeminarMahasiswaController::class, 'index'])->name('admin.jadwal.seminar.mahasiswa');

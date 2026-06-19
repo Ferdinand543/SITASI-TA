@@ -2,6 +2,41 @@
 
 @section('content')
 
+<style>
+.bg-purple { background: #e9d5ff; }
+.table td { vertical-align: middle; }
+
+/* ACTION CARDS */
+.aksi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.aksi-card {
+    background: #fff; border-radius: 16px; border: 1px solid #E5E7EB;
+    box-shadow: 0 2px 10px rgba(0,0,0,.05); padding: 22px 24px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+}
+.aksi-icon {
+    width: 46px; height: 46px; border-radius: 12px;
+    background: #FFFDF0; border: 1px solid #F5D97A;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.aksi-title { font-size: 15px; font-weight: 800; color: #1E293B; margin-bottom: 4px; }
+.aksi-desc { font-size: 12.5px; color: #6B7280; line-height: 1.6; }
+.aksi-btn {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
+    padding: 8px 16px; background: #FDE047; color: #713F12;
+    border: 1px solid #FACC15; border-radius: 10px; font-size: 12.5px; font-weight: 700;
+    text-decoration: none; transition: background .2s;
+}
+.aksi-btn:hover { background: #FACC15; color: #713F12; }
+.aksi-badge {
+    text-align: center; background: #FFFDF0; border: 1.5px solid #F5D97A;
+    border-radius: 12px; padding: 12px 18px; flex-shrink: 0; min-width: 70px;
+}
+.aksi-badge-num { font-size: 28px; font-weight: 900; color: #C9A227; line-height: 1; }
+.aksi-badge-label { font-size: 10px; font-weight: 700; color: #92400E; text-transform: uppercase; margin-top: 3px; }
+
+@media (max-width: 700px) { .aksi-grid { grid-template-columns: 1fr; } }
+</style>
+
 <div class="container-fluid py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -12,6 +47,59 @@
         <button class="btn btn-warning rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalTambah">
             + Tambah Jadwal
         </button>
+    </div>
+
+    {{-- ✅ DUA CARD AKSI: KELOLA JADWAL SEMINAR + JADWAL SEMINAR MAHASISWA --}}
+    <div class="aksi-grid">
+        {{-- CARD 1: Kelola Jadwal Seminar (shared data dengan koordinator) --}}
+        <div class="aksi-card">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+                <div class="aksi-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#C9A227" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="aksi-title">Kelola Jadwal Seminar</div>
+                    <div class="aksi-desc">
+                        Atur dan pantau penjadwalan seminar mahasiswa. Data jadwal ini sama dengan yang dikelola koordinator — tidak ada double input.
+                    </div>
+                    <a href="{{ route('jadwalseminar.index') }}" class="aksi-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/>
+                        </svg>
+                        Kelola Jadwal Seminar
+                    </a>
+                </div>
+            </div>
+            <div class="aksi-badge">
+                <div class="aksi-badge-num">{{ $jumlahMahasiswaSiapSeminar }}</div>
+                <div class="aksi-badge-label">Mahasiswa</div>
+            </div>
+        </div>
+
+        {{-- CARD 2: Jadwal Seminar Mahasiswa (admin lihat semua) --}}
+        <div class="aksi-card">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+                <div class="aksi-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#C9A227" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="aksi-title">Jadwal Seminar Mahasiswa</div>
+                    <div class="aksi-desc">
+                        Lihat jadwal seminar seluruh mahasiswa lengkap dengan dosen pembimbing, penguji, ruang, dan waktu. Admin dapat melihat semua mahasiswa.
+                    </div>
+                    <a href="{{ route('admin.jadwal.seminar.mahasiswa') }}" class="aksi-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
+                        </svg>
+                        Lihat Jadwal Seminar Mahasiswa
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Statistik -->
@@ -54,7 +142,6 @@
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body">
 
-            {{-- ✅ FILTER OTOMATIS — FORM DIHAPUS, DIGANTI JS --}}
             <div class="row mb-4">
                 <div class="col-md-5">
                     <input type="text" id="adminSearch" class="form-control rounded-pill"
@@ -108,9 +195,7 @@
                                 @endif
                             </td>
                             <td>{{ date('d M Y', strtotime($item->tanggal)) }}</td>
-                            <td>
-                                {{ $item->tanggal_selesai ? date('d M Y', strtotime($item->tanggal_selesai)) : '—' }}
-                            </td>
+                            <td>{{ $item->tanggal_selesai ? date('d M Y', strtotime($item->tanggal_selesai)) : '—' }}</td>
                             <td>{{ $item->waktu }}</td>
                             <td>{{ $item->lokasi }}</td>
                             <td>
@@ -257,26 +342,15 @@
 </div>
 @endforeach
 
-<style>
-.bg-purple { background: #e9d5ff; }
-.table td { vertical-align: middle; }
-.card { transition: .3s; }
-.card:hover { transform: translateY(-3px); }
-</style>
-
 <script>
-// ✅ FILTER OTOMATIS
 let adminSearchTimer;
-
 document.getElementById('adminSearch').addEventListener('input', function () {
     clearTimeout(adminSearchTimer);
     adminSearchTimer = setTimeout(() => applyAdminFilter(), 400);
 });
-
 document.getElementById('adminStatus').addEventListener('change', function () {
     applyAdminFilter();
 });
-
 function applyAdminFilter() {
     const search = document.getElementById('adminSearch').value;
     const status = document.getElementById('adminStatus').value;
@@ -285,15 +359,12 @@ function applyAdminFilter() {
     url.searchParams.set('status', status);
     window.location.href = url.toString();
 }
-
 function resetAdminFilter() {
     const url = new URL(window.location.href);
     url.searchParams.delete('search');
     url.searchParams.delete('status');
     window.location.href = url.toString();
 }
-
-// ✅ KONFIRMASI HAPUS
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.form-delete').forEach(form => {
         form.addEventListener('submit', function(e) {

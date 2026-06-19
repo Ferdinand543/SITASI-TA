@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\JadwalAkademik;
 
 class JadwalAkademikController extends Controller
@@ -42,8 +43,20 @@ class JadwalAkademikController extends Controller
         $seminarMendatang = JadwalAkademik::where('kategori', 'Seminar')->where('status', 'Akan Datang')->count();
         $deadlineBerakhir = JadwalAkademik::where('status', 'Ditutup')->count();
 
+        // ✅ TAMBAHAN: jumlah mahasiswa siap dijadwalkan (sudah ada penguji)
+        $jumlahMahasiswaSiapSeminar = DB::table('pengajuan_seminars')
+            ->where('is_draft', 0)
+            ->whereIn('status_seminar', ['Menunggu Jadwal', 'Sudah Dijadwalkan', 'Selesai'])
+            ->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                  ->from('dosen_penguji_seminar as dps')
+                  ->whereColumn('dps.pengajuan_seminar_id', 'pengajuan_seminars.id');
+            })
+            ->count();
+
         return view('admin.jadwal.index', compact(
-            'jadwals', 'totalKegiatan', 'kegiatanAktif', 'seminarMendatang', 'deadlineBerakhir'
+            'jadwals', 'totalKegiatan', 'kegiatanAktif', 'seminarMendatang', 'deadlineBerakhir',
+            'jumlahMahasiswaSiapSeminar'
         ));
     }
 
@@ -60,7 +73,7 @@ class JadwalAkademikController extends Controller
             'nama_kegiatan'   => $request->nama_kegiatan,
             'sub_judul'       => $request->sub_judul,
             'kategori'        => $request->kategori,
-            'status'          => 'Akan Datang', // ✅ default, nanti auto-update
+            'status'          => 'Akan Datang',
             'tanggal'         => $request->tanggal,
             'tanggal_selesai' => $request->tanggal_selesai,
             'waktu'           => $request->waktu,
@@ -86,7 +99,6 @@ class JadwalAkademikController extends Controller
             'nama_kegiatan'   => $request->nama_kegiatan,
             'sub_judul'       => $request->sub_judul,
             'kategori'        => $request->kategori,
-            // ✅ status tidak diupdate dari form, biar auto-update yg handle
             'tanggal'         => $request->tanggal,
             'tanggal_selesai' => $request->tanggal_selesai,
             'waktu'           => $request->waktu,
