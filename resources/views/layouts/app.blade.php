@@ -725,6 +725,9 @@
                 <i class="fa-solid fa-user-graduate"></i> Administrasi Seminar
                 @if($notifSeminarAdmin)<span class="link-badge-notif"></span>@endif
             </a>
+            <a href="{{ route('admin.mahasiswa-seminar') }}" class="sidebar-link {{ request()->routeIs('admin.mahasiswa-seminar') ? 'active' : '' }}">
+                <i class="fa-solid fa-chalkboard-user"></i> Mahasiswa Seminar
+            </a>
             <div class="nav-label">Master Data</div>
             <a href="/admin/mahasiswa" class="sidebar-link">
                 <i class="fa-solid fa-database"></i> Data Mahasiswa

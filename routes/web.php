@@ -512,3 +512,5 @@ Route::post('/admin/mahasiswa/import',         [ImportMahasiswaController::class
 
 Route::get('/jadwal-seminar-mahasiswa', [App\Http\Controllers\JadwalSeminarMahasiswaController::class, 'index'])
     ->name('jadwalseminar.mahasiswa.list');
+
+Route::get('/admin/mahasiswa-seminar', [App\Http\Controllers\AdminMahasiswaSeminarController::class, 'mahasiswaSeminar'])->name('admin.mahasiswa-seminar');
