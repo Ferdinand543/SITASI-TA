@@ -597,6 +597,8 @@
 
             $proposalDropdownOpen = request()->is('proposal*') || request()->is('reviewer*');
             $bimbinganDropdownOpen = request()->is('dosen/bimbingan*');
+            $jadwalDropdownOpen = request()->is('jadwal') || request()->is('kelola-seminar*') || request()->is('jadwal-seminar-mahasiswa*');
+            $pengujiDropdownOpen = request()->routeIs('dosen.penguji.index') || request()->routeIs('penguji.show') || request()->routeIs('penguji.tetapkan') || request()->routeIs('penguji.mahasiswa.index');
             @endphp
 
             <div class="nav-label">Tugas Akhir</div>
@@ -716,9 +718,46 @@
             </button>
             @endif
 
-            <a href="{{ route('jadwal.index') }}" class="sidebar-link {{ request()->is('jadwal*') ? 'active' : '' }}">
+            {{-- JADWAL DROPDOWN --}}
+            <button class="sidebar-link {{ $jadwalDropdownOpen ? 'active' : '' }}"
+                onclick="toggleDropdownJadwal()">
                 <i class="fa-solid fa-calendar-days"></i> Jadwal
-            </a>
+                <i class="fa-solid fa-chevron-right sidebar-chevron {{ $jadwalDropdownOpen ? 'open' : '' }}" id="chevron-jadwal"></i>
+            </button>
+            <div class="sidebar-dropdown" id="dropdown-jadwal"
+                style="max-height: {{ $jadwalDropdownOpen ? '200px' : '0' }};">
+
+                <a href="{{ route('jadwal.index') }}"
+                    class="sidebar-link sidebar-sublink {{ request()->is('jadwal') ? 'active' : '' }}">
+                    <i class="fa-solid fa-calendar-check"></i> Jadwal Akademik
+                </a>
+
+                @if($isKoor)
+                <a href="{{ route('jadwalseminar.index') }}"
+                    class="sidebar-link sidebar-sublink {{ request()->is('kelola-seminar*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-list-check"></i> Kelola Jadwal Seminar
+                </a>
+                @else
+                <button class="sidebar-link sidebar-sublink sidebar-link-locked"
+                    onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator.')">
+                    <i class="fa-solid fa-list-check"></i> Kelola Jadwal Seminar
+                </button>
+                @endif
+
+                @if($isPenguji || $isPembimbing)
+                <a href="{{ route('jadwalseminar.mahasiswa.list') }}"
+                    class="sidebar-link sidebar-sublink {{ request()->is('jadwal-seminar-mahasiswa*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-eye"></i> Lihat Jadwal Seminar
+                </a>
+                @else
+                <button class="sidebar-link sidebar-sublink sidebar-link-locked"
+                    onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Pembimbing/Penguji.')">
+                    <i class="fa-solid fa-eye"></i> Lihat Jadwal Seminar
+                </button>
+                @endif
+
+            </div>
+            {{-- END JADWAL DROPDOWN --}}
 
             @if($isKoor)
             <a href="{{ route('dosen.mahasiswa') }}" class="sidebar-link {{ request()->routeIs('dosen.mahasiswa') ? 'active' : '' }}">
@@ -730,15 +769,30 @@
             </button>
             @endif
 
+            {{-- KELOLA DOSEN PENGUJI DROPDOWN --}}
             @if($isKoor)
-            <a href="{{ route('dosen.penguji.index') }}" class="sidebar-link {{ request()->routeIs('dosen.penguji.index') || request()->routeIs('penguji.show') || request()->routeIs('penguji.tetapkan') ? 'active' : '' }}">
+            <button class="sidebar-link {{ $pengujiDropdownOpen ? 'active' : '' }}"
+                onclick="toggleDropdownPenguji()">
                 <i class="fa-solid fa-user-tie"></i> Kelola Dosen Penguji
-            </a>
+                <i class="fa-solid fa-chevron-right sidebar-chevron {{ $pengujiDropdownOpen ? 'open' : '' }}" id="chevron-penguji"></i>
+            </button>
+            <div class="sidebar-dropdown" id="dropdown-penguji"
+                style="max-height: {{ $pengujiDropdownOpen ? '200px' : '0' }};">
+                <a href="{{ route('dosen.penguji.index') }}"
+                    class="sidebar-link sidebar-sublink {{ request()->routeIs('dosen.penguji.index') || request()->routeIs('penguji.show') || request()->routeIs('penguji.tetapkan') ? 'active' : '' }}">
+                    <i class="fa-solid fa-user-tie"></i> Dosen Penguji
+                </a>
+                <a href="{{ route('penguji.mahasiswa.index') }}"
+                    class="sidebar-link sidebar-sublink {{ request()->routeIs('penguji.mahasiswa.index') ? 'active' : '' }}">
+                    <i class="fa-solid fa-user-graduate"></i> Mahasiswa
+                </a>
+            </div>
             @else
             <button class="sidebar-link sidebar-link-locked" onclick="showSidebarDenied('Halaman ini khusus untuk Dosen Koordinator.')">
                 <i class="fa-solid fa-user-tie"></i> Kelola Dosen Penguji
             </button>
             @endif
+            {{-- END KELOLA DOSEN PENGUJI DROPDOWN --}}
 
             <a href="{{ url('/panduan-ta/dosen') }}" class="sidebar-link {{ request()->is('panduan-ta*') ? 'active' : '' }}">
                 <i class="fa-solid fa-book-open"></i> Panduan TA
@@ -943,10 +997,27 @@
             document.getElementById('popupSidebarDenied').style.display = 'flex';
         }
 
+        function closeAllDropdowns(except) {
+            const allDropdowns = [
+                { id: 'dropdown-proposal', chevronId: 'chevron-proposal' },
+                { id: 'dropdown-bimbingan', chevronId: 'chevron-bimbingan' },
+                { id: 'dropdown-jadwal', chevronId: 'chevron-jadwal' },
+                { id: 'dropdown-penguji', chevronId: 'chevron-penguji' },
+            ];
+            allDropdowns.forEach(function(d) {
+                if (d.id === except) return;
+                const dd = document.getElementById(d.id);
+                const chevron = document.getElementById(d.chevronId);
+                if (dd) dd.style.maxHeight = '0';
+                if (chevron) chevron.classList.remove('open');
+            });
+        }
+
         function toggleDropdownProposal() {
             const dd      = document.getElementById('dropdown-proposal');
             const chevron = document.getElementById('chevron-proposal');
             const isOpen  = dd.style.maxHeight !== '0px' && dd.style.maxHeight !== '';
+            closeAllDropdowns('dropdown-proposal');
             dd.style.maxHeight = isOpen ? '0' : '200px';
             chevron.classList.toggle('open', !isOpen);
         }
@@ -955,6 +1026,25 @@
             const dd      = document.getElementById('dropdown-bimbingan');
             const chevron = document.getElementById('chevron-bimbingan');
             const isOpen  = dd.style.maxHeight !== '0px' && dd.style.maxHeight !== '';
+            closeAllDropdowns('dropdown-bimbingan');
+            dd.style.maxHeight = isOpen ? '0' : '200px';
+            chevron.classList.toggle('open', !isOpen);
+        }
+
+        function toggleDropdownJadwal() {
+            const dd      = document.getElementById('dropdown-jadwal');
+            const chevron = document.getElementById('chevron-jadwal');
+            const isOpen  = dd.style.maxHeight !== '0px' && dd.style.maxHeight !== '';
+            closeAllDropdowns('dropdown-jadwal');
+            dd.style.maxHeight = isOpen ? '0' : '200px';
+            chevron.classList.toggle('open', !isOpen);
+        }
+
+        function toggleDropdownPenguji() {
+            const dd      = document.getElementById('dropdown-penguji');
+            const chevron = document.getElementById('chevron-penguji');
+            const isOpen  = dd.style.maxHeight !== '0px' && dd.style.maxHeight !== '';
+            closeAllDropdowns('dropdown-penguji');
             dd.style.maxHeight = isOpen ? '0' : '200px';
             chevron.classList.toggle('open', !isOpen);
         }
