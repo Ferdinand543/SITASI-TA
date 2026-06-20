@@ -519,6 +519,14 @@ function switchTab(tab) {
     btn.classList.remove('inactive');
 }
 
+// ── AUTO SWITCH TAB dari URL ?tab=mahasiswa (dari sidebar admin) ──
+document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tab') === 'mahasiswa') {
+        switchTab('dosen');
+    }
+});
+
 function filterProposal() {
     const q      = document.getElementById('searchProposal').value.toLowerCase();
     const status = document.getElementById('filterStatusProposal').value;

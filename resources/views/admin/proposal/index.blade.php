@@ -117,6 +117,7 @@
         background:#FFE083; color:#6C5700; border:none; border-radius:8px;
         padding:7px 14px; font-size:0.8rem; font-weight:700; text-decoration:none;
         display:inline-flex; align-items:center; gap:5px; transition:0.15s; white-space:nowrap;
+        cursor:pointer;
     }
     .btn-verifikasi:hover { background:#e0b800; color:#4a3000; }
 
@@ -124,6 +125,7 @@
         background:#fff; color:#475569; border:1px solid #e2e8f0; border-radius:8px;
         padding:7px 14px; font-size:0.8rem; font-weight:700; text-decoration:none;
         display:inline-flex; align-items:center; gap:5px; transition:0.15s; white-space:nowrap;
+        cursor:pointer;
     }
     .btn-detail:hover { background:#f8fafc; border-color:#FACC15; color:#333; }
 
@@ -136,6 +138,10 @@
     .empty-state-sub   { font-size:0.82rem; color:#94a3b8; }
 
     .pagination-wrap { display:flex; justify-content:flex-end; padding:16px 20px; border-top:1px solid #f0f0f0; }
+
+    .section-heading { margin-bottom:16px; }
+    .section-heading h5 { font-weight:800; color:#1e293b; margin-bottom:4px; }
+    .section-heading p { font-size:0.85rem; color:#64748b; margin:0; }
 </style>
 
 <div class="container-fluid px-4 page-wrap">
@@ -156,7 +162,7 @@
             <div class="hero-btn-group">
 
                 {{-- BUTTON 1: Penetapan Dosen Pembimbing --}}
-                <a href="{{ url('/proposal') }}" class="btn-hero-primary">
+                <a href="{{ route('admin.proposal.index') }}" class="{{ request('tab') !== 'reviewer' ? 'btn-hero-primary' : 'btn-hero-outline' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/>
                     </svg>
@@ -164,7 +170,7 @@
                 </a>
 
                 {{-- BUTTON 2: Penetapan Reviewer --}}
-                <a href="{{ url('/proposal?tab=reviewer') }}" class="btn-hero-outline">
+                <a href="{{ route('admin.proposal.index', ['tab' => 'reviewer']) }}" class="{{ request('tab') === 'reviewer' ? 'btn-hero-primary' : 'btn-hero-outline' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
                         <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
@@ -194,6 +200,12 @@
             </div>
         </div>
     </div>
+
+    @if(request('tab') !== 'reviewer')
+
+    {{-- ========================================================== --}}
+    {{-- TAB PEMBIMBING (DEFAULT) — TIDAK DIUBAH SAMA SEKALI --}}
+    {{-- ========================================================== --}}
 
     {{-- STAT CARDS — 5 kolom, pisah verifikasi & review --}}
     <div class="stat-row mb-4" style="grid-template-columns: repeat(5,1fr);">
@@ -410,6 +422,145 @@
         @endif
     </div>
 
+    @else
+
+    {{-- ========================================================== --}}
+    {{-- TAB REVIEWER (?tab=reviewer) --}}
+    {{-- ========================================================== --}}
+
+    <div class="stat-row mb-4" style="grid-template-columns: repeat(3,1fr);">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#2563eb" viewBox="0 0 16 16">
+                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="stat-num">{{ $totalDosenReviewer }}</div>
+                <div class="stat-label">Total Dosen Reviewer</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon yellow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#ca8a04" viewBox="0 0 16 16">
+                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="stat-num">{{ $mahasiswaBelumDitugaskan }}</div>
+                <div class="stat-label">Mahasiswa Belum Ditugaskan</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#16a34a" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="stat-num">{{ $dosenMemilikiPenugasan }}</div>
+                <div class="stat-label">Dosen Memiliki Penugasan</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-heading">
+        <h5>Daftar Penetapan Reviewer Proposal</h5>
+        <p>Kelola penugasan proposal ke masing-masing dosen reviewer.</p>
+    </div>
+
+    {{-- FILTER (khusus tab reviewer, tetap kirim tab=reviewer biar gak balik ke tab pembimbing) --}}
+    <form method="GET" action="{{ route('admin.proposal.index') }}" id="filterFormReviewer">
+        <input type="hidden" name="tab" value="reviewer">
+        <div class="filter-bar mb-4">
+            <div class="search-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+                </svg>
+                <input type="text" name="search" id="searchInputReviewer"
+                    placeholder="Cari NID atau nama dosen reviewer..."
+                    value="{{ request('search') }}">
+            </div>
+            <div class="filter-right">
+                <button type="button" class="btn-reset" onclick="window.location.href='{{ route('admin.proposal.index', ['tab' => 'reviewer']) }}'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                    </svg>
+                    Reset Filter
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-card">
+        <table class="tbl" style="min-width:800px;">
+            <thead>
+                <tr>
+                    <th>NID</th>
+                    <th>Nama Dosen</th>
+                    <th class="center">Jumlah Mahasiswa Review</th>
+                    <th class="center">Status Penugasan</th>
+                    <th class="center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($daftarReviewer as $dosen)
+                <tr>
+                    <td style="font-family:monospace; font-size:0.82rem;">{{ $dosen->nim_nid }}</td>
+                    <td style="font-weight:600;">{{ $dosen->nama }}</td>
+                    <td class="center">{{ $dosen->jumlah_mahasiswa }} Mahasiswa</td>
+                    <td class="center">
+                        @if($dosen->status_penugasan === 'Memiliki Penugasan')
+                            <span class="status-pill sp-selesai">Memiliki Penugasan</span>
+                        @else
+                            <span class="status-pill sp-menunggu-verifikasi">Belum Ditugaskan</span>
+                        @endif
+                    </td>
+                    <td class="center">
+                        @if($dosen->jumlah_mahasiswa > 0)
+                        <a href="{{ route('admin.proposal.reviewer.kelola', $dosen->nim_nid) }}" class="btn-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5z"/>
+                            </svg>
+                            Kelola Penugasan
+                        </a>
+                        @else
+                        <a href="{{ route('admin.proposal.reviewer.kelola', $dosen->nim_nid) }}" class="btn-verifikasi">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/>
+                            </svg>
+                            + Tetapkan Reviewer
+                        </a>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state-wrap">
+                            <div class="empty-state-inner">
+                                <div class="empty-state-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#94a3b8" viewBox="0 0 16 16">
+                                        <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                                    </svg>
+                                </div>
+                                <div class="empty-state-title">Belum ada dosen reviewer</div>
+                                <div class="empty-state-sub">Tambahkan role reviewer ke dosen terlebih dahulu pada data dosen.</div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    @endif
+
 </div>
 
 <script>
@@ -420,6 +571,16 @@
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 document.getElementById('filterForm').submit();
+            }, 500);
+        });
+    }
+
+    const searchInputReviewer = document.getElementById('searchInputReviewer');
+    if (searchInputReviewer) {
+        searchInputReviewer.addEventListener('input', function () {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                document.getElementById('filterFormReviewer').submit();
             }, 500);
         });
     }

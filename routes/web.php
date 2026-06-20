@@ -394,6 +394,8 @@ Route::delete('/admin/mahasiswa/{nim_nid}',   [AdminMahasiswaController::class, 
 
 Route::prefix('admin')->group(function () {
     Route::get('/proposal',               [AdminProposalController::class, 'index'])->name('admin.proposal.index');
+    Route::get('/proposal/reviewer/{nim_nid}/kelola', [ProposalController::class, 'kelolaReviewer'])->name('admin.proposal.reviewer.kelola');
+    Route::post('/proposal/reviewer/{nim_nid}/tambah-mahasiswa', [ProposalController::class, 'tambahMahasiswaReviewer'])->name('admin.proposal.reviewer.tambah');
     Route::get('/proposal/{id}',          [AdminProposalController::class, 'show'])->name('admin.proposal.detail');
     Route::post('/proposal/{id}/approve', [AdminProposalController::class, 'approve'])->name('admin.proposal.approve');
     Route::post('/proposal/{id}/reject',  [AdminProposalController::class, 'reject'])->name('admin.proposal.reject');

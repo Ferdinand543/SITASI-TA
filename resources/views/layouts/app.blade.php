@@ -177,25 +177,29 @@
             padding: 10px 12px;
         }
 
-        /* ══ ADMIN ONLY: biar semua menu muat tanpa scroll ══ */
+        /* ══ ADMIN ONLY ══ */
         .role-admin .sidebar-brand {
-            padding: 13px 18px 11px 18px;
+            padding: 10px 16px 9px 16px;
         }
 
         .role-admin .sidebar-nav {
-            padding: 8px 12px;
+            padding: 4px 10px;
             overflow-y: hidden;
         }
 
         .role-admin .nav-label {
-            margin: 7px 0 2px 0;
-            font-size: 0.59rem;
+            margin: 4px 0 1px 0;
+            font-size: 0.56rem;
         }
 
         .role-admin .sidebar-link {
-            padding: 7px 10px;
-            font-size: 0.76rem;
-            margin-bottom: 1px;
+            padding: 5px 8px;
+            font-size: 0.73rem;
+            margin-bottom: 0px;
+        }
+
+        .role-admin .sidebar-footer {
+            padding: 6px 8px;
         }
 
         .sidebar-footer {
@@ -423,6 +427,8 @@
             padding-left: 32px !important;
             font-size: 0.76rem !important;
             font-weight: 500 !important;
+            white-space: normal !important;
+            line-height: 1.3 !important;
         }
 
         @media (max-width: 768px) {
@@ -624,7 +630,6 @@
             <div class="sidebar-dropdown" id="dropdown-proposal"
                 style="max-height: {{ $proposalDropdownOpen ? '200px' : '0' }};">
 
-                {{-- Penetapan Dosen Pembimbing: hanya koordinator --}}
                 @if($isKoor)
                 <a href="{{ route('proposal.index') }}?tab=pembimbing"
                     class="sidebar-link sidebar-sublink {{ request()->is('proposal*') && request()->query('tab') === 'pembimbing' ? 'active' : '' }}">
@@ -637,7 +642,6 @@
                 </button>
                 @endif
 
-                {{-- Penetapan Reviewer: hanya koordinator --}}
                 @if($isKoor)
                 <a href="{{ route('proposal.index') }}?tab=reviewer"
                     class="sidebar-link sidebar-sublink {{ request()->is('proposal*') && request()->query('tab') === 'reviewer' ? 'active' : '' }}">
@@ -650,7 +654,6 @@
                 </button>
                 @endif
 
-                {{-- Review Proposal: hanya reviewer --}}
                 @if($isReviewer)
                 <a href="{{ route('reviewer.proposal') }}"
                     class="sidebar-link sidebar-sublink {{ request()->is('reviewer*') ? 'active' : '' }}">
@@ -840,19 +843,69 @@
             $notifSeminarAdmin = DB::table('pengajuan_seminars')
                 ->where('status_administrasi', 'Menunggu Verifikasi')
                 ->exists();
+
+            $proposalAdminDropdownOpen = request()->routeIs('admin.proposal.*') || request()->is('reviewer/proposal*');
+            $bimbinganAdminDropdownOpen = request()->is('admin/bimbingan') || request()->is('admin/bimbingan/*');
+            $jadwalAdminDropdownOpen = request()->routeIs('jadwal-akademik.*')
+                || request()->is('kelola-seminar*')
+                || request()->routeIs('admin.jadwal.seminar.mahasiswa');
             @endphp
 
             <a href="/admin/judul" class="sidebar-link {{ request()->is('admin/judul*') ? 'active' : '' }}">
                 <i class="fa-regular fa-file-lines"></i> Pengajuan Judul
                 @if($notifJudulAdmin)<span class="link-badge-notif"></span>@endif
             </a>
-            <a href="{{ route('admin.proposal.index') }}" class="sidebar-link {{ request()->routeIs('admin.proposal.*') ? 'active' : '' }}">
+
+            {{-- PROPOSAL MAHASISWA DROPDOWN --}}
+            <button class="sidebar-link {{ $proposalAdminDropdownOpen ? 'active' : '' }}"
+                onclick="toggleDropdownProposalAdmin()">
                 <i class="fa-regular fa-folder-open"></i> Proposal Mahasiswa
                 @if($notifProposalAdmin)<span class="link-badge-notif"></span>@endif
-            </a>
-            <a href="/admin/bimbingan" class="sidebar-link {{ request()->is('admin/bimbingan') || request()->is('admin/bimbingan/*') ? 'active' : '' }}">
+                <i class="fa-solid fa-chevron-right sidebar-chevron {{ $proposalAdminDropdownOpen ? 'open' : '' }}" id="chevron-proposal-admin"></i>
+            </button>
+            <div class="sidebar-dropdown" id="dropdown-proposal-admin"
+                style="max-height: {{ $proposalAdminDropdownOpen ? '300px' : '0' }};">
+
+                <a href="{{ route('admin.proposal.index') }}"
+                    class="sidebar-link sidebar-sublink {{ request()->routeIs('admin.proposal.index') && !request()->query('tab') ? 'active' : '' }}">
+                    <i class="fa-solid fa-chalkboard-user"></i> Penetapan Dospem
+                </a>
+
+                <a href="{{ route('admin.proposal.index', ['tab' => 'reviewer']) }}"
+                    class="sidebar-link sidebar-sublink {{ request()->query('tab') === 'reviewer' ? 'active' : '' }}">
+                    <i class="fa-solid fa-user-check"></i> Penetapan Reviewer
+                </a>
+
+                <a href="{{ route('reviewer.proposal') }}"
+                    class="sidebar-link sidebar-sublink {{ request()->is('reviewer/proposal*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-circle-check"></i> Review Proposal
+                </a>
+
+            </div>
+            {{-- END PROPOSAL MAHASISWA DROPDOWN --}}
+
+            {{-- RIWAYAT BIMBINGAN DROPDOWN (ADMIN) --}}
+            <button class="sidebar-link {{ $bimbinganAdminDropdownOpen ? 'active' : '' }}"
+                onclick="toggleDropdownBimbinganAdmin()">
                 <i class="fa-regular fa-clock"></i> Riwayat Bimbingan
-            </a>
+                <i class="fa-solid fa-chevron-right sidebar-chevron {{ $bimbinganAdminDropdownOpen ? 'open' : '' }}" id="chevron-bimbingan-admin"></i>
+            </button>
+            <div class="sidebar-dropdown" id="dropdown-bimbingan-admin"
+                style="max-height: {{ $bimbinganAdminDropdownOpen ? '300px' : '0' }};">
+
+                <a href="/admin/bimbingan"
+                    class="sidebar-link sidebar-sublink {{ request()->is('admin/bimbingan') && !request()->query('tab') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-lines"></i> Proposal Bimbingan
+                </a>
+
+                <a href="/admin/bimbingan?tab=mahasiswa"
+                    class="sidebar-link sidebar-sublink {{ request()->is('admin/bimbingan*') && request()->query('tab') === 'mahasiswa' ? 'active' : '' }}">
+                    <i class="fa-solid fa-user-graduate"></i> Mahasiswa Bimbingan
+                </a>
+
+            </div>
+            {{-- END RIWAYAT BIMBINGAN DROPDOWN (ADMIN) --}}
+
             <a href="{{ route('admin.seminar.index') }}" class="sidebar-link {{ request()->routeIs('admin.seminar.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-graduate"></i> Administrasi Seminar
                 @if($notifSeminarAdmin)<span class="link-badge-notif"></span>@endif
@@ -863,6 +916,7 @@
             <a href="{{ route('admin.mahasiswa.progress') }}" class="sidebar-link {{ request()->is('admin/mahasiswa-progress*') ? 'active' : '' }}">
                 <i class="fa-solid fa-users"></i> Mahasiswa
             </a>
+
             <div class="nav-label">Master Data</div>
             <a href="/admin/mahasiswa" class="sidebar-link {{ request()->is('admin/mahasiswa') || request()->is('admin/mahasiswa/*') ? 'active' : '' }}">
                 <i class="fa-solid fa-database"></i> Data Mahasiswa
@@ -870,9 +924,34 @@
             <a href="/admin/dosen" class="sidebar-link {{ request()->is('admin/dosen*') ? 'active' : '' }}">
                 <i class="fa-solid fa-users"></i> Data Dosen
             </a>
-            <a href="{{ route('jadwal-akademik.index') }}" class="sidebar-link {{ request()->routeIs('jadwal-akademik.*') ? 'active' : '' }}">
+
+            {{-- JADWAL DROPDOWN (ADMIN) --}}
+            <button class="sidebar-link {{ $jadwalAdminDropdownOpen ? 'active' : '' }}"
+                onclick="toggleDropdownJadwalAdmin()">
                 <i class="fa-regular fa-calendar-days"></i> Jadwal
-            </a>
+                <i class="fa-solid fa-chevron-right sidebar-chevron {{ $jadwalAdminDropdownOpen ? 'open' : '' }}" id="chevron-jadwal-admin"></i>
+            </button>
+            <div class="sidebar-dropdown" id="dropdown-jadwal-admin"
+                style="max-height: {{ $jadwalAdminDropdownOpen ? '300px' : '0' }};">
+
+                <a href="{{ route('jadwal-akademik.index') }}"
+                    class="sidebar-link sidebar-sublink {{ request()->routeIs('jadwal-akademik.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-calendar-check"></i> Kelola Jadwal & Timeline
+                </a>
+
+                <a href="{{ route('jadwalseminar.index') }}"
+                    class="sidebar-link sidebar-sublink {{ request()->is('kelola-seminar*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-list-check"></i> Kelola Jadwal Seminar
+                </a>
+
+                <a href="{{ route('admin.jadwal.seminar.mahasiswa') }}"
+                    class="sidebar-link sidebar-sublink {{ request()->routeIs('admin.jadwal.seminar.mahasiswa') ? 'active' : '' }}">
+                    <i class="fa-solid fa-eye"></i> Jadwal Seminar Mahasiswa
+                </a>
+
+            </div>
+            {{-- END JADWAL DROPDOWN (ADMIN) --}}
+
             <a href="/panduan-ta/admin" class="sidebar-link {{ request()->is('panduan-ta/admin*') ? 'active' : '' }}">
                 <i class="fa-regular fa-bookmark"></i> Panduan TA
             </a>
@@ -1003,6 +1082,9 @@
                 { id: 'dropdown-bimbingan', chevronId: 'chevron-bimbingan' },
                 { id: 'dropdown-jadwal', chevronId: 'chevron-jadwal' },
                 { id: 'dropdown-penguji', chevronId: 'chevron-penguji' },
+                { id: 'dropdown-proposal-admin', chevronId: 'chevron-proposal-admin' },
+                { id: 'dropdown-bimbingan-admin', chevronId: 'chevron-bimbingan-admin' },
+                { id: 'dropdown-jadwal-admin', chevronId: 'chevron-jadwal-admin' },
             ];
             allDropdowns.forEach(function(d) {
                 if (d.id === except) return;
@@ -1046,6 +1128,33 @@
             const isOpen  = dd.style.maxHeight !== '0px' && dd.style.maxHeight !== '';
             closeAllDropdowns('dropdown-penguji');
             dd.style.maxHeight = isOpen ? '0' : '200px';
+            chevron.classList.toggle('open', !isOpen);
+        }
+
+        function toggleDropdownProposalAdmin() {
+            const dd      = document.getElementById('dropdown-proposal-admin');
+            const chevron = document.getElementById('chevron-proposal-admin');
+            const isOpen  = dd.style.maxHeight !== '0px' && dd.style.maxHeight !== '';
+            closeAllDropdowns('dropdown-proposal-admin');
+            dd.style.maxHeight = isOpen ? '0' : '300px';
+            chevron.classList.toggle('open', !isOpen);
+        }
+
+        function toggleDropdownBimbinganAdmin() {
+            const dd      = document.getElementById('dropdown-bimbingan-admin');
+            const chevron = document.getElementById('chevron-bimbingan-admin');
+            const isOpen  = dd.style.maxHeight !== '0px' && dd.style.maxHeight !== '';
+            closeAllDropdowns('dropdown-bimbingan-admin');
+            dd.style.maxHeight = isOpen ? '0' : '300px';
+            chevron.classList.toggle('open', !isOpen);
+        }
+
+        function toggleDropdownJadwalAdmin() {
+            const dd      = document.getElementById('dropdown-jadwal-admin');
+            const chevron = document.getElementById('chevron-jadwal-admin');
+            const isOpen  = dd.style.maxHeight !== '0px' && dd.style.maxHeight !== '';
+            closeAllDropdowns('dropdown-jadwal-admin');
+            dd.style.maxHeight = isOpen ? '0' : '300px';
             chevron.classList.toggle('open', !isOpen);
         }
 
