@@ -84,7 +84,7 @@
     .det-dosbing-item .sub { font-size: 0.7rem; color: var(--muted); font-weight: 500; margin-bottom: 2px; }
     .det-dosbing-item .nama { font-size: 0.95rem; font-weight: 700; color: var(--neutral); }
 
-    /* Progress Steps */
+    /* ── PROGRESS STEPS ── */
     .det-steps-card {
         background: var(--white); border-radius: 16px;
         padding: 28px 32px; margin-bottom: 20px;
@@ -116,28 +116,18 @@
     .det-step-icon {
         width: 36px; height: 36px; border-radius: 50%;
         background: #F1F5F9; border: 2px solid #E5E7EB;
-        display: flex; align-items: center;
-        justify-content: center;
+        display: flex; align-items: center; justify-content: center;
         position: relative; z-index: 1; margin-bottom: 10px; flex-shrink: 0;
     }
-    .det-step.done .det-step-icon {
-        background: #22C55E; border-color: #22C55E;
-    }
-    /* Kuning untuk sedang berjalan */
-    .det-step.current .det-step-icon {
-        background: #FACC15; border-color: #F59E0B;
-        box-shadow: 0 0 0 4px rgba(250,204,21,0.2);
-    }
+    .det-step.done .det-step-icon    { background: #22C55E; border-color: #22C55E; }
+    .det-step.current .det-step-icon { background: #FACC15; border-color: #F59E0B; box-shadow: 0 0 0 4px rgba(250,204,21,0.2); }
 
     /* Label step */
-    .det-step-label {
-        font-size: 0.7rem; font-weight: 600; color: var(--muted);
-        text-align: center; line-height: 1.3; white-space: pre-line;
-    }
-    .det-step.done .det-step-label { color: #16A34A; font-weight: 700; }
+    .det-step-label { font-size: 0.7rem; font-weight: 600; color: var(--muted); text-align: center; line-height: 1.3; white-space: pre-line; }
+    .det-step.done .det-step-label    { color: #16A34A; font-weight: 700; }
     .det-step.current .det-step-label { color: #A16207; font-weight: 700; }
 
-    /* Bottom Cards */
+    /* ── BOTTOM CARDS ── */
     .det-bottom { display: flex; gap: 20px; flex-wrap: wrap; }
     .det-card {
         background: var(--white); border-radius: 16px;
@@ -163,6 +153,7 @@
     .det-jadwal-meta { display: flex; gap: 16px; flex-wrap: wrap; }
     .det-jadwal-meta-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; color: var(--neutral); }
 
+    /* ── EMPTY STATE ── */
     .det-empty { color: var(--muted); font-size: 0.82rem; font-style: italic; }
     .det-empty-state {
         display: flex; flex-direction: column; align-items: center;
@@ -187,6 +178,7 @@
     {{-- PROFILE OUTER --}}
     <div class="det-profile-outer">
 
+        {{-- KIRI: foto + info --}}
         <div class="det-profile-card">
             @if($mhs->foto)
                 <img src="{{ asset('storage/' . $mhs->foto) }}" class="det-avatar" alt="foto">
@@ -218,6 +210,7 @@
             </div>
         </div>
 
+        {{-- KANAN: dosen pembimbing --}}
         <div class="det-dosbing-card">
             <div class="det-dosbing-label">Dosen Pembimbing</div>
             @if($pembimbing1)
@@ -239,14 +232,13 @@
 
     </div>
 
-    {{-- PROGRESS STEPS --}}
+    {{-- PROGRESS STEPS — 7 tahap dari Doc 30, logic currentIndex dari Doc 30, icon dari Doc 30 --}}
     <div class="det-steps-card">
         <div class="det-steps-header">
             <div>
                 <div class="det-steps-title">Progress Akademik</div>
                 <div class="det-steps-sub">Pelacakan tahapan penyelesaian Tugas Akhir mahasiswa</div>
             </div>
-            {{-- LEGEND: tambahin Sedang Berjalan --}}
             <div class="det-steps-legend">
                 <div class="det-legend-item" style="color:#16A34A;">
                     <span class="det-legend-dot" style="background:#22C55E;"></span> Selesai
@@ -261,6 +253,7 @@
         </div>
 
         @php
+            // 7 tahap dari Doc 30 (lebih lengkap)
             $stepList = [
                 ['label' => "Pengajuan\nJudul",     'done' => $steps['adaPengajuan']],
                 ['label' => "Verifikasi\nJudul",     'done' => $steps['judulDisetujui']],
@@ -271,7 +264,7 @@
                 ['label' => "Seminar\nProposal",     'done' => $steps['daftarSeminar']],
             ];
 
-            // Cari index pertama yang belum done = "sedang berjalan"
+            // Logic currentIndex dari Doc 30 — step pertama yang belum done = sedang berjalan
             $currentIndex = -1;
             foreach ($stepList as $i => $step) {
                 if (!$step['done']) {
@@ -290,10 +283,10 @@
             <div class="det-step {{ $cls }}">
                 <div class="det-step-icon">
                     @if($step['done'])
-                        {{-- Centang hijau --}}
+                        {{-- Centang putih --}}
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                     @elseif($isCurrent)
-                        {{-- Icon sedang berjalan: jam/spinner kuning --}}
+                        {{-- Jam/sedang berjalan — kuning --}}
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#735C00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     @else
                         {{-- Abu belum --}}

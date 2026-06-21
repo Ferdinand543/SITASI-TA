@@ -140,7 +140,7 @@ class AuthController extends Controller
             ['token' => $token, 'user' => $user],
             function ($mail) use ($request) {
                 $mail->to($request->email)
-                     ->subject('Reset Password - SITASI-TA');
+                    ->subject('Reset Password - SITASI-TA');
             }
         );
 
@@ -234,6 +234,42 @@ class AuthController extends Controller
     }
 
     // =====================================================
+    // UPDATE PROFIL MAHASISWA (nama, email, no_kontak)
+    // =====================================================
+    public function updateProfilMahasiswa(Request $request)
+    {
+        if (!session('user')) return redirect('/login');
+
+        $nim = session('user')->nim_nid;
+
+        $request->validate([
+            'nama'      => 'required|string|max:255',
+            'email'     => 'required|email|max:255|unique:users,email,' . $nim . ',nim_nid',
+            'no_kontak' => 'nullable|string|max:20',
+        ], [
+            'nama.required'  => 'Nama lengkap wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email'    => 'Format email tidak valid.',
+            'email.unique'   => 'Email sudah digunakan akun lain.',
+            'no_kontak.max'  => 'No. kontak maksimal 20 karakter.',
+        ]);
+
+        DB::table('users')
+            ->where('nim_nid', $nim)
+            ->update([
+                'nama'      => $request->nama,
+                'email'     => $request->email,
+                'no_kontak' => $request->no_kontak,
+            ]);
+
+        // Refresh session supaya data terbaru ke-load
+        $userBaru = DB::table('users')->where('nim_nid', $nim)->first();
+        session(['user' => $userBaru]);
+
+        return back()->with('success', 'Profil berhasil diperbarui!');
+    }
+
+    // =====================================================
     // UPLOAD FOTO MAHASISWA
     // =====================================================
     public function uploadFotoMahasiswa(Request $request)
@@ -262,6 +298,33 @@ class AuthController extends Controller
         session(['user' => $userBaru]);
 
         return back()->with('success', 'Foto profil berhasil diperbarui!');
+    }
+
+    // =====================================================
+    // SET / GANTI PIN ELEKTRONIK DOSEN
+    // =====================================================
+    public function setPinDosen(Request $request)
+    {
+        if (!session('user')) return redirect('/login');
+
+        $request->validate([
+            'pin' => 'required|digits:6|confirmed',
+        ], [
+            'pin.required'  => 'PIN wajib diisi',
+            'pin.digits'    => 'PIN harus terdiri dari 6 digit angka',
+            'pin.confirmed' => 'Konfirmasi PIN tidak cocok',
+        ]);
+
+        $nid = session('user')->nim_nid;
+
+        DB::table('users')
+            ->where('nim_nid', $nid)
+            ->update(['pin' => Hash::make($request->pin)]);
+
+        $userBaru = DB::table('users')->where('nim_nid', $nid)->first();
+        session(['user' => $userBaru]);
+
+        return back()->with('success', 'PIN berhasil disimpan.');
     }
 
     // =====================================================
@@ -327,57 +390,40 @@ class AuthController extends Controller
         return back()->with('success', 'Foto profil berhasil diperbarui!');
     }
 
-    //register admin
+    // =====================================================
+    // REGISTER ADMIN
+    // =====================================================
     public function register(Request $request)
     {
         $request->validate([
             'nim_nid' => 'required|max:20|unique:users,nim_nid',
-
-            'nama' => 'required|max:100',
-
-            'email' => 'required|email|unique:users,email',
-
-            'role' => 'required|in:admin,dosen,mahasiswa',
-
+            'nama'    => 'required|max:100',
+            'email'   => 'required|email|unique:users,email',
+            'role'    => 'required|in:admin,dosen,mahasiswa',
             'password' => 'required|min:6|confirmed',
         ], [
-
             'nim_nid.required' => 'NIM / NID wajib diisi',
-            'nim_nid.unique' => 'NIM / NID sudah digunakan',
-
-            'nama.required' => 'Nama wajib diisi',
-
-            'email.required' => 'Email wajib diisi',
-            'email.email' => 'Format email tidak valid',
-            'email.unique' => 'Email sudah digunakan',
-
-            'role.required' => 'Role wajib dipilih',
-
+            'nim_nid.unique'   => 'NIM / NID sudah digunakan',
+            'nama.required'    => 'Nama wajib diisi',
+            'email.required'   => 'Email wajib diisi',
+            'email.email'      => 'Format email tidak valid',
+            'email.unique'     => 'Email sudah digunakan',
+            'role.required'    => 'Role wajib dipilih',
             'password.required' => 'Password wajib diisi',
-            'password.min' => 'Password minimal 6 karakter',
+            'password.min'      => 'Password minimal 6 karakter',
             'password.confirmed' => 'Konfirmasi password tidak cocok',
         ]);
 
         DB::table('users')->insert([
-
-            'nim_nid' => $request->nim_nid,
-
-            'nama' => $request->nama,
-
-            'email' => $request->email,
-
+            'nim_nid'  => $request->nim_nid,
+            'nama'     => $request->nama,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-
-            'role' => strtolower($request->role),
-
-            'angkatan' => $request->role == 'mahasiswa'
-                ? date('Y')
-                : null,
-
-            'foto' => '',
+            'role'     => strtolower($request->role),
+            'angkatan' => $request->role == 'mahasiswa' ? date('Y') : null,
+            'foto'     => '',
         ]);
 
-        return redirect('/login')
-            ->with('success', 'Akun berhasil didaftarkan');
+        return redirect('/login')->with('success', 'Akun berhasil didaftarkan');
     }
 }

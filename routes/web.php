@@ -28,6 +28,8 @@ use App\Http\Controllers\HasilPenilaianMahasiswaController;
 use App\Http\Controllers\KelolaPengujiController;
 use App\Http\Controllers\PengujiMahasiswaSeminarController;
 use App\Http\Controllers\ImportMahasiswaController;
+use App\Http\Controllers\VerifikasiSeminarController;
+use App\Http\Controllers\SuratPembimbingController;
 
 // ROOT
 Route::get('/', fn() => redirect('/login'));
@@ -72,7 +74,7 @@ Route::get('/mahasiswa', function () {
 
     $totalPengajuan = DB::table('pengajuan_judul')->where('nim_nid', $nim)->count();
     $totalProposal  = DB::table('proposal')->where('nim_nid', $nim)->count();
-    $totalBimbingan = DB::table('bimbingan')->where('nim_nid', $nim)->where('status_validasi', 'Valid')->count();
+    $totalBimbingan = DB::table('bimbingan')->where('nim_nid', $nim)->count();
 
     $judulDisetujui = DB::table('pengajuan_judul')
         ->where('nim_nid', $nim)
@@ -189,7 +191,7 @@ Route::get('/mahasiswa', function () {
         ->whereIn('status', ['selesai', 'disetujui'])
         ->exists();
 
-    $prosesBimbingan = DB::table('bimbingan')->where('nim_nid', $nim)->where('status_validasi', 'Valid')->exists();
+    $prosesBimbingan = DB::table('bimbingan')->where('nim_nid', $nim)->exists();
     $seminarProposal = false;
 
     $steps = [
@@ -201,6 +203,59 @@ Route::get('/mahasiswa', function () {
         'seminar_proposal'      => $seminarProposal,
     ];
 
+    // ── JADWAL AKADEMIK ──
+    $jadwalList = DB::table('jadwal_akademik')
+        ->orderBy('tanggal')
+        ->get();
+
+    $deadlineDekat = DB::table('jadwal_akademik')
+        ->where('tanggal', '>=', now()->toDateString())
+        ->where('status', '!=', 'Selesai')
+        ->orderBy('tanggal')
+        ->first();
+
+    // ══ NOTIFIKASI BADGE MERAH PER CARD ══
+
+    // 1. Pengajuan Judul → ada yang ditolak
+    $notifJudulMahasiswa = DB::table('pengajuan_judul')
+        ->where('nim_nid', $nim)
+        ->where('status', 'ditolak')
+        ->exists() ? 1 : 0;
+
+    // 2. Upload Proposal → ada yang ditolak/revisi
+    $notifProposalMahasiswa = DB::table('proposal')
+        ->where('nim_nid', $nim)
+        ->whereIn('status', ['ditolak', 'revisi'])
+        ->exists() ? 1 : 0;
+
+    // 3. Riwayat Bimbingan → ada bimbingan yang masih proses validasi
+    $notifBimbingan = DB::table('bimbingan')
+        ->where('nim_nid', $nim)
+        ->where('status_validasi', 'Validasi Bimbingan')
+        ->exists() ? 1 : 0;
+
+    // 4. Jadwal → ada jadwal dalam 7 hari ke depan
+    $notifJadwal = DB::table('jadwal_akademik')
+        ->where('tanggal', '>=', now()->toDateString())
+        ->where('tanggal', '<=', now()->addDays(7)->toDateString())
+        ->where('status', '!=', 'Selesai')
+        ->exists() ? 1 : 0;
+
+    // 5. Daftar Seminar → ditolak admin ATAU ada draft belum selesai
+    $notifSeminar = DB::table('pengajuan_seminars')
+        ->where('mahasiswa_id', $nim)
+        ->where(function ($q) {
+            $q->where('status_administrasi', 'Tidak Administrasi')
+                ->orWhere('is_draft', 1);
+        })
+        ->exists() ? 1 : 0;
+
+    // 6. Nilai → seminar sudah selesai (ada nilai)
+    $notifNilai = DB::table('pengajuan_seminars')
+        ->where('mahasiswa_id', $nim)
+        ->where('status_seminar', 'Selesai')
+        ->exists() ? 1 : 0;
+
     return view('mahasiswa.index', compact(
         'totalPengajuan',
         'totalProposal',
@@ -210,7 +265,15 @@ Route::get('/mahasiswa', function () {
         'namaDosen2',
         'targetBimbingan',
         'aktivitas',
-        'steps'
+        'steps',
+        'jadwalList',
+        'deadlineDekat',
+        'notifJudulMahasiswa',
+        'notifProposalMahasiswa',
+        'notifBimbingan',
+        'notifJadwal',
+        'notifSeminar',
+        'notifNilai'
     ));
 });
 
@@ -326,7 +389,6 @@ Route::put('/dosen/bimbingan/proposal/{id}/status', [DosenBimbinganController::c
 Route::get('/dosen/bimbingan/mahasiswa/{nim}',      [DosenBimbinganController::class, 'detailMahasiswa'])->name('dosen.bimbingan.detail');
 Route::get('/dosen/proposal/{id}/lihat',            [DosenBimbinganController::class, 'lihatProposal'])->name('dosen.proposal.lihat');
 Route::post('/dosen/bimbingan/proposal/{id}/track', [DosenBimbinganController::class, 'trackBuka'])->name('dosen.bimbingan.proposal.track');
-Route::post('/dosen/bimbingan/validasi/{id}',       [DosenBimbinganController::class, 'validasiBimbingan'])->name('dosen.bimbingan.validasi'); // ✅ BARU
 
 
 // =====================================================
@@ -337,6 +399,7 @@ Route::get('/admin/bimbingan',                       [AdminBimbinganController::
 Route::put('/admin/bimbingan/proposal/{id}/status',  [AdminBimbinganController::class, 'updateStatusProposal'])->name('admin.bimbingan.proposal.status');
 Route::get('/admin/proposal/{id}/lihat',             [AdminBimbinganController::class, 'lihatProposal'])->name('admin.proposal.lihat');
 Route::post('/admin/bimbingan/proposal/{id}/track',  [AdminBimbinganController::class, 'trackBuka'])->name('admin.proposal.track');
+Route::post('/admin/bimbingan/validasi/{id}',        [AdminBimbinganController::class, 'validasiBimbingan'])->name('admin.bimbingan.validasi'); // ✅ BARU
 Route::get('/admin/bimbingan/dosen/{nim_nid}',       [AdminBimbinganController::class, 'detailDosen'])->name('admin.bimbingan.dosen');
 Route::get('/admin/bimbingan/{nim}/{nim_nid_dosen}', [AdminBimbinganController::class, 'detailMahasiswa'])->name('admin.bimbingan.detail');
 
@@ -354,8 +417,16 @@ Route::post('/bimbingan/proposal', [BimbinganController::class, 'storeProposal']
 // DATA MAHASISWA — DOSEN
 // =====================================================
 
-Route::get('/dosen/mahasiswa', [MahasiswaDosenController::class, 'index'])->name('dosen.mahasiswa');
+Route::get('/dosen/mahasiswa',       [MahasiswaDosenController::class, 'index'])->name('dosen.mahasiswa');
 Route::get('/dosen/mahasiswa/{nim}', [MahasiswaDosenController::class, 'show'])->name('dosen.mahasiswa.detail');
+
+
+// =====================================================
+// DATA MAHASISWA PROGRESS — ADMIN
+// =====================================================
+
+Route::get('/admin/mahasiswa-progress',       [App\Http\Controllers\AdminMahasiswaProgressController::class, 'index'])->name('admin.mahasiswa.progress');
+Route::get('/admin/mahasiswa-progress/{nim}', [App\Http\Controllers\AdminMahasiswaProgressController::class, 'show'])->name('admin.mahasiswa.progress.detail');
 
 
 // =====================================================
@@ -388,6 +459,8 @@ Route::delete('/admin/mahasiswa/{nim_nid}',   [AdminMahasiswaController::class, 
 
 Route::prefix('admin')->group(function () {
     Route::get('/proposal',               [AdminProposalController::class, 'index'])->name('admin.proposal.index');
+    Route::get('/proposal/reviewer/{nim_nid}/kelola',            [ProposalController::class, 'kelolaReviewer'])->name('admin.proposal.reviewer.kelola');
+    Route::post('/proposal/reviewer/{nim_nid}/tambah-mahasiswa', [ProposalController::class, 'tambahMahasiswaReviewer'])->name('admin.proposal.reviewer.tambah');
     Route::get('/proposal/{id}',          [AdminProposalController::class, 'show'])->name('admin.proposal.detail');
     Route::post('/proposal/{id}/approve', [AdminProposalController::class, 'approve'])->name('admin.proposal.approve');
     Route::post('/proposal/{id}/reject',  [AdminProposalController::class, 'reject'])->name('admin.proposal.reject');
@@ -410,10 +483,11 @@ Route::prefix('admin')->group(function () {
 // =====================================================
 
 Route::prefix('admin')->group(function () {
-    Route::get('/seminar',                  [AdminSeminarController::class, 'index'])->name('admin.seminar.index');
-    Route::get('/seminar/{id}',             [AdminSeminarController::class, 'show'])->name('admin.seminar.show');
-    Route::post('/seminar/{id}/verifikasi', [AdminSeminarController::class, 'verifikasi'])->name('admin.seminar.verifikasi');
-    Route::post('/seminar/{id}/jadwalkan',  [AdminSeminarController::class, 'jadwalkan'])->name('admin.seminar.jadwalkan');
+    Route::get('/seminar',                       [AdminSeminarController::class, 'index'])->name('admin.seminar.index');
+    Route::post('/seminar/upload-berita-acara',  [AdminSeminarController::class, 'uploadBeritaAcara'])->name('admin.seminar.upload-berita-acara');
+    Route::get('/seminar/{id}',                  [AdminSeminarController::class, 'show'])->name('admin.seminar.show');
+    Route::post('/seminar/{id}/verifikasi',      [AdminSeminarController::class, 'verifikasi'])->name('admin.seminar.verifikasi');
+    Route::post('/seminar/{id}/jadwalkan',       [AdminSeminarController::class, 'jadwalkan'])->name('admin.seminar.jadwalkan');
 });
 
 
@@ -507,8 +581,56 @@ Route::get('/dosen/mahasiswa-seminar', [PengujiMahasiswaSeminarController::class
 Route::get('/admin/mahasiswa/import/template', [ImportMahasiswaController::class, 'template'])->name('mahasiswa.import.template');
 Route::post('/admin/mahasiswa/import',         [ImportMahasiswaController::class, 'import'])->name('mahasiswa.import');
 
-// ===== TAMBAHKAN INI DI web.php =====
-// Pastikan App\Http\Controllers\JadwalSeminarMahasiswaController sudah di-import / use namespace
-
 Route::get('/jadwal-seminar-mahasiswa', [App\Http\Controllers\JadwalSeminarMahasiswaController::class, 'index'])
     ->name('jadwalseminar.mahasiswa.list');
+
+Route::get('/admin/mahasiswa-seminar', [App\Http\Controllers\AdminMahasiswaSeminarController::class, 'mahasiswaSeminar'])->name('admin.mahasiswa-seminar');
+
+Route::get('/admin/jadwal/seminar-mahasiswa', [App\Http\Controllers\AdminJadwalSeminarMahasiswaController::class, 'index'])->name('admin.jadwal.seminar.mahasiswa');
+
+
+// =====================================================
+// BERITA ACARA
+// =====================================================
+
+Route::get('/berita-acara/generate', [App\Http\Controllers\BeritaAcaraController::class, 'generate'])
+    ->name('berita.acara.generate');
+
+Route::get('/berita-acara/unduh', function () {
+    $beritaAcara = \App\Models\BeritaAcaraTemplate::latest()->first();
+    if (!$beritaAcara) abort(404);
+    $path = storage_path('app/public/' . $beritaAcara->file_path);
+    if (!file_exists($path)) abort(404);
+    return response()->download($path, $beritaAcara->nama_file_asli);
+})->name('berita.acara.unduh');
+
+Route::get('/berita-acara/{filename}', function ($filename) {
+    $path = storage_path('app/public/berita-acara/' . $filename);
+    if (!file_exists($path)) abort(404);
+    return response()->file($path);
+})->name('berita.acara.file');
+
+
+// =====================================================
+// VALIDASI & VERIFIKASI BIMBINGAN / SEMINAR — DOSEN
+// =====================================================
+
+Route::post('/dosen/bimbingan/validasi/{id}', [DosenBimbinganController::class, 'validasiBimbingan'])->name('dosen.bimbingan.validasi');
+
+Route::get(
+    '/dosen/bimbingan/verifikasi-seminar/{nim}/{proposal_id}',
+    [DosenBimbinganController::class, 'showVerifikasiSeminar']
+)->name('dosen.bimbingan.verifikasi.seminar');
+
+Route::post(
+    '/dosen/bimbingan/verifikasi-seminar/{nim}/{proposal_id}',
+    [VerifikasiSeminarController::class, 'submit']
+)->name('dosen.bimbingan.verifikasi.seminar.submit');
+
+Route::post('/dosen/profil/set-pin', [AuthController::class, 'setPinDosen'])
+    ->name('dosen.profil.setpin');
+
+Route::get('/surat-pembimbing/{nim}/download', [SuratPembimbingController::class, 'download'])
+    ->name('surat.pembimbing.download');
+
+Route::put('/mahasiswa/profil/update', [AuthController::class, 'updateProfilMahasiswa'])->name('mahasiswa.profil.update');

@@ -58,6 +58,8 @@ class User extends Authenticatable
         'role',
         'angkatan',
         'foto',
+        'no_kontak',
+        'ipk_terakhir',
     ];
 
     /*

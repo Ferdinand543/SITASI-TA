@@ -54,11 +54,13 @@ class ImportMahasiswaController extends Controller
                 // Skip header (baris 1)
                 if ($rowNum === 1) continue;
 
-                $nim      = trim($row['A'] ?? '');
-                $nama     = trim($row['B'] ?? '');
-                $email    = trim($row['C'] ?? '');
-                $angkatan = trim($row['D'] ?? '');
-                $password = trim($row['E'] ?? '');
+                $nim         = trim($row['A'] ?? '');
+                $nama        = trim($row['B'] ?? '');
+                $email       = trim($row['C'] ?? '');
+                $angkatan    = trim($row['D'] ?? '');
+                $password    = trim($row['E'] ?? '');
+                $noKontak    = trim($row['F'] ?? '');
+                $ipkTerakhir = trim($row['G'] ?? '');
 
                 // Skip baris kosong
                 if (empty($nim) && empty($nama) && empty($email)) continue;
@@ -84,6 +86,11 @@ class ImportMahasiswaController extends Controller
                     $errors[] = 'Password maksimal 20 karakter';
                 }
 
+                // Validasi IPK (opsional, tapi kalau diisi harus angka 0-4)
+                if (!empty($ipkTerakhir) && (!is_numeric($ipkTerakhir) || $ipkTerakhir < 0 || $ipkTerakhir > 4)) {
+                    $errors[] = 'IPK tidak valid (harus angka 0-4)';
+                }
+
                 if (in_array(strtolower(trim($nim)), $existingNim)) {
                     $errors[] = 'NIM sudah terdaftar';
                 }
@@ -100,12 +107,14 @@ class ImportMahasiswaController extends Controller
                 // Insert ke DB
                 DB::statement('SET @OLD_SQL_MODE=@@SQL_MODE');
                 DB::table('users')->insert([
-                    'nim_nid'  => $nim,
-                    'nama'     => $nama,
-                    'email'    => strtolower($email),
-                    'angkatan' => $angkatan,
-                    'password' => Hash::make($password, ['rounds' => 4]),
-                    'role'     => 'mahasiswa',
+                    'nim_nid'      => $nim,
+                    'nama'         => $nama,
+                    'email'        => strtolower($email),
+                    'angkatan'     => $angkatan,
+                    'password'     => Hash::make($password, ['rounds' => 4]),
+                    'role'         => 'mahasiswa',
+                    'no_kontak'    => $noKontak !== '' ? $noKontak : null,
+                    'ipk_terakhir' => $ipkTerakhir !== '' ? $ipkTerakhir : null,
                 ]);
 
                 // Tambah ke list existing biar baris berikutnya tidak duplikat dalam file yg sama

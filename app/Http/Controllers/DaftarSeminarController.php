@@ -88,6 +88,19 @@ class DaftarSeminarController extends Controller
         $user   = session('user');
         $nimNid = $user->nim_nid;
 
+        // ── Reset notif seminar setelah halaman dibuka ──
+        $totalSeminar = DB::table('pengajuan_seminars')
+            ->where('mahasiswa_id', $nimNid)
+            ->whereIn('status_seminar', [
+                'Lolos Administrasi',
+                'Menunggu Jadwal',
+                'Selesai',
+                'Ditolak'
+            ])->count();
+
+        session(['notif_seminar_terakhir_' . $nimNid => $totalSeminar]);
+        // ───────────────────────────────────────────────
+
         $query = PengajuanSeminar::where('mahasiswa_id', $nimNid);
 
         if ($request->filled('search')) {

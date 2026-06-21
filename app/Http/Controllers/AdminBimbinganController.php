@@ -119,6 +119,28 @@ class AdminBimbinganController extends Controller
         return redirect()->back()->with('success', 'Status bimbingan berhasil diperbarui.');
     }
 
+    // ── VALIDASI BIMBINGAN (Valid / Tidak Valid) ──
+    // Pakai kolom status_validasi & catatan_dosen yang sama dengan sisi dosen,
+    // jadi begitu salah satu pihak (dosen/admin) sudah validasi, pihak lain otomatis
+    // melihatnya sebagai "sudah final" dan tidak bisa validasi ulang (dicegah di modal/JS).
+    public function validasiBimbingan(Request $request, $id)
+    {
+        if (!session('user')) return redirect('/login');
+
+        $request->validate([
+            'status_validasi' => 'required|in:Valid,Tidak Valid',
+            'catatan_dosen'   => 'nullable|string',
+        ]);
+
+        DB::table('bimbingan')->where('id', $id)->update([
+            'status_validasi' => $request->status_validasi,
+            'catatan_dosen'   => $request->status_validasi === 'Tidak Valid' ? $request->catatan_dosen : null,
+            'updated_at'      => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Validasi bimbingan berhasil disimpan.');
+    }
+
     // ── TRACK BUKA: dipanggil via AJAX tiap admin klik salah satu chip dokumen/link ──
     // Pakai status_admin (kolom terpisah) supaya tidak mengganggu status dosen
     public function trackBuka(Request $request, $id)

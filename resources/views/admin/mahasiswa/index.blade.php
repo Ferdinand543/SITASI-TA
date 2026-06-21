@@ -66,65 +66,22 @@
     .pw-toggle:hover { color: #735C00; }
 
     /* ── SEARCH BAR ── */
-    .search-bar-wrap {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 16px;
-        flex-wrap: wrap;
-    }
-    .search-input-wrap {
-        position: relative;
-        flex: 1;
-        min-width: 220px;
-    }
-    .search-input-wrap i {
-        position: absolute;
-        left: 14px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #94a3b8;
-        font-size: 0.85rem;
-        pointer-events: none;
-    }
-    .search-input {
-        width: 100%;
-        height: 42px;
-        border: 1.5px solid #E5E7EB;
-        border-radius: 12px;
-        padding: 0 14px 0 38px;
-        font-size: 0.85rem;
-        font-family: inherit;
-        color: #1E293B;
-        background: #fff;
-        outline: none;
-        transition: border-color .2s;
-    }
+    .search-bar-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .search-input-wrap { position: relative; flex: 1; min-width: 220px; }
+    .search-input-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.85rem; pointer-events: none; }
+    .search-input { width: 100%; height: 42px; border: 1.5px solid #E5E7EB; border-radius: 12px; padding: 0 14px 0 38px; font-size: 0.85rem; font-family: inherit; color: #1E293B; background: #fff; outline: none; transition: border-color .2s; }
     .search-input:focus { border-color: #FACC15; }
-    .btn-reset {
-        height: 42px;
-        padding: 0 18px;
-        border-radius: 12px;
-        border: 1.5px solid #E5E7EB;
-        background: #fff;
-        color: #6B7280;
-        font-size: 0.83rem;
-        font-weight: 700;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        transition: .2s;
-        white-space: nowrap;
-        font-family: inherit;
-    }
+    .btn-reset { height: 42px; padding: 0 18px; border-radius: 12px; border: 1.5px solid #E5E7EB; background: #fff; color: #6B7280; font-size: 0.83rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: .2s; white-space: nowrap; font-family: inherit; }
     .btn-reset:hover { background: #FEE2E2; border-color: #FECACA; color: #DC2626; }
-    .search-info {
-        font-size: 0.82rem;
-        color: #6B7280;
-        padding: 0 4px;
-    }
+    .search-info { font-size: 0.82rem; color: #6B7280; padding: 0 4px; }
     .highlight { background: #FFF3A3; border-radius: 3px; padding: 0 2px; }
+
+    /* ── BADGE IPK ── */
+    .badge-ipk { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+    .ipk-high   { background: #D1FAE5; color: #065F46; }
+    .ipk-mid    { background: #FEF3C7; color: #92400E; }
+    .ipk-low    { background: #FEE2E2; color: #991B1B; }
+    .ipk-none   { background: #F1F5F9; color: #94a3b8; }
 
     /* ── IMPORT MODAL ── */
     .import-drop-area { border: 2.5px dashed #FACC15; border-radius: 18px; padding: 36px 20px; text-align: center; background: #FFFBEB; cursor: pointer; transition: .2s; position: relative; }
@@ -136,6 +93,13 @@
     .import-tip ul { margin: 0; padding-left: 18px; }
     .btn-download-template { display: inline-flex; align-items: center; gap: 6px; background: #F0FDF4; color: #15803D; border: 1.5px solid #BBF7D0; border-radius: 10px; padding: 8px 16px; font-size: 0.83rem; font-weight: 700; text-decoration: none; transition: .2s; margin-bottom: 16px; }
     .btn-download-template:hover { background: #DCFCE7; color: #15803D; }
+
+    /* ── FORM LABEL ICON ── */
+    .form-label { font-size: 0.8rem; font-weight: 700; color: #374151; margin-bottom: 6px; }
+    .form-label i { color: #FACC15; margin-right: 5px; }
+
+    /* ── MODAL SCROLL ── */
+    .modal-body { max-height: 70vh; overflow-y: auto; }
 </style>
 
 <div class="container-fluid py-4">
@@ -204,7 +168,9 @@
                         <th>NIM</th>
                         <th>Mahasiswa</th>
                         <th>Angkatan</th>
-                        <th width="180">Aksi</th>
+                        <th>No. Kontak</th>
+                        <th>IPK</th>
+                        <th width="120">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -219,7 +185,19 @@
                             <div class="mhs-name mhs-nama-text">{{ $mhs->nama }}</div>
                             <div class="mhs-email mhs-email-text">{{ $mhs->email }}</div>
                         </td>
-                        <td>{{ $mhs->angkatan }}</td>
+                        <td>{{ $mhs->angkatan ?? '-' }}</td>
+                        <td>{{ $mhs->no_kontak ?? '-' }}</td>
+                        <td>
+                            @if(!empty($mhs->ipk_terakhir))
+                                @php
+                                    $ipk = (float) $mhs->ipk_terakhir;
+                                    $cls = $ipk >= 3.5 ? 'ipk-high' : ($ipk >= 3.0 ? 'ipk-mid' : 'ipk-low');
+                                @endphp
+                                <span class="badge-ipk {{ $cls }}">{{ number_format($ipk, 2) }}</span>
+                            @else
+                                <span class="badge-ipk ipk-none">-</span>
+                            @endif
+                        </td>
                         <td>
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn-action btn-edit"
@@ -241,7 +219,7 @@
                                                 <h5 class="modal-title fw-bold text-danger">Hapus Mahasiswa</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                             </div>
-                                            <div class="modal-body text-center py-4">
+                                            <div class="modal-body text-center py-4" style="max-height:none;">
                                                 <div class="mb-3"><i class="fa-solid fa-trash-can" style="font-size:60px;color:#ef4444;"></i></div>
                                                 <h5 class="fw-bold mb-2">Yakin ingin menghapus?</h5>
                                                 <p class="text-muted mb-0">Data mahasiswa <strong>{{ $mhs->nama }}</strong> akan dihapus permanen.</p>
@@ -267,29 +245,56 @@
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header border-0">
-                                    <h5 class="modal-title">Edit Mahasiswa</h5>
+                                    <h5 class="modal-title"><i class="fa-solid fa-pen me-2" style="color:#FACC15;"></i>Edit Mahasiswa</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
                                     <form action="{{ route('mahasiswa.update', $mhs->nim_nid) }}" method="POST" data-current-nim="{{ $mhs->nim_nid }}">
                                         @csrf @method('PUT')
+
                                         <div class="mb-3">
-                                            <label class="form-label">NIM</label>
-                                            <input type="text" class="form-control" value="{{ $mhs->nim_nid }}" disabled>
+                                            <label class="form-label"><i class="fa-solid fa-id-badge"></i> NIM</label>
+                                            <input type="text" class="form-control bg-light" value="{{ $mhs->nim_nid }}" disabled>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Nama Mahasiswa</label>
-                                            <input type="text" name="nama" class="form-control" value="{{ $mhs->nama }}">
+                                            <label class="form-label"><i class="fa-solid fa-user"></i> Nama Mahasiswa</label>
+                                            <input type="text" name="nama" class="form-control" value="{{ $mhs->nama }}" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Email</label>
-                                            <input type="email" name="email" class="form-control" value="{{ $mhs->email }}">
+                                            <label class="form-label"><i class="fa-solid fa-envelope"></i> Email</label>
+                                            <input type="email" name="email" class="form-control" value="{{ $mhs->email }}" required>
+                                        </div>
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-6">
+                                                <label class="form-label"><i class="fa-solid fa-calendar"></i> Angkatan</label>
+                                                <input type="text" name="angkatan" class="form-control" value="{{ $mhs->angkatan }}" maxlength="4" placeholder="cth: 2021">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label"><i class="fa-solid fa-mobile-alt"></i> No. Kontak</label>
+                                                <input type="text" name="no_kontak" class="form-control" value="{{ $mhs->no_kontak }}" maxlength="20" placeholder="08xxxxxxxxxx">
+                                            </div>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Angkatan</label>
-                                            <input type="text" name="angkatan" class="form-control" value="{{ $mhs->angkatan }}">
+                                            <label class="form-label"><i class="fa-solid fa-star"></i> IPK Terakhir</label>
+                                            <input type="number" name="ipk_terakhir" class="form-control"
+                                                value="{{ $mhs->ipk_terakhir }}"
+                                                step="0.01" min="0" max="4.00"
+                                                placeholder="cth: 3.75">
+                                            <div class="form-text">Nilai 0.00 – 4.00</div>
                                         </div>
-                                        <button type="submit" class="btn-submit">Update Mahasiswa</button>
+                                        <div class="mb-4">
+                                            <label class="form-label"><i class="fa-solid fa-lock"></i> Password Baru <span class="text-muted fw-normal">(kosongkan jika tidak diubah)</span></label>
+                                            <div class="pw-wrap">
+                                                <input type="password" name="password" class="form-control" placeholder="Min. 6 karakter">
+                                                <button type="button" class="pw-toggle" onclick="togglePw(this)">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn-submit">
+                                            <i class="fa-solid fa-check me-2"></i> Update Mahasiswa
+                                        </button>
                                     </form>
                                 </div>
                             </div>
@@ -298,7 +303,7 @@
 
                     @empty
                     <tr id="emptyRow">
-                        <td colspan="5" class="py-5 text-muted">Data mahasiswa belum tersedia</td>
+                        <td colspan="7" class="py-5 text-muted">Data mahasiswa belum tersedia</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -318,50 +323,69 @@
 
 </div>
 
-{{-- MODAL TAMBAH --}}
+{{-- ============================================================
+     MODAL TAMBAH MAHASISWA
+     ============================================================ --}}
 <div class="modal fade" id="modalMahasiswa" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h5 class="modal-title">Tambah Mahasiswa</h5>
+                <h5 class="modal-title"><i class="fa-solid fa-plus me-2" style="color:#FACC15;"></i>Tambah Mahasiswa</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form action="{{ route('mahasiswa.store') }}" method="POST">
                     @csrf
                     <div class="mb-3">
-                        <label class="form-label">NIM</label>
-                        <input type="text" name="nim_nid" class="form-control">
+                        <label class="form-label"><i class="fa-solid fa-id-badge"></i> NIM</label>
+                        <input type="text" name="nim_nid" class="form-control" placeholder="Nomor Induk Mahasiswa" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Nama Mahasiswa</label>
-                        <input type="text" name="nama" class="form-control">
+                        <label class="form-label"><i class="fa-solid fa-user"></i> Nama Mahasiswa</label>
+                        <input type="text" name="nama" class="form-control" placeholder="Nama lengkap" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control">
+                        <label class="form-label"><i class="fa-solid fa-envelope"></i> Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="email@university.ac.id" required>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label"><i class="fa-solid fa-calendar"></i> Angkatan</label>
+                            <input type="text" name="angkatan" class="form-control" placeholder="cth: 2021" maxlength="4">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label"><i class="fa-solid fa-mobile-alt"></i> No. Kontak</label>
+                            <input type="text" name="no_kontak" class="form-control" placeholder="08xxxxxxxxxx" maxlength="20">
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Angkatan</label>
-                        <input type="text" name="angkatan" class="form-control">
+                        <label class="form-label"><i class="fa-solid fa-star"></i> IPK Terakhir</label>
+                        <input type="number" name="ipk_terakhir" class="form-control"
+                            step="0.01" min="0" max="4.00"
+                            placeholder="cth: 3.75">
+                        <div class="form-text">Nilai 0.00 – 4.00 (opsional)</div>
                     </div>
                     <div class="mb-4">
-                        <label class="form-label">Password</label>
+                        <label class="form-label"><i class="fa-solid fa-lock"></i> Password</label>
                         <div class="pw-wrap">
-                            <input type="password" name="password" class="form-control">
+                            <input type="password" name="password" class="form-control" placeholder="Min. 6, maks. 10 karakter" required>
                             <button type="button" class="pw-toggle" onclick="togglePw(this)">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
                         </div>
                     </div>
-                    <button type="submit" class="btn-submit">Simpan Mahasiswa</button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fa-solid fa-floppy-disk me-2"></i> Simpan Mahasiswa
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-{{-- MODAL IMPORT --}}
+{{-- ============================================================
+     MODAL IMPORT EXCEL
+     ============================================================ --}}
 <div class="modal fade" id="modalImport" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -389,11 +413,12 @@
                         </div>
                     </div>
                     <div class="import-tip mt-3">
-                        <strong>Panduan:</strong>
+                        <strong>Panduan kolom Excel:</strong>
                         <ul class="mt-1">
-                            <li>Download template, isi data, lalu upload kembali</li>
-                            <li>Kolom wajib: NIM, Nama, Email, Angkatan, Password</li>
+                            <li><strong>Wajib:</strong> NIM, Nama, Email, Angkatan, Password</li>
+                            <li><strong>Opsional:</strong> No. Kontak, IPK Terakhir</li>
                             <li>NIM dan Email harus unik</li>
+                            <li>IPK format desimal: 0.00 – 4.00</li>
                             <li>Maksimal 2000 baris per file</li>
                         </ul>
                     </div>
@@ -437,13 +462,11 @@ function filterMahasiswa() {
 
         if (match || !q) {
             row.style.display = '';
-            // Update nomor urut
             row.querySelector('.row-num').textContent = num++;
-            // Highlight
             if (q) {
-                highlightText(row.querySelector('.mhs-nim'),        row.dataset.nim.toUpperCase().includes(q.toUpperCase()) ? q : '', row.querySelector('.mhs-nim').textContent);
-                highlightText(row.querySelector('.mhs-nama-text'),  nama.includes(q) ? q : '', row.querySelector('.mhs-nama-text').textContent);
-                highlightText(row.querySelector('.mhs-email-text'), email.includes(q) ? q : '', row.querySelector('.mhs-email-text').textContent);
+                highlightText(row.querySelector('.mhs-nim'),        q, row.querySelector('.mhs-nim').textContent);
+                highlightText(row.querySelector('.mhs-nama-text'),  q, row.querySelector('.mhs-nama-text').textContent);
+                highlightText(row.querySelector('.mhs-email-text'), q, row.querySelector('.mhs-email-text').textContent);
             } else {
                 clearHighlight(row);
             }
@@ -484,12 +507,12 @@ function resetSearch() {
 
 // ── FILE INPUT IMPORT ──
 document.getElementById('fileExcel').addEventListener('change', function () {
-    const file = this.files[0];
-    const nameEl = document.getElementById('fileName');
-    const nameText = document.getElementById('fileNameText');
+    const file      = this.files[0];
+    const nameEl    = document.getElementById('fileName');
+    const nameText  = document.getElementById('fileNameText');
     const btnImport = document.getElementById('btnImport');
     if (file) { nameText.textContent = file.name; nameEl.style.display = 'block'; btnImport.disabled = false; }
-    else { nameEl.style.display = 'none'; btnImport.disabled = true; }
+    else       { nameEl.style.display = 'none'; btnImport.disabled = true; }
 });
 
 // ── DRAG & DROP ──
@@ -521,10 +544,33 @@ document.addEventListener('DOMContentLoaded', function () {
         const nim      = formTambah.querySelector('[name="nim_nid"]').value.trim();
         const email    = formTambah.querySelector('[name="email"]').value.trim();
         const password = formTambah.querySelector('[name="password"]').value;
-        if (existingNim.includes(nim)) { e.preventDefault(); Swal.fire({ icon:'error', title:'NIM Sudah Terdaftar!', text:'NIM ' + nim + ' sudah digunakan.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' }); return; }
-        if (existingEmail.includes(email)) { e.preventDefault(); Swal.fire({ icon:'error', title:'Email Sudah Terdaftar!', text:'Email ' + email + ' sudah digunakan.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' }); return; }
-        if (password.length < 6) { e.preventDefault(); Swal.fire({ icon:'warning', title:'Password Terlalu Pendek!', text:'Password minimal 6 karakter.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' }); return; }
-        if (password.length > 10) { e.preventDefault(); Swal.fire({ icon:'warning', title:'Password Terlalu Panjang!', text:'Password maksimal 10 karakter.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' }); return; }
+        const ipk      = parseFloat(formTambah.querySelector('[name="ipk_terakhir"]').value);
+
+        if (existingNim.includes(nim)) {
+            e.preventDefault();
+            Swal.fire({ icon:'error', title:'NIM Sudah Terdaftar!', text:'NIM ' + nim + ' sudah digunakan.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' });
+            return;
+        }
+        if (existingEmail.includes(email)) {
+            e.preventDefault();
+            Swal.fire({ icon:'error', title:'Email Sudah Terdaftar!', text:'Email ' + email + ' sudah digunakan.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' });
+            return;
+        }
+        if (password.length < 6) {
+            e.preventDefault();
+            Swal.fire({ icon:'warning', title:'Password Terlalu Pendek!', text:'Password minimal 6 karakter.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' });
+            return;
+        }
+        if (password.length > 10) {
+            e.preventDefault();
+            Swal.fire({ icon:'warning', title:'Password Terlalu Panjang!', text:'Password maksimal 10 karakter.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' });
+            return;
+        }
+        if (formTambah.querySelector('[name="ipk_terakhir"]').value !== '' && (isNaN(ipk) || ipk < 0 || ipk > 4)) {
+            e.preventDefault();
+            Swal.fire({ icon:'warning', title:'IPK Tidak Valid!', text:'IPK harus antara 0.00 dan 4.00.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' });
+            return;
+        }
     });
 
     // VALIDASI EDIT
@@ -532,12 +578,33 @@ document.addEventListener('DOMContentLoaded', function () {
         formEdit.addEventListener('submit', function (e) {
             const currentNim = formEdit.dataset.currentNim;
             const email      = formEdit.querySelector('[name="email"]').value.trim();
-            const password   = formEdit.querySelector('[name="password"]') ? formEdit.querySelector('[name="password"]').value : '';
+            const pwEl       = formEdit.querySelector('[name="password"]');
+            const password   = pwEl ? pwEl.value : '';
+            const ipkEl      = formEdit.querySelector('[name="ipk_terakhir"]');
+            const ipk        = ipkEl ? parseFloat(ipkEl.value) : null;
+
             for (const [nim, em] of Object.entries(emailByNim)) {
-                if (em === email && nim !== currentNim) { e.preventDefault(); Swal.fire({ icon:'error', title:'Email Sudah Digunakan!', text:'Email ' + email + ' sudah digunakan mahasiswa lain.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' }); return; }
+                if (em === email && nim !== currentNim) {
+                    e.preventDefault();
+                    Swal.fire({ icon:'error', title:'Email Sudah Digunakan!', text:'Email ' + email + ' sudah digunakan mahasiswa lain.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' });
+                    return;
+                }
             }
-            if (password.length > 0 && password.length < 6) { e.preventDefault(); Swal.fire({ icon:'warning', title:'Password Terlalu Pendek!', text:'Password minimal 6 karakter.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' }); return; }
-            if (password.length > 10) { e.preventDefault(); Swal.fire({ icon:'warning', title:'Password Terlalu Panjang!', text:'Password maksimal 10 karakter.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' }); return; }
+            if (password.length > 0 && password.length < 6) {
+                e.preventDefault();
+                Swal.fire({ icon:'warning', title:'Password Terlalu Pendek!', text:'Password minimal 6 karakter.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' });
+                return;
+            }
+            if (password.length > 10) {
+                e.preventDefault();
+                Swal.fire({ icon:'warning', title:'Password Terlalu Panjang!', text:'Password maksimal 10 karakter.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' });
+                return;
+            }
+            if (ipkEl && ipkEl.value !== '' && (isNaN(ipk) || ipk < 0 || ipk > 4)) {
+                e.preventDefault();
+                Swal.fire({ icon:'warning', title:'IPK Tidak Valid!', text:'IPK harus antara 0.00 dan 4.00.', confirmButtonColor:'#FACC15', confirmButtonText:'OK' });
+                return;
+            }
         });
     });
 });

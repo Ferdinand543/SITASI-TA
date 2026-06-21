@@ -14,8 +14,6 @@ class DosenBimbinganController extends Controller
         $dosen    = session('user');
         $nidDosen = $dosen->nim_nid;
 
-        // ❌ DIHAPUS: auto-mark bimbingan (ini yang bikin status langsung berubah pas halaman dibuka)
-
         $proposalIds = DB::table('dosen_pembimbing')
             ->where('nim_nid_dosen', $nidDosen)
             ->pluck('proposal_id');
@@ -85,7 +83,6 @@ class DosenBimbinganController extends Controller
         return redirect(asset('uploads/proposal/' . $proposal->file_proposal));
     }
 
-    // ✅ BARU: dipanggil via AJAX tiap dosen klik salah satu chip dokumen/link
     public function trackBuka(Request $request, $id)
     {
         if (!session('user')) return response()->json(['ok' => false], 401);
@@ -96,12 +93,11 @@ class DosenBimbinganController extends Controller
             return response()->json(['ok' => true, 'status' => $proposal->status ?? 'not_found']);
         }
 
-        $decoded    = json_decode($proposal->file_proposal, true);
-        $files      = $decoded['files'] ?? [];
-        $links      = $decoded['links'] ?? [];
-        $totalAset  = count($files) + count($links);
+        $decoded   = json_decode($proposal->file_proposal, true);
+        $files     = $decoded['files'] ?? [];
+        $links     = $decoded['links'] ?? [];
+        $totalAset = count($files) + count($links);
 
-        // Kalau format lama (plain string, bukan JSON array), total = 1
         if (!is_array($decoded)) {
             $totalAset = 1;
         }
@@ -149,13 +145,50 @@ class DosenBimbinganController extends Controller
 
         $judulTA = $pengajuan->judul_disetujui ?? '-';
 
-        // ✅ Total bimbingan & status kelayakan hanya dihitung dari yang sudah divalidasi "Valid"
         $totalBimbingan = $bimbingan->where('status_validasi', 'Valid')->count();
         $minBimbingan   = 6;
 
+        $proposal = DB::table('pengajuan_proposal_bimbingan')
+            ->where('nim_nid', $nim)
+            ->where('dosen_nid', $nidDosen)
+            ->latest()
+            ->first();
+
+        // ── Ambil data seminar ──
+        $seminarMhs = DB::table('pengajuan_seminars')
+            ->where('mahasiswa_id', $nim)
+            ->latest()
+            ->first();
+
+        // ── Cek urutan dosen (pembimbing 1 atau 2) ──
+        $proposalTA = DB::table('proposal')
+            ->where('nim_nid', $nim)
+            ->latest()
+            ->first();
+
+        $urutanDosen = DB::table('dosen_pembimbing')
+            ->where('nim_nid_dosen', $nidDosen)
+            ->where('proposal_id', $proposalTA->id ?? 0)
+            ->value('urutan');
+
+        // FIX: pastikan $urutanDosen tidak null sebelum cek kolom
+        $kolomStatus    = $urutanDosen ? ('status_pembimbing' . $urutanDosen) : null;
+        $sudahDisetujui = $kolomStatus
+            && $seminarMhs
+            && isset($seminarMhs->$kolomStatus)
+            && $seminarMhs->$kolomStatus === 'layak';
+
         return view('dosen.detail_bimbingan', compact(
-            'mahasiswa', 'bimbingan', 'judulTA',
-            'dosen', 'totalBimbingan', 'minBimbingan'
+            'mahasiswa',
+            'bimbingan',
+            'judulTA',
+            'dosen',
+            'totalBimbingan',
+            'minBimbingan',
+            'proposal',
+            'seminarMhs',
+            'urutanDosen',
+            'sudahDisetujui'
         ));
     }
 
@@ -170,12 +203,11 @@ class DosenBimbinganController extends Controller
         return redirect()->back()->with('success', 'Status bimbingan diperbarui.');
     }
 
-    // ✅ BARU: simpan hasil validasi (Valid / Tidak Valid) dari modal popup dosen
     public function validasiBimbingan(Request $request, $id)
     {
         if (!session('user')) return redirect('/login');
 
-        $statusValidasi = $request->input('status_validasi'); // 'Valid' atau 'Tidak Valid'
+        $statusValidasi = $request->input('status_validasi');
         $catatanDosen   = $request->input('catatan_dosen');
 
         $data = [
@@ -183,7 +215,6 @@ class DosenBimbinganController extends Controller
             'updated_at'      => now(),
         ];
 
-        // Catatan dosen hanya diisi kalau status = Tidak Valid
         if ($statusValidasi === 'Tidak Valid') {
             $data['catatan_dosen'] = $catatanDosen;
         } else {
@@ -195,5 +226,107 @@ class DosenBimbinganController extends Controller
             ->update($data);
 
         return redirect()->back()->with('success', 'Validasi bimbingan berhasil disimpan.');
+    }
+
+    public function showVerifikasiSeminar($nim, $proposal_id)
+    {
+        if (!session('user')) return redirect('/login');
+
+        $mahasiswa = DB::table('users')->where('nim_nid', $nim)->first();
+        $proposal  = DB::table('pengajuan_proposal_bimbingan')->where('id', $proposal_id)->first();
+        $pengajuan = DB::table('pengajuan_judul')
+            ->where('nim_nid', $nim)
+            ->where('status', 'disetujui')
+            ->latest('updated_at')
+            ->first();
+
+        $judulTA        = $pengajuan->judul_disetujui ?? '-';
+        $totalBimbingan = DB::table('bimbingan')
+            ->where('nim_nid', $nim)
+            ->where('status_validasi', 'Valid')
+            ->count();
+        $minBimbingan = 6;
+
+        $seminar = DB::table('pengajuan_seminars')
+            ->where('mahasiswa_id', $nim)
+            ->latest()
+            ->first();
+
+        return view('dosen.verifikasi_seminar', compact(
+            'mahasiswa',
+            'proposal',
+            'judulTA',
+            'totalBimbingan',
+            'minBimbingan',
+            'nim',
+            'seminar'
+        ));
+    }
+
+    public function submitVerifikasiSeminar(Request $request, $nim, $proposal_id)
+    {
+        if (!session('user')) return redirect('/login');
+
+        $dosen    = session('user');
+        $nidDosen = $dosen->nim_nid;
+
+        // ── Cek urutan dosen (pembimbing 1 atau 2) ──
+        $proposalTA = DB::table('proposal')
+            ->where('nim_nid', $nim)
+            ->latest()
+            ->first();
+
+        $urutanDosen = DB::table('dosen_pembimbing')
+            ->where('nim_nid_dosen', $nidDosen)
+            ->where('proposal_id', $proposalTA->id ?? 0)
+            ->value('urutan');
+
+        if (!$urutanDosen) {
+            return redirect()->back()->with('error', 'Anda bukan pembimbing mahasiswa ini.');
+        }
+
+        $kolomStatus   = 'status_pembimbing'   . $urutanDosen;
+        $kolomSignedAt = 'signed_at_pembimbing' . $urutanDosen;
+
+        // ── Ambil data seminar ──
+        $seminar = DB::table('pengajuan_seminars')
+            ->where('mahasiswa_id', $nim)
+            ->latest()
+            ->first();
+
+        if (!$seminar) {
+            return redirect()->back()->with('error', 'Data seminar mahasiswa tidak ditemukan.');
+        }
+
+        // ── Guard: sudah pernah disetujui ──
+        if (($seminar->$kolomStatus ?? '') === 'layak') {
+            return redirect()->back()->with('error', 'Anda sudah pernah memverifikasi seminar mahasiswa ini.');
+        }
+
+        // ── Update status seminar ──
+        DB::table('pengajuan_seminars')
+            ->where('id', $seminar->id)
+            ->update([
+                $kolomStatus   => 'layak',
+                $kolomSignedAt => now(),
+                'updated_at'   => now(),
+            ]);
+
+        // FIX: Update proposal bimbingan HANYA kalau kedua pembimbing sudah TTD
+        $seminarFresh = DB::table('pengajuan_seminars')
+            ->where('id', $seminar->id)
+            ->first();
+
+        if (
+            ($seminarFresh->status_pembimbing1 ?? '') === 'layak' &&
+            ($seminarFresh->status_pembimbing2 ?? '') === 'layak'
+        ) {
+            DB::table('pengajuan_proposal_bimbingan')
+                ->where('id', $proposal_id)
+                ->update(['status' => 'disetujui', 'updated_at' => now()]);
+        }
+
+        return redirect()->route('dosen.bimbingan.detail', $nim)
+            ->with('success', 'Kelayakan seminar berhasil diverifikasi & ditandatangani.');
     }
 }

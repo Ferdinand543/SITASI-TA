@@ -367,7 +367,15 @@
                             </button>
 
                             @elseif(in_array($p->status_seminar, ['Menunggu Jadwal', 'Jadwal ditetapkan', 'Sudah Dijadwalkan', 'Selesai']))
-                            <a href="{{ route('seminar.show', $p->id) }}" class="btn-lihat">Lihat Seminar</a>
+                            <div style="display:flex;flex-direction:column;gap:6px;">
+                                <a href="{{ route('seminar.show', $p->id) }}" class="btn-lihat">Lihat Seminar</a>
+                                {{-- EDIT: Unduh Berita Acara hanya muncul kalau sudah dijadwalkan atau selesai --}}
+                                @if(in_array($p->status_seminar, ['Sudah Dijadwalkan', 'Selesai']))
+                                <a href="{{ route('berita.acara.generate') }}" class="btn-lihat" style="color:#C9A227;">
+                                    Unduh Berita Acara
+                                </a>
+                                @endif
+                            </div>
 
                             @else
                             <a href="{{ route('seminar.show', $p->id) }}" class="btn-lihat">Lihat Detail</a>

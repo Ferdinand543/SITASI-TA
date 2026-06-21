@@ -292,7 +292,7 @@
 </style>
 
 {{-- BACK --}}
-<a href="{{ route('admin.bimbingan.index') }}" class="btn-back">
+<a href="{{ route('admin.bimbingan.index') }}?tab=mahasiswa" class="btn-back">
     <i class="fa-solid fa-arrow-left" style="font-size:12px;"></i>
     Kembali
 </a>

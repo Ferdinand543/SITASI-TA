@@ -438,8 +438,8 @@
         <div class="hero-body">
             <h1>Sistem Bimbingan Tugas Akhir Mahasiswa<br>Sistem Informasi</h1>
             <div class="d-flex gap-2 flex-wrap">
-                <a href="#" class="btn-hero-primary">Pelajari Alur TA</a>
-                <a href="#" class="btn-hero-outline">Unduh Pedoman</a>
+                <a href="{{ route('panduan-ta.mahasiswa') }}" class="btn-hero-primary">Pelajari Alur TA</a>
+                <a href="{{ asset('pedoman/Pengarahan Pelaksanaan TA1 - 151025.pdf') }}" target="_blank" download class="btn-hero-outline">Unduh Pedoman</a>
             </div>
         </div>
     </div>
@@ -705,6 +705,7 @@
                 <div class="card-text"><h6>Upload Proposal</h6><p>Kirim proposal untuk di review</p></div>
             </a>
             <a href="{{ url('/bimbingan') }}" class="menu-card-item">
+                @if(($notifBimbinganMahasiswa ?? 0) > 0)<span class="card-badge-notif"></span>@endif
                 <div class="card-icon-wrap"><img src="{{ asset('images/bimbingan.jpeg') }}" alt="Bimbingan"></div>
                 <div class="card-text"><h6>Riwayat Bimbingan</h6><p>Riwayat Bimbingan TA1</p></div>
             </a>
@@ -713,10 +714,12 @@
                 <div class="card-text"><h6>Jadwal</h6><p>Pelaksanaan TA & Seminar</p></div>
             </a>
             <a href="{{ route('seminar.daftar') }}" class="menu-card-item">
+                @if(($notifSeminarMahasiswa ?? 0) > 0)<span class="card-badge-notif"></span>@endif
                 <div class="card-icon-wrap"><img src="{{ asset('images/seminar.jpeg') }}" alt="Daftar Seminar"></div>
                 <div class="card-text"><h6>Daftar Seminar</h6><p>Ajukan Pendaftaran Seminar</p></div>
             </a>
             <a href="#" class="menu-card-item">
+                @if(($notifNilaiMahasiswa ?? 0) > 0)<span class="card-badge-notif"></span>@endif
                 <div class="card-icon-wrap"><img src="{{ asset('images/nilai.jpeg') }}" alt="Nilai"></div>
                 <div class="card-text"><h6>Nilai</h6><p>Lihat Hasil Penilaian TA dan Seminar</p></div>
             </a>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\PengajuanSeminar;
+use App\Models\BeritaAcaraTemplate;
 
 class AdminSeminarController extends Controller
 {
@@ -43,13 +44,19 @@ class AdminSeminarController extends Controller
         $lolos       = PengajuanSeminar::where('is_draft', 0)->where('status_administrasi', 'Lolos Administrasi')->count();
         $dijadwalkan = PengajuanSeminar::where('is_draft', 0)->whereNotNull('tanggal_seminar')->count();
 
+        $adaYangDijadwalkan = PengajuanSeminar::where('is_draft', 0)
+            ->whereIn('status_seminar', ['Sudah Dijadwalkan', 'Menunggu Jadwal'])
+            ->exists();
+
         $angkatanList = DB::table('users')
             ->where('role', 'mahasiswa')
             ->distinct()->pluck('angkatan')
             ->filter()->sort()->values();
 
+        $beritaAcara = BeritaAcaraTemplate::latest()->first();
+
         return view('admin.seminar.index', compact(
-            'pengajuans', 'total', 'pending', 'lolos', 'dijadwalkan', 'angkatanList'
+            'pengajuans', 'total', 'pending', 'lolos', 'dijadwalkan', 'angkatanList', 'adaYangDijadwalkan', 'beritaAcara'
         ));
     }
 
@@ -101,10 +108,6 @@ class AdminSeminarController extends Controller
 
         $pengajuan = PengajuanSeminar::findOrFail($id);
 
-        // ══ Ambil status dokumen yang SUDAH ADA di DB ══
-        // Ini penting untuk mode reverifikasi: dokumen yang terkunci (setujui)
-        // tidak dikirim via tombol, tapi sudah dikirim via hidden input di blade.
-        // Fallback ke status lama kalau request tidak mengirim field tersebut.
         $statusLama = $pengajuan->status_dokumen
             ? (json_decode($pengajuan->status_dokumen, true) ?? [])
             : [];
@@ -122,17 +125,12 @@ class AdminSeminarController extends Controller
             $fieldStatus  = 'status_'  . $key;
             $fieldCatatan = 'catatan_' . $key;
 
-            // Kalau field dikirim dari form → pakai nilai baru
-            // Kalau tidak dikirim (dokumen terkunci tidak punya tombol) → pakai nilai lama dari DB
             if ($request->has($fieldStatus)) {
                 $statusDokumen[$key] = $request->input($fieldStatus, 'menunggu');
             } else {
-                // Pertahankan status lama (biasanya 'setujui' untuk yang terkunci)
                 $statusDokumen[$key] = $statusLama[$key] ?? 'menunggu';
             }
 
-            // Catatan: kalau dokumen di-tolak → simpan catatan baru
-            // Kalau tidak di-tolak → kosongkan catatan (sudah tidak relevan)
             if ($statusDokumen[$key] === 'tolak') {
                 $catatanDokumen[$key] = $request->input($fieldCatatan) ?? $catatanLama[$key] ?? null;
             } else {
@@ -140,7 +138,6 @@ class AdminSeminarController extends Controller
             }
         }
 
-        // Hitung ulang progress_dokumen berdasarkan jumlah yang disetujui
         $progressDokumen = collect($statusDokumen)
             ->filter(fn($v) => $v === 'setujui')
             ->count();
@@ -176,5 +173,23 @@ class AdminSeminarController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Jadwal seminar berhasil ditetapkan.');
+    }
+
+    public function uploadBeritaAcara(Request $request)
+    {
+        if (!session('user')) return redirect('/login');
+
+        $request->validate([
+            'file_berita_acara' => 'required|file|mimes:pdf,doc,docx|max:10240',
+        ]);
+
+        $path = $request->file('file_berita_acara')->store('berita-acara', 'public');
+
+        BeritaAcaraTemplate::create([
+            'file_path'       => $path,
+            'nama_file_asli'  => $request->file('file_berita_acara')->getClientOriginalName(),
+        ]);
+
+        return redirect()->route('admin.seminar.index')->with('success', 'Berita acara berhasil diunggah');
     }
 }

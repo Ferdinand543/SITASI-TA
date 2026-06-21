@@ -32,8 +32,12 @@ class BimbinganController extends Controller
             ->latest('created_at')
             ->first();
 
-        // ✅ FIX: Join ke tabel proposal dulu untuk dapat proposal_id milik mahasiswa ini,
-        // lalu join ke dosen_pembimbing dan users untuk dapat nama dosen
+        // ✅ Riwayat upload dokumen pra bimbingan (buat dropdown di sidebar)
+        $riwayatProposal = DB::table('pengajuan_proposal_bimbingan')
+            ->where('nim_nid', $nim)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         $dosenList = DB::table('dosen_pembimbing as pb')
             ->join('proposal as p', 'p.id', '=', 'pb.proposal_id')
             ->join('users as u', 'u.nim_nid', '=', 'pb.nim_nid_dosen')
@@ -42,11 +46,36 @@ class BimbinganController extends Controller
             ->orderBy('pb.urutan')
             ->get();
 
-        // $semuaDosen dipakai di modal tambah bimbingan (select dosen)
         $semuaDosen = $dosenList;
 
+        // ✅ Tambahan: ambil data seminar aktif mahasiswa ini
+        // untuk cek status TTD pembimbing (dipakai banner kelayakan)
+        $seminar = DB::table('pengajuan_seminars')
+            ->where('mahasiswa_id', $nim)
+            ->latest()
+            ->first();
+
+        // 🔵 FIX #1 — tandai notif "Riwayat Bimbingan" sebagai sudah dilihat
+        // (sama persis logic-nya dengan yang dihitung di AppServiceProvider)
+        $totalBimbinganDirespon = DB::table('bimbingan')
+            ->where('nim_nid', $nim)
+            ->whereIn('status_validasi', ['Valid', 'Tidak Valid'])
+            ->count();
+
+        session(['notif_bimbingan_terakhir_' . $nim => $totalBimbinganDirespon]);
+
+        // 🔵 FIX #2 — tandai notif "Kelayakan Seminar" (banner ijo) sebagai sudah dilihat
+        // (sama persis logic-nya dengan yang dihitung di AppServiceProvider)
+        $totalLayakDirespon = DB::table('pengajuan_seminars')
+            ->where('mahasiswa_id', $nim)
+            ->where('status_pembimbing1', 'layak')
+            ->count();
+
+        session(['notif_layak_terakhir_' . $nim => $totalLayakDirespon]);
+
         return view('mahasiswa.bimbingan', compact(
-            'bimbingan', 'judulTA', 'dosenList', 'semuaDosen', 'user', 'proposal'
+            'bimbingan', 'judulTA', 'dosenList', 'semuaDosen', 'user', 'proposal',
+            'seminar', 'riwayatProposal'
         ));
     }
 
@@ -86,7 +115,7 @@ class BimbinganController extends Controller
         return redirect()->back()->with('success', 'Riwayat bimbingan berhasil ditambahkan!');
     }
 
-    // UPLOAD DOKUMEN (sidebar) — mendukung multi-file + multi-link, semua opsional
+    // UPLOAD DOKUMEN (sidebar)
     public function storeProposal(Request $request)
     {
         if (!session('user')) return redirect('/login');
@@ -94,7 +123,6 @@ class BimbinganController extends Controller
         $user = session('user');
         $nim  = $user->nim_nid;
 
-        // Kumpulkan semua file path yang diunggah
         $uploadedFiles = [];
         if ($request->hasFile('file_dokumen')) {
             foreach ($request->file('file_dokumen') as $file) {
@@ -109,20 +137,17 @@ class BimbinganController extends Controller
             }
         }
 
-        // Kumpulkan semua link yang diisi (filter yang kosong)
         $links = [];
         if ($request->has('links')) {
             $links = array_filter($request->input('links', []), fn($l) => !empty(trim($l)));
             $links = array_values($links);
         }
 
-        // Gabungkan files dan links menjadi JSON untuk disimpan di kolom file_proposal
         $fileProposalData = json_encode([
             'files' => $uploadedFiles,
             'links' => $links,
         ]);
 
-        // Hanya simpan jika ada file atau link yang diisi
         if (empty($uploadedFiles) && empty($links)) {
             return redirect()->back()->with('proposal_error', 'Silakan unggah minimal satu file atau masukkan satu link.');
         }

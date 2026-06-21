@@ -64,6 +64,44 @@ class AdminProposalController extends Controller
         $ditolak                = DB::table('proposal')->where('status', 'ditolak')->count();
         $countPenetapanReviewer = $menungguVerifikasi;
 
+        // =====================================================
+        // DATA UNTUK TAB REVIEWER (?tab=reviewer)
+        // Sumber data SAMA dengan yang dipakai dosen koordinator
+        // (kolom proposal.nim_nid_reviewer) — supaya tidak double.
+        // =====================================================
+        $daftarReviewer = DB::table('users')
+            ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
+            ->where('dosen_roles.role_dosen', 'reviewer')
+            ->select('users.nim_nid', 'users.nama')
+            ->distinct()
+            ->get()
+            ->map(function ($dosen) {
+                $jumlahProposal = DB::table('proposal')
+                    ->where('nim_nid_reviewer', $dosen->nim_nid)
+                    ->whereIn('status', ['menunggu_review', 'selesai'])
+                    ->count();
+
+                $dosen->jumlah_mahasiswa = $jumlahProposal;
+                $dosen->status_penugasan = $jumlahProposal > 0 ? 'Memiliki Penugasan' : 'Belum Ditugaskan';
+
+                return $dosen;
+            });
+
+        if ($request->filled('search') && $request->get('tab') === 'reviewer') {
+            $searchReviewer = strtolower($request->search);
+            $daftarReviewer = $daftarReviewer->filter(function ($dosen) use ($searchReviewer) {
+                return str_contains(strtolower($dosen->nama), $searchReviewer)
+                    || str_contains(strtolower($dosen->nim_nid), $searchReviewer);
+            })->values();
+        }
+
+        $totalDosenReviewer       = $daftarReviewer->count();
+        $mahasiswaBelumDitugaskan = DB::table('proposal')
+            ->whereNull('nim_nid_reviewer')
+            ->whereIn('status', ['menunggu_verifikasi', 'menunggu_review'])
+            ->count();
+        $dosenMemilikiPenugasan   = $daftarReviewer->where('jumlah_mahasiswa', '>', 0)->count();
+
         return view('admin.proposal.index', compact(
             'proposals',
             'totalProposal',
@@ -72,7 +110,11 @@ class AdminProposalController extends Controller
             'menungguReview',
             'selesaiDireview',
             'ditolak',
-            'countPenetapanReviewer'
+            'countPenetapanReviewer',
+            'daftarReviewer',
+            'totalDosenReviewer',
+            'mahasiswaBelumDitugaskan',
+            'dosenMemilikiPenugasan'
         ));
     }
 

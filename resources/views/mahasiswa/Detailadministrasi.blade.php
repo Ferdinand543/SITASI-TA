@@ -281,6 +281,79 @@
         color: var(--muted);
     }
 
+    /* === JADWAL SEMINAR CARD === */
+    .jadwal-card {
+        background: linear-gradient(135deg, var(--gold-lt) 0%, #FFFBEB 100%);
+        border: 1px solid var(--gold-border);
+        border-radius: var(--radius);
+        padding: 20px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(201, 162, 39, .1);
+    }
+
+    .jadwal-card-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #7C5C00;
+        margin-bottom: 16px;
+    }
+
+    .jadwal-card-head .jadwal-icon-wrap {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: #FFF1C2;
+        border: 1px solid var(--gold-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gold);
+        flex-shrink: 0;
+    }
+
+    .jadwal-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px 24px;
+    }
+
+    .jadwal-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .jadwal-item.full {
+        grid-column: 1 / -1;
+    }
+
+    .jadwal-label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        color: #92400E;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+        margin-bottom: 4px;
+    }
+
+    .jadwal-val {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #7C5C00;
+    }
+
+    @media (max-width: 900px) {
+        .jadwal-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    /* === END JADWAL SEMINAR CARD === */
+
     .dokumen-section {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -573,6 +646,9 @@
 
     // Status per dokumen — MURNI dari kolom status_dokumen, tidak ikut status global
     $getDokStatus = fn($key) => $statusDokumen[$key] ?? 'menunggu';
+
+    // Apakah jadwal seminar sudah ditetapkan? (dari File 1)
+    $sudahDijadwalkan = in_array($pengajuan->status_seminar, ['Jadwal ditetapkan', 'Sudah Dijadwalkan', 'Selesai']);
     @endphp
 
     {{-- STATUS BAR --}}
@@ -693,6 +769,38 @@
         </div>
     </div>
 
+    {{-- JADWAL SEMINAR (dari File 1 — muncul kalau seminar sudah dijadwalkan) --}}
+    @if($sudahDijadwalkan)
+    <div class="jadwal-card">
+        <div class="jadwal-card-head">
+            <span class="jadwal-icon-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3.75 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h12a2.25 2.25 0 0 1 2.25 2.25v11.25m-16.5 0A2.25 2.25 0 0 0 6 21h12a2.25 2.25 0 0 0 2.25-2.25m-16.5 0v-7.5A2.25 2.25 0 0 1 6 9h12a2.25 2.25 0 0 1 2.25 2.25v7.5" />
+                </svg>
+            </span>
+            Jadwal Seminar TA-1
+        </div>
+        <div class="jadwal-grid">
+            <div class="jadwal-item">
+                <span class="jadwal-label">Tanggal Seminar</span>
+                <span class="jadwal-val">
+                    {{ $pengajuan->tanggal_seminar ? \Carbon\Carbon::parse($pengajuan->tanggal_seminar)->translatedFormat('d M Y') : '-' }}
+                </span>
+            </div>
+            <div class="jadwal-item">
+                <span class="jadwal-label">Ruangan</span>
+                <span class="jadwal-val">{{ $pengajuan->ruang ?? '-' }}</span>
+            </div>
+            <div class="jadwal-item full">
+                <span class="jadwal-label">Jam</span>
+                <span class="jadwal-val">
+                    {{ $pengajuan->waktu_mulai ? \Carbon\Carbon::parse($pengajuan->waktu_mulai)->format('H:i') : '-' }} - {{ $pengajuan->waktu_selesai ? \Carbon\Carbon::parse($pengajuan->waktu_selesai)->format('H:i') : '-' }} WIB
+                </span>
+            </div>
+        </div>
+    </div>
+    @endif
+
     {{-- DOKUMEN --}}
     @php
     $svgFile = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -808,8 +916,8 @@
         <span style="font-size:12px;color:#991B1B;font-style:italic;font-weight:600;">↑ Upload Ulang File yang Ditolak</span>
         @elseif($statusAdm === 'Lolos Administrasi' && $pengajuan->status_seminar === 'Menunggu Jadwal')
         <span style="font-size:12px;color:#92400E;font-style:italic;font-weight:600;">✓ Administrasi Lolos — Menunggu penjadwalan seminar ...</span>
-        @elseif($statusAdm === 'Lolos Administrasi' && in_array($pengajuan->status_seminar, ['Jadwal ditetapkan', 'Sudah Dijadwalkan', 'Selesai']))
-        <a href="{{ route('seminar.show', $pengajuan->id) }}" style="font-size:12px;font-weight:700;color:var(--neutral);">Lihat Jadwal Seminar →</a>
+        @elseif($statusAdm === 'Lolos Administrasi' && $sudahDijadwalkan)
+        {{-- Dari File 2: tombol Lihat Jadwal Seminar --}}
         @else
         <span style="font-size:12px;color:var(--muted);font-style:italic;">Menunggu verifikasi dari admin...</span>
         @endif

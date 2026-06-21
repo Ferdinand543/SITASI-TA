@@ -330,17 +330,9 @@
         height: 100%;
     }
 
-    .bar-green {
-        background: #16A34A;
-    }
-
-    .bar-gold {
-        background: var(--gold);
-    }
-
-    .bar-red {
-        background: #DC2626;
-    }
+    .bar-green { background: #16A34A; }
+    .bar-gold  { background: var(--gold); }
+    .bar-red   { background: #DC2626; }
 
     .badge-sm {
         display: inline-flex;
@@ -353,47 +345,13 @@
         white-space: nowrap;
     }
 
-    .badge-lolos {
-        background: #F0FDF4;
-        color: #15803D;
-        border: 1px solid #BBF7D0;
-    }
-
-    .badge-tidak {
-        background: #FEF2F2;
-        color: #991B1B;
-        border: 1px solid #FECACA;
-    }
-
-    .badge-menunggu {
-        background: #FFFBEB;
-        color: #92400E;
-        border: 1px solid #FDE68A;
-    }
-
-    .badge-jadwal {
-        background: #EFF6FF;
-        color: #1D4ED8;
-        border: 1px solid #BFDBFE;
-    }
-
-    .badge-selesai {
-        background: #F0FDF4;
-        color: #15803D;
-        border: 1px solid #BBF7D0;
-    }
-
-    .badge-belum {
-        background: #F9FAFB;
-        color: #9CA3AF;
-        border: 1px solid #E5E7EB;
-    }
-
-    .badge-menunggu-jadwal {
-        background: #FEF3C7;
-        color: #92400E;
-        border: 1px solid #FDE68A;
-    }
+    .badge-lolos          { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
+    .badge-tidak          { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+    .badge-menunggu       { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
+    .badge-jadwal         { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+    .badge-selesai        { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
+    .badge-belum          { background: #F9FAFB; color: #9CA3AF; border: 1px solid #E5E7EB; }
+    .badge-menunggu-jadwal{ background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
 
     .aksi-wrap {
         display: flex;
@@ -434,9 +392,7 @@
         font-family: inherit;
     }
 
-    .btn-verif:hover {
-        background: #fdd835;
-    }
+    .btn-verif:hover { background: #fdd835; }
 
     .empty-state {
         text-align: center;
@@ -445,10 +401,196 @@
         font-size: 14px;
     }
 
+    /* MODAL */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.45);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal-box {
+        background: #fff;
+        border-radius: 18px;
+        padding: 32px;
+        width: 100%;
+        max-width: 480px;
+        box-shadow: 0 12px 40px rgba(0,0,0,.18);
+        position: relative;
+    }
+
+    .modal-title {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--neutral);
+        margin-bottom: 4px;
+    }
+
+    .modal-sub {
+        font-size: 12.5px;
+        color: var(--muted);
+        margin-bottom: 24px;
+        line-height: 1.5;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: #F3F4F6;
+        border: none;
+        border-radius: 8px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 16px;
+        color: var(--muted);
+    }
+
+    .modal-close:hover { background: #E5E7EB; }
+
+    .upload-area {
+        border: 2px dashed var(--gold-border);
+        border-radius: 12px;
+        background: var(--gold-lt);
+        padding: 28px;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color .2s, background .2s;
+        margin-bottom: 16px;
+        position: relative;
+    }
+
+    .upload-area:hover {
+        border-color: var(--gold);
+        background: #FEF3C7;
+    }
+
+    .upload-area input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+
+    .upload-icon {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .upload-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #7C5C00;
+        margin-bottom: 4px;
+    }
+
+    .upload-hint {
+        font-size: 11.5px;
+        color: var(--muted);
+    }
+
+    .file-preview {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        background: #F0FDF4;
+        border: 1px solid #BBF7D0;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 16px;
+    }
+
+    .file-preview.show { display: flex; }
+
+    .file-preview-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #15803D;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .file-preview-remove {
+        background: none;
+        border: none;
+        color: #DC2626;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        padding: 0 4px;
+        line-height: 1;
+    }
+
+    .file-error {
+        display: none;
+        font-size: 12px;
+        color: #DC2626;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .file-error.show { display: block; }
+
+    .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 4px;
+    }
+
+    .btn-batal {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #F3F4F6;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .btn-batal:hover { background: #E5E7EB; }
+
+    .btn-upload {
+        padding: 10px 22px;
+        border-radius: 8px;
+        border: none;
+        background: var(--gold);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        opacity: .5;
+        pointer-events: none;
+        transition: opacity .2s;
+    }
+
+    .btn-upload.ready {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .btn-upload:hover.ready { background: #b8911f; }
+
     @media (max-width: 900px) {
-        .stat-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
+        .stat-grid { grid-template-columns: repeat(2, 1fr); }
     }
 </style>
 
@@ -524,6 +666,118 @@
         </div>
 
     </div>
+
+    {{-- BERITA ACARA ALERT --}}
+    @if($adaYangDijadwalkan)
+    <div style="
+        background: #FFFBEB;
+        border: 1.5px solid #F5D97A;
+        border-radius: 16px;
+        padding: 18px 24px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    ">
+        <div style="display:flex;align-items:center;gap:14px;">
+            <div style="
+                background: #FEF3C7;
+                border-radius: 10px;
+                width: 42px; height: 42px;
+                display: flex; align-items: center; justify-content: center;
+                flex-shrink: 0;
+            ">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.8" stroke="#92400E" width="22" height="22">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125
+                        1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0
+                        12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125
+                        1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0
+                        1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+            </div>
+            <div>
+                @if($beritaAcara)
+                    {{-- SUDAH ADA BERITA ACARA --}}
+                    <div style="font-weight:800;color:#15803D;font-size:14px;margin-bottom:3px;">
+                        Berita Acara Seminar Siap Digunakan
+                    </div>
+                    <div style="font-size:12.5px;color:#92400E;line-height:1.5;">
+                        Berita acara seminar telah tersedia dan siap digunakan untuk seluruh Seminar Tugas Akhir 1 yang telah dijadwalkan.<br>
+                        <span style="color:var(--muted);">Terakhir diperbarui: {{ \Carbon\Carbon::parse($beritaAcara->created_at)->format('d M Y') }}</span>
+                    </div>
+                @else
+                    {{-- BELUM ADA BERITA ACARA --}}
+                    <div style="font-weight:800;color:#7C5C00;font-size:14px;margin-bottom:3px;">
+                        Berita Acara Seminar Belum Tersedia
+                    </div>
+                    <div style="font-size:12.5px;color:#92400E;line-height:1.5;">
+                        Mahasiswa telah memasuki tahap penjadwalan seminar.
+                        Silakan unggah template berita acara yang akan digunakan
+                        sebagai dokumen resmi pada pelaksanaan Seminar Tugas Akhir 1.
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            @if($beritaAcara)
+                {{-- TOMBOL PERBARUI --}}
+                <button type="button" onclick="bukaModalBeritaAcara()" style="
+                    background: #fff;
+                    color: #7C5C00;
+                    border: 1.5px solid #F5D97A;
+                    border-radius: 8px;
+                    padding: 10px 18px;
+                    font-size: 13px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    white-space: nowrap;
+                    font-family: inherit;
+                ">
+                    Perbarui Berita Acara
+                </button>
+                {{-- TOMBOL LIHAT --}}
+                <a href="{{ route('berita.acara.file', basename($beritaAcara->file_path)) }}" target="_blank" style="
+                    background: #C9A227;
+                    color: #fff;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 10px 18px;
+                    font-size: 13px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    white-space: nowrap;
+                    font-family: inherit;
+                    text-decoration: none;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                ">
+                    Lihat Berita Acara
+                </a>
+            @else
+                <button type="button" onclick="bukaModalBeritaAcara()" style="
+                    background: #C9A227;
+                    color: #fff;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 10px 18px;
+                    font-size: 13px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    white-space: nowrap;
+                    font-family: inherit;
+                ">
+                    ⬆ Unggah Berita Acara
+                </button>
+            @endif
+        </div>
+    </div>
+    @endif
 
     {{-- FILTER --}}
     <div class="filter-card">
@@ -674,24 +928,64 @@
 
 </div>
 
+{{-- MODAL UPLOAD BERITA ACARA --}}
+<div class="modal-overlay" id="modalBeritaAcara">
+    <div class="modal-box">
+        <button class="modal-close" type="button" onclick="tutupModalBeritaAcara()">✕</button>
+        <div class="modal-title">Unggah Berita Acara</div>
+        <div class="modal-sub">Upload template berita acara seminar TA-1.<br>Format yang diterima: <strong>PDF, DOC, DOCX</strong> — maks. 10MB, hanya 1 file.</div>
+
+        <form id="formBeritaAcara" action="{{ route('admin.seminar.upload-berita-acara') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+
+            {{-- AREA UPLOAD --}}
+            <div class="upload-area" id="uploadArea">
+                <input type="file"
+                    id="inputBeritaAcara"
+                    name="file_berita_acara"
+                    accept=".pdf,.doc,.docx"
+                    onchange="handleFileChange(this)">
+                <div class="upload-icon">📄</div>
+                <div class="upload-label">Klik untuk memilih file</div>
+                <div class="upload-hint">PDF, DOC, atau DOCX — maksimal 10MB</div>
+            </div>
+
+            {{-- PREVIEW FILE TERPILIH --}}
+            <div class="file-preview" id="filePreview">
+                <span style="font-size:20px;">📎</span>
+                <span class="file-preview-name" id="filePreviewName"></span>
+                <button type="button" class="file-preview-remove" onclick="hapusFile()" title="Hapus file">✕</button>
+            </div>
+
+            {{-- PESAN ERROR --}}
+            <div class="file-error" id="fileError"></div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-batal" onclick="tutupModalBeritaAcara()">Batal</button>
+                <button type="submit" class="btn-upload" id="btnUpload">⬆ Upload</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+    // ====== FILTER TABLE ======
     const searchInput = document.getElementById('searchInput');
-    const filterAdm = document.getElementById('filterAdm');
+    const filterAdm   = document.getElementById('filterAdm');
     const filterSeminar = document.getElementById('filterSeminar');
-    const tableBody = document.getElementById('tableBody');
-    const noResult = document.getElementById('noResult');
+    const tableBody   = document.getElementById('tableBody');
+    const noResult    = document.getElementById('noResult');
 
     function applyFilter() {
-        const q = searchInput.value.toLowerCase().trim();
-        const adm = filterAdm.value.toLowerCase();
+        const q       = searchInput.value.toLowerCase().trim();
+        const adm     = filterAdm.value.toLowerCase();
         const seminar = filterSeminar.value.toLowerCase();
-
-        const rows = tableBody.querySelectorAll('tr[data-search]');
-        let visible = 0;
+        const rows    = tableBody.querySelectorAll('tr[data-search]');
+        let visible   = 0;
 
         rows.forEach(row => {
-            const matchSearch = !q || row.dataset.search.includes(q);
-            const matchAdm = !adm || row.dataset.adm === adm;
+            const matchSearch  = !q       || row.dataset.search.includes(q);
+            const matchAdm     = !adm     || row.dataset.adm === adm;
             const matchSeminar = !seminar || row.dataset.seminar === seminar;
 
             if (matchSearch && matchAdm && matchSeminar) {
@@ -706,17 +1000,95 @@
     }
 
     function resetFilter() {
-        searchInput.value = '';
-        filterAdm.value = '';
+        searchInput.value   = '';
+        filterAdm.value     = '';
         filterSeminar.value = '';
         applyFilter();
     }
 
     let searchTimeout = null;
-    searchInput.addEventListener('input', function() {
+    searchInput.addEventListener('input', function () {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(applyFilter, 200);
     });
+
+    // ====== MODAL ======
+    function bukaModalBeritaAcara() {
+        document.getElementById('modalBeritaAcara').classList.add('active');
+    }
+
+    function tutupModalBeritaAcara() {
+        document.getElementById('modalBeritaAcara').classList.remove('active');
+        hapusFile();
+    }
+
+    // Tutup modal kalau klik di luar box
+    document.getElementById('modalBeritaAcara').addEventListener('click', function (e) {
+        if (e.target === this) tutupModalBeritaAcara();
+    });
+
+    // ====== HANDLE FILE ======
+    const ALLOWED_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const ALLOWED_EXT   = ['.pdf', '.doc', '.docx'];
+    const MAX_SIZE_MB   = 10;
+
+    function handleFileChange(input) {
+        const fileError   = document.getElementById('fileError');
+        const filePreview = document.getElementById('filePreview');
+        const previewName = document.getElementById('filePreviewName');
+        const uploadArea  = document.getElementById('uploadArea');
+        const btnUpload   = document.getElementById('btnUpload');
+
+        fileError.classList.remove('show');
+        fileError.textContent = '';
+
+        if (!input.files || input.files.length === 0) {
+            return;
+        }
+
+        // Hanya 1 file — ambil yang pertama saja
+        const file = input.files[0];
+        const ext  = '.' + file.name.split('.').pop().toLowerCase();
+
+        // Validasi format
+        if (!ALLOWED_EXT.includes(ext)) {
+            fileError.textContent = '❌ Format tidak didukung. Gunakan PDF, DOC, atau DOCX.';
+            fileError.classList.add('show');
+            input.value = '';
+            return;
+        }
+
+        // Validasi ukuran
+        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+            fileError.textContent = '❌ Ukuran file melebihi ' + MAX_SIZE_MB + 'MB.';
+            fileError.classList.add('show');
+            input.value = '';
+            return;
+        }
+
+        // Tampilkan preview
+        previewName.textContent = file.name;
+        filePreview.classList.add('show');
+        uploadArea.style.display = 'none';
+
+        // Aktifkan tombol upload
+        btnUpload.classList.add('ready');
+    }
+
+    function hapusFile() {
+        const input       = document.getElementById('inputBeritaAcara');
+        const filePreview = document.getElementById('filePreview');
+        const uploadArea  = document.getElementById('uploadArea');
+        const btnUpload   = document.getElementById('btnUpload');
+        const fileError   = document.getElementById('fileError');
+
+        input.value = '';
+        filePreview.classList.remove('show');
+        uploadArea.style.display = '';
+        btnUpload.classList.remove('ready');
+        fileError.classList.remove('show');
+        fileError.textContent = '';
+    }
 </script>
 
 @endsection
