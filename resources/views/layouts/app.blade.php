@@ -79,7 +79,7 @@
         .sidebar-nav {
             padding: 10px 12px;
             flex: 1;
-            overflow-y: hidden;
+            overflow-y: auto; /* ← DIUBAH */
             min-height: 0;
         }
 
@@ -169,9 +169,42 @@
             right: 12px;
         }
 
-        .role-dosen .sidebar-link {
-            padding: 7px 12px;
+        /* ══ DOSEN ONLY — dipadetin & gak bisa di-scroll ══ */
+        .role-dosen .sidebar-brand {
+            padding: 12px 16px 10px 16px;
         }
+
+        .role-dosen .sidebar-nav {
+            padding: 6px 10px;
+            overflow-y: hidden;
+        }
+
+        .role-dosen .nav-label {
+            margin: 6px 0 2px 0;
+            font-size: 0.58rem;
+        }
+
+        .role-dosen .sidebar-link {
+            padding: 6px 10px;
+            font-size: 0.77rem;
+            margin-bottom: 0px;
+        }
+
+        .role-dosen .sidebar-link i {
+            font-size: 0.78rem;
+        }
+
+        .role-dosen .sidebar-sublink {
+            padding-left: 30px !important;
+            padding-top: 5px !important;
+            padding-bottom: 5px !important;
+            font-size: 0.72rem !important;
+        }
+
+        .role-dosen .sidebar-footer {
+            padding: 7px 10px;
+        }
+        /* ══ END DOSEN ONLY ══ */
 
         .role-mahasiswa .sidebar-link {
             padding: 10px 12px;
@@ -184,7 +217,7 @@
 
         .role-admin .sidebar-nav {
             padding: 4px 10px;
-            overflow-y: hidden;
+            overflow-y: auto; /* ← DIUBAH */
         }
 
         .role-admin .nav-label {
@@ -683,7 +716,7 @@
 
                 <a href="{{ route('dosen.bimbingan.index') }}?tab=dokumen"
                     class="sidebar-link sidebar-sublink {{ $bimbinganDropdownOpen && request()->query('tab') === 'dokumen' ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-lines"></i> Dokumen Bimbingan
+                    <i class="fa-solid fa-file-lines"></i> Dokumen Pra-Bimbingan
                 </a>
 
                 <a href="{{ route('dosen.bimbingan.index') }}?tab=mahasiswa"
@@ -894,8 +927,8 @@
                 style="max-height: {{ $bimbinganAdminDropdownOpen ? '300px' : '0' }};">
 
                 <a href="/admin/bimbingan"
-                    class="sidebar-link sidebar-sublink {{ request()->is('admin/bimbingan') && !request()->query('tab') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-lines"></i> Proposal Bimbingan
+                    class="sidebar-link sidebar-sublink {{ request()->is('admin/bimbingan*') && request()->query('tab') !== 'mahasiswa' ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-lines"></i> Dokumen Pra-Bimbingan
                 </a>
 
                 <a href="/admin/bimbingan?tab=mahasiswa"

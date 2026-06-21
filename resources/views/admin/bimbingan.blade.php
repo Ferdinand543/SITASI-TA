@@ -257,7 +257,7 @@ tbody td { padding: 15px 18px; font-size: 13px; color: var(--neutral); vertical-
 
             <button class="tab-btn active" id="tab-proposal-btn" onclick="switchTab('proposal')">
                 <i class="fa-solid fa-file-lines" style="font-size:13px;"></i>
-                Proposal Bimbingan
+                Dokumen Pra-Bimbingan
                 <span class="count-chip">{{ $countProposal }}</span>
             </button>
 

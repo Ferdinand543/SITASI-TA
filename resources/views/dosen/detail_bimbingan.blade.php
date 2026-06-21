@@ -137,7 +137,7 @@
     /* ===== MODAL FOTO DOKUMENTASI ===== */
     .modal-overlay {
         display: none; position: fixed; inset: 0;
-        background: rgba(0,0,0,.5); z-index: 2000;
+        background: rgba(0,0,0,.5); z-index: 2300;
         align-items: center; justify-content: center; padding: 20px;
     }
     .modal-overlay.show { display: flex; }
@@ -454,8 +454,6 @@
                 <tbody>
                     @forelse($bimbingan as $i => $b)
                     @php
-                        // ===== OLAH DATA DOKUMENTASI =====
-                        // Bisa multi-foto (array) atau 1 foto (string)
                         $dokList = [];
                         if (!empty($b->dokumentasi)) {
                             $dekDok = json_decode($b->dokumentasi, true);
@@ -468,7 +466,7 @@
 
                         $dokumentasiHtml = '';
                         if (count($dokList) > 0) {
-                            $showMax  = 2; // tampil 2 foto + 1 slot "+N More"
+                            $showMax  = 2;
                             $total    = count($dokList);
                             $documented = array_slice($dokList, 0, $showMax);
                             $remaining  = $total - $showMax;
@@ -481,7 +479,6 @@
                             if ($remaining > 0) {
                                 $dokumentasiHtml .= '<div class="mv-dok-more">+' . $remaining . ' More</div>';
                             } elseif ($total < 3) {
-                                // padding kosong agar grid rapi
                                 for ($pad = $total; $pad < 3; $pad++) {
                                     $dokumentasiHtml .= '<div></div>';
                                 }
@@ -492,7 +489,6 @@
                             $dokumentasiHtml = '<span class="mv-empty-text">Tidak ada dokumentasi</span>';
                         }
 
-                        // ===== STATUS VALIDASI =====
                         $statusValidasi = $b->status_validasi ?? 'Validasi Bimbingan';
                         if ($statusValidasi === 'Valid') {
                             $svBg = '#F0FDF4'; $svBorder = '#BBF7D0'; $svText = '#15803D'; $svIcon = '✓';
@@ -544,7 +540,7 @@
                             </span>
                         </td>
 
-                        {{-- CATATAN: tampil jika ada --}}
+                        {{-- CATATAN --}}
                         <td>
                             @if(!empty($b->catatan_dosen))
                                 <span class="catatan-text">{{ $b->catatan_dosen }}</span>
@@ -626,33 +622,8 @@
             </div>
         </div>
 
-        {{-- FORM VALIDASI --}}
-        <form id="formValidasi" method="POST" onsubmit="return submitValidasi(event)">
-            @csrf
-            <input type="hidden" name="status_validasi" id="inputStatusValidasi" value="">
-            <input type="hidden" name="catatan_dosen" id="inputCatatanDosen" value="">
-
-            {{-- TOMBOL TIDAK VALID / VALID --}}
-            <div class="mv-action-row">
-                <button type="button" class="mv-btn-tv" id="btnTidakValid" onclick="setStatusValidasi('Tidak Valid')">
-                    ✕ Tidak Valid
-                </button>
-                <button type="button" class="mv-btn-v" id="btnValid" onclick="setStatusValidasi('Valid')">
-                    ✓ Valid
-                </button>
-            </div>
-
-            {{-- CATATAN DOSEN (muncul jika Tidak Valid) --}}
-            <div class="mv-catatan-wrap" id="catatanWrap">
-                <label class="mv-catatan-label">Catatan Dosen</label>
-                <textarea class="mv-catatan-textarea" id="catatanDosenInput"
-                    placeholder="Tambahkan catatan hasil validasi riwayat bimbingan..."></textarea>
-            </div>
-
-            <div class="mv-kirim-row">
-                <button type="submit" class="mv-btn-kirim">➤ Kirim</button>
-            </div>
-        </form>
+        {{-- AREA INI: form validasi ATAU tampilan hasil (diisi oleh JS) --}}
+        <div id="areaValidasi"></div>
 
     </div>
 </div>
@@ -674,6 +645,7 @@
 
 <script>
     let selectedStatusValidasi = null;
+    let formActionUrl = '';
 
     // ===== MODAL FOTO DOKUMENTASI =====
     function lihatFoto(src) {
@@ -703,7 +675,6 @@
 
     // ===== MODAL VALIDASI =====
     function bukaModalValidasi(el) {
-        // Bisa dipanggil dari <tr onclick> langsung, el sudah row
         const row = el.tagName === 'TR' ? el : el.closest('tr');
 
         document.getElementById('mvNama').textContent    = row.dataset.nama;
@@ -713,17 +684,56 @@
         document.getElementById('mvJudul').textContent   = row.dataset.judul;
         document.getElementById('mvTopik').textContent   = '"' + row.dataset.topikFull + '"';
 
-        // Decode HTML entities dari data-attribute
         document.getElementById('mvDokumentasi').innerHTML = decodeHTMLEntities(row.dataset.dokumentasiHtml);
 
-        document.getElementById('catatanDosenInput').value = row.dataset.catatan || '';
+        const statusAwal  = row.dataset.statusValidasi;
+        const sudahFinal  = statusAwal === 'Valid' || statusAwal === 'Tidak Valid';
+        const areaValidasi = document.getElementById('areaValidasi');
 
-        // Set form action
-        document.getElementById('formValidasi').action = '/dosen/bimbingan/validasi/' + row.dataset.id;
+        if (sudahFinal) {
+            // ── Sudah divalidasi: tampilkan hasil saja, tidak bisa diedit ──
+            const isValid     = statusAwal === 'Valid';
+            const warnaBg     = isValid ? '#F0FDF4' : '#FEF2F2';
+            const warnaBorder = isValid ? '#BBF7D0' : '#FECACA';
+            const warnaText   = isValid ? '#15803D' : '#991B1B';
+            const icon        = isValid ? '✓' : '✕';
+            const catatan     = row.dataset.catatan;
 
-        // Set status validasi awal
-        const statusAwal = row.dataset.statusValidasi;
-        setStatusValidasi(statusAwal === 'Valid' || statusAwal === 'Tidak Valid' ? statusAwal : null);
+            areaValidasi.innerHTML = `
+                <div style="border:1.5px solid ${warnaBorder};background:${warnaBg};border-radius:12px;padding:16px 18px;margin-bottom:12px;">
+                    <div style="font-size:10.5px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;">Hasil Validasi</div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:20px;">${icon}</span>
+                        <span style="font-size:15px;font-weight:800;color:${warnaText};">${statusAwal}</span>
+                    </div>
+                    ${catatan ? `<div style="margin-top:10px;font-size:12.5px;color:#6B7280;line-height:1.5;border-top:1px solid ${warnaBorder};padding-top:10px;"><strong>Catatan:</strong> ${catatan}</div>` : ''}
+                </div>
+                <div style="font-size:11.5px;color:#9CA3AF;text-align:right;">Validasi sudah dikirim dan tidak dapat diubah.</div>
+            `;
+        } else {
+            // ── Belum divalidasi: tampilkan form seperti biasa ──
+            formActionUrl = '/dosen/bimbingan/validasi/' + row.dataset.id;
+            selectedStatusValidasi = null;
+
+            areaValidasi.innerHTML = `
+                <div class="mv-action-row">
+                    <button type="button" class="mv-btn-tv" id="btnTidakValid" onclick="setStatusValidasi('Tidak Valid')">
+                        ✕ Tidak Valid
+                    </button>
+                    <button type="button" class="mv-btn-v" id="btnValid" onclick="setStatusValidasi('Valid')">
+                        ✓ Valid
+                    </button>
+                </div>
+                <div class="mv-catatan-wrap" id="catatanWrap">
+                    <label class="mv-catatan-label">Catatan Dosen</label>
+                    <textarea class="mv-catatan-textarea" id="catatanDosenInput"
+                        placeholder="Tambahkan catatan hasil validasi riwayat bimbingan..."></textarea>
+                </div>
+                <div class="mv-kirim-row">
+                    <button type="button" class="mv-btn-kirim" onclick="submitValidasi()">➤ Kirim</button>
+                </div>
+            `;
+        }
 
         document.getElementById('modalValidasi').classList.add('show');
     }
@@ -745,33 +755,29 @@
     function setStatusValidasi(status) {
         selectedStatusValidasi = status;
 
-        document.getElementById('btnValid').classList.toggle('active', status === 'Valid');
-        document.getElementById('btnTidakValid').classList.toggle('active', status === 'Tidak Valid');
-        document.getElementById('inputStatusValidasi').value = status || '';
+        const btnValid      = document.getElementById('btnValid');
+        const btnTidakValid = document.getElementById('btnTidakValid');
+        const catatanWrap   = document.getElementById('catatanWrap');
 
-        document.getElementById('catatanWrap').style.display =
-            (status === 'Tidak Valid') ? 'block' : 'none';
+        if (btnValid)      btnValid.classList.toggle('active', status === 'Valid');
+        if (btnTidakValid) btnTidakValid.classList.toggle('active', status === 'Tidak Valid');
+        if (catatanWrap)   catatanWrap.style.display = (status === 'Tidak Valid') ? 'block' : 'none';
     }
 
-    function submitValidasi(e) {
-        e.preventDefault();
-
+    function submitValidasi() {
         if (!selectedStatusValidasi) {
             alert('Silakan pilih status "Valid" atau "Tidak Valid" terlebih dahulu.');
-            return false;
-        }
-        if (selectedStatusValidasi === 'Tidak Valid') {
-            const catatan = document.getElementById('catatanDosenInput').value.trim();
-            if (!catatan) {
-                alert('Catatan dosen wajib diisi jika status "Tidak Valid".');
-                return false;
-            }
-            document.getElementById('inputCatatanDosen').value = catatan;
-        } else {
-            document.getElementById('inputCatatanDosen').value = '';
+            return;
         }
 
-        // Tampilkan modal konfirmasi sebelum benar-benar mengirim
+        const catatan = document.getElementById('catatanDosenInput') ? document.getElementById('catatanDosenInput').value.trim() : '';
+
+        if (selectedStatusValidasi === 'Tidak Valid' && !catatan) {
+            alert('Catatan dosen wajib diisi jika status "Tidak Valid".');
+            return;
+        }
+
+        // Tampilkan modal konfirmasi
         if (selectedStatusValidasi === 'Valid') {
             document.getElementById('mkIcon').textContent = '✓';
             document.getElementById('mkIcon').style.color = '#16A34A';
@@ -786,7 +792,6 @@
             document.getElementById('mkDesc').innerHTML = 'Apakah Anda yakin ingin menandai riwayat bimbingan ini sebagai <strong>Tidak Valid</strong>?';
         }
         document.getElementById('modalKonfirmasi').classList.add('show');
-        return false;
     }
 
     // ===== MODAL KONFIRMASI =====
@@ -798,8 +803,33 @@
             tutupModalKonfirmasi();
     }
     function konfirmasiKirim() {
-        document.getElementById('modalKonfirmasi').classList.remove('show');
-        document.getElementById('formValidasi').submit();
+        // Buat form dinamis dan submit
+        const catatan = document.getElementById('catatanDosenInput') ? document.getElementById('catatanDosenInput').value.trim() : '';
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = formActionUrl;
+
+        const tokenInput = document.createElement('input');
+        tokenInput.type  = 'hidden';
+        tokenInput.name  = '_token';
+        tokenInput.value = '{{ csrf_token() }}';
+        form.appendChild(tokenInput);
+
+        const statusInput = document.createElement('input');
+        statusInput.type  = 'hidden';
+        statusInput.name  = 'status_validasi';
+        statusInput.value = selectedStatusValidasi;
+        form.appendChild(statusInput);
+
+        const catatanInput = document.createElement('input');
+        catatanInput.type  = 'hidden';
+        catatanInput.name  = 'catatan_dosen';
+        catatanInput.value = selectedStatusValidasi === 'Tidak Valid' ? catatan : '';
+        form.appendChild(catatanInput);
+
+        document.body.appendChild(form);
+        form.submit();
     }
 </script>
 
