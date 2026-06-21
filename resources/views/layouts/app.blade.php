@@ -780,7 +780,7 @@
                 </button>
                 @endif
 
-                @if($isPenguji || $isPembimbing)
+                @if($isPenguji || $isPembimbing || $isReviewer)
                 <a href="{{ route('jadwalseminar.mahasiswa.list') }}"
                     class="sidebar-link sidebar-sublink {{ request()->is('jadwal-seminar-mahasiswa*') ? 'active' : '' }}">
                     <i class="fa-solid fa-eye"></i> Lihat Jadwal Seminar
