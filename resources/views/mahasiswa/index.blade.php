@@ -438,7 +438,7 @@
         <div class="hero-body">
             <h1>Sistem Bimbingan Tugas Akhir Mahasiswa<br>Sistem Informasi</h1>
             <div class="d-flex gap-2 flex-wrap">
-                <a href="#" class="btn-hero-primary">Pelajari Alur TA</a>
+                <a href="{{ route('panduan-ta.mahasiswa') }}" class="btn-hero-primary">Pelajari Alur TA</a>
                 <a href="#" class="btn-hero-outline">Unduh Pedoman</a>
             </div>
         </div>
