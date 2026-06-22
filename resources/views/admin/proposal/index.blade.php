@@ -2,6 +2,12 @@
 
 @section('content')
 
+@php
+    // ── INI KUNCI PERBAIKANNYA ──
+    // Baca tab dari query string. Default-nya 'pembimbing'.
+    $tab = request('tab', 'pembimbing');
+@endphp
+
 <style>
     .page-wrap { padding: 0 0 48px; }
 
@@ -106,6 +112,7 @@
     .dosen-nidn { font-size:0.72rem; color:#94a3b8; margin-top:1px; }
     .role-badge { display:inline-block; margin-top:4px; font-size:0.66rem; padding:2px 8px; border-radius:5px; font-weight:700; }
     .rb-pembimbing { background:#e0f2fe; color:#0369a1; }
+    .rb-reviewer   { background:#fce7f3; color:#a21caf; }
 
     .status-pill { display:inline-flex; align-items:center; gap:5px; padding:5px 12px; border-radius:20px; font-size:0.74rem; font-weight:700; white-space:nowrap; }
     .sp-menunggu-verifikasi { background:#fff3cd; color:#856404; border:1px solid #ffd96a; }
@@ -152,11 +159,19 @@
                     ADMIN
                 </span>
             </h2>
-            <p>Verifikasi dan tetapkan dosen pembimbing tugas akhir mahasiswa untuk menjamin kualitas akademik.</p>
+            <p>
+                @if($tab === 'reviewer')
+                    Tetapkan dosen reviewer untuk setiap proposal tugas akhir mahasiswa secara merata.
+                @else
+                    Verifikasi dan tetapkan dosen pembimbing tugas akhir mahasiswa untuk menjamin kualitas akademik.
+                @endif
+            </p>
             <div class="hero-btn-group">
 
                 {{-- BUTTON 1: Penetapan Dosen Pembimbing --}}
-                <a href="{{ url('/proposal') }}" class="btn-hero-primary">
+                {{-- class-nya sekarang dinamis, ngikutin $tab --}}
+                <a href="{{ route('admin.proposal.index') }}"
+                   class="{{ $tab !== 'reviewer' ? 'btn-hero-primary' : 'btn-hero-outline' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/>
                     </svg>
@@ -164,7 +179,9 @@
                 </a>
 
                 {{-- BUTTON 2: Penetapan Reviewer --}}
-                <a href="{{ url('/proposal?tab=reviewer') }}" class="btn-hero-outline">
+                {{-- URL sekarang pakai route() yang sama persis dengan sidebar, bukan url('/proposal?tab=...') --}}
+                <a href="{{ route('admin.proposal.index', ['tab' => 'reviewer']) }}"
+                   class="{{ $tab === 'reviewer' ? 'btn-hero-primary' : 'btn-hero-outline' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
                         <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
@@ -195,7 +212,7 @@
         </div>
     </div>
 
-    {{-- STAT CARDS — 5 kolom, pisah verifikasi & review --}}
+    {{-- STAT CARDS --}}
     <div class="stat-row mb-4" style="grid-template-columns: repeat(5,1fr);">
         <div class="stat-card">
             <div class="stat-icon blue">
@@ -260,7 +277,9 @@
     </div>
 
     {{-- FILTER --}}
+    {{-- Tab dipertahankan lewat hidden input supaya search/filter status gak ngebuang kita balik ke tab pembimbing --}}
     <form method="GET" action="{{ route('admin.proposal.index') }}" id="filterForm">
+        <input type="hidden" name="tab" value="{{ $tab }}">
         <div class="filter-bar mb-4">
             <div class="search-wrap">
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
@@ -278,7 +297,8 @@
                     <option value="selesai"             {{ request('status') == 'selesai'             ? 'selected' : '' }}>Selesai</option>
                     <option value="ditolak"             {{ request('status') == 'ditolak'             ? 'selected' : '' }}>Ditolak</option>
                 </select>
-                <button type="button" class="btn-reset" onclick="window.location.href='{{ route('admin.proposal.index') }}'">
+                <button type="button" class="btn-reset"
+                    onclick="window.location.href='{{ route('admin.proposal.index', ['tab' => $tab]) }}'">
                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
                         <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
@@ -300,8 +320,12 @@
                     <th>Nama</th>
                     <th>Judul</th>
                     <th>Proposal</th>
-                    <th>Pembimbing 1</th>
-                    <th>Pembimbing 2</th>
+                    @if($tab === 'reviewer')
+                        <th>Reviewer</th>
+                    @else
+                        <th>Pembimbing 1</th>
+                        <th>Pembimbing 2</th>
+                    @endif
                     <th class="center">Status</th>
                     <th class="center">Aksi</th>
                 </tr>
@@ -331,24 +355,43 @@
                         <span style="color:#cbd5e1;">-</span>
                         @endif
                     </td>
-                    <td style="min-width:180px;">
-                        @if(!empty($p->dosen1_nama))
-                            <div class="dosen-name">{{ $p->dosen1_nama }}</div>
-                            <div class="dosen-nidn">NIDN. {{ $p->dosen1_nidn }}</div>
-                            <span class="role-badge rb-pembimbing">PEMBIMBING TA</span>
-                        @else
-                            <span style="color:#cbd5e1;">-</span>
-                        @endif
-                    </td>
-                    <td style="min-width:180px;">
-                        @if(!empty($p->dosen2_nama))
-                            <div class="dosen-name">{{ $p->dosen2_nama }}</div>
-                            <div class="dosen-nidn">NIDN. {{ $p->dosen2_nidn }}</div>
-                            <span class="role-badge rb-pembimbing">PEMBIMBING TA</span>
-                        @else
-                            <span style="color:#cbd5e1;">-</span>
-                        @endif
-                    </td>
+
+                    @if($tab === 'reviewer')
+                        {{--
+                            ⚠️ SESUAIKAN: ganti $p->reviewer_nama / $p->reviewer_nidn
+                            dengan nama kolom/relasi yang sebenarnya dari tabel reviewer
+                            di controller kamu (mis. hasil join ke tabel dosen_reviewer).
+                        --}}
+                        <td style="min-width:180px;">
+                            @if(!empty($p->reviewer_nama))
+                                <div class="dosen-name">{{ $p->reviewer_nama }}</div>
+                                <div class="dosen-nidn">NIDN. {{ $p->reviewer_nidn }}</div>
+                                <span class="role-badge rb-reviewer">REVIEWER</span>
+                            @else
+                                <span style="color:#cbd5e1;">Belum ditetapkan</span>
+                            @endif
+                        </td>
+                    @else
+                        <td style="min-width:180px;">
+                            @if(!empty($p->dosen1_nama))
+                                <div class="dosen-name">{{ $p->dosen1_nama }}</div>
+                                <div class="dosen-nidn">NIDN. {{ $p->dosen1_nidn }}</div>
+                                <span class="role-badge rb-pembimbing">PEMBIMBING TA</span>
+                            @else
+                                <span style="color:#cbd5e1;">-</span>
+                            @endif
+                        </td>
+                        <td style="min-width:180px;">
+                            @if(!empty($p->dosen2_nama))
+                                <div class="dosen-name">{{ $p->dosen2_nama }}</div>
+                                <div class="dosen-nidn">NIDN. {{ $p->dosen2_nidn }}</div>
+                                <span class="role-badge rb-pembimbing">PEMBIMBING TA</span>
+                            @else
+                                <span style="color:#cbd5e1;">-</span>
+                            @endif
+                        </td>
+                    @endif
+
                     <td class="center">
                         @if($status === 'menunggu_verifikasi')
                             <span class="status-pill sp-menunggu-verifikasi">Menunggu Verifikasi</span>
@@ -362,30 +405,51 @@
                             <span style="color:#94a3b8; font-size:0.82rem;">{{ $p->status }}</span>
                         @endif
                     </td>
+
                     <td class="center">
                         <div class="action-group">
-                            @if($status === 'menunggu_verifikasi')
-                            <a href="{{ url('/proposal/' . $p->id . '/verifikasi') }}" class="btn-verifikasi">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                                </svg>
-                                Verifikasi
-                            </a>
+                            @if($tab === 'reviewer')
+                                {{--
+                                    ⚠️ SESUAIKAN: ganti route/url di bawah dengan route
+                                    assignment reviewer yang sebenarnya (controller method
+                                    buat nge-set nim_nid_reviewer ke tabel proposal).
+                                --}}
+                                @if(empty($p->reviewer_nama))
+                                <a href="{{ url('/proposal/' . $p->id . '/tetapkan-reviewer') }}" class="btn-verifikasi">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                    </svg>
+                                    Tetapkan Reviewer
+                                </a>
+                                @else
+                                <a href="{{ route('admin.proposal.detail', $p->id) }}" class="btn-detail">
+                                    Detail
+                                </a>
+                                @endif
                             @else
-                            <a href="{{ route('admin.proposal.detail', $p->id) }}" class="btn-detail">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
-                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
-                                </svg>
-                                Detail
-                            </a>
+                                @if($status === 'menunggu_verifikasi')
+                                <a href="{{ url('/proposal/' . $p->id . '/verifikasi') }}" class="btn-verifikasi">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                    </svg>
+                                    Verifikasi
+                                </a>
+                                @else
+                                <a href="{{ route('admin.proposal.detail', $p->id) }}" class="btn-detail">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                    </svg>
+                                    Detail
+                                </a>
+                                @endif
                             @endif
                         </div>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="10">
+                    <td colspan="9">
                         <div class="empty-state-wrap">
                             <div class="empty-state-inner">
                                 <div class="empty-state-icon">

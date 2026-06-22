@@ -300,7 +300,7 @@
             @if($role === 'mahasiswa')
             <div class="timeline-card" style="margin-top:20px;">
                 <div class="timeline-card-title">
-                    Timeline Progress
+                    Timeline 
                     <span class="progress-persen">{{ $progressPersen }}% Selesai</span>
                 </div>
                 <div class="progress-bar-wrap" style="margin-top:10px;">

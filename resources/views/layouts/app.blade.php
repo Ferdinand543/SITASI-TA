@@ -95,9 +95,9 @@
             width: 100%;
             cursor: pointer;
             text-align: left;
-            position: relative;
         }
-        .sidebar-link i { width: 16px; font-size: 0.82rem; text-align: center; flex-shrink: 0; color: #735C00; }
+        .sidebar-link i.fa-solid,
+        .sidebar-link i.fa-regular { width: 16px; font-size: 0.82rem; text-align: center; flex-shrink: 0; color: #735C00; }
         .sidebar-link:hover { background: #FFE083; color: #4D4632; text-decoration: none; }
         .sidebar-link:hover i { color: #4D4632; }
         .sidebar-link.active { background: #FFE083; color: #4D4632; font-weight: 700; }
@@ -107,19 +107,38 @@
         .sidebar-link-locked:hover { background: #fee2e2 !important; color: #dc2626 !important; opacity: 0.7; }
         .sidebar-link-locked:hover i { color: #dc2626 !important; }
 
+        /* ── BADGE NOTIF — sekarang inline flex, bukan absolute ── */
         .link-badge-notif {
-            width: 8px; height: 8px;
+            width: 8px;
+            height: 8px;
             background: red;
             border-radius: 50%;
             display: inline-block;
-            position: absolute;
-            top: 10px; right: 12px;
+            flex-shrink: 0;
+            margin-left: auto; /* dorong badge ke kanan */
+            margin-right: 4px; /* beri jarak ke chevron */
         }
+
+        /* Kalau tidak ada badge, chevron tetap di ujung kanan */
+        .sidebar-chevron {
+            font-size: 0.65rem;
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+            /* TIDAK pakai margin-left:auto — biarkan badge yang mengatur */
+        }
+        /* Khusus link tanpa badge: chevron harus tetap di kanan */
+        .sidebar-link > .sidebar-chevron:last-child {
+            margin-left: auto;
+        }
+        /* Kalau ada badge sebelum chevron, margin-left:auto di badge sudah cukup,
+           chevron tidak perlu margin-left:auto lagi */
+        .sidebar-link > .link-badge-notif ~ .sidebar-chevron {
+            margin-left: 0;
+        }
+        .sidebar-chevron.open { transform: rotate(90deg); }
 
         /* ── DROPDOWN SIDEBAR ── */
         .sidebar-dropdown { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
-        .sidebar-chevron { margin-left: auto; font-size: 0.65rem; transition: transform 0.25s ease; flex-shrink: 0; }
-        .sidebar-chevron.open { transform: rotate(90deg); }
         .sidebar-sublink {
             padding-left: 32px !important;
             font-size: 0.76rem !important;
@@ -135,13 +154,15 @@
         .role-admin .sidebar-link  { padding: 5px 8px; font-size: 0.73rem; margin-bottom: 0; }
         .role-admin .sidebar-footer { padding: 6px 8px; }
 
-        .role-dosen .sidebar-brand  { padding: 12px 16px 10px 16px; }
-        .role-dosen .sidebar-nav    { padding: 6px 10px; }
-        .role-dosen .nav-label      { margin: 6px 0 2px 0; font-size: 0.58rem; }
-        .role-dosen .sidebar-link   { padding: 6px 10px; font-size: 0.77rem; margin-bottom: 0; }
-        .role-dosen .sidebar-link i { font-size: 0.78rem; }
-        .role-dosen .sidebar-sublink { padding-left: 30px !important; padding-top: 5px !important; padding-bottom: 5px !important; font-size: 0.72rem !important; }
-        .role-dosen .sidebar-footer  { padding: 7px 10px; }
+        /* ── DOSEN ── */
+        .role-dosen .sidebar         { overflow-y: auto; overflow-x: hidden; }
+        .role-dosen .sidebar-brand   { padding: 10px 16px 9px 16px; }
+        .role-dosen .sidebar-nav     { padding: 4px 10px; overflow-y: visible !important; flex: 1; min-height: 0; }
+        .role-dosen .nav-label       { margin: 5px 0 1px 0; font-size: 0.56rem; }
+        .role-dosen .sidebar-link    { padding: 6px 10px; font-size: 0.75rem; margin-bottom: 0; line-height: 1.3; }
+        .role-dosen .sidebar-link i  { font-size: 0.75rem; }
+        .role-dosen .sidebar-sublink { padding-left: 28px !important; padding-top: 4px !important; padding-bottom: 4px !important; font-size: 0.71rem !important; line-height: 1.3 !important; }
+        .role-dosen .sidebar-footer  { padding: 8px 10px; flex-shrink: 0; }
 
         .sidebar-footer {
             padding: 10px 10px;
@@ -308,11 +329,6 @@
             {{-- ══════════════════════════
                  MAHASISWA
                  ══════════════════════════ --}}
-            {{-- Semua variabel notif ($notifJudulMahasiswa, $notifProposalMahasiswa,
-                 $notifBimbinganMahasiswa, $notifLayakMahasiswa, $notifSeminarMahasiswa,
-                 $notifNilaiMahasiswa) sudah di-share otomatis dari AppServiceProvider
-                 ke semua view. JANGAN query ulang / override di sini — langsung pakai
-                 variabelnya, supaya konsisten dengan badge di seluruh aplikasi. --}}
             @if($role === 'mahasiswa')
 
             <div class="nav-label">Tugas Akhir</div>
@@ -485,7 +501,7 @@
                 @elseif($isPenguji)
                 <a href="{{ route('proposal.penguji') }}"
                    class="sidebar-link sidebar-sublink {{ request()->is('proposal/penguji*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-file-magnifying-glass"></i> Lihat Proposal
+                     <i class="fa-solid fa-eye"></i> Lihat Proposal
                 </a>
                 @else
                 <button class="sidebar-link sidebar-sublink sidebar-link-locked"
@@ -828,7 +844,6 @@
         const topbarToggle = document.getElementById('topbarToggle');
         const isMobile     = () => window.innerWidth <= 768;
 
-        /* ── TOPBAR TOGGLE VISIBILITY ── */
         function updateTopbarToggle() {
             if (isMobile()) {
                 topbarToggle.style.display = 'flex';
@@ -837,7 +852,6 @@
             }
         }
 
-        /* ── TOGGLE SIDEBAR (desktop collapse / mobile drawer) ── */
         function toggleSidebar() {
             if (isMobile()) {
                 const isOpen = sidebar.classList.contains('open');
@@ -863,13 +877,11 @@
             overlay.classList.remove('show');
         }
 
-        /* ── AKSES DITOLAK POPUP ── */
         function showSidebarDenied(msg) {
             document.getElementById('popupSidebarMsg').innerText = msg;
             document.getElementById('popupSidebarDenied').style.display = 'flex';
         }
 
-        /* ── GENERIC DROPDOWN TOGGLE ── */
         const allDropdownIds = [
             'dropdown-proposal', 'dropdown-bimbingan', 'dropdown-jadwal', 'dropdown-penguji',
             'dropdown-proposal-admin', 'dropdown-bimbingan-admin', 'dropdown-jadwal-admin'
@@ -881,12 +893,10 @@
             if (!dd) return;
             const isOpen = dd.style.maxHeight && dd.style.maxHeight !== '0px';
 
-            // Tutup semua dropdown lain
             allDropdownIds.forEach(function(id) {
                 if (id === ddId) return;
                 const el = document.getElementById(id);
                 if (el) el.style.maxHeight = '0';
-                // cari chevron yang sesuai
                 const chv = document.getElementById(id.replace('dropdown-', 'chevron-'));
                 if (chv) chv.classList.remove('open');
             });
@@ -895,7 +905,6 @@
             if (chevron) chevron.classList.toggle('open', !isOpen);
         }
 
-        /* ── LOGOUT ── */
         function konfirmasiLogout() {
             Swal.fire({
                 title: 'Yakin ingin logout?',
@@ -924,7 +933,6 @@
             });
         }
 
-        /* ── INIT ── */
         document.addEventListener('DOMContentLoaded', function() {
             if (!isMobile()) {
                 if (localStorage.getItem('sidebarCollapsed') === 'true') {
