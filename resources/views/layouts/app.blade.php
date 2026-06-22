@@ -135,13 +135,15 @@
         .role-admin .sidebar-link  { padding: 5px 8px; font-size: 0.73rem; margin-bottom: 0; }
         .role-admin .sidebar-footer { padding: 6px 8px; }
 
-        .role-dosen .sidebar-brand  { padding: 12px 16px 10px 16px; }
-        .role-dosen .sidebar-nav    { padding: 6px 10px; }
-        .role-dosen .nav-label      { margin: 6px 0 2px 0; font-size: 0.58rem; }
-        .role-dosen .sidebar-link   { padding: 6px 10px; font-size: 0.77rem; margin-bottom: 0; }
-        .role-dosen .sidebar-link i { font-size: 0.78rem; }
-        .role-dosen .sidebar-sublink { padding-left: 30px !important; padding-top: 5px !important; padding-bottom: 5px !important; font-size: 0.72rem !important; }
-        .role-dosen .sidebar-footer  { padding: 7px 10px; }
+      /* ── DOSEN ── */
+        .role-dosen .sidebar         { overflow-y: auto; overflow-x: hidden; }
+        .role-dosen .sidebar-brand   { padding: 10px 16px 9px 16px; }
+        .role-dosen .sidebar-nav     { padding: 4px 10px; overflow-y: visible !important; flex: 1; min-height: 0; }
+        .role-dosen .nav-label       { margin: 5px 0 1px 0; font-size: 0.56rem; }
+        .role-dosen .sidebar-link    { padding: 6px 10px; font-size: 0.75rem; margin-bottom: 0; line-height: 1.3; }
+        .role-dosen .sidebar-link i  { font-size: 0.75rem; }
+        .role-dosen .sidebar-sublink { padding-left: 28px !important; padding-top: 4px !important; padding-bottom: 4px !important; font-size: 0.71rem !important; line-height: 1.3 !important; }
+        .role-dosen .sidebar-footer  { padding: 8px 10px; flex-shrink: 0; }
 
         .sidebar-footer {
             padding: 10px 10px;
@@ -828,7 +830,6 @@
         const topbarToggle = document.getElementById('topbarToggle');
         const isMobile     = () => window.innerWidth <= 768;
 
-        /* ── TOPBAR TOGGLE VISIBILITY ── */
         function updateTopbarToggle() {
             if (isMobile()) {
                 topbarToggle.style.display = 'flex';
@@ -837,7 +838,6 @@
             }
         }
 
-        /* ── TOGGLE SIDEBAR (desktop collapse / mobile drawer) ── */
         function toggleSidebar() {
             if (isMobile()) {
                 const isOpen = sidebar.classList.contains('open');
@@ -863,13 +863,11 @@
             overlay.classList.remove('show');
         }
 
-        /* ── AKSES DITOLAK POPUP ── */
         function showSidebarDenied(msg) {
             document.getElementById('popupSidebarMsg').innerText = msg;
             document.getElementById('popupSidebarDenied').style.display = 'flex';
         }
 
-        /* ── GENERIC DROPDOWN TOGGLE ── */
         const allDropdownIds = [
             'dropdown-proposal', 'dropdown-bimbingan', 'dropdown-jadwal', 'dropdown-penguji',
             'dropdown-proposal-admin', 'dropdown-bimbingan-admin', 'dropdown-jadwal-admin'
@@ -881,12 +879,10 @@
             if (!dd) return;
             const isOpen = dd.style.maxHeight && dd.style.maxHeight !== '0px';
 
-            // Tutup semua dropdown lain
             allDropdownIds.forEach(function(id) {
                 if (id === ddId) return;
                 const el = document.getElementById(id);
                 if (el) el.style.maxHeight = '0';
-                // cari chevron yang sesuai
                 const chv = document.getElementById(id.replace('dropdown-', 'chevron-'));
                 if (chv) chv.classList.remove('open');
             });
@@ -895,7 +891,6 @@
             if (chevron) chevron.classList.toggle('open', !isOpen);
         }
 
-        /* ── LOGOUT ── */
         function konfirmasiLogout() {
             Swal.fire({
                 title: 'Yakin ingin logout?',
@@ -924,7 +919,6 @@
             });
         }
 
-        /* ── INIT ── */
         document.addEventListener('DOMContentLoaded', function() {
             if (!isMobile()) {
                 if (localStorage.getItem('sidebarCollapsed') === 'true') {
