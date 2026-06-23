@@ -217,7 +217,6 @@
         padding: 36px 24px 100px;
     }
 
-    /* TOMBOL KEMBALI ATAS */
     .btn-back-top {
         display: inline-flex;
         align-items: center;
@@ -239,7 +238,6 @@
         background: #FFFBEA;
     }
 
-    /* TITLE */
     .page-title {
         font-size: 1.75rem;
         font-weight: 700;
@@ -252,7 +250,6 @@
         margin-bottom: 28px;
     }
 
-    /* INFO GRID */
     .info-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -299,7 +296,6 @@
     .status-disetujui { color: #16A34A; }
     .status-ditolak   { color: #DC2626; }
 
-    /* INFORMASI PENTING */
     .info-penting {
         background: #FFFBEA;
         border: 1px solid #FDE68A;
@@ -325,7 +321,6 @@
         line-height: 1.5;
     }
 
-    /* DAFTAR HEADER */
     .daftar-header {
         display: flex;
         align-items: center;
@@ -336,7 +331,6 @@
         margin-bottom: 14px;
     }
 
-    /* JUDUL CARD */
     .judul-card {
         background: #fff;
         border: 1px solid #E5E7EB;
@@ -396,7 +390,6 @@
         color: #6B7280;
     }
 
-    /* CATATAN */
     .catatan-wrap {
         margin-bottom: 14px;
         margin-top: 2px;
@@ -415,7 +408,6 @@
         color: #9CA3AF;
         font-size: 0.75rem;
     }
-    /* EDIT: style wajib untuk label catatan */
     .catatan-wajib {
         font-weight: 600;
         color: #DC2626;
@@ -440,7 +432,6 @@
         background: #fff;
         box-shadow: 0 0 0 3px rgba(244,180,0,0.08);
     }
-    /* EDIT: border merah saat error */
     .catatan-input.input-error {
         border-color: #EF4444;
         background: #FFF5F5;
@@ -457,7 +448,6 @@
         margin-top: 4px;
     }
 
-    /* Readonly catatan */
     .catatan-readonly .catatan-label { color: #6B7280; }
     .catatan-isi {
         background: #F9FAFB;
@@ -476,7 +466,6 @@
         gap: 8px;
     }
 
-    /* ACTION BUTTONS */
     .btn-setuju {
         display: inline-flex; align-items: center; gap: 5px;
         background: #DCFCE7; color: #15803D;
@@ -503,7 +492,6 @@
     .btn-disetujui-hasil { background: #DCFCE7; color: #15803D; }
     .btn-ditolak-hasil   { background: #FEE2E2; color: #B91C1C; }
 
-    /* FOOTER STICKY */
     .footer-sticky {
         position: fixed;
         bottom: 0; left: 0; right: 0;
@@ -533,7 +521,6 @@
     }
     .btn-kirim:hover { background: #D97706; }
 
-    /* POPUP */
     .popup-bg {
         position: fixed; top: 0; left: 0;
         width: 100%; height: 100%;
@@ -584,13 +571,11 @@
     let nomorDipilih = null;
     let statusJudul  = { 1: '', 2: '', 3: '' };
 
-    // ── Counter karakter catatan ──
     [1, 2, 3].forEach(function (no) {
         const el = document.getElementById('catatanInput' + no);
         if (!el) return;
         el.addEventListener('input', function () {
             document.getElementById('counter' + no).textContent = this.value.length;
-            // EDIT: hapus error highlight saat user mulai ngetik
             this.classList.remove('input-error');
         });
     });
@@ -643,6 +628,14 @@
         const badge = document.getElementById('badge' + no);
 
         if (aksiDipilih === 'setuju') {
+            // CEK KALAU SUDAH ADA YANG DISETUJUI SEBELUMNYA
+            const sudahAdaSetuju = Object.values(statusJudul).filter(s => s === 'setuju').length > 0;
+            if (sudahAdaSetuju) {
+                closePopup();
+                showPopup('error', 'Hanya boleh 1 judul yang disetujui.');
+                return;
+            }
+
             statusJudul[no] = 'setuju';
             card.className  = card.className.replace(/border-\w+/, 'border-green');
             badge.className = 'usulan-badge badge-approved';
@@ -650,13 +643,11 @@
             document.getElementById('aksi' + no).innerHTML =
                 '<button type="button" class="btn-setuju" disabled><i class="fa fa-check"></i> Disetujui</button>';
 
-            // EDIT: kembaliin label catatan jadi opsional kalau sebelumnya pernah ditolak
             const labelEl = document.getElementById('catatanLabel' + no);
             if (labelEl) {
                 labelEl.textContent = '(opsional)';
                 labelEl.className   = 'catatan-opsional';
             }
-            // EDIT: hapus error highlight juga
             const catatanEl = document.getElementById('catatanInput' + no);
             if (catatanEl) catatanEl.classList.remove('input-error');
 
@@ -669,7 +660,6 @@
             document.getElementById('aksi' + no).innerHTML =
                 '<button type="button" class="btn-tolak" disabled><i class="fa fa-xmark"></i> Ditolak</button>';
 
-            // EDIT: ubah label catatan jadi wajib
             const labelEl = document.getElementById('catatanLabel' + no);
             if (labelEl) {
                 labelEl.textContent = '(wajib)';
@@ -691,13 +681,11 @@
             '<button type="button" class="btn-setuju" onclick="setuju(' + no + ')"><i class="fa fa-check"></i> Setujui</button>' +
             '<button type="button" class="btn-tolak"  onclick="tolak('  + no + ')"><i class="fa fa-xmark"></i> Tolak</button>';
 
-        // EDIT: kembaliin label catatan jadi opsional saat reset
         const labelEl = document.getElementById('catatanLabel' + no);
         if (labelEl) {
             labelEl.textContent = '(opsional)';
             labelEl.className   = 'catatan-opsional';
         }
-        // EDIT: hapus error highlight juga
         const catatanEl = document.getElementById('catatanInput' + no);
         if (catatanEl) catatanEl.classList.remove('input-error');
 
@@ -711,25 +699,24 @@
         let jumlahSetuju  = 0;
         let masihKosong   = false;
         let judulDipilih  = '';
-        let catatanKosong = false;  // EDIT
+        let catatanKosong = false;
 
         for (let i = 1; i <= 3; i++) {
             if (statusJudul[i] === '')       { masihKosong = true; }
             if (statusJudul[i] === 'setuju') { jumlahSetuju++; judulDipilih = i; }
 
-            // EDIT: kalau ditolak, cek catatan wajib diisi
             if (statusJudul[i] === 'tolak') {
                 const catatanEl = document.getElementById('catatanInput' + i);
                 if (catatanEl && catatanEl.value.trim() === '') {
                     catatanKosong = true;
-                    catatanEl.classList.add('input-error');  // highlight merah
+                    catatanEl.classList.add('input-error');
                 }
             }
         }
 
         if (masihKosong)      { showPopup('error', 'Semua judul harus diberi keputusan.'); return; }
         if (jumlahSetuju > 1) { showPopup('error', 'Hanya boleh 1 judul yang disetujui.'); return; }
-        if (catatanKosong)    { showPopup('error', 'Catatan wajib diisi untuk semua judul yang ditolak.'); return; }  // EDIT
+        if (catatanKosong)    { showPopup('error', 'Catatan wajib diisi untuk semua judul yang ditolak.'); return; }
 
         document.getElementById('judul_disetujui').value = judulDipilih;
         document.getElementById('formVerifikasi').submit();

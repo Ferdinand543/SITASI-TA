@@ -407,23 +407,45 @@
                         ->exists();
                 }
 
-                $adaPengajuanBaruSidebar = $isKoor
+               $adaPengajuanBaruSidebar = $isKoor
                     ? DB::table('pengajuan_judul')->where('status','menunggu verifikasi')->exists()
                     : false;
 
-                $jumlahMenungguProposalSidebar = $isKoor
-                    ? DB::table('proposal')->whereIn('status',['menunggu_review','menunggu_verifikasi'])->count()
-                    : ($isReviewer
-                        ? DB::table('proposal')
-                            ->where('status','menunggu_review')
-                            ->whereNotNull('nim_nid_reviewer')
-                            ->where('nim_nid_reviewer', $nimSesi)
-                            ->count()
-                        : 0);
+                // Badge Penetapan Dospem: ada proposal yang belum punya pembimbing di tabel dosen_pembimbing
+                $badgeDospem = $isKoor
+                    ? DB::table('proposal')
+                        ->whereNotExists(function($q) {
+                            $q->select(DB::raw(1))
+                            ->from('dosen_pembimbing')
+                            ->whereColumn('dosen_pembimbing.proposal_id', 'proposal.id');
+                        })
+                        ->exists()
+                    : false;
 
+                // Badge Penetapan Reviewer: ada proposal yang nim_nid_reviewer masih null
+                $badgeReviewer = $isKoor
+                    ? DB::table('proposal')->whereNull('nim_nid_reviewer')->exists()
+                    : false;
+
+                // Badge Review Proposal: ada proposal yang ditugaskan ke reviewer ini tapi belum direview
+                $badgeReviewProposal = $isReviewer
+                    ? DB::table('proposal')
+                        ->where('status', 'menunggu_review')
+                        ->whereNotNull('nim_nid_reviewer')
+                        ->where('nim_nid_reviewer', $nimSesi)
+                        ->whereNotExists(function($q) {
+                            $q->select(DB::raw(1))
+                            ->from('tinjauan_proposal')
+                            ->whereColumn('tinjauan_proposal.proposal_id', 'proposal.id');
+                        })
+                        ->exists()
+                    : false;
+
+// Badge parent "Proposal" (nyala kalau salah satu child di atas ada notif)
+$jumlahMenungguProposalSidebar = $badgeDospem || $badgeReviewer || $badgeReviewProposal;
                 $jumlahBimbinganBaruSidebar = $isPembimbing
-                    ? DB::table('bimbingan')->where('dosen_nid',$nimSesi)->where('status','Baru Dikirim')->count()
-                      + DB::table('pengajuan_proposal_bimbingan')->where('dosen_nid',$nimSesi)->where('status','pending')->count()
+                    ? DB::table('bimbingan')->where('dosen_nid',$nimSesi)->where('status_validasi','Validasi Bimbingan')->count()
+                        + DB::table('pengajuan_proposal_bimbingan')->where('dosen_nid',$nimSesi)->where('status','pending')->count()
                     : 0;
 
                 $proposalDropdownOpen  = request()->is('proposal*') || request()->is('reviewer*');
@@ -462,10 +484,12 @@
                 <a href="{{ route('proposal.index') }}?tab=pembimbing"
                    class="sidebar-link sidebar-sublink {{ request()->is('proposal*') && request()->query('tab')==='pembimbing' ? 'active' : '' }}">
                     <i class="fa-solid fa-chalkboard-user"></i> Penetapan Dospem
+                    @if($badgeDospem)<span class="link-badge-notif"></span>@endif
                 </a>
                 <a href="{{ route('proposal.index') }}?tab=reviewer"
                    class="sidebar-link sidebar-sublink {{ request()->is('proposal*') && request()->query('tab')==='reviewer' ? 'active' : '' }}">
                     <i class="fa-solid fa-user-check"></i> Penetapan Reviewer
+                    @if($badgeReviewer)<span class="link-badge-notif"></span>@endif
                 </a>
                 @else
                 <button class="sidebar-link sidebar-sublink sidebar-link-locked"
@@ -482,7 +506,7 @@
                 <a href="{{ route('reviewer.proposal') }}"
                    class="sidebar-link sidebar-sublink {{ request()->is('reviewer*') ? 'active' : '' }}">
                     <i class="fa-solid fa-file-circle-check"></i> Review Proposal
-                    @if($jumlahMenungguProposalSidebar > 0)<span class="link-badge-notif"></span>@endif
+                    @if($badgeReviewProposal)<span class="link-badge-notif"></span>@endif
                 </a>
                 @elseif($isPenguji)
                 <a href="{{ route('proposal.penguji') }}"

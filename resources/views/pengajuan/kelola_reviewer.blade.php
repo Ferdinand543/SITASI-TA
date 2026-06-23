@@ -68,12 +68,12 @@
 
     /* ── TOMBOL TAMBAH ── */
     .btn-tambah-mhs {
-        background: #111; color: #fff; border: none; border-radius: 10px;
+        background: #FACC15; color: #333; border: none; border-radius: 10px;
         padding: 10px 20px; font-size: 0.85rem; font-weight: 700;
         display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
         transition: 0.15s; text-decoration: none;
     }
-    .btn-tambah-mhs:hover { background: #333; color: #fff; }
+    .btn-tambah-mhs:hover { background: #e6b800; color: #333; }
 
     /* ── SEARCH INLINE ── */
     .inline-search-wrap { position: relative; }
@@ -184,10 +184,10 @@
     .btn-modal-batal:hover { background: #f5f5f5; }
     .btn-modal-simpan {
         padding: 10px 22px; border-radius: 10px; border: none;
-        background: #111; color: #fff; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+        background: #FACC15; color: #333; font-size: 0.9rem; font-weight: 700; cursor: pointer;
         display: inline-flex; align-items: center; gap: 7px;
     }
-    .btn-modal-simpan:hover { background: #333; }
+    .btn-modal-simpan:hover { background: #e6b800; }
     .btn-modal-simpan:disabled { background: #ccc; cursor: not-allowed; }
 
     /* MODAL EMPTY */

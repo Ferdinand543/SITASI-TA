@@ -135,8 +135,13 @@
                     </div>
                 </div>
 
-                
+            </div>
 
+            {{-- TOMBOL EDIT PROFIL --}}
+            <div class="profil-dosen-footer">
+                <button class="btn-edit-profil-dosen" onclick="openModalEditDosen()">
+                    <i class="fa fa-pen"></i> Edit Profil
+                </button>
             </div>
 
         </div>
@@ -144,7 +149,9 @@
 
 </div>
 
-{{-- POPUP KONFIRMASI GANTI FOTO --}}
+{{-- ============================================================
+     POPUP KONFIRMASI GANTI FOTO
+     ============================================================ --}}
 <div id="popupFotoDosen" class="popup-foto-overlay" style="display:none;">
     <div class="popup-foto-box">
         <div class="popup-foto-icon">📷</div>
@@ -159,6 +166,87 @@
                 Simpan <i class="fa fa-check"></i>
             </button>
         </div>
+    </div>
+</div>
+
+{{-- ============================================================
+     MODAL EDIT PROFIL DOSEN
+     ============================================================ --}}
+<div id="modalEditDosen" class="popup-foto-overlay" style="display:none;">
+    <div class="popup-edit-box-dosen">
+
+        <div class="popup-edit-header-dosen">
+            <div class="popup-edit-title-dosen">
+                <i class="fa fa-pen" style="color:#FACC15; margin-right:8px;"></i> Edit Profil
+            </div>
+            <button class="popup-close-btn-dosen" onclick="closeModalEditDosen()" title="Tutup">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+
+        @if($errors->any())
+            <div class="alert-custom alert-error-custom" style="margin-bottom:16px;">
+                <i class="fa fa-times-circle me-1"></i>
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <form action="{{ route('dosen.profil.update') }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="edit-grid-dosen">
+
+                {{-- Nama (readonly) --}}
+                <div class="edit-form-group-dosen" style="grid-column: 1 / -1;">
+                    <label class="edit-form-label-dosen">
+                        <i class="fa fa-user edit-label-icon-dosen"></i> NAMA LENGKAP
+                    </label>
+                    <input type="text"
+                           class="edit-form-input-dosen edit-form-input-readonly-dosen"
+                           value="{{ $user->nama }}"
+                           readonly>
+                </div>
+
+                {{-- NID (readonly) --}}
+                <div class="edit-form-group-dosen">
+                    <label class="edit-form-label-dosen">
+                        <i class="fa fa-id-badge edit-label-icon-dosen"></i> NID
+                    </label>
+                    <input type="text"
+                           class="edit-form-input-dosen edit-form-input-readonly-dosen"
+                           value="{{ $user->nim_nid ?? '-' }}"
+                           readonly>
+                </div>
+
+                {{-- Email --}}
+                <div class="edit-form-group-dosen">
+                    <label class="edit-form-label-dosen">
+                        <i class="fa fa-envelope edit-label-icon-dosen"></i> EMAIL
+                    </label>
+                    <input type="email"
+                           name="email"
+                           class="edit-form-input-dosen @error('email') input-error-dosen @enderror"
+                           value="{{ old('email', $user->email) }}"
+                           placeholder="Email aktif"
+                           required>
+                    @error('email')
+                        <span class="edit-error-msg-dosen">{{ $message }}</span>
+                    @enderror
+                </div>
+
+            </div>
+
+            <div class="popup-foto-btn-row" style="margin-top: 24px;">
+                <button type="button" class="popup-btn-batal" onclick="closeModalEditDosen()">
+                    Batal
+                </button>
+                <button type="submit" class="popup-btn-simpan">
+                    Simpan <i class="fa fa-check"></i>
+                </button>
+            </div>
+
+        </form>
     </div>
 </div>
 
@@ -272,7 +360,6 @@
     color: #fff;
 }
 
-.profil-dosen-identity {}
 .profil-dosen-nama {
     font-size: 1.35rem;
     font-weight: 800;
@@ -280,8 +367,6 @@
     margin-bottom: 8px;
     line-height: 1.2;
 }
-
-/* Badge Dosen — biru sesuai mockup */
 .badge-role-dosen {
     display: inline-block;
     padding: 4px 14px;
@@ -352,6 +437,37 @@
 }
 
 /* ============================================================
+   FOOTER (TOMBOL EDIT)
+   ============================================================ */
+.profil-dosen-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+}
+.btn-edit-profil-dosen {
+    padding: 10px 28px;
+    border-radius: 12px;
+    border: none;
+    background: #FACC15;
+    color: #735C00;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+    box-shadow: 0 2px 8px rgba(250,204,21,0.3);
+}
+.btn-edit-profil-dosen:hover {
+    background: #d4a00e;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(212,160,14,0.35);
+}
+
+/* ============================================================
    ALERT
    ============================================================ */
 .alert-custom { padding: 12px 16px; border-radius: 10px; font-size: 0.9rem; margin-bottom: 16px; }
@@ -370,6 +486,7 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
+    backdrop-filter: blur(2px);
 }
 .popup-foto-box {
     background: #fff;
@@ -421,16 +538,111 @@
 .popup-btn-simpan:hover { background: #d4a00e; color: #fff; }
 
 /* ============================================================
+   MODAL EDIT PROFIL DOSEN
+   ============================================================ */
+.popup-edit-box-dosen {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px 32px 28px;
+    width: 100%;
+    max-width: 520px;
+    text-align: left;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+.popup-edit-header-dosen {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+.popup-edit-title-dosen {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #111827;
+}
+.popup-close-btn-dosen {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1.5px solid #e5e7eb;
+    background: #fff;
+    color: #6b7280;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+.popup-close-btn-dosen:hover {
+    background: #fdecea;
+    border-color: #f1aeb5;
+    color: #92400E;
+}
+.edit-grid-dosen {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
+}
+.edit-form-group-dosen {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.edit-form-label-dosen {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #9ca3af;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.edit-label-icon-dosen {
+    color: #FACC15;
+    font-size: 0.72rem;
+}
+.edit-form-input-dosen {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #e5e7eb;
+    font-size: 0.88rem;
+    color: #111827;
+    outline: none;
+    transition: 0.2s;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+}
+.edit-form-input-dosen:focus {
+    border-color: #FACC15;
+    box-shadow: 0 0 0 3px rgba(250,204,21,0.15);
+}
+.edit-form-input-readonly-dosen {
+    background: #f9fafb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+.input-error-dosen { border-color: #f1aeb5 !important; }
+.edit-error-msg-dosen { font-size: 0.75rem; color: #DC2626; margin-top: 2px; }
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 640px) {
-    .profil-dosen-inner { padding: 24px 20px; }
-    .profil-dosen-grid  { grid-template-columns: 1fr; gap: 18px; }
+    .profil-dosen-inner  { padding: 24px 20px; }
+    .profil-dosen-grid   { grid-template-columns: 1fr; gap: 18px; }
     .profil-dosen-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .edit-grid-dosen     { grid-template-columns: 1fr; }
+    .popup-edit-box-dosen { padding: 24px 20px; }
 }
 </style>
 
 <script>
+/* ============================================================
+   FOTO PROFIL
+   ============================================================ */
 function previewFotoDosen(input) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
@@ -446,6 +658,32 @@ function batalFotoDosen() {
     document.getElementById('popupFotoDosen').style.display = 'none';
     document.getElementById('inputFotoDosen').value = '';
 }
+
+/* ============================================================
+   MODAL EDIT PROFIL
+   ============================================================ */
+function openModalEditDosen() {
+    document.getElementById('modalEditDosen').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModalEditDosen() {
+    document.getElementById('modalEditDosen').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('modalEditDosen').addEventListener('click', function (e) {
+        if (e.target === this) closeModalEditDosen();
+    });
+    document.getElementById('popupFotoDosen').addEventListener('click', function (e) {
+        if (e.target === this) batalFotoDosen();
+    });
+
+    @if($errors->any())
+        openModalEditDosen();
+    @endif
+});
 </script>
 
 @endsection

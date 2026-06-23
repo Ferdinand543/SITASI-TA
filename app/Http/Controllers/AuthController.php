@@ -262,7 +262,6 @@ class AuthController extends Controller
                 'no_kontak' => $request->no_kontak,
             ]);
 
-        // Refresh session supaya data terbaru ke-load
         $userBaru = DB::table('users')->where('nim_nid', $nim)->first();
         session(['user' => $userBaru]);
 
@@ -357,6 +356,35 @@ class AuthController extends Controller
         $roles = array_map(fn($r) => $roleLabels[$r] ?? ucfirst($r), $rolesRaw);
 
         return view('dosen.profil_dosen_tu', compact('user', 'roles'));
+    }
+
+    // =====================================================
+    // UPDATE PROFIL DOSEN (email doang)
+    // =====================================================
+    public function updateProfilDosen(Request $request)
+    {
+        if (!session('user')) return redirect('/login');
+
+        $nid = session('user')->nim_nid;
+
+        $request->validate([
+            'email' => 'required|email|max:255|unique:users,email,' . $nid . ',nim_nid',
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email'    => 'Format email tidak valid.',
+            'email.unique'   => 'Email sudah digunakan akun lain.',
+        ]);
+
+        DB::table('users')
+            ->where('nim_nid', $nid)
+            ->update([
+                'email' => $request->email,
+            ]);
+
+        $userBaru = DB::table('users')->where('nim_nid', $nid)->first();
+        session(['user' => $userBaru]);
+
+        return back()->with('success', 'Profil berhasil diperbarui!');
     }
 
     // =====================================================

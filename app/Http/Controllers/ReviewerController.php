@@ -42,7 +42,6 @@ class ReviewerController extends Controller
                 $join->on('tp.proposal_id', '=', 'proposal.id')
                     ->where('tp.nim_nid_reviewer', '=', $nimReviewer);
             })
-            // ↓ Filter hanya proposal yang ditugaskan ke reviewer ini
             ->whereIn('proposal.status', ['menunggu_review', 'menunggu_verifikasi', 'selesai'])
             ->where('proposal.nim_nid_reviewer', $nimReviewer)
             ->select([
@@ -86,11 +85,18 @@ class ReviewerController extends Controller
         $totalMenunggu = $proposals->filter(fn($p) => is_null($p->tinjauan_id))->count();
         $totalSelesai  = $proposals->filter(fn($p) => !is_null($p->tinjauan_id))->count();
 
+        // BADGE FIX — hitung mahasiswa belum punya reviewer untuk badge di tombol Penetapan Reviewer
+        $mahasiswaBelumReviewerCount = DB::table('proposal')
+            ->whereNull('nim_nid_reviewer')
+            ->whereIn('status', ['menunggu_verifikasi', 'menunggu_review'])
+            ->count();
+
         return view('pengajuan.proposal_reviewer', compact(
             'proposals',
             'totalProposal',
             'totalMenunggu',
-            'totalSelesai'
+            'totalSelesai',
+            'mahasiswaBelumReviewerCount' // BADGE FIX
         ));
     }
 

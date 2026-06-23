@@ -285,8 +285,10 @@ Route::get('/mahasiswa', function () {
 Route::get('/admin/profil_admin_tu',      [AuthController::class, 'profilAdmin'])->name('admin.profil_admin_tu');
 Route::get('/mahasiswa/profil',           [AuthController::class, 'profilMahasiswa'])->name('mahasiswa.profil');
 Route::post('/mahasiswa/profil/foto',     [AuthController::class, 'uploadFotoMahasiswa'])->name('mahasiswa.profil.foto');
+Route::put('/mahasiswa/profil/update',    [AuthController::class, 'updateProfilMahasiswa'])->name('mahasiswa.profil.update');
 Route::get('/dosen/profil',               [AuthController::class, 'profilDosen'])->name('dosen.profil');
 Route::post('/dosen/profil/foto',         [AuthController::class, 'uploadFotoDosen'])->name('dosen.profil.foto');
+Route::put('/dosen/profil/update',        [AuthController::class, 'updateProfilDosen'])->name('dosen.profil.update');
 
 
 // =====================================================

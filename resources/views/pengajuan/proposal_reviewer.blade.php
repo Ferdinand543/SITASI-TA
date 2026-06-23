@@ -24,9 +24,15 @@
                 <i class="fa fa-user-check"></i>
                 Penetapan Dosen Pembimbing
             </a>
+            {{-- BADGE FIX — tambahin badge kalau ada mahasiswa belum punya reviewer --}}
             <a href="{{ url('/proposal?tab=reviewer') }}" class="btn-hero-white">
                 <i class="fa fa-user-shield"></i>
                 Penetapan Reviewer
+                @if(!empty($mahasiswaBelumReviewerCount) && $mahasiswaBelumReviewerCount > 0)
+                    <span style="background:#ef4444;color:#fff;border-radius:20px;font-size:0.7rem;padding:1px 7px;font-weight:700;">
+                        {{ $mahasiswaBelumReviewerCount }}
+                    </span>
+                @endif
             </a>
             @endif
             @if($isReviewer)
@@ -180,7 +186,6 @@
                     </td>
                 </tr>
                 @empty
-                {{-- Belum ada data dari DB sama sekali → inbox icon --}}
                 <tr id="rowEmpty">
                     <td colspan="9" style="padding: 60px 20px; text-align: center; border: none;">
                         <div style="display:inline-flex; flex-direction:column; align-items:center; gap:12px;">
@@ -196,7 +201,6 @@
             </tbody>
         </table>
 
-        {{-- Filter/search tidak nemu hasil → magnifier icon --}}
         <div id="msgKosong" style="display:none;">
             <table class="tbl-reviewer">
                 <tbody>
@@ -599,7 +603,7 @@
 .popup-msg   { font-size: 0.9rem; color: var(--brown-dark); margin-bottom: 24px; line-height: 1.5; }
 .popup-btn-row { display: flex; gap: 12px; justify-content: center; }
 .popup-btn { padding: 10px 28px; border-radius: 10px; font-size: 0.92rem; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; min-width: 90px; }
-.popup-btn.ok, .popup-btn.kirim { background: var(--gold); color: #fff; }
+.popup-btn.ok, .popup-btn.kirim { background: #FACC15; color: #333; }
 .popup-btn.ok:hover, .popup-btn.kirim:hover { background: var(--brown-dark); }
 .popup-btn.batal { background: #D1C6AB; color: var(--navy); }
 .popup-btn.batal:hover { background: #c4b89a; }

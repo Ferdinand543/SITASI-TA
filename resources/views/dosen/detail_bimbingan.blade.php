@@ -752,7 +752,6 @@
         gap: 12px;
     }
 
-    /* Card seminar sudah disetujui */
     .card-seminar.sudah-disetujui {
         border-color: #D1D5DB;
         background: #FAFAFA;
@@ -776,7 +775,6 @@
         letter-spacing: .5px;
     }
 
-    /* Tombol seminar aktif */
     .btn-seminar {
         display: flex;
         width: 100%;
@@ -801,7 +799,6 @@
         color: #4a3b00;
     }
 
-    /* Tombol seminar sudah disetujui (disabled) */
     .btn-seminar-done {
         display: flex;
         width: 100%;
@@ -1045,7 +1042,7 @@
 
 <div class="wrap">
 
-    <a href="{{ route('dosen.bimbingan.index') }}" class="btn-back">
+    <a href="{{ route('dosen.bimbingan.index') }}?tab=mahasiswa" class="btn-back">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
         </svg>
@@ -1065,9 +1062,8 @@
         </div>
     </div>
 
-    {{-- GRID: PERSETUJUAN SEMINAR + ATUR PIN (muncul bersamaan, hanya jika bimbingan sudah cukup) --}}
+    {{-- GRID: PERSETUJUAN SEMINAR + ATUR PIN --}}
     @php
-        // Ambil seminar & cek urutan dosen ini
         $seminarMhs = DB::table('pengajuan_seminars')
             ->where('mahasiswa_id', $mahasiswa->nim_nid)
             ->latest()->first();
@@ -1086,14 +1082,9 @@
     @if($totalBimbingan >= $minBimbingan)
     <div class="grid-seminar-pin">
 
-        {{-- PERSETUJUAN SEMINAR --}}
         <div class="card-seminar {{ $sudahDisetujui ? 'sudah-disetujui' : '' }}">
-
             @if($sudahDisetujui)
-            {{-- SUDAH DISETUJUI: tampilan terkunci --}}
-            <div class="card-section-label" style="color:#6B7280;">
-                Persetujuan Seminar
-            </div>
+            <div class="card-section-label" style="color:#6B7280;">Persetujuan Seminar</div>
             <div style="display:flex;align-items:flex-start;gap:12px;flex:1;">
                 <div style="width:36px;height:36px;border-radius:50%;background:#F0FDF4;border:2px solid #BBF7D0;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#16A34A" width="16" height="16">
@@ -1102,9 +1093,7 @@
                 </div>
                 <div>
                     <div style="font-size:13px;font-weight:700;color:#15803D;margin-bottom:4px;">Sudah Diverifikasi</div>
-                    <div style="font-size:12px;color:#6B7280;line-height:1.6;">
-                        Kelayakan seminar mahasiswa ini telah disetujui dan ditandatangani. Tidak dapat dilakukan ulang.
-                    </div>
+                    <div style="font-size:12px;color:#6B7280;line-height:1.6;">Kelayakan seminar mahasiswa ini telah disetujui dan ditandatangani. Tidak dapat dilakukan ulang.</div>
                 </div>
             </div>
             <div class="btn-seminar-done">
@@ -1113,52 +1102,35 @@
                 </svg>
                 Sudah Disetujui
             </div>
-
             @else
-            {{-- BELUM DISETUJUI: tampilan normal --}}
-            <div class="card-section-label" style="color:#15803D;">
-                Persetujuan Seminar
-            </div>
+            <div class="card-section-label" style="color:#15803D;">Persetujuan Seminar</div>
             <div style="display:flex;align-items:flex-start;gap:12px;flex:1;">
                 <div style="width:36px;height:36px;border-radius:50%;background:#F0FDF4;border:2px solid #BBF7D0;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="#16A34A" width="16" height="16">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                     </svg>
                 </div>
-                <div style="font-size:12.5px;color:#15803D;line-height:1.6;">
-                    Mahasiswa telah memenuhi persyaratan bimbingan yang ditetapkan dan dapat diberikan persetujuan kelayakan untuk mengikuti Seminar Tugas Akhir 1.
-                </div>
+                <div style="font-size:12.5px;color:#15803D;line-height:1.6;">Mahasiswa telah memenuhi persyaratan bimbingan yang ditetapkan dan dapat diberikan persetujuan kelayakan untuk mengikuti Seminar Tugas Akhir 1.</div>
             </div>
-            <a href="{{ route('dosen.bimbingan.verifikasi.seminar', ['nim' => $mahasiswa->nim_nid, 'proposal_id' => $proposal->id ?? 0]) }}"
-                class="btn-seminar">
+            <a href="{{ route('dosen.bimbingan.verifikasi.seminar', ['nim' => $mahasiswa->nim_nid, 'proposal_id' => $proposal->id ?? 0]) }}" class="btn-seminar">
                 Setujui Kelayakan Seminar
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="14" height="14">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
             </a>
             @endif
-
         </div>
 
-        {{-- ATUR PIN ELEKTRONIK --}}
         <div class="card-pin">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-                <div class="card-section-label" style="color:var(--muted);">
-                    🔑 PIN Elektronik
-                </div>
+                <div class="card-section-label" style="color:var(--muted);">🔑 PIN Elektronik</div>
                 @if(!empty(session('user')->pin))
-                <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:#D1FAE5;color:#065F46;border:1px solid #10B981;border-radius:99px;font-size:11px;font-weight:700;">
-                    ✓ PIN sudah diatur
-                </span>
+                <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:#D1FAE5;color:#065F46;border:1px solid #10B981;border-radius:99px;font-size:11px;font-weight:700;">✓ PIN sudah diatur</span>
                 @else
-                <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:#FFFBEB;color:#92400E;border:1px solid #FDE68A;border-radius:99px;font-size:11px;font-weight:700;">
-                    ⚠ Belum diatur
-                </span>
+                <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:#FFFBEB;color:#92400E;border:1px solid #FDE68A;border-radius:99px;font-size:11px;font-weight:700;">⚠ Belum diatur</span>
                 @endif
             </div>
-            <p style="font-size:12px;color:var(--muted);line-height:1.6;margin:0;flex:1;">
-                PIN 6 digit digunakan sebagai otentikasi saat menandatangani persetujuan kelayakan seminar mahasiswa. PIN bersifat rahasia dan hanya Anda yang mengetahuinya.
-            </p>
+            <p style="font-size:12px;color:var(--muted);line-height:1.6;margin:0;flex:1;">PIN 6 digit digunakan sebagai otentikasi saat menandatangani persetujuan kelayakan seminar mahasiswa. PIN bersifat rahasia dan hanya Anda yang mengetahuinya.</p>
             <button type="button" class="btn-pin" onclick="document.getElementById('popupPinDetail').style.display='flex'">
                 🔑 {{ !empty(session('user')->pin) ? 'Ganti PIN' : 'Atur PIN' }}
             </button>
@@ -1170,44 +1142,21 @@
     {{-- STATUS KELAYAKAN --}}
     @php
         $persen = min(100, round(($totalBimbingan / $minBimbingan) * 100));
-
         if ($persen >= 100) {
-            $barColor = '#22C55E';
-            $barLight = '#F0FDF4';
-            $barBorder = '#BBF7D0';
-            $barText = '#15803D';
-            $barLabel = 'Selesai';
-            $badgeIcon = '✓';
-            $badgeText = 'Layak Seminar';
+            $barColor = '#22C55E'; $barLight = '#F0FDF4'; $barBorder = '#BBF7D0'; $barText = '#15803D'; $barLabel = 'Selesai'; $badgeIcon = '✓'; $badgeText = 'Layak Seminar';
         } elseif ($persen >= 50) {
-            $barColor = '#F59E0B';
-            $barLight = '#FFFBEB';
-            $barBorder = '#FDE68A';
-            $barText = '#92400E';
-            $barLabel = 'Berlangsung';
-            $badgeIcon = '⏳';
-            $badgeText = 'Belum Mencukupi';
+            $barColor = '#F59E0B'; $barLight = '#FFFBEB'; $barBorder = '#FDE68A'; $barText = '#92400E'; $barLabel = 'Berlangsung'; $badgeIcon = '⏳'; $badgeText = 'Belum Mencukupi';
         } else {
-            $barColor = '#EF4444';
-            $barLight = '#FEF2F2';
-            $barBorder = '#FECACA';
-            $barText = '#991B1B';
-            $barLabel = 'Awal';
-            $badgeIcon = '✕';
-            $badgeText = 'Belum Mencukupi';
+            $barColor = '#EF4444'; $barLight = '#FEF2F2'; $barBorder = '#FECACA'; $barText = '#991B1B'; $barLabel = 'Awal'; $badgeIcon = '✕'; $badgeText = 'Belum Mencukupi';
         }
     @endphp
 
     <div class="kelayakan-card">
         <div class="kelayakan-header">
             <div class="kelayakan-title">Status Kelayakan Seminar</div>
-            <span class="badge-layak" style="background:{{ $barLight }};color:{{ $barText }};border:1px solid {{ $barBorder }};">
-                {{ $badgeIcon }} {{ $badgeText }}
-            </span>
+            <span class="badge-layak" style="background:{{ $barLight }};color:{{ $barText }};border:1px solid {{ $barBorder }};">{{ $badgeIcon }} {{ $badgeText }}</span>
         </div>
-        <div class="kelayakan-desc">
-            Minimal {{ $minBimbingan }} kali bimbingan sebagai persyaratan seminar tugas akhir.
-        </div>
+        <div class="kelayakan-desc">Minimal {{ $minBimbingan }} kali bimbingan sebagai persyaratan seminar tugas akhir.</div>
         <div class="progress-wrap">
             <div class="progress-bar" style="width:{{ $persen }}%; background:{{ $barColor }};"></div>
         </div>
@@ -1233,14 +1182,13 @@
                         <circle cx="11" cy="11" r="8" />
                         <path d="m21 21-4.35-4.35" />
                     </svg>
-                    <input type="text" class="search-input" id="searchTopik"
-                        placeholder="Cari topik bimbingan..."
-                        oninput="filterDetail()">
+                    <input type="text" class="search-input" id="searchTopik" placeholder="Cari topik bimbingan..." oninput="filterDetail()">
                 </div>
                 <select class="filter-select" id="filterStatusDetail" onchange="filterDetail()">
                     <option value="">Semua Status</option>
-                    <option value="Baru Dikirim">Baru Dikirim</option>
-                    <option value="Sudah Dilihat">Sudah Dilihat</option>
+                    <option value="Valid">Valid</option>
+                    <option value="Tidak Valid">Tidak Valid</option>
+                    <option value="Validasi Bimbingan">Belum Divalidasi</option>
                 </select>
                 <button class="btn-reset-sm" onclick="resetDetail()">Reset</button>
             </div>
@@ -1262,8 +1210,6 @@
                 <tbody>
                     @forelse($bimbingan as $i => $b)
                     @php
-                        // ===== OLAH DATA DOKUMENTASI =====
-                        // Bisa multi-foto (array) atau 1 foto (string)
                         $dokList = [];
                         if (!empty($b->dokumentasi)) {
                             $dekDok = json_decode($b->dokumentasi, true);
@@ -1276,11 +1222,10 @@
 
                         $dokumentasiHtml = '';
                         if (count($dokList) > 0) {
-                            $showMax = 2; // tampil 2 foto + 1 slot "+N More"
+                            $showMax = 2;
                             $total = count($dokList);
                             $documented = array_slice($dokList, 0, $showMax);
                             $remaining = $total - $showMax;
-
                             $dokumentasiHtml = '<div class="mv-dok-grid">';
                             foreach ($documented as $dok) {
                                 $dokUrl = asset('uploads/bimbingan/' . $dok);
@@ -1289,7 +1234,6 @@
                             if ($remaining > 0) {
                                 $dokumentasiHtml .= '<div class="mv-dok-more">+' . $remaining . ' More</div>';
                             } elseif ($total < 3) {
-                                // padding kosong agar grid rapi
                                 for ($pad = $total; $pad < 3; $pad++) {
                                     $dokumentasiHtml .= '<div></div>';
                                 }
@@ -1300,7 +1244,6 @@
                             $dokumentasiHtml = '<span class="mv-empty-text">Tidak ada dokumentasi</span>';
                         }
 
-                        // ===== STATUS VALIDASI =====
                         $statusValidasi = $b->status_validasi ?? 'Validasi Bimbingan';
                         if ($statusValidasi === 'Valid') {
                             $svBg = '#F0FDF4'; $svBorder = '#BBF7D0'; $svText = '#15803D'; $svIcon = '✓';
@@ -1326,33 +1269,20 @@
                         data-dokumentasi-html="{{ htmlspecialchars($dokumentasiHtml, ENT_QUOTES, 'UTF-8') }}"
                     >
                         <td>{{ $i + 1 }}</td>
-                        <td style="white-space:nowrap;font-size:12.5px;">
-                            {{ \Carbon\Carbon::parse($b->tanggal_bimbingan)->translatedFormat('d M Y') }}
-                        </td>
+                        <td style="white-space:nowrap;font-size:12.5px;">{{ \Carbon\Carbon::parse($b->tanggal_bimbingan)->translatedFormat('d M Y') }}</td>
                         <td><span class="badge-ke">{{ $b->pertemuan_ke }}</span></td>
                         <td style="max-width:160px;font-size:12px;">{{ Str::limit($judulTA, 40) }}</td>
                         <td style="max-width:180px;font-size:12.5px;">{{ $b->topik_bimbingan }}</td>
-
-                        {{-- DOKUMENTASI --}}
                         <td onclick="event.stopPropagation()">
                             @if(count($dokList) > 0)
-                                <img src="{{ asset('uploads/bimbingan/' . $dokList[0]) }}"
-                                     class="thumb"
-                                     alt="Dokumentasi"
-                                     onclick="lihatFoto('{{ asset('uploads/bimbingan/' . $dokList[0]) }}')">
+                                <img src="{{ asset('uploads/bimbingan/' . $dokList[0]) }}" class="thumb" alt="Dokumentasi" onclick="lihatFoto('{{ asset('uploads/bimbingan/' . $dokList[0]) }}')">
                             @else
                                 <span style="color:#9CA3AF;font-size:12px;">—</span>
                             @endif
                         </td>
-
-                        {{-- STATUS --}}
                         <td>
-                            <span class="badge-validasi" style="background:{{ $svBg }};color:{{ $svText }};border:1px solid {{ $svBorder }};">
-                                {{ $statusValidasi }}
-                            </span>
+                            <span class="badge-validasi" style="background:{{ $svBg }};color:{{ $svText }};border:1px solid {{ $svBorder }};">{{ $statusValidasi }}</span>
                         </td>
-
-                        {{-- CATATAN --}}
                         <td>
                             @if(!empty($b->catatan_dosen))
                                 <span class="catatan-text">{{ $b->catatan_dosen }}</span>
@@ -1376,54 +1306,34 @@
 
 </div>
 
-{{-- ============================================================
-     POPUP ATUR / GANTI PIN
-     ============================================================ --}}
+{{-- POPUP ATUR / GANTI PIN --}}
 <div id="popupPinDetail" class="popup-pin-overlay">
     <div class="popup-pin-box">
         <div style="font-size:2rem;margin-bottom:10px;">🔑</div>
         <div style="font-size:1.05rem;font-weight:800;color:#111827;margin-bottom:6px;">
             {{ !empty(session('user')->pin) ? 'Ganti PIN Elektronik' : 'Atur PIN Elektronik' }}
         </div>
-        <div style="font-size:0.83rem;color:#6b7280;margin-bottom:18px;">
-            PIN 6 digit ini digunakan untuk menandatangani persetujuan seminar. Hanya Anda yang mengetahuinya.
-        </div>
-
+        <div style="font-size:0.83rem;color:#6b7280;margin-bottom:18px;">PIN 6 digit ini digunakan untuk menandatangani persetujuan seminar. Hanya Anda yang mengetahuinya.</div>
         <div id="pinDetailErrorMsg" style="display:none;text-align:left;margin-bottom:14px;padding:12px 16px;border-radius:10px;background:#fdecea;color:#92400E;border:1px solid #f1aeb5;font-size:0.88rem;"></div>
-
         <form action="{{ route('dosen.profil.setpin') }}" method="POST" onsubmit="return validasiPinDetail(event)">
             @csrf
             <div class="pin-form-group">
                 <label class="pin-form-label">PIN Baru</label>
                 <div class="pin-input-wrap">
-                    <input type="password" name="pin" id="inputPinBaruDetail" maxlength="6" pattern="[0-9]{6}"
-                        inputmode="numeric" class="pin-form-control" placeholder="••••••" required autocomplete="off">
-                    <button type="button" class="btn-toggle-pin" onclick="togglePinDetailVisibility('inputPinBaruDetail', this)">
-                        <i class="fa fa-eye"></i>
-                    </button>
+                    <input type="password" name="pin" id="inputPinBaruDetail" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="pin-form-control" placeholder="••••••" required autocomplete="off">
+                    <button type="button" class="btn-toggle-pin" onclick="togglePinDetailVisibility('inputPinBaruDetail', this)"><i class="fa fa-eye"></i></button>
                 </div>
             </div>
             <div class="pin-form-group">
                 <label class="pin-form-label">Konfirmasi PIN</label>
                 <div class="pin-input-wrap">
-                    <input type="password" name="pin_confirmation" id="inputPinKonfirmasiDetail" maxlength="6" pattern="[0-9]{6}"
-                        inputmode="numeric" class="pin-form-control" placeholder="••••••" required autocomplete="off">
-                    <button type="button" class="btn-toggle-pin" onclick="togglePinDetailVisibility('inputPinKonfirmasiDetail', this)">
-                        <i class="fa fa-eye"></i>
-                    </button>
+                    <input type="password" name="pin_confirmation" id="inputPinKonfirmasiDetail" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="pin-form-control" placeholder="••••••" required autocomplete="off">
+                    <button type="button" class="btn-toggle-pin" onclick="togglePinDetailVisibility('inputPinKonfirmasiDetail', this)"><i class="fa fa-eye"></i></button>
                 </div>
             </div>
-
             <div style="display:flex;gap:10px;justify-content:center;margin-top:18px;">
-                <button type="button"
-                    onclick="document.getElementById('popupPinDetail').style.display='none'"
-                    style="padding:9px 24px;border-radius:10px;border:1.5px solid #e5e7eb;background:#fff;color:#374151;font-size:0.88rem;font-weight:600;cursor:pointer;font-family:inherit;">
-                    Batal
-                </button>
-                <button type="submit"
-                    style="padding:9px 24px;border-radius:10px;border:none;background:#FACC15;color:#735C00;font-size:0.88rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;">
-                    Simpan <i class="fa fa-check"></i>
-                </button>
+                <button type="button" onclick="document.getElementById('popupPinDetail').style.display='none'" style="padding:9px 24px;border-radius:10px;border:1.5px solid #e5e7eb;background:#fff;color:#374151;font-size:0.88rem;font-weight:600;cursor:pointer;font-family:inherit;">Batal</button>
+                <button type="submit" style="padding:9px 24px;border-radius:10px;border:none;background:#FACC15;color:#735C00;font-size:0.88rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;">Simpan <i class="fa fa-check"></i></button>
             </div>
         </form>
     </div>
@@ -1434,8 +1344,7 @@
     <div class="modal-foto">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
             <span style="font-size:15px;font-weight:800;color:var(--neutral);">Dokumentasi Bimbingan</span>
-            <button onclick="document.getElementById('modalFoto').classList.remove('show')"
-                style="width:28px;height:28px;border-radius:50%;border:none;background:#F3F4F6;cursor:pointer;font-size:14px;color:var(--muted);">×</button>
+            <button onclick="document.getElementById('modalFoto').classList.remove('show')" style="width:28px;height:28px;border-radius:50%;border:none;background:#F3F4F6;cursor:pointer;font-size:14px;color:var(--muted);">×</button>
         </div>
         <img id="fotoImg" src="" alt="Foto">
     </div>
@@ -1487,30 +1396,8 @@
             </div>
         </div>
 
-        <form id="formValidasi" method="POST" onsubmit="return submitValidasi(event)">
-            @csrf
-            <input type="hidden" name="status_validasi" id="inputStatusValidasi" value="">
-            <input type="hidden" name="catatan_dosen" id="inputCatatanDosen" value="">
-
-            <div class="mv-action-row">
-                <button type="button" class="mv-btn-tv" id="btnTidakValid" onclick="setStatusValidasi('Tidak Valid')">
-                    ✕ Tidak Valid
-                </button>
-                <button type="button" class="mv-btn-v" id="btnValid" onclick="setStatusValidasi('Valid')">
-                    ✓ Valid
-                </button>
-            </div>
-
-            <div class="mv-catatan-wrap" id="catatanWrap">
-                <label class="mv-catatan-label">Catatan Dosen</label>
-                <textarea class="mv-catatan-textarea" id="catatanDosenInput"
-                    placeholder="Tambahkan catatan hasil validasi riwayat bimbingan..."></textarea>
-            </div>
-
-            <div class="mv-kirim-row">
-                <button type="submit" class="mv-btn-kirim">➤ Kirim</button>
-            </div>
-        </form>
+        {{-- == INI BAGIAN YANG BERUBAH: diganti div kosong, diisi JS == --}}
+        <div id="validasiSection"></div>
 
     </div>
 </div>
@@ -1520,9 +1407,7 @@
     <div class="modal-konfirmasi">
         <div class="mk-icon-wrap" id="mkIcon">?</div>
         <div class="mk-title">Konfirmasi</div>
-        <div class="mk-desc" id="mkDesc">
-            Apakah Anda yakin ingin mengirim hasil validasi ini?
-        </div>
+        <div class="mk-desc" id="mkDesc">Apakah Anda yakin ingin mengirim hasil validasi ini?</div>
         <div class="mk-action-row">
             <button type="button" class="mk-btn-batal" onclick="tutupModalKonfirmasi()">Batal</button>
             <button type="button" class="mk-btn-konfirmasi" onclick="konfirmasiKirim()">Konfirmasi</button>
@@ -1533,7 +1418,7 @@
 <script>
     let selectedStatusValidasi = null;
 
-    // ===== MODAL FOTO DOKUMENTASI =====
+    // ===== MODAL FOTO =====
     function lihatFoto(src) {
         document.getElementById('fotoImg').src = src;
         document.getElementById('modalFoto').classList.add('show');
@@ -1550,7 +1435,7 @@
         const status = document.getElementById('filterStatusDetail').value;
         document.querySelectorAll('#tabelDetail tbody tr:not(.empty-row)').forEach(row => {
             const matchQ = !q || row.dataset.topik.includes(q);
-            const matchS = !status || row.dataset.status === status;
+            const matchS = !status || row.dataset.statusValidasi === status;
             row.style.display = (matchQ && matchS) ? '' : 'none';
         });
     }
@@ -1563,7 +1448,6 @@
 
     // ===== MODAL VALIDASI =====
     function bukaModalValidasi(el) {
-        // Bisa dipanggil dari <tr onclick> langsung, el sudah row
         const row = el.tagName === 'TR' ? el : el.closest('tr');
 
         document.getElementById('mvNama').textContent = row.dataset.nama;
@@ -1572,17 +1456,71 @@
         document.getElementById('mvTanggal').textContent = row.dataset.tanggal;
         document.getElementById('mvJudul').textContent = row.dataset.judul;
         document.getElementById('mvTopik').textContent = '"' + row.dataset.topikFull + '"';
-
-        // Decode HTML entities dari data-attribute
         document.getElementById('mvDokumentasi').innerHTML = decodeHTMLEntities(row.dataset.dokumentasiHtml);
-        document.getElementById('catatanDosenInput').value = row.dataset.catatan || '';
 
-        // Set form action
-        document.getElementById('formValidasi').action = '/dosen/bimbingan/validasi/' + row.dataset.id;
+        const statusAwal     = row.dataset.statusValidasi;
+        const sudahDivalidasi = (statusAwal === 'Valid' || statusAwal === 'Tidak Valid');
+        const bimbinganId    = row.dataset.id;
+        const catatanAwal    = row.dataset.catatan || '';
+        const section        = document.getElementById('validasiSection');
 
-        // Set status validasi awal
-        const statusAwal = row.dataset.statusValidasi;
-        setStatusValidasi(statusAwal === 'Valid' || statusAwal === 'Tidak Valid' ? statusAwal : null);
+        if (sudahDivalidasi) {
+            // ── READ-ONLY: sudah divalidasi, tampilkan info saja ──
+            const isValid     = statusAwal === 'Valid';
+            const bgColor     = isValid ? '#F0FDF4' : '#FEF2F2';
+            const borderColor = isValid ? '#BBF7D0' : '#FECACA';
+            const textColor   = isValid ? '#15803D' : '#991B1B';
+            const icon        = isValid ? '✓' : '✕';
+
+            let catatanHtml = '';
+            if (!isValid && catatanAwal) {
+                catatanHtml = `
+                    <div style="margin-top:12px;">
+                        <div style="font-size:10.5px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;">Catatan Dosen</div>
+                        <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:11px 12px;font-size:13px;color:#991B1B;line-height:1.5;">${catatanAwal}</div>
+                    </div>`;
+            }
+
+            section.innerHTML = `
+                <div style="padding:16px;background:${bgColor};border:1.5px solid ${borderColor};border-radius:12px;display:flex;align-items:flex-start;gap:12px;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid ${borderColor};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;font-weight:800;color:${textColor};">${icon}</div>
+                    <div>
+                        <div style="font-size:13px;font-weight:800;color:${textColor};margin-bottom:3px;">Sudah Divalidasi: ${statusAwal}</div>
+                        <div style="font-size:12px;color:${textColor};opacity:.8;">Status validasi ini sudah ditetapkan dan tidak dapat diubah lagi.</div>
+                    </div>
+                </div>
+                ${catatanHtml}
+            `;
+        } else {
+            // ── EDITABLE: belum divalidasi, render form ──
+            selectedStatusValidasi = null;
+            section.innerHTML = `
+                <form id="formValidasi" method="POST" action="/dosen/bimbingan/validasi/${bimbinganId}" onsubmit="return submitValidasi(event)">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="status_validasi" id="inputStatusValidasi" value="">
+                    <input type="hidden" name="catatan_dosen" id="inputCatatanDosen" value="">
+
+                    <div class="mv-action-row">
+                        <button type="button" class="mv-btn-tv" id="btnTidakValid" onclick="setStatusValidasi('Tidak Valid')">
+                            ✕ Tidak Valid
+                        </button>
+                        <button type="button" class="mv-btn-v" id="btnValid" onclick="setStatusValidasi('Valid')">
+                            ✓ Valid
+                        </button>
+                    </div>
+
+                    <div class="mv-catatan-wrap" id="catatanWrap" style="display:none;">
+                        <label class="mv-catatan-label">Catatan Dosen</label>
+                        <textarea class="mv-catatan-textarea" id="catatanDosenInput"
+                            placeholder="Tambahkan catatan hasil validasi riwayat bimbingan..."></textarea>
+                    </div>
+
+                    <div class="mv-kirim-row">
+                        <button type="submit" class="mv-btn-kirim">➤ Kirim</button>
+                    </div>
+                </form>
+            `;
+        }
 
         document.getElementById('modalValidasi').classList.add('show');
     }
@@ -1628,7 +1566,6 @@
             document.getElementById('inputCatatanDosen').value = '';
         }
 
-        // Tampilkan modal konfirmasi sebelum benar-benar mengirim
         if (selectedStatusValidasi === 'Valid') {
             document.getElementById('mkIcon').textContent = '✓';
             document.getElementById('mkIcon').style.color = '#16A34A';
@@ -1681,10 +1618,8 @@
         const pin = document.getElementById('inputPinBaruDetail').value.trim();
         const konfirmasi = document.getElementById('inputPinKonfirmasiDetail').value.trim();
         const errBox = document.getElementById('pinDetailErrorMsg');
-
         errBox.style.display = 'none';
         errBox.textContent = '';
-
         if (!/^\d{6}$/.test(pin)) {
             errBox.textContent = 'PIN harus terdiri dari 6 digit angka.';
             errBox.style.display = 'block';
