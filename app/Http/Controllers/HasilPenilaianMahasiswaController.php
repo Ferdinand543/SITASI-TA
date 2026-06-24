@@ -30,24 +30,27 @@ class HasilPenilaianMahasiswaController extends Controller
             ->first();
         $judulTA = $pengajuanJudul->judul_disetujui ?? '-';
 
+        // ── Proposal belum ada ──
         if (!$proposal) {
             return view('mahasiswa.hasil_penilaian', [
                 'user'                 => $user,
                 'mahasiswa'            => $mahasiswa,
                 'judulTA'              => $judulTA,
                 'adaPenilaian'         => false,
-                'sedangBerlangsung'    => false,  // <-- tambah
+                'sedangBerlangsung'    => false,
                 'nilaiAkhir'           => null,
                 'namaDospem1'          => '-',
                 'namaDospem2'          => '-',
                 'namaPenguji1'         => '-',
+                'namaPenguji2'         => '-',
                 'penilaianPembimbing1' => null,
                 'penilaianPembimbing2' => null,
                 'penilaianPenguji1'    => null,
+                'penilaianPenguji2'    => null,
             ]);
         }
 
-        // ── Penilaian pembimbing 1 & 2 ──
+        // ── Penilaian Pembimbing 1 & 2 ──
         $nilaiPembimbing1 = DB::table('penilaian_seminar_pembimbing')
             ->where('proposal_id', $proposal->id)
             ->where('urutan_pembimbing', 1)
@@ -60,14 +63,20 @@ class HasilPenilaianMahasiswaController extends Controller
             ->where('status', 'submitted')
             ->first();
 
-        // ── Penilaian penguji 1 ──
+        // ── Penilaian Penguji 1 & 2 ──
         $nilaiPenguji1 = DB::table('penilaian_seminar')
             ->where('proposal_id', $proposal->id)
             ->where('urutan_penguji', 1)
             ->where('status', 'submitted')
             ->first();
 
-        // ── Nama dosen ──
+        $nilaiPenguji2 = DB::table('penilaian_seminar')
+            ->where('proposal_id', $proposal->id)
+            ->where('urutan_penguji', 2)
+            ->where('status', 'submitted')
+            ->first();
+
+        // ── Nama Dosen Pembimbing ──
         $dospem1 = DB::table('usulan_pembimbing')
             ->where('proposal_id', $proposal->id)
             ->where('urutan', 1)->first();
@@ -82,13 +91,18 @@ class HasilPenilaianMahasiswaController extends Controller
             ? DB::table('users')->where('nim_nid', $dospem2->nim_nid_dosen)->value('nama') ?? '-'
             : '-';
 
+        // ── Nama Dosen Penguji 1 & 2 ──
         $namaPenguji1 = $nilaiPenguji1
             ? DB::table('users')->where('nim_nid', $nilaiPenguji1->nim_nid_penguji)->value('nama') ?? '-'
             : '-';
 
-        // ── Normalisasi nilai ──
-        // Pembimbing max = 200 → dinormalisasi ke 100
-        // Penguji max = 100
+        $namaPenguji2 = $nilaiPenguji2
+            ? DB::table('users')->where('nim_nid', $nilaiPenguji2->nim_nid_penguji)->value('nama') ?? '-'
+            : '-';
+
+        // ── Normalisasi Nilai ──
+        // Pembimbing: nilai_akhir max 200 → dinormalisasi ke 100
+        // Penguji:    nilai_akhir max 100 → langsung dipakai
         $np1 = $nilaiPembimbing1
             ? round(($nilaiPembimbing1->nilai_akhir / 200) * 100, 2)
             : null;
@@ -98,20 +112,24 @@ class HasilPenilaianMahasiswaController extends Controller
         $nq1 = $nilaiPenguji1
             ? (float) $nilaiPenguji1->nilai_akhir
             : null;
+        $nq2 = $nilaiPenguji2
+            ? (float) $nilaiPenguji2->nilai_akhir
+            : null;
 
-        $jumlahSudahNilai = collect([$nilaiPembimbing1, $nilaiPembimbing2, $nilaiPenguji1])
+        // ── Hitung jumlah dosen yang sudah submit (total 4 dosen) ──
+        $jumlahSudahNilai = collect([$nilaiPembimbing1, $nilaiPembimbing2, $nilaiPenguji1, $nilaiPenguji2])
             ->filter(fn($n) => $n !== null)
             ->count();
 
-        // adaPenilaian = TRUE hanya kalau SEMUA 3 dosen sudah submit
-        $adaPenilaian = $jumlahSudahNilai === 3;
+        // adaPenilaian = TRUE hanya kalau SEMUA 4 dosen sudah submit
+        $adaPenilaian = $jumlahSudahNilai === 4;
 
         // sedangBerlangsung = TRUE kalau minimal 1 sudah submit, tapi belum semua
         $sedangBerlangsung = $jumlahSudahNilai > 0 && !$adaPenilaian;
 
-        // Nilai akhir hanya dihitung kalau semua sudah submit
+        // ── Nilai akhir: rata-rata dari 4 dosen (masing-masing sudah dinormalisasi ke 100) ──
         $nilaiAkhir = $adaPenilaian
-            ? round(collect([$np1, $np2, $nq1])->avg(), 2)
+            ? round(collect([$np1, $np2, $nq1, $nq2])->avg(), 2)
             : null;
 
         return view('mahasiswa.hasil_penilaian', [
@@ -120,14 +138,16 @@ class HasilPenilaianMahasiswaController extends Controller
             'judulTA'              => $judulTA,
             'proposal'             => $proposal,
             'adaPenilaian'         => $adaPenilaian,
-            'sedangBerlangsung'    => $sedangBerlangsung,  // <-- tambah
+            'sedangBerlangsung'    => $sedangBerlangsung,
             'nilaiAkhir'           => $nilaiAkhir,
             'namaDospem1'          => $namaDospem1,
             'namaDospem2'          => $namaDospem2,
             'namaPenguji1'         => $namaPenguji1,
+            'namaPenguji2'         => $namaPenguji2,
             'penilaianPembimbing1' => $nilaiPembimbing1,
             'penilaianPembimbing2' => $nilaiPembimbing2,
             'penilaianPenguji1'    => $nilaiPenguji1,
+            'penilaianPenguji2'    => $nilaiPenguji2,
         ]);
     }
 }

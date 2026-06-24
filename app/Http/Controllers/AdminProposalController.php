@@ -62,7 +62,10 @@ class AdminProposalController extends Controller
         $belumDireview          = $menungguVerifikasi + $menungguReview;
         $selesaiDireview        = DB::table('proposal')->where('status', 'selesai')->count();
         $ditolak                = DB::table('proposal')->where('status', 'ditolak')->count();
-        $countPenetapanReviewer = $menungguVerifikasi;
+        $countPenetapanReviewer = DB::table('proposal')
+            ->whereNull('nim_nid_reviewer')
+            ->whereIn('status', ['menunggu_verifikasi', 'menunggu_review'])
+            ->count();
 
         // =====================================================
         // DATA UNTUK TAB REVIEWER (?tab=reviewer)

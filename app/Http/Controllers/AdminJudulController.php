@@ -81,14 +81,37 @@ class AdminJudulController extends Controller
         return view('admin.judul.show', compact('pengajuan'));
     }
 
-    // Dipanggil dari form verifikasi admin
     public function proses(Request $request, $id)
     {
+        // =========================
+        // CEK SUDAH DIVERIFIKASI
+        // =========================
+        $existing = DB::table('pengajuan_judul')->where('id', $id)->first();
+
+        if (!$existing) {
+            return redirect()->route('admin.judul.show', $id)
+                ->with('error', 'Data tidak ditemukan.');
+        }
+
+        $statusSekarang = strtolower($existing->status ?? '');
+        $sudahDiverifikasi = !in_array($statusSekarang, ['menunggu', 'menunggu verifikasi']);
+
+        if ($sudahDiverifikasi) {
+            return redirect()->route('admin.judul.show', $id)
+                ->with('error', 'Pengajuan ini sudah diverifikasi dan tidak dapat diubah.');
+        }
+
+        // =========================
+        // PROSES VERIFIKASI
+        // =========================
         $aksi = $request->aksi; // 'setujui' atau 'tolak'
 
         if ($aksi === 'setujui') {
             $request->validate([
                 'judul_disetujui' => 'required|string',
+                'catatan_1'       => 'nullable|string|max:500',
+                'catatan_2'       => 'nullable|string|max:500',
+                'catatan_3'       => 'nullable|string|max:500',
             ]);
 
             DB::table('pengajuan_judul')
@@ -96,6 +119,9 @@ class AdminJudulController extends Controller
                 ->update([
                     'status'          => 'disetujui',
                     'judul_disetujui' => $request->judul_disetujui,
+                    'catatan_1'       => $request->catatan_1,
+                    'catatan_2'       => $request->catatan_2,
+                    'catatan_3'       => $request->catatan_3,
                     'updated_at'      => now(),
                 ]);
 
@@ -103,10 +129,19 @@ class AdminJudulController extends Controller
                 ->with('success', 'Pengajuan judul berhasil disetujui.');
 
         } elseif ($aksi === 'tolak') {
+            $request->validate([
+                'catatan_1' => 'nullable|string|max:500',
+                'catatan_2' => 'nullable|string|max:500',
+                'catatan_3' => 'nullable|string|max:500',
+            ]);
+
             DB::table('pengajuan_judul')
                 ->where('id', $id)
                 ->update([
                     'status'     => 'ditolak',
+                    'catatan_1'  => $request->catatan_1,
+                    'catatan_2'  => $request->catatan_2,
+                    'catatan_3'  => $request->catatan_3,
                     'updated_at' => now(),
                 ]);
 

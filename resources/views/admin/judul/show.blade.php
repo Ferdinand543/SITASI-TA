@@ -11,11 +11,9 @@
         padding: 36px 24px 100px;
     }
 
-    /* TITLE */
     .page-title { font-size: 1.75rem; font-weight: 700; color: #111; margin-bottom: 4px; }
     .page-subtitle { font-size: 0.9rem; color: #888; margin-bottom: 28px; }
 
-    /* INFO GRID */
     .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
     .info-card {
         background: #fff; border: 1px solid #E5E7EB;
@@ -33,7 +31,6 @@
     .status-disetujui { color: #16A34A; }
     .status-ditolak   { color: #DC2626; }
 
-    /* INFORMASI PENTING */
     .info-penting {
         background: #FFFBEA; border: 1px solid #FDE68A;
         border-radius: 12px; padding: 18px 22px; margin-bottom: 28px;
@@ -44,10 +41,8 @@
     .info-penting-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
     .info-penting-list li { font-size: 0.82rem; color: #78350F; line-height: 1.5; }
 
-    /* DAFTAR HEADER */
     .daftar-header { display: flex; align-items: center; gap: 8px; font-size: 1.05rem; font-weight: 700; color: #111; margin-bottom: 14px; }
 
-    /* JUDUL CARD */
     .judul-card {
         background: #fff; border: 1px solid #E5E7EB;
         border-left: 4px solid #E5E7EB; border-radius: 10px;
@@ -70,9 +65,42 @@
     .judul-meta { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 14px; }
     .meta-item { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; color: #6B7280; }
 
+    /* CATATAN */
+    .catatan-wrap { margin-bottom: 14px; margin-top: 2px; }
+    .catatan-label {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 0.78rem; font-weight: 600; color: #6B7280; margin-bottom: 6px;
+    }
+    .catatan-opsional { font-weight: 400; color: #9CA3AF; font-size: 0.75rem; }
+    .catatan-wajib    { font-weight: 600; color: #DC2626; font-size: 0.75rem; }
+    .catatan-input {
+        width: 100%; border: 1px solid #E5E7EB; border-radius: 8px;
+        padding: 9px 12px; font-size: 0.82rem; color: #374151;
+        resize: none; background: #FAFAFA; transition: border-color 0.15s, background 0.15s;
+        font-family: inherit; line-height: 1.5;
+    }
+    .catatan-input:focus {
+        outline: none; border-color: #F4B400; background: #fff;
+        box-shadow: 0 0 0 3px rgba(244,180,0,0.08);
+    }
+    .catatan-input.input-error {
+        border-color: #EF4444; background: #FFF5F5;
+    }
+    .catatan-input.input-error:focus {
+        border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.08);
+    }
+    .catatan-input::placeholder { color: #BFC7D2; }
+    .catatan-counter { text-align: right; font-size: 0.72rem; color: #9CA3AF; margin-top: 4px; }
+
+    .catatan-readonly .catatan-label { color: #6B7280; }
+    .catatan-isi {
+        background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px;
+        padding: 9px 12px; font-size: 0.82rem; color: #374151;
+        line-height: 1.6; white-space: pre-wrap;
+    }
+
     .judul-aksi { display: flex; justify-content: flex-end; gap: 8px; }
 
-    /* ACTION BUTTONS */
     .btn-setuju {
         display: inline-flex; align-items: center; gap: 5px;
         background: #DCFCE7; color: #15803D; border: 1px solid #86EFAC;
@@ -95,7 +123,6 @@
     .btn-disetujui-hasil { background: #DCFCE7; color: #15803D; }
     .btn-ditolak-hasil   { background: #FEE2E2; color: #B91C1C; }
 
-    /* FOOTER STICKY */
     .footer-sticky {
         position: fixed; bottom: 0; left: 0; right: 0;
         background: #fff; border-top: 1px solid #E5E7EB;
@@ -116,7 +143,6 @@
     }
     .btn-kirim:hover { background: #D97706; }
 
-    /* POPUP */
     .popup-bg {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0,0,0,0.35); display: none;
@@ -227,9 +253,24 @@
     $sudahDiverifikasi = !in_array($st, ['menunggu', 'menunggu verifikasi']);
     $judulDisetujui    = $pengajuan->judul_disetujui ?? null;
     $judulList = [
-        1 => ['judul' => $pengajuan->judul_1, 'topik' => $pengajuan->topik_1 ?? '-', 'mitra' => $pengajuan->mitra_1 ?? '-'],
-        2 => ['judul' => $pengajuan->judul_2, 'topik' => $pengajuan->topik_2 ?? '-', 'mitra' => $pengajuan->mitra_2 ?? '-'],
-        3 => ['judul' => $pengajuan->judul_3, 'topik' => $pengajuan->topik_3 ?? '-', 'mitra' => $pengajuan->mitra_3 ?? '-'],
+        1 => [
+            'judul'   => $pengajuan->judul_1,
+            'topik'   => $pengajuan->topik_1 ?? '-',
+            'mitra'   => $pengajuan->mitra_1 ?? '-',
+            'catatan' => $pengajuan->catatan_1 ?? '',
+        ],
+        2 => [
+            'judul'   => $pengajuan->judul_2,
+            'topik'   => $pengajuan->topik_2 ?? '-',
+            'mitra'   => $pengajuan->mitra_2 ?? '-',
+            'catatan' => $pengajuan->catatan_2 ?? '',
+        ],
+        3 => [
+            'judul'   => $pengajuan->judul_3,
+            'topik'   => $pengajuan->topik_3 ?? '-',
+            'mitra'   => $pengajuan->mitra_3 ?? '-',
+            'catatan' => $pengajuan->catatan_3 ?? '',
+        ],
     ];
     @endphp
 
@@ -272,6 +313,35 @@
                     Mitra: {{ $j['mitra'] }}
                 </span>
             </div>
+
+            {{-- CATATAN: kalau belum diverifikasi tampil textarea, kalau sudah tampil readonly --}}
+            @if(!$sudahDiverifikasi)
+                <div class="catatan-wrap">
+                    <label class="catatan-label" for="catatan_{{ $no }}">
+                        <i class="fa fa-pen-to-square"></i>
+                        Catatan <span class="catatan-opsional" id="catatanLabel{{ $no }}">(opsional)</span>
+                    </label>
+                    <textarea
+                        class="catatan-input"
+                        id="catatanInput{{ $no }}"
+                        name="catatan_{{ $no }}"
+                        placeholder="Tulis catatan atau alasan keputusan untuk judul ini..."
+                        rows="2"
+                        maxlength="500"></textarea>
+                    <div class="catatan-counter"><span id="counter{{ $no }}">0</span>/500</div>
+                </div>
+            @else
+                @if(!empty($j['catatan']))
+                <div class="catatan-wrap catatan-readonly">
+                    <div class="catatan-label">
+                        <i class="fa fa-comment-dots"></i>
+                        Catatan
+                    </div>
+                    <div class="catatan-isi">{{ $j['catatan'] }}</div>
+                </div>
+                @endif
+            @endif
+
             <div class="judul-aksi" id="aksi{{ $no }}">
                 @if($sudahDiverifikasi)
                     @if($isDisetujui)
@@ -322,9 +392,9 @@
 </div>
 
 <script>
-    let aksiDipilih = null;
+    let aksiDipilih  = null;
     let nomorDipilih = null;
-    let statusJudul = { 1: '', 2: '', 3: '' };
+    let statusJudul  = { 1: '', 2: '', 3: '' };
 
     const judulMap = {
         @foreach($judulList as $no => $j)
@@ -334,11 +404,21 @@
         @endforeach
     };
 
+    // Counter karakter catatan
+    [1, 2, 3].forEach(function(no) {
+        const el = document.getElementById('catatanInput' + no);
+        if (!el) return;
+        el.addEventListener('input', function() {
+            document.getElementById('counter' + no).textContent = this.value.length;
+            this.classList.remove('input-error');
+        });
+    });
+
     function showPopup(type, text) {
         const wrap  = document.getElementById('popupIconWrap');
         const icon  = document.getElementById('popupIcon');
         const title = document.getElementById('popupTitle');
-        document.getElementById('popupOkBtn').style.display = 'inline-block';
+        document.getElementById('popupOkBtn').style.display  = 'inline-block';
         document.getElementById('confirmArea').style.display = 'none';
         if (type === 'success') {
             wrap.className  = 'popup-icon-wrap success';
@@ -370,57 +450,104 @@
     }
 
     function closePopup() { document.getElementById('popupBg').style.display = 'none'; }
-
-    function setuju(no) { showConfirm('setuju', no); }
-    function tolak(no)  { showConfirm('tolak', no);  }
+    function setuju(no)   { showConfirm('setuju', no); }
+    function tolak(no)    { showConfirm('tolak',  no); }
 
     function lanjutkanAksi() {
         const no    = nomorDipilih;
-        const card  = document.getElementById('card' + no);
+        const card  = document.getElementById('card'  + no);
         const badge = document.getElementById('badge' + no);
+
         if (aksiDipilih === 'setuju') {
+            const sudahAdaSetuju = Object.values(statusJudul).filter(s => s === 'setuju').length > 0;
+            if (sudahAdaSetuju) {
+                closePopup();
+                showPopup('error', 'Hanya boleh 1 judul yang disetujui.');
+                return;
+            }
             statusJudul[no] = 'setuju';
             card.className  = card.className.replace(/border-\w+/, 'border-green');
             badge.className = 'usulan-badge badge-approved';
             badge.innerHTML = 'Usulan ' + no + ' · Approved';
-            // Hanya ganti tombol aksi, TANPA tambah reset icon baru (reset icon sudah ada di atas)
             document.getElementById('aksi' + no).innerHTML =
                 '<button type="button" class="btn-setuju" disabled><i class="fa fa-check"></i> Disetujui</button>';
+
+            // Catatan jadi opsional
+            const labelEl = document.getElementById('catatanLabel' + no);
+            if (labelEl) {
+                labelEl.textContent = '(opsional)';
+                labelEl.className   = 'catatan-opsional';
+            }
+            const catatanEl = document.getElementById('catatanInput' + no);
+            if (catatanEl) catatanEl.classList.remove('input-error');
+
             showPopup('success', 'Judul berhasil dipilih.');
+
         } else {
             statusJudul[no] = 'tolak';
             card.className  = card.className.replace(/border-\w+/, 'border-red');
             badge.className = 'usulan-badge badge-rejected';
             badge.innerHTML = 'Usulan ' + no + ' · Rejected';
-            // Hanya ganti tombol aksi, TANPA tambah reset icon baru (reset icon sudah ada di atas)
             document.getElementById('aksi' + no).innerHTML =
                 '<button type="button" class="btn-tolak" disabled><i class="fa fa-xmark"></i> Ditolak</button>';
+
+            // Catatan jadi WAJIB
+            const labelEl = document.getElementById('catatanLabel' + no);
+            if (labelEl) {
+                labelEl.textContent = '(wajib)';
+                labelEl.className   = 'catatan-wajib';
+            }
+
             showPopup('success', 'Judul berhasil ditolak.');
         }
     }
 
     function resetJudul(no) {
         statusJudul[no] = '';
-        const card  = document.getElementById('card' + no);
+        const card  = document.getElementById('card'  + no);
         const badge = document.getElementById('badge' + no);
         card.className  = card.className.replace(/border-\w+/, 'border-yellow');
         badge.className = 'usulan-badge badge-pending';
         badge.innerHTML = 'Usulan ' + no + ' · Pending';
         document.getElementById('aksi' + no).innerHTML =
             '<button type="button" class="btn-setuju" onclick="setuju(' + no + ')"><i class="fa fa-check"></i> Setujui</button>' +
-            '<button type="button" class="btn-tolak"  onclick="tolak(' + no + ')"><i class="fa fa-xmark"></i> Tolak</button>';
+            '<button type="button" class="btn-tolak"  onclick="tolak('  + no + ')"><i class="fa fa-xmark"></i> Tolak</button>';
+
+        // Reset label catatan ke opsional
+        const labelEl = document.getElementById('catatanLabel' + no);
+        if (labelEl) {
+            labelEl.textContent = '(opsional)';
+            labelEl.className   = 'catatan-opsional';
+        }
+        const catatanEl = document.getElementById('catatanInput' + no);
+        if (catatanEl) catatanEl.classList.remove('input-error');
+        const counterEl = document.getElementById('counter' + no);
+        if (counterEl && catatanEl) counterEl.textContent = catatanEl.value.length;
     }
 
     function simpanData() {
         const keys = Object.keys(judulMap).map(Number);
-        let jumlahSetuju = 0, masihKosong = false, judulDipilih = '';
+        let jumlahSetuju = 0, masihKosong = false, judulDipilih = '', catatanKosong = false;
+
         keys.forEach(i => {
-            if (!statusJudul[i]) masihKosong = true;
+            if (!statusJudul[i])           masihKosong = true;
             if (statusJudul[i] === 'setuju') { jumlahSetuju++; judulDipilih = judulMap[i]; }
+
+            // Validasi catatan wajib kalau ditolak
+            if (statusJudul[i] === 'tolak') {
+                const catatanEl = document.getElementById('catatanInput' + i);
+                if (catatanEl && catatanEl.value.trim() === '') {
+                    catatanKosong = true;
+                    catatanEl.classList.add('input-error');
+                }
+            }
         });
-        if (masihKosong)    { showPopup('error', 'Semua judul harus diberi keputusan.'); return; }
+
+        if (masihKosong)      { showPopup('error', 'Semua judul harus diberi keputusan.'); return; }
         if (jumlahSetuju > 1) { showPopup('error', 'Hanya boleh 1 judul yang disetujui.'); return; }
-        document.getElementById('inputAksi').value          = jumlahSetuju === 1 ? 'setujui' : 'tolak';
+        if (catatanKosong)    { showPopup('error', 'Catatan wajib diisi untuk semua judul yang ditolak.'); return; }
+
+        document.getElementById('inputAksi').value           = jumlahSetuju === 1 ? 'setujui' : 'tolak';
         document.getElementById('inputJudulDisetujui').value = judulDipilih;
         document.getElementById('formVerifikasi').submit();
     }

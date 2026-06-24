@@ -754,7 +754,7 @@
                         <label class="modal-label">Judul Proposal</label>
                         <textarea name="judul" id="up_judul" class="modal-input"
                             rows="3" placeholder="Masukkan judul proposal"
-                            style="resize:none;"></textarea>
+                            style="resize:none;">{{ $judulDisetujui ?? '' }}</textarea>
                     </div>
 
                     <div class="mb-3">
@@ -808,239 +808,241 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
 
-    // ── FILTER & SEARCH ──
-    const filterStatus = document.getElementById("filterStatus");
-    const searchInput  = document.getElementById("searchInput");
-    const btnReset     = document.getElementById("btnReset");
-    const tableCard    = document.getElementById("tableCard");
-    const noSearchResult = document.getElementById("noSearchResult");
-    const tabelBody    = document.getElementById("tabelBody");
+        // ── FILTER & SEARCH ──
+        const filterStatus = document.getElementById("filterStatus");
+        const searchInput = document.getElementById("searchInput");
+        const btnReset = document.getElementById("btnReset");
+        const tableCard = document.getElementById("tableCard");
+        const noSearchResult = document.getElementById("noSearchResult");
+        const tabelBody = document.getElementById("tabelBody");
 
-    function applyFilter() {
-        const status  = filterStatus.value.toLowerCase();
-        const keyword = searchInput.value.toLowerCase().trim();
-        const rows    = tabelBody.querySelectorAll("tr[data-status]");
-        let visible   = 0;
+        function applyFilter() {
+            const status = filterStatus.value.toLowerCase();
+            const keyword = searchInput.value.toLowerCase().trim();
+            const rows = tabelBody.querySelectorAll("tr[data-status]");
+            let visible = 0;
 
-        rows.forEach(row => {
-            const rowStatus = (row.dataset.status || "").toLowerCase();
-            const rowSearch = (row.dataset.search || "").toLowerCase();
-            const ok = (!status || rowStatus === status) && (!keyword || rowSearch.includes(keyword));
-            row.style.display = ok ? "" : "none";
-            if (ok) visible++;
+            rows.forEach(row => {
+                const rowStatus = (row.dataset.status || "").toLowerCase();
+                const rowSearch = (row.dataset.search || "").toLowerCase();
+                const ok = (!status || rowStatus === status) && (!keyword || rowSearch.includes(keyword));
+                row.style.display = ok ? "" : "none";
+                if (ok) visible++;
+            });
+
+            const rowDefault = document.getElementById("rowKosongDefault");
+            if (rowDefault) rowDefault.style.display = "none";
+
+            if (visible === 0 && rows.length > 0) {
+                tableCard.style.display = "none";
+                noSearchResult.style.display = "block";
+            } else {
+                tableCard.style.display = "";
+                noSearchResult.style.display = "none";
+            }
+        }
+
+        filterStatus.addEventListener("change", applyFilter);
+        searchInput.addEventListener("input", applyFilter);
+        btnReset.addEventListener("click", function() {
+            filterStatus.value = "";
+            searchInput.value = "";
+            applyFilter();
         });
 
-        const rowDefault = document.getElementById("rowKosongDefault");
-        if (rowDefault) rowDefault.style.display = "none";
-
-        if (visible === 0 && rows.length > 0) {
-            tableCard.style.display = "none";
-            noSearchResult.style.display = "block";
-        } else {
-            tableCard.style.display = "";
-            noSearchResult.style.display = "none";
+        // ── TOAST ──
+        function showToast(msg) {
+            let toast = document.getElementById("toastDosbing");
+            if (!toast) {
+                toast = document.createElement("div");
+                toast.id = "toastDosbing";
+                toast.style.cssText = "position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#DC2626;color:#fff;padding:12px 22px;border-radius:10px;font-size:0.84rem;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;align-items:center;gap:8px;opacity:1;transition:opacity 0.3s;";
+                toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="white" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/></svg><span></span>`;
+                document.body.appendChild(toast);
+            }
+            toast.querySelector("span").textContent = msg;
+            toast.style.opacity = "1";
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.style.opacity = "0";
+            }, 2500);
         }
-    }
 
-    filterStatus.addEventListener("change", applyFilter);
-    searchInput.addEventListener("input", applyFilter);
-    btnReset.addEventListener("click", function () {
-        filterStatus.value = "";
-        searchInput.value  = "";
-        applyFilter();
-    });
+        // ── VALIDASI FORM ──
+        const formUpload = document.getElementById("formUpload");
+        const alertBox = document.getElementById("errorAlert");
+        const errorMsg = document.getElementById("errorMsg");
+        const dropZone = document.getElementById("dropZone");
+        const fileInput = document.getElementById("up_file");
+        const dropText = document.getElementById("dropText");
+        const wajib = ["up_judul", "up_tanggal", "up_dosbing1", "up_dosbing2"];
+        const MAX_SIZE = 10 * 1024 * 1024;
 
-    // ── TOAST ──
-    function showToast(msg) {
-        let toast = document.getElementById("toastDosbing");
-        if (!toast) {
-            toast = document.createElement("div");
-            toast.id = "toastDosbing";
-            toast.style.cssText = "position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#DC2626;color:#fff;padding:12px 22px;border-radius:10px;font-size:0.84rem;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;align-items:center;gap:8px;opacity:1;transition:opacity 0.3s;";
-            toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="white" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/></svg><span></span>`;
-            document.body.appendChild(toast);
-        }
-        toast.querySelector("span").textContent = msg;
-        toast.style.opacity = "1";
-        clearTimeout(toast._timer);
-        toast._timer = setTimeout(() => { toast.style.opacity = "0"; }, 2500);
-    }
+        formUpload.addEventListener("submit", function(e) {
+            let isValid = true;
 
-    // ── VALIDASI FORM ──
-    const formUpload = document.getElementById("formUpload");
-    const alertBox   = document.getElementById("errorAlert");
-    const errorMsg   = document.getElementById("errorMsg");
-    const dropZone   = document.getElementById("dropZone");
-    const fileInput  = document.getElementById("up_file");
-    const dropText   = document.getElementById("dropText");
-    const wajib      = ["up_judul", "up_tanggal", "up_dosbing1", "up_dosbing2"];
-    const MAX_SIZE   = 10 * 1024 * 1024;
+            wajib.forEach(id => document.getElementById(id).classList.remove("is-invalid"));
+            dropZone.classList.remove("is-invalid");
+            dropText.style.color = "#64748b";
+            alertBox.classList.add("d-none");
 
-    formUpload.addEventListener("submit", function (e) {
-        let isValid = true;
+            wajib.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el.value.trim()) {
+                    el.classList.add("is-invalid");
+                    isValid = false;
+                }
+            });
 
-        wajib.forEach(id => document.getElementById(id).classList.remove("is-invalid"));
-        dropZone.classList.remove("is-invalid");
-        dropText.style.color = "#64748b";
-        alertBox.classList.add("d-none");
-
-        wajib.forEach(id => {
-            const el = document.getElementById(id);
-            if (!el.value.trim()) {
-                el.classList.add("is-invalid");
+            const val1 = document.getElementById("up_dosbing1").value;
+            const val2 = document.getElementById("up_dosbing2").value;
+            if (val1 && val2 && val1 === val2) {
+                document.getElementById("up_dosbing1").classList.add("is-invalid");
+                document.getElementById("up_dosbing2").classList.add("is-invalid");
+                errorMsg.textContent = "Pembimbing 1 dan Pembimbing 2 tidak boleh sama!";
                 isValid = false;
+            }
+
+            if (!fileInput.files.length) {
+                dropZone.classList.add("is-invalid");
+                if (isValid) errorMsg.textContent = "File proposal wajib diunggah!";
+                isValid = false;
+            } else if (fileInput.files[0].size > MAX_SIZE) {
+                dropZone.classList.add("is-invalid");
+                dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
+                dropText.style.color = "#dc3545";
+                errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB.";
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                alertBox.classList.remove("d-none");
             }
         });
 
-        const val1 = document.getElementById("up_dosbing1").value;
-        const val2 = document.getElementById("up_dosbing2").value;
-        if (val1 && val2 && val1 === val2) {
-            document.getElementById("up_dosbing1").classList.add("is-invalid");
-            document.getElementById("up_dosbing2").classList.add("is-invalid");
-            errorMsg.textContent = "Pembimbing 1 dan Pembimbing 2 tidak boleh sama!";
-            isValid = false;
-        }
+        // ── DRAG & DROP ──
+        fileInput.addEventListener("change", function() {
+            if (this.files.length) {
+                const file = this.files[0];
+                dropZone.classList.remove("is-invalid");
+                alertBox.classList.add("d-none");
 
-        if (!fileInput.files.length) {
-            dropZone.classList.add("is-invalid");
-            if (isValid) errorMsg.textContent = "File proposal wajib diunggah!";
-            isValid = false;
-        } else if (fileInput.files[0].size > MAX_SIZE) {
-            dropZone.classList.add("is-invalid");
-            dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
-            dropText.style.color = "#dc3545";
-            errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB.";
-            isValid = false;
-        }
+                if (file.size > MAX_SIZE) {
+                    dropZone.classList.add("is-invalid");
+                    dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
+                    dropText.style.color = "#dc3545";
+                    errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB. Kompres file PDF kamu terlebih dahulu.";
+                    alertBox.classList.remove("d-none");
+                    this.value = "";
+                } else {
+                    dropText.textContent = "✅ " + file.name;
+                    dropText.style.color = "#15803d";
+                    dropZone.classList.add("has-file");
+                    dropZone.classList.remove("is-invalid");
+                }
+            }
+        });
 
-        if (!isValid) {
+        dropZone.addEventListener("dragover", function(e) {
             e.preventDefault();
-            alertBox.classList.remove("d-none");
-        }
-    });
+            this.classList.add("dragover");
+        });
 
-    // ── DRAG & DROP ──
-    fileInput.addEventListener("change", function () {
-        if (this.files.length) {
-            const file = this.files[0];
-            dropZone.classList.remove("is-invalid");
-            alertBox.classList.add("d-none");
+        dropZone.addEventListener("dragleave", function() {
+            this.classList.remove("dragover");
+        });
+
+        dropZone.addEventListener("drop", function(e) {
+            e.preventDefault();
+            this.classList.remove("dragover");
+            const file = e.dataTransfer.files[0];
+
+            if (!file || file.type !== "application/pdf") {
+                alert("Hanya file PDF yang diperbolehkan!");
+                return;
+            }
 
             if (file.size > MAX_SIZE) {
                 dropZone.classList.add("is-invalid");
                 dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
                 dropText.style.color = "#dc3545";
-                errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB. Kompres file PDF kamu terlebih dahulu.";
+                errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB.";
                 alertBox.classList.remove("d-none");
-                this.value = "";
-            } else {
-                dropText.textContent = "✅ " + file.name;
-                dropText.style.color = "#15803d";
-                dropZone.classList.add("has-file");
-                dropZone.classList.remove("is-invalid");
+                return;
             }
-        }
-    });
 
-    dropZone.addEventListener("dragover", function (e) {
-        e.preventDefault();
-        this.classList.add("dragover");
-    });
-
-    dropZone.addEventListener("dragleave", function () {
-        this.classList.remove("dragover");
-    });
-
-    dropZone.addEventListener("drop", function (e) {
-        e.preventDefault();
-        this.classList.remove("dragover");
-        const file = e.dataTransfer.files[0];
-
-        if (!file || file.type !== "application/pdf") {
-            alert("Hanya file PDF yang diperbolehkan!");
-            return;
-        }
-
-        if (file.size > MAX_SIZE) {
-            dropZone.classList.add("is-invalid");
-            dropText.textContent = "❌ File terlalu besar! Maksimal 10MB";
-            dropText.style.color = "#dc3545";
-            errorMsg.textContent = "Ukuran file melebihi batas maksimal 10MB.";
-            alertBox.classList.remove("d-none");
-            return;
-        }
-
-        fileInput.files = e.dataTransfer.files;
-        dropText.textContent = "✅ " + file.name;
-        dropText.style.color = "#15803d";
-        dropZone.classList.add("has-file");
-        dropZone.classList.remove("is-invalid");
-        alertBox.classList.add("d-none");
-    });
-
-    // ── RESET MODAL ──
-    document.getElementById("modalUpload").addEventListener("hidden.bs.modal", function () {
-        formUpload.reset();
-        wajib.forEach(id => document.getElementById(id).classList.remove("is-invalid"));
-        dropZone.classList.remove("is-invalid", "has-file", "dragover");
-        dropText.textContent = "Klik atau seret file proposal untuk diunggah";
-        dropText.style.color = "#64748b";
-        alertBox.classList.add("d-none");
-        // Reset prev values & sync dropdown
-        prevVal1 = "";
-        prevVal2 = "";
-        syncDosbing();
-    });
-
-    // ── DOSBING DUPLICATE PREVENTION ──
-    const dosbing1 = document.getElementById("up_dosbing1");
-    const dosbing2 = document.getElementById("up_dosbing2");
-    let prevVal1 = "";
-    let prevVal2 = "";
-
-    // ── PERUBAHAN: hide option yang sudah dipilih di dropdown lawan ──
-    function syncDosbing() {
-        const val1 = dosbing1.value;
-        const val2 = dosbing2.value;
-
-        // Tampilkan semua option dulu, lalu sembunyikan yang bentrok
-        Array.from(dosbing2.options).forEach(opt => {
-            opt.hidden   = (opt.value !== "" && opt.value === val1);
-            opt.disabled = opt.hidden;
+            fileInput.files = e.dataTransfer.files;
+            dropText.textContent = "✅ " + file.name;
+            dropText.style.color = "#15803d";
+            dropZone.classList.add("has-file");
+            dropZone.classList.remove("is-invalid");
+            alertBox.classList.add("d-none");
         });
 
-        Array.from(dosbing1.options).forEach(opt => {
-            opt.hidden   = (opt.value !== "" && opt.value === val2);
-            opt.disabled = opt.hidden;
+        // ── RESET MODAL ──
+        document.getElementById("modalUpload").addEventListener("hidden.bs.modal", function() {
+            formUpload.reset();
+            wajib.forEach(id => document.getElementById(id).classList.remove("is-invalid"));
+            dropZone.classList.remove("is-invalid", "has-file", "dragover");
+            dropText.textContent = "Klik atau seret file proposal untuk diunggah";
+            dropText.style.color = "#64748b";
+            alertBox.classList.add("d-none");
+            // Reset prev values & sync dropdown
+            prevVal1 = "";
+            prevVal2 = "";
+            syncDosbing();
         });
-    }
 
-    dosbing1.addEventListener("change", function () {
-        if (dosbing1.value && dosbing1.value === dosbing2.value) {
-            showToast("Pembimbing 1 dan 2 tidak boleh sama!");
-            dosbing1.value = prevVal1;
-        } else {
-            prevVal1 = dosbing1.value;
+        // ── DOSBING DUPLICATE PREVENTION ──
+        const dosbing1 = document.getElementById("up_dosbing1");
+        const dosbing2 = document.getElementById("up_dosbing2");
+        let prevVal1 = "";
+        let prevVal2 = "";
+
+        // ── PERUBAHAN: hide option yang sudah dipilih di dropdown lawan ──
+        function syncDosbing() {
+            const val1 = dosbing1.value;
+            const val2 = dosbing2.value;
+
+            // Tampilkan semua option dulu, lalu sembunyikan yang bentrok
+            Array.from(dosbing2.options).forEach(opt => {
+                opt.hidden = (opt.value !== "" && opt.value === val1);
+                opt.disabled = opt.hidden;
+            });
+
+            Array.from(dosbing1.options).forEach(opt => {
+                opt.hidden = (opt.value !== "" && opt.value === val2);
+                opt.disabled = opt.hidden;
+            });
         }
+
+        dosbing1.addEventListener("change", function() {
+            if (dosbing1.value && dosbing1.value === dosbing2.value) {
+                showToast("Pembimbing 1 dan 2 tidak boleh sama!");
+                dosbing1.value = prevVal1;
+            } else {
+                prevVal1 = dosbing1.value;
+            }
+            syncDosbing();
+        });
+
+        dosbing2.addEventListener("change", function() {
+            if (dosbing2.value && dosbing2.value === dosbing1.value) {
+                showToast("Pembimbing 1 dan 2 tidak boleh sama!");
+                dosbing2.value = prevVal2;
+            } else {
+                prevVal2 = dosbing2.value;
+            }
+            syncDosbing();
+        });
+
+        // Init sync on load
         syncDosbing();
-    });
 
-    dosbing2.addEventListener("change", function () {
-        if (dosbing2.value && dosbing2.value === dosbing1.value) {
-            showToast("Pembimbing 1 dan 2 tidak boleh sama!");
-            dosbing2.value = prevVal2;
-        } else {
-            prevVal2 = dosbing2.value;
-        }
-        syncDosbing();
-    });
-
-    // Init sync on load
-    syncDosbing();
-
-}); // end DOMContentLoaded
+    }); // end DOMContentLoaded
 </script>
 
 @endsection

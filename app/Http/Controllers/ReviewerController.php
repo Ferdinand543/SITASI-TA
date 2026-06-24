@@ -34,29 +34,57 @@ class ReviewerController extends Controller
             return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
         }
 
-        $nimReviewer = session('user')->nim_nid;
+        $user    = session('user');
+        $isAdmin = strtolower(trim($user->role)) === 'admin';
+        $nimReviewer = $user->nim_nid;
 
-        $query = DB::table('proposal')
-            ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
-            ->leftJoin('tinjauan_proposal as tp', function ($join) use ($nimReviewer) {
-                $join->on('tp.proposal_id', '=', 'proposal.id')
-                    ->where('tp.nim_nid_reviewer', '=', $nimReviewer);
-            })
-            ->whereIn('proposal.status', ['menunggu_review', 'menunggu_verifikasi', 'selesai'])
-            ->where('proposal.nim_nid_reviewer', $nimReviewer)
-            ->select([
-                'proposal.id',
-                'proposal.nim_nid',
-                'mhs.nama',
-                'proposal.judul',
-                'proposal.file_proposal',
-                'proposal.tanggal_pengajuan',
-                'proposal.status as proposal_status',
-                'tp.id as tinjauan_id',
-                'tp.catatan',
-                'tp.file_tinjauan',
-                'tp.tanggal_tinjauan',
-            ]);
+        // =====================================================
+        // ADMIN: lihat SEMUA proposal yang sudah punya reviewer
+        // DOSEN REVIEWER: lihat proposal miliknya sendiri (TIDAK DIUBAH)
+        // =====================================================
+        if ($isAdmin) {
+            $query = DB::table('proposal')
+                ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
+                ->leftJoin('tinjauan_proposal as tp', 'tp.proposal_id', '=', 'proposal.id')
+                ->whereNotNull('proposal.nim_nid_reviewer')
+                ->whereIn('proposal.status', ['menunggu_review', 'menunggu_verifikasi', 'selesai'])
+                ->select([
+                    'proposal.id',
+                    'proposal.nim_nid',
+                    'mhs.nama',
+                    'proposal.judul',
+                    'proposal.file_proposal',
+                    'proposal.tanggal_pengajuan',
+                    'proposal.status as proposal_status',
+                    'tp.id as tinjauan_id',
+                    'tp.catatan',
+                    'tp.file_tinjauan',
+                    'tp.tanggal_tinjauan',
+                ]);
+        } else {
+            // DOSEN REVIEWER — TIDAK DIUBAH SAMA SEKALI
+            $query = DB::table('proposal')
+                ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
+                ->leftJoin('tinjauan_proposal as tp', function ($join) use ($nimReviewer) {
+                    $join->on('tp.proposal_id', '=', 'proposal.id')
+                        ->where('tp.nim_nid_reviewer', '=', $nimReviewer);
+                })
+                ->whereIn('proposal.status', ['menunggu_review', 'menunggu_verifikasi', 'selesai'])
+                ->where('proposal.nim_nid_reviewer', $nimReviewer)
+                ->select([
+                    'proposal.id',
+                    'proposal.nim_nid',
+                    'mhs.nama',
+                    'proposal.judul',
+                    'proposal.file_proposal',
+                    'proposal.tanggal_pengajuan',
+                    'proposal.status as proposal_status',
+                    'tp.id as tinjauan_id',
+                    'tp.catatan',
+                    'tp.file_tinjauan',
+                    'tp.tanggal_tinjauan',
+                ]);
+        }
 
         if ($request->filled('status_review')) {
             if ($request->status_review === 'menunggu') {
@@ -85,7 +113,6 @@ class ReviewerController extends Controller
         $totalMenunggu = $proposals->filter(fn($p) => is_null($p->tinjauan_id))->count();
         $totalSelesai  = $proposals->filter(fn($p) => !is_null($p->tinjauan_id))->count();
 
-        // BADGE FIX — hitung mahasiswa belum punya reviewer untuk badge di tombol Penetapan Reviewer
         $mahasiswaBelumReviewerCount = DB::table('proposal')
             ->whereNull('nim_nid_reviewer')
             ->whereIn('status', ['menunggu_verifikasi', 'menunggu_review'])
@@ -96,7 +123,7 @@ class ReviewerController extends Controller
             'totalProposal',
             'totalMenunggu',
             'totalSelesai',
-            'mahasiswaBelumReviewerCount' // BADGE FIX
+            'mahasiswaBelumReviewerCount'
         ));
     }
 
@@ -193,8 +220,6 @@ class ReviewerController extends Controller
             ]);
         }
 
-        // ✅ FIX: setelah reviewer selesai review → menunggu_verifikasi (bukan selesai)
-        // supaya koordinator bisa tetapkan dosbing
         DB::table('proposal')
             ->where('id', $id)
             ->update(['status' => 'menunggu_verifikasi', 'updated_at' => now()]);

@@ -17,7 +17,6 @@ class ProposalMahasiswaController extends Controller
 
         $nim = session('user')->nim_nid;
 
-        // Tandai sudah dibaca — simpan jumlah yg direspon saat ini
         $totalDirespon = ProposalMahasiswa::where('nim_nid', $nim)
             ->whereIn('status', ['selesai', 'ditolak', 'disetujui'])
             ->count();
@@ -28,7 +27,6 @@ class ProposalMahasiswaController extends Controller
             ->latest()
             ->get();
 
-        // Hanya ambil dosen yang punya role 'pembimbing' di tabel dosen_roles
         $dosenList = DB::table('users')
             ->join('dosen_roles', 'users.nim_nid', '=', 'dosen_roles.nim_nid')
             ->where('dosen_roles.role_dosen', 'pembimbing')
@@ -37,7 +35,13 @@ class ProposalMahasiswaController extends Controller
             ->distinct()
             ->get();
 
-        return view('pengajuan.proposal_mahasiswa', compact('proposalList', 'dosenList'));
+        $judulDisetujui = DB::table('pengajuan_judul')
+            ->where('nim_nid', $nim)
+            ->where('status', 'disetujui')
+            ->orderByDesc('created_at')
+            ->value('judul_disetujui');
+
+        return view('pengajuan.proposal_mahasiswa', compact('proposalList', 'dosenList', 'judulDisetujui'));
     }
 
     public function store(Request $request)
@@ -96,7 +100,6 @@ class ProposalMahasiswaController extends Controller
 
         $nim = session('user')->nim_nid;
 
-        // Tandai sudah dibaca
         $totalDirespon = ProposalMahasiswa::where('nim_nid', $nim)
             ->whereIn('status', ['selesai', 'ditolak', 'disetujui'])
             ->count();
