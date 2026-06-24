@@ -354,6 +354,7 @@ class DaftarSeminarController extends Controller
                 'total_sks_akumulasi' => $request->total_sks_akumulasi,
             ])),
             'status_administrasi' => 'Menunggu Verifikasi',
+            'status_seminar'      => 'Belum Daftar Seminar',
             'progress_dokumen'    => $dokumenAda,
             'total_dokumen'       => 7,
             'judul_ta'            => $judulTA,
@@ -370,8 +371,7 @@ class DaftarSeminarController extends Controller
         if ($draft) {
             $draft->update($dataLengkap);
         } else {
-            $dataLengkap['mahasiswa_id']   = $nimNid;
-            $dataLengkap['status_seminar'] = 'Belum Daftar Seminar';
+            $dataLengkap['mahasiswa_id'] = $nimNid;
             PengajuanSeminar::create($dataLengkap);
         }
 

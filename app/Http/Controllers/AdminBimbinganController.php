@@ -103,7 +103,7 @@ class AdminBimbinganController extends Controller
             ->first();
 
         $judulTA        = $pengajuan->judul_disetujui ?? '-';
-        $totalBimbingan = $bimbingan->count();
+        $totalBimbingan = $bimbingan->where('status_validasi', 'Valid')->count();
         $minBimbingan   = 6;
 
         return view('admin.detail_bimbingan', compact(

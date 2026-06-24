@@ -142,9 +142,10 @@
             font-weight: normal;
             line-height: 1.5;
             margin-bottom: 0;
-            min-height: 10mm;
+            min-height: 10mm; /* ← samain tinggi baris role DP1 vs DP2 */
         }
 
+        /* FIX UTAMA: tinggi fixed untuk area QR agar selalu sejajar */
         .ttd-qr-wrap {
             height: 28mm;
             display: flex;
@@ -152,7 +153,7 @@
             justify-content: center;
             margin: 4mm 0 2mm 0;
         }
-        .ttd-qr-wrap svg {
+        .ttd-qr-wrap img {
             width: 24mm;
             height: 24mm;
         }
@@ -284,6 +285,10 @@
     <div class="ttd-section">
         <div class="ttd-tanggal">Cimahi, {{ $tanggalSurat ?? '………………………………' }}</div>
 
+        {{--
+            FIX: Pisah jadi 3 baris table terpisah (role / qr / nama)
+            supaya tinggi tiap cell selalu sama kiri-kanan.
+        --}}
         <table class="ttd-table">
 
             {{-- Baris 1: Label role --}}
@@ -296,19 +301,19 @@
                 </td>
             </tr>
 
-            {{-- Baris 2: Area QR --}}
+            {{-- Baris 2: Area QR (tinggi fixed 28mm, kosong kalau belum TTD) --}}
             <tr>
                 <td>
                     <div class="ttd-qr-wrap">
-                        @if(!empty($ttd2Selesai) && !empty($qr2Svg))
-                            {!! $qr2Svg !!}
+                        @if(!empty($ttd2Selesai) && !empty($qr2Base64))
+                            <img src="{{ $qr2Base64 }}" alt="QR TTD 2">
                         @endif
                     </div>
                 </td>
                 <td>
                     <div class="ttd-qr-wrap">
-                        @if(!empty($ttd1Selesai) && !empty($qr1Svg))
-                            {!! $qr1Svg !!}
+                        @if(!empty($ttd1Selesai) && !empty($qr1Base64))
+                            <img src="{{ $qr1Base64 }}" alt="QR TTD 1">
                         @endif
                     </div>
                 </td>

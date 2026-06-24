@@ -375,8 +375,8 @@
 
     .btn-unduh {
         margin-left: auto;
-        background: #1e293b;
-        color: #fff;
+        background: #FACC15;
+        color: #1e293b;
         border: none;
         border-radius: 8px;
         padding: 7px 16px;
@@ -388,8 +388,8 @@
     }
 
     .btn-unduh:hover {
-        background: #334155;
-        color: #fff;
+        background: #EAB308;
+        color: #1e293b;
     }
 
     @media(max-width:768px) {
