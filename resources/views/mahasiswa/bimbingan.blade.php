@@ -572,7 +572,7 @@
                                 @elseif($b->status_validasi == 'Tidak Valid')
                                 <span class="status-badge status-tidak-valid">● Tidak Valid</span>
                                 @else
-                                <span class="status-badge status-menunggu">● Menunggu</span>  {{-- tampil "Menunggu" tapi data-status = "Validasi Bimbingan" ✅ --}}
+                                <span class="status-badge status-menunggu">● Menunggu</span>
                                 @endif
                             </td>
                             <td class="catatan-cell" title="{{ $b->catatan_dosen ?? '' }}">
@@ -782,14 +782,20 @@
                 </div>
                 <div class="modal-row full" style="margin-bottom:0;">
                     <div>
-                        <label class="form-label">Dokumentasi Foto</label>
+                        <label class="form-label">
+                            Dokumentasi Foto
+                            <span class="form-label-opt" style="color:#DC2626;font-weight:700;">*wajib diisi</span>
+                        </label>
                         <div class="modal-dropzone" id="modalDropzone">
-                            <input type="file" name="dokumentasi" accept=".jpg,.jpeg,.png"
+                            <input type="file" name="dokumentasi" accept=".jpg,.jpeg,.png" required
                                 onchange="updateDropzone(this,'modalDropzone')">
                             <div class="modal-dropzone-icon">🖼️</div>
                             <div class="modal-dropzone-text" id="modalDropzoneText">Klik atau seret foto dokumentasi untuk diunggah</div>
-                            <div class="modal-dropzone-hint">Format: JPG, PNG (Maks. 5MB)</div>
+                            <div class="modal-dropzone-hint">Format: JPG, PNG (Maks. 5MB) — Wajib diunggah</div>
                         </div>
+                        @error('dokumentasi')
+                        <div style="color:#DC2626;font-size:11.5px;margin-top:6px;">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>

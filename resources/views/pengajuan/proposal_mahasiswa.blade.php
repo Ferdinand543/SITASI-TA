@@ -561,8 +561,6 @@
                 <option value="">Semua Status</option>
                 <option value="menunggu_verifikasi">Menunggu Verifikasi</option>
                 <option value="menunggu_review">Menunggu Review</option>
-                <option value="selesai">Selesai</option>
-                <option value="ditolak">Ditolak</option>
             </select>
         </div>
         <div class="filter-group">

@@ -77,10 +77,11 @@ class AdminSeminarController extends Controller
             ->where('status', 'disetujui')
             ->latest()->first();
 
-        $dospem1 = DB::table('usulan_pembimbing')
+        // ✅ FIX: ambil dospem FINAL dari tabel dosen_pembimbing, bukan usulan_pembimbing (usulan awal)
+        $dospem1 = DB::table('dosen_pembimbing')
             ->where('proposal_id', $proposal->id ?? null)
             ->where('urutan', 1)->first();
-        $dospem2 = DB::table('usulan_pembimbing')
+        $dospem2 = DB::table('dosen_pembimbing')
             ->where('proposal_id', $proposal->id ?? null)
             ->where('urutan', 2)->first();
 

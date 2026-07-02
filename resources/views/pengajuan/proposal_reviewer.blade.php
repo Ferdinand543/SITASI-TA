@@ -102,7 +102,7 @@
             <select id="inputStatus">
                 <option value="">Semua Status</option>
                 <option value="menunggu" {{ request('status_review') === 'menunggu' ? 'selected' : '' }}>Menunggu Review</option>
-                <option value="selesai"  {{ request('status_review') === 'selesai'  ? 'selected' : '' }}>Selesai</option>
+                <option value="selesai"  {{ request('status_review') === 'selesai'  ? 'selected' : '' }}>Sudah DiReview</option>
             </select>
         </div>
         <div class="filter-date-wrap">

@@ -80,15 +80,15 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
 
     .form-group { display: flex; flex-direction: column; }
     .form-group label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
-    .form-group input, .form-group textarea {
+    .form-group input, .form-group textarea, .form-group select {
         height: 44px; border: 1px solid var(--border); border-radius: 10px;
         padding: 0 14px; font-size: 14px; color: var(--neutral);
         background: #FAFAFA; font-family: inherit; outline: none;
         transition: border-color .2s, background .2s;
     }
     .form-group textarea { height: auto; padding: 12px 14px; resize: vertical; min-height: 90px; }
-    .form-group input:focus, .form-group textarea:focus { border-color: var(--gold); background: #fff; }
-    .form-group input:disabled, .form-group textarea:disabled {
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--gold); background: #fff; }
+    .form-group input:disabled, .form-group textarea:disabled, .form-group select:disabled {
         background: #F3F4F6 !important; color: #9CA3AF !important;
         cursor: not-allowed; border-color: #E5E7EB !important;
     }
@@ -217,9 +217,17 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
                 <div class="form-row cols-1">
                     <div class="form-group">
                         <label>Dosen Wali</label>
-                        <input type="text" name="dosen_wali"
-                            value="{{ $draftData['dosen_wali'] ?? ($pengajuan->dosen_wali ?? old('dosen_wali')) }}"
-                            placeholder="Nama dosen wali" {{ $disabledField }}>
+                        @php
+                            $dosenWaliTerpilih = $draftData['dosen_wali'] ?? ($pengajuan->dosen_wali ?? old('dosen_wali'));
+                        @endphp
+                        <select name="dosen_wali" {{ $disabledField }}>
+                            <option value="">-- Pilih Dosen Wali --</option>
+                            @foreach($dosenList as $dosen)
+                            <option value="{{ $dosen->nama }}" {{ $dosenWaliTerpilih === $dosen->nama ? 'selected' : '' }}>
+                                {{ $dosen->nama }}
+                            </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
             </div>
@@ -382,8 +390,8 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
                 <div class="form-row">
                 @php
                 $dokLaporan = [
-                    ['key'=>'laporan_doc','field'=>'file_laporan_doc','label'=>'Laporan TA 1 (Docx)','sub'=>'Format .doc / .docx','accept'=>'.doc,.docx'],
-                    ['key'=>'laporan_pdf','field'=>'file_laporan_pdf','label'=>'Laporan TA 1 (PDF)', 'sub'=>'Format .pdf',        'accept'=>'.pdf'],
+                    ['key'=>'laporan_doc','field'=>'file_laporan_doc','label'=>'Proposal TA 1 (Docx)','sub'=>'Format .doc / .docx','accept'=>'.doc,.docx'],
+                    ['key'=>'laporan_pdf','field'=>'file_laporan_pdf','label'=>'Proposal TA 1 (PDF)', 'sub'=>'Format .pdf',        'accept'=>'.pdf'],
                 ];
                 @endphp
                 @foreach($dokLaporan as $dok)
@@ -484,8 +492,8 @@ const labelFile = {
     file_spp: 'Bukti Lunas SPP',
     file_bimbingan: 'Kartu Bimbingan',
     file_persetujuan: 'Lembar Persetujuan Pembimbing',
-    file_laporan_doc: 'Laporan TA 1 (Docx)',
-    file_laporan_pdf: 'Laporan TA 1 (PDF)',
+    file_laporan_doc: 'Proposal TA 1 (Docx)',
+    file_laporan_pdf: 'Proposal TA 1 (PDF)',
 };
 const labelField = {
     semester: 'Semester',

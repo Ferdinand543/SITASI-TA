@@ -15,6 +15,8 @@ class DaftarSeminarController extends Controller
     // ============================================================
     private function getDospem($proposalId)
     {
+        if (!$proposalId) return [null, null];
+
         $dospem1 = DB::table('dosen_pembimbing')
             ->where('proposal_id', $proposalId)
             ->where('urutan', 1)
@@ -40,6 +42,69 @@ class DaftarSeminarController extends Controller
     }
 
     // ============================================================
+    // HELPER: cek syarat minimal bimbingan (6x per dosen, HARUS Valid)
+    // ============================================================
+    private function cekSyaratBimbingan($nimNid, $proposalId)
+    {
+        $minBimbinganPerDosen = 6;
+
+        // Guard: kalau proposalId null, belum bisa cek
+        if (!$proposalId) {
+            return [
+                'count1'  => 0,
+                'count2'  => 0,
+                'min'     => $minBimbinganPerDosen,
+                'lengkap' => false,
+            ];
+        }
+
+        [$dospem1, $dospem2] = $this->getDospem($proposalId);
+
+        $countBimbingan1 = 0;
+        $countBimbingan2 = 0;
+        $ada1 = $dospem1 && !empty($dospem1->nim_nid_dosen);
+        $ada2 = $dospem2 && !empty($dospem2->nim_nid_dosen);
+
+        // Hitung bimbingan Valid saja (bukan menunggu/tidak valid)
+        if ($ada1) {
+            $countBimbingan1 = DB::table('bimbingan')
+                ->where('nim_nid', $nimNid)
+                ->where('dosen_nid', $dospem1->nim_nid_dosen)
+                ->where('status_validasi', 'Valid')
+                ->count();
+        }
+
+        if ($ada2) {
+            $countBimbingan2 = DB::table('bimbingan')
+                ->where('nim_nid', $nimNid)
+                ->where('dosen_nid', $dospem2->nim_nid_dosen)
+                ->where('status_validasi', 'Valid')
+                ->count();
+        }
+
+        // Tentukan kelengkapan:
+        // - Kalau tidak ada dospem sama sekali → belum lengkap
+        // - Kalau ada 2 dospem → keduanya harus >= min
+        // - Kalau hanya 1 dospem → yang ada harus >= min
+        if (!$ada1 && !$ada2) {
+            $lengkap = false;
+        } elseif ($ada1 && $ada2) {
+            $lengkap = ($countBimbingan1 >= $minBimbinganPerDosen)
+                    && ($countBimbingan2 >= $minBimbinganPerDosen);
+        } else {
+            $count   = $ada1 ? $countBimbingan1 : $countBimbingan2;
+            $lengkap = $count >= $minBimbinganPerDosen;
+        }
+
+        return [
+            'count1'  => $countBimbingan1,
+            'count2'  => $countBimbingan2,
+            'min'     => $minBimbinganPerDosen,
+            'lengkap' => $lengkap,
+        ];
+    }
+
+    // ============================================================
     // HELPER: upload file fields, merge dengan data lama
     // ============================================================
     private function uploadFiles(Request $request, string $nimNid, array $oldData = [], array $tolakKeys = []): array
@@ -55,7 +120,6 @@ class DaftarSeminarController extends Controller
             $hapus = $request->input('hapus_' . $field) == '1';
 
             if ($request->hasFile($field)) {
-                // Hapus file lama kalau ada
                 if (!empty($oldData[$field])) {
                     Storage::disk('public')->delete($oldData[$field]);
                 }
@@ -119,9 +183,19 @@ class DaftarSeminarController extends Controller
             fn($p) => in_array($p->status_seminar, ['Menunggu Jadwal', 'Jadwal ditetapkan', 'Selesai'])
         );
 
+        // ── CEK SYARAT BIMBINGAN (6x per dosen, harus status Valid) ──
+        $proposal = DB::table('proposal')->where('nim_nid', $nimNid)->latest()->first();
+        $syarat   = $this->cekSyaratBimbingan($nimNid, $proposal->id ?? null);
+
+        $syaratBimbinganLengkap = $syarat['lengkap'];
+        $countBimbingan1        = $syarat['count1'];
+        $countBimbingan2        = $syarat['count2'];
+        $minBimbinganPerDosen   = $syarat['min'];
+
         return view('mahasiswa.DaftarSeminar', compact(
             'pengajuans', 'progressPersen', 'progressAdm', 'totalDokumen',
-            'statusAdministrasi', 'statusSeminar', 'sudahDaftar', 'user'
+            'statusAdministrasi', 'statusSeminar', 'sudahDaftar', 'user',
+            'syaratBimbinganLengkap', 'countBimbingan1', 'countBimbingan2', 'minBimbinganPerDosen'
         ));
     }
 
@@ -135,7 +209,16 @@ class DaftarSeminarController extends Controller
         $user   = session('user');
         $nimNid = $user->nim_nid;
 
-        // Kalau sudah submit (bukan draft) → redirect ke daftar
+        // ── GUARD BARU: cek syarat bimbingan sebelum bisa Ajukan Seminar ──
+        $proposalGuard = DB::table('proposal')->where('nim_nid', $nimNid)->latest()->first();
+        $syaratGuard   = $this->cekSyaratBimbingan($nimNid, $proposalGuard->id ?? null);
+
+        if (!$syaratGuard['lengkap']) {
+            return redirect()->route('seminar.daftar')
+                ->with('error', "Belum memenuhi syarat minimal bimbingan ({$syaratGuard['min']}x bimbingan tervalidasi per dosen). Progress saat ini: Pembimbing 1 = {$syaratGuard['count1']}/{$syaratGuard['min']} Valid, Pembimbing 2 = {$syaratGuard['count2']}/{$syaratGuard['min']} Valid.");
+        }
+        // ───────────────────────────────────────────────────────────────
+
         $submitted = PengajuanSeminar::where('mahasiswa_id', $nimNid)
             ->whereIn('status_administrasi', ['Menunggu Verifikasi', 'Lolos Administrasi'])
             ->where('is_draft', 0)
@@ -146,7 +229,6 @@ class DaftarSeminarController extends Controller
                 ->with('info', 'Pengajuan administrasi sudah ada dan sedang diproses.');
         }
 
-        // Load draft kalau ada
         $draft     = PengajuanSeminar::where('mahasiswa_id', $nimNid)
             ->where('is_draft', 1)->latest()->first();
         $draftData = $draft ? (json_decode($draft->draft_data, true) ?? []) : [];
@@ -160,10 +242,12 @@ class DaftarSeminarController extends Controller
         $namaDospem1 = $this->getNamaDosen($dospem1);
         $namaDospem2 = $this->getNamaDosen($dospem2);
 
+        $dosenList = DB::table('users')->where('role', 'dosen')->orderBy('nama')->get();
+
         return view('mahasiswa.FormAdministrasi', compact(
             'user', 'mahasiswa', 'proposal', 'pengajuanJudul',
             'dospem1', 'dospem2', 'namaDospem1', 'namaDospem2',
-            'draftData', 'draft'
+            'draftData', 'draft', 'dosenList'
         ));
     }
 
@@ -182,12 +266,10 @@ class DaftarSeminarController extends Controller
             'files' => array_keys($request->allFiles()),
         ]);
 
-        // Ambil draft lama kalau ada
         $existing = PengajuanSeminar::where('mahasiswa_id', $nimNid)
             ->where('is_draft', 1)->latest()->first();
         $oldData  = $existing ? (json_decode($existing->draft_data, true) ?? []) : [];
 
-        // Upload file
         $filePaths = $this->uploadFiles($request, $nimNid, $oldData);
         $savedAt   = now('Asia/Jakarta')->format('d M Y, H:i');
 
@@ -318,7 +400,6 @@ class DaftarSeminarController extends Controller
                 ->with('info', 'Pengajuan administrasi sudah ada.');
         }
 
-        // Ambil draft
         $draft = null;
         if ($request->filled('pengajuan_id')) {
             $draft = PengajuanSeminar::where('id', $request->pengajuan_id)
@@ -392,7 +473,6 @@ class DaftarSeminarController extends Controller
             ->where('mahasiswa_id', $nimNid)
             ->firstOrFail();
 
-        // Draft → buka form edit
         if ($pengajuan->is_draft) {
             return redirect()->route('seminar.edit', $pengajuan->id);
         }
@@ -454,18 +534,20 @@ class DaftarSeminarController extends Controller
         $namaDospem1 = $this->getNamaDosen($dospem1);
         $namaDospem2 = $this->getNamaDosen($dospem2);
 
+        $dosenList = DB::table('users')->where('role', 'dosen')->orderBy('nama')->get();
+
         $draft = $pengajuan;
 
         return view('mahasiswa.FormAdministrasi', compact(
             'user', 'mahasiswa', 'proposal', 'pengajuanJudul',
             'dospem1', 'dospem2', 'namaDospem1', 'namaDospem2',
             'draftData', 'draft', 'pengajuan',
-            'statusDokumen', 'catatanDokumen'
+            'statusDokumen', 'catatanDokumen', 'dosenList'
         ));
     }
 
     // ============================================================
-    // FORM DAFTAR SEMINAR
+    // FORM DAFTAR SEMINAR — dengan double-check syarat bimbingan
     // ============================================================
     public function formDaftar($id)
     {
@@ -481,6 +563,13 @@ class DaftarSeminarController extends Controller
         $mahasiswa = DB::table('users')->where('nim_nid', $nimNid)->first();
         $proposal  = DB::table('proposal')->where('nim_nid', $nimNid)->latest()->first();
 
+        // ── GUARD: cek syarat bimbingan Valid sebelum masuk form ──
+        $syarat = $this->cekSyaratBimbingan($nimNid, $proposal->id ?? null);
+        if (!$syarat['lengkap']) {
+            return redirect()->route('seminar.daftar')
+                ->with('error', "Belum memenuhi syarat minimal bimbingan ({$syarat['min']}x bimbingan tervalidasi per dosen). Progress saat ini: Pembimbing 1 = {$syarat['count1']}/{$syarat['min']} Valid, Pembimbing 2 = {$syarat['count2']}/{$syarat['min']} Valid.");
+        }
+
         [$dospem1, $dospem2] = $this->getDospem($proposal->id ?? null);
         $namaDospem1 = $this->getNamaDosen($dospem1);
         $namaDospem2 = $this->getNamaDosen($dospem2);
@@ -492,7 +581,7 @@ class DaftarSeminarController extends Controller
     }
 
     // ============================================================
-    // SUBMIT DAFTAR SEMINAR
+    // SUBMIT DAFTAR SEMINAR — dengan triple-check syarat bimbingan
     // ============================================================
     public function submitDaftar(Request $request, $id)
     {
@@ -508,7 +597,18 @@ class DaftarSeminarController extends Controller
         $nimNid    = $user->nim_nid;
         $pengajuan = PengajuanSeminar::where('id', $id)
             ->where('mahasiswa_id', $nimNid)
+            ->where('status_administrasi', 'Lolos Administrasi')
             ->firstOrFail();
+
+        // ── GUARD: cek ulang syarat bimbingan Valid sebelum submit ──
+        $proposal = DB::table('proposal')->where('nim_nid', $nimNid)->latest()->first();
+        $syarat   = $this->cekSyaratBimbingan($nimNid, $proposal->id ?? null);
+
+        if (!$syarat['lengkap']) {
+            return redirect()->route('seminar.daftar')
+                ->with('error', "Belum memenuhi syarat minimal bimbingan ({$syarat['min']}x bimbingan tervalidasi per dosen). Progress saat ini: Pembimbing 1 = {$syarat['count1']}/{$syarat['min']} Valid, Pembimbing 2 = {$syarat['count2']}/{$syarat['min']} Valid.");
+        }
+        // ────────────────────────────────────────────────────
 
         $filePath = null;
         if ($request->hasFile('file_proposal')) {

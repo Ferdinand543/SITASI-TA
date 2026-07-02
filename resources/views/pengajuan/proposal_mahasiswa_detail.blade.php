@@ -75,11 +75,13 @@
         gap: 14px;
     }
 
+    /* ── KOTAK LEBIH KELIATAN: border lebih gelap + shadow ── */
     .info-card {
         background: #fff;
-        border: 1px solid #f0f0f0;
+        border: 1.5px solid #cbd5e1;
         border-radius: 14px;
         padding: 16px 18px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
     }
 
     .info-card .ic-label {
@@ -215,11 +217,13 @@
         gap: 14px;
     }
 
+    /* ── KOTAK LEBIH KELIATAN: border lebih gelap + shadow ── */
     .pb-card {
         background: #fff;
-        border: 1px solid #f0f0f0;
+        border: 1.5px solid #cbd5e1;
         border-radius: 14px;
         padding: 16px 18px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
     }
 
     .pb-top {
@@ -309,12 +313,14 @@
     }
 
     /* TINJAUAN */
+    /* ── KOTAK LEBIH KELIATAN: border lebih gelap + shadow ── */
     .tinjauan-card {
         background: #fff;
-        border: 1px solid #f0f0f0;
+        border: 1.5px solid #cbd5e1;
         border-radius: 14px;
         padding: 20px;
         margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
     }
 
     .tinjauan-top {

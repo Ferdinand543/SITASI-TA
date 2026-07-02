@@ -142,6 +142,12 @@
 
 <div class="seminar-wrap">
 
+    @if(session('error'))
+    <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:12px 16px;font-size:13px;color:#991B1B;margin-bottom:16px;">
+        ⚠️ {{ session('error') }}
+    </div>
+    @endif
+
     {{-- HERO --}}
     <div class="seminar-hero">
         <div class="hero-content">
@@ -171,9 +177,15 @@
                 Seminar Sudah Terdaftar
             </div>
             @elseif($adaLolos)
-            <a href="{{ route('seminar.formDaftar', $pengajuans->where('status_administrasi', 'Lolos Administrasi')->first()->id) }}" class="btn-ajukan">
-                🎓 Daftar Seminar Sekarang
-            </a>
+                @if($syaratBimbinganLengkap)
+                <a href="{{ route('seminar.formDaftar', $pengajuans->where('status_administrasi', 'Lolos Administrasi')->first()->id) }}" class="btn-ajukan">
+                    🎓 Daftar Seminar Sekarang
+                </a>
+                @else
+                <button type="button" class="btn-ajukan" onclick="showPopupSyarat()">
+                    🎓 Daftar Seminar Sekarang
+                </button>
+                @endif
             @elseif($adaPengajuanAktif)
             <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.85);color:#92400E;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;border:1px solid #FDE68A;">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="14" height="14">
@@ -185,9 +197,13 @@
             <a href="{{ route('seminar.edit', $pengajuans->where('is_draft', 1)->first()->id) }}" class="btn-ajukan">
                 Lanjutkan Draft
             </a>
-            @else
-            <a href="{{ route('seminar.create') }}" class="btn-ajukan">+ Ajukan Seminar</a>
-            @endif
+          @else
+           @if($syaratBimbinganLengkap)
+           <a href="{{ route('seminar.create') }}" class="btn-ajukan">+ Ajukan Seminar</a>
+           @else
+           <button type="button" class="btn-ajukan" onclick="showPopupSyarat()">+ Ajukan Seminar</button>
+           @endif
+           @endif
         </div>
     </div>
 
@@ -362,9 +378,15 @@
                             <a href="{{ route('seminar.show', $p->id) }}" class="btn-perbaiki">Lihat<br>Detail</a>
 
                             @elseif($p->status_administrasi === 'Lolos Administrasi' && $p->status_seminar === 'Belum Daftar Seminar')
-                            <button class="btn-daftar" onclick="showPopupDaftar('{{ route('seminar.formDaftar', $p->id) }}')">
-                                Daftar<br>Seminar
-                            </button>
+                                @if($syaratBimbinganLengkap)
+                                <button class="btn-daftar" onclick="showPopupDaftar('{{ route('seminar.formDaftar', $p->id) }}')">
+                                    Daftar<br>Seminar
+                                </button>
+                                @else
+                                <button class="btn-daftar" style="background:#9CA3AF;" onclick="showPopupSyarat()">
+                                    Daftar<br>Seminar
+                                </button>
+                                @endif
 
                             @elseif(in_array($p->status_seminar, ['Menunggu Jadwal', 'Jadwal ditetapkan', 'Sudah Dijadwalkan', 'Selesai']))
                             <div style="display:flex;flex-direction:column;gap:6px;">
@@ -399,7 +421,7 @@
 
 </div>
 
-{{-- POPUP --}}
+{{-- POPUP DAFTAR SEMINAR --}}
 <div class="popup-overlay" id="popupDaftar">
     <div class="popup-box">
         <div class="popup-icon">🎓</div>
@@ -411,6 +433,35 @@
         <div class="popup-actions">
             <button class="btn-popup-cancel" onclick="closePopup()">Nanti Saja</button>
             <a href="#" id="btnLanjutDaftar" class="btn-popup-ok">Lanjut Daftar</a>
+        </div>
+    </div>
+</div>
+
+{{-- POPUP SYARAT BIMBINGAN BELUM TERPENUHI --}}
+<div class="popup-overlay" id="popupSyarat">
+    <div class="popup-box">
+        <div class="popup-icon">🔒</div>
+        <div class="popup-title">Belum Memenuhi Syarat Bimbingan</div>
+        <div class="popup-sub">
+            Minimal <strong>{{ $minBimbinganPerDosen ?? 6 }}x bimbingan tervalidasi</strong> per dosen pembimbing (total {{ ($minBimbinganPerDosen ?? 6) * 2 }}x) diperlukan sebelum bisa mendaftar seminar.<br><br>
+            <div style="text-align:left;background:#F9FAFB;border-radius:10px;padding:12px 14px;margin-top:8px;">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px;">
+                    <span>Pembimbing 1</span>
+                    <strong style="color:{{ ($countBimbingan1 ?? 0) >= ($minBimbinganPerDosen ?? 6) ? '#16A34A' : '#DC2626' }};">
+                        {{ $countBimbingan1 ?? 0 }} / {{ $minBimbinganPerDosen ?? 6 }}
+                    </strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;">
+                    <span>Pembimbing 2</span>
+                    <strong style="color:{{ ($countBimbingan2 ?? 0) >= ($minBimbinganPerDosen ?? 6) ? '#16A34A' : '#DC2626' }};">
+                        {{ $countBimbingan2 ?? 0 }} / {{ $minBimbinganPerDosen ?? 6 }}
+                    </strong>
+                </div>
+            </div>
+        </div>
+        <div class="popup-actions">
+            <button class="btn-popup-cancel" onclick="closePopupSyarat()">Tutup</button>
+            <a href="{{ route('bimbingan.index') }}" class="btn-popup-ok">Isi Bimbingan</a>
         </div>
     </div>
 </div>
@@ -427,6 +478,18 @@
 
     document.getElementById('popupDaftar').addEventListener('click', function(e) {
         if (e.target === this) closePopup();
+    });
+
+    function showPopupSyarat() {
+        document.getElementById('popupSyarat').classList.add('show');
+    }
+
+    function closePopupSyarat() {
+        document.getElementById('popupSyarat').classList.remove('show');
+    }
+
+    document.getElementById('popupSyarat').addEventListener('click', function(e) {
+        if (e.target === this) closePopupSyarat();
     });
 </script>
 

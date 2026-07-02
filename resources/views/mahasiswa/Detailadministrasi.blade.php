@@ -816,8 +816,8 @@
     'Dokumen Bimbingan' => [
     ['key' => 'bimbingan', 'file_key' => 'file_bimbingan', 'label' => 'Kartu Bimbingan'],
     ['key' => 'persetujuan', 'file_key' => 'file_persetujuan', 'label' => 'Lembar Persetujuan Pembimbing'],
-    ['key' => 'laporan_doc', 'file_key' => 'file_laporan_doc', 'label' => 'Laporan TA 1 (Docx)'],
-    ['key' => 'laporan_pdf', 'file_key' => 'file_laporan_pdf', 'label' => 'Laporan TA 1 (PDF)'],
+    ['key' => 'laporan_doc', 'file_key' => 'file_laporan_doc', 'label' => 'Proposal TA 1 (Docx)'],
+    ['key' => 'laporan_pdf', 'file_key' => 'file_laporan_pdf', 'label' => 'Proposal TA 1 (PDF)'],
     ],
     ];
     @endphp

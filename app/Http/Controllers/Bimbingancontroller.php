@@ -87,6 +87,24 @@ class BimbinganController extends Controller
         $user = session('user');
         $nim  = $user->nim_nid;
 
+        // ✅ VALIDASI — dokumentasi foto wajib diisi
+        $request->validate([
+            'tanggal_bimbingan' => 'required|date',
+            'pertemuan_ke'      => 'required|integer|min:1',
+            'dosen_nid'         => 'required',
+            'topik_bimbingan'   => 'required|string',
+            'dokumentasi'       => 'required|image|mimes:jpg,jpeg,png|max:5120', // wajib, maks 5MB
+        ], [
+            'dokumentasi.required' => 'Foto dokumentasi bimbingan wajib diunggah.',
+            'dokumentasi.image'    => 'File yang diunggah harus berupa gambar.',
+            'dokumentasi.mimes'    => 'Format foto harus JPG atau PNG.',
+            'dokumentasi.max'      => 'Ukuran foto maksimal 5MB.',
+            'tanggal_bimbingan.required' => 'Tanggal bimbingan wajib diisi.',
+            'pertemuan_ke.required'      => 'Bimbingan ke- wajib diisi.',
+            'dosen_nid.required'         => 'Dosen pembimbing wajib dipilih.',
+            'topik_bimbingan.required'   => 'Topik bimbingan wajib diisi.',
+        ]);
+
         $filePath = null;
         if ($request->hasFile('dokumentasi')) {
             $file     = $request->file('dokumentasi');
