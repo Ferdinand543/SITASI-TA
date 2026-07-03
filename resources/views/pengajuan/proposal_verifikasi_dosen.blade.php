@@ -29,10 +29,13 @@
         grid-template-columns: 1fr 1fr;
         gap: 14px;
         margin-bottom: 24px;
+        background: #e9ecef;
+        border-radius: 16px;
+        padding: 14px;
     }
 
     .info-box {
-        border: 1px solid #e5e5e5;
+        border: 2px solid #adb5bd;
         border-radius: 14px;
         padding: 16px 18px;
         background: #fff;
@@ -78,7 +81,7 @@
     }
 
     .dosen-card {
-        border: 1px solid #e5e5e5;
+        border: 2px solid #adb5bd;
         border-radius: 14px;
         padding: 18px;
         background: #fff;
@@ -305,7 +308,7 @@
     /* ── BOX STATUS REVIEWER ── */
     .status-reviewer-box {
         display: flex; align-items: center; gap: 14px;
-        background: #fff; border: 1px solid #e5e5e5; border-radius: 14px;
+        background: #fff; border: 2px solid #adb5bd; border-radius: 14px;
         padding: 18px 20px; margin-bottom: 24px;
     }
 

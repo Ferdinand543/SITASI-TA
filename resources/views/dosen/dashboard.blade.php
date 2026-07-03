@@ -75,11 +75,16 @@
                 ->count()
             : 0);
 
-    // ── BADGE BIMBINGAN: nyala kalau ada bimbingan baru ATAU proposal pending ──
+    // ── BADGE BIMBINGAN: nyala kalau ADA bimbingan yang belum divalidasi (Valid/Tidak Valid) ATAU proposal masih pending ──
+    // FIX: sebelumnya ngecek kolom 'status' (isinya 'Baru Dikirim') yang gak pernah keupdate,
+    // sekarang ngecek 'status_validasi' yang emang keupdate pas dosen klik Valid/Tidak Valid di modal riwayat bimbingan
     $jumlahBimbinganBaru = $isPembimbing
         ? \Illuminate\Support\Facades\DB::table('bimbingan')
             ->where('dosen_nid', $nimSesi)
-            ->where('status', 'Baru Dikirim')
+            ->where(function($q) {
+                $q->whereNull('status_validasi')
+                  ->orWhereNotIn('status_validasi', ['Valid', 'Tidak Valid']);
+            })
             ->count()
           + \Illuminate\Support\Facades\DB::table('pengajuan_proposal_bimbingan')
             ->where('dosen_nid', $nimSesi)

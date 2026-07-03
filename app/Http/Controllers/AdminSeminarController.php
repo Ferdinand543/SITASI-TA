@@ -13,6 +13,9 @@ class AdminSeminarController extends Controller
     {
         if (!session('user')) return redirect('/login');
 
+        // ── FIX BADGE: tandain admin baru aja buka halaman ini, biar badge sidebar clear ──
+        session(['admin_seminar_last_visit' => now()]);
+
         $query = PengajuanSeminar::where('is_draft', 0);
 
         if ($request->filled('search')) {

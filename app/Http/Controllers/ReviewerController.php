@@ -138,30 +138,56 @@ class ReviewerController extends Controller
             return redirect('/dashboard/dosen')->with('error', 'Akses ditolak!');
         }
 
-        $nimReviewer = session('user')->nim_nid;
+        $user        = session('user');
+        $isAdmin     = strtolower(trim($user->role)) === 'admin';
+        $nimReviewer = $user->nim_nid;
 
-        $proposal = DB::table('proposal')
-            ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
-            ->leftJoin('tinjauan_proposal as tp', function ($join) use ($nimReviewer) {
-                $join->on('tp.proposal_id', '=', 'proposal.id')
-                    ->where('tp.nim_nid_reviewer', '=', $nimReviewer);
-            })
-            ->where('proposal.id', $id)
-            ->where('proposal.nim_nid_reviewer', $nimReviewer)
-            ->select([
-                'proposal.id',
-                'proposal.nim_nid',
-                'mhs.nama',
-                'proposal.judul',
-                'proposal.file_proposal',
-                'proposal.tanggal_pengajuan',
-                'proposal.status as proposal_status',
-                'tp.id as tinjauan_id',
-                'tp.catatan',
-                'tp.file_tinjauan',
-                'tp.tanggal_tinjauan',
-            ])
-            ->first();
+        if ($isAdmin) {
+            // ADMIN: bisa lihat proposal siapa pun asal sudah punya reviewer
+            $proposal = DB::table('proposal')
+                ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
+                ->leftJoin('tinjauan_proposal as tp', 'tp.proposal_id', '=', 'proposal.id')
+                ->where('proposal.id', $id)
+                ->whereNotNull('proposal.nim_nid_reviewer')
+                ->select([
+                    'proposal.id',
+                    'proposal.nim_nid',
+                    'mhs.nama',
+                    'proposal.judul',
+                    'proposal.file_proposal',
+                    'proposal.tanggal_pengajuan',
+                    'proposal.status as proposal_status',
+                    'tp.id as tinjauan_id',
+                    'tp.catatan',
+                    'tp.file_tinjauan',
+                    'tp.tanggal_tinjauan',
+                ])
+                ->first();
+        } else {
+            // DOSEN REVIEWER — TIDAK DIUBAH SAMA SEKALI
+            $proposal = DB::table('proposal')
+                ->join('users as mhs', 'proposal.nim_nid', '=', 'mhs.nim_nid')
+                ->leftJoin('tinjauan_proposal as tp', function ($join) use ($nimReviewer) {
+                    $join->on('tp.proposal_id', '=', 'proposal.id')
+                        ->where('tp.nim_nid_reviewer', '=', $nimReviewer);
+                })
+                ->where('proposal.id', $id)
+                ->where('proposal.nim_nid_reviewer', $nimReviewer)
+                ->select([
+                    'proposal.id',
+                    'proposal.nim_nid',
+                    'mhs.nama',
+                    'proposal.judul',
+                    'proposal.file_proposal',
+                    'proposal.tanggal_pengajuan',
+                    'proposal.status as proposal_status',
+                    'tp.id as tinjauan_id',
+                    'tp.catatan',
+                    'tp.file_tinjauan',
+                    'tp.tanggal_tinjauan',
+                ])
+                ->first();
+        }
 
         if (!$proposal) {
             return redirect()->route('reviewer.proposal')->with('error', 'Proposal tidak ditemukan!');

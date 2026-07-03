@@ -374,7 +374,8 @@
         position: fixed;
         inset: 0;
         background: rgba(0, 0, 0, .5);
-        z-index: 2000;
+        z-index: 2300;
+        /* dinaikkan supaya di atas modal validasi (2100) & modal konfirmasi (2200) */
         align-items: center;
         justify-content: center;
         padding: 20px;
@@ -1064,19 +1065,19 @@
 
     {{-- GRID: PERSETUJUAN SEMINAR + ATUR PIN --}}
     @php
-        $seminarMhs = DB::table('pengajuan_seminars')
-            ->where('mahasiswa_id', $mahasiswa->nim_nid)
-            ->latest()->first();
+    $seminarMhs = DB::table('pengajuan_seminars')
+    ->where('mahasiswa_id', $mahasiswa->nim_nid)
+    ->latest()->first();
 
-        $urutanDosen = DB::table('dosen_pembimbing')
-            ->where('nim_nid_dosen', $dosen->nim_nid)
-            ->whereIn('proposal_id', DB::table('proposal')
-                ->where('nim_nid', $mahasiswa->nim_nid)
-                ->pluck('id'))
-            ->value('urutan');
+    $urutanDosen = DB::table('dosen_pembimbing')
+    ->where('nim_nid_dosen', $dosen->nim_nid)
+    ->whereIn('proposal_id', DB::table('proposal')
+    ->where('nim_nid', $mahasiswa->nim_nid)
+    ->pluck('id'))
+    ->value('urutan');
 
-        $kolomStatus = 'status_pembimbing' . $urutanDosen;
-        $sudahDisetujui = $seminarMhs && ($seminarMhs->$kolomStatus ?? '') === 'layak';
+    $kolomStatus = 'status_pembimbing' . $urutanDosen;
+    $sudahDisetujui = $seminarMhs && ($seminarMhs->$kolomStatus ?? '') === 'layak';
     @endphp
 
     @if($totalBimbingan >= $minBimbingan)
@@ -1141,14 +1142,14 @@
 
     {{-- STATUS KELAYAKAN --}}
     @php
-        $persen = min(100, round(($totalBimbingan / $minBimbingan) * 100));
-        if ($persen >= 100) {
-            $barColor = '#22C55E'; $barLight = '#F0FDF4'; $barBorder = '#BBF7D0'; $barText = '#15803D'; $barLabel = 'Selesai'; $badgeIcon = '✓'; $badgeText = 'Layak Seminar';
-        } elseif ($persen >= 50) {
-            $barColor = '#F59E0B'; $barLight = '#FFFBEB'; $barBorder = '#FDE68A'; $barText = '#92400E'; $barLabel = 'Berlangsung'; $badgeIcon = '⏳'; $badgeText = 'Belum Mencukupi';
-        } else {
-            $barColor = '#EF4444'; $barLight = '#FEF2F2'; $barBorder = '#FECACA'; $barText = '#991B1B'; $barLabel = 'Awal'; $badgeIcon = '✕'; $badgeText = 'Belum Mencukupi';
-        }
+    $persen = min(100, round(($totalBimbingan / $minBimbingan) * 100));
+    if ($persen >= 100) {
+    $barColor = '#22C55E'; $barLight = '#F0FDF4'; $barBorder = '#BBF7D0'; $barText = '#15803D'; $barLabel = 'Selesai'; $badgeIcon = '✓'; $badgeText = 'Layak Seminar';
+    } elseif ($persen >= 50) {
+    $barColor = '#F59E0B'; $barLight = '#FFFBEB'; $barBorder = '#FDE68A'; $barText = '#92400E'; $barLabel = 'Berlangsung'; $badgeIcon = '⏳'; $badgeText = 'Belum Mencukupi';
+    } else {
+    $barColor = '#EF4444'; $barLight = '#FEF2F2'; $barBorder = '#FECACA'; $barText = '#991B1B'; $barLabel = 'Awal'; $badgeIcon = '✕'; $badgeText = 'Belum Mencukupi';
+    }
     @endphp
 
     <div class="kelayakan-card">
@@ -1210,95 +1211,94 @@
                 <tbody>
                     @forelse($bimbingan as $i => $b)
                     @php
-                        $dokList = [];
-                        if (!empty($b->dokumentasi)) {
-                            $dekDok = json_decode($b->dokumentasi, true);
-                            if (is_array($dekDok)) {
-                                $dokList = $dekDok;
+                    $dokList = [];
+                    if (!empty($b->dokumentasi)) {
+                    $dekDok = json_decode($b->dokumentasi, true);
+                    if (is_array($dekDok)) {
+                    $dokList = $dekDok;
+                    } else {
+                    $dokList = [$b->dokumentasi];
+                    }
+                    }
+
+                    $dokumentasiHtml = '';
+                    if (count($dokList) > 0) {
+                    $showMax = 2;
+                    $total = count($dokList);
+                    $documented = array_slice($dokList, 0, $showMax);
+                    $remaining = $total - $showMax;
+                    $dokumentasiHtml = '<div class="mv-dok-grid">';
+                        foreach ($documented as $dok) {
+                        $dokUrl = asset('uploads/bimbingan/' . $dok);
+                        $dokumentasiHtml .= '<img src="'.$dokUrl.'" class="mv-dok-img" onclick="lihatFoto(\''.$dokUrl.'\')">';
+                        }
+                        if ($remaining > 0) {
+                        $dokumentasiHtml .= '<div class="mv-dok-more">+' . $remaining . ' More</div>';
+                        } elseif ($total < 3) {
+                            for ($pad=$total; $pad < 3; $pad++) {
+                            $dokumentasiHtml .='<div></div>' ;
+                            }
+                            }
+                            $dokumentasiHtml .='</div>' ;
+                            $dokumentasiHtml .='<div class="mv-dok-caption">Klik gambar untuk memperbesar</div>' ;
                             } else {
-                                $dokList = [$b->dokumentasi];
+                            $dokumentasiHtml='<span class="mv-empty-text">Tidak ada dokumentasi</span>' ;
                             }
-                        }
 
-                        $dokumentasiHtml = '';
-                        if (count($dokList) > 0) {
-                            $showMax = 2;
-                            $total = count($dokList);
-                            $documented = array_slice($dokList, 0, $showMax);
-                            $remaining = $total - $showMax;
-                            $dokumentasiHtml = '<div class="mv-dok-grid">';
-                            foreach ($documented as $dok) {
-                                $dokUrl = asset('uploads/bimbingan/' . $dok);
-                                $dokumentasiHtml .= '<img src="'.$dokUrl.'" class="mv-dok-img" onclick="lihatFoto(\''.$dokUrl.'\')">';
-                            }
-                            if ($remaining > 0) {
-                                $dokumentasiHtml .= '<div class="mv-dok-more">+' . $remaining . ' More</div>';
-                            } elseif ($total < 3) {
-                                for ($pad = $total; $pad < 3; $pad++) {
-                                    $dokumentasiHtml .= '<div></div>';
-                                }
-                            }
-                            $dokumentasiHtml .= '</div>';
-                            $dokumentasiHtml .= '<div class="mv-dok-caption">Klik gambar untuk memperbesar</div>';
-                        } else {
-                            $dokumentasiHtml = '<span class="mv-empty-text">Tidak ada dokumentasi</span>';
-                        }
-
-                        $statusValidasi = $b->status_validasi ?? 'Validasi Bimbingan';
-                        if ($statusValidasi === 'Valid') {
+                            $statusValidasi=$b->status_validasi ?? 'Validasi Bimbingan';
+                            if ($statusValidasi === 'Valid') {
                             $svBg = '#F0FDF4'; $svBorder = '#BBF7D0'; $svText = '#15803D'; $svIcon = '✓';
-                        } elseif ($statusValidasi === 'Tidak Valid') {
+                            } elseif ($statusValidasi === 'Tidak Valid') {
                             $svBg = '#FEF2F2'; $svBorder = '#FECACA'; $svText = '#991B1B'; $svIcon = '✕';
-                        } else {
+                            } else {
                             $svBg = '#FFFBEB'; $svBorder = '#FDE68A'; $svText = '#92400E'; $svIcon = '⏳';
-                        }
-                    @endphp
-                    <tr class="clickable-row"
-                        onclick="bukaModalValidasi(this)"
-                        data-topik="{{ strtolower($b->topik_bimbingan) }}"
-                        data-status="{{ $b->status }}"
-                        data-id="{{ $b->id }}"
-                        data-nama="{{ $mahasiswa->nama ?? '-' }}"
-                        data-nim="{{ $mahasiswa->nim_nid ?? '-' }}"
-                        data-ke="{{ $b->pertemuan_ke }}"
-                        data-tanggal="{{ \Carbon\Carbon::parse($b->tanggal_bimbingan)->translatedFormat('d M Y') }}"
-                        data-judul="{{ $judulTA }}"
-                        data-topik-full="{{ $b->topik_bimbingan }}"
-                        data-catatan="{{ $b->catatan_dosen ?? '' }}"
-                        data-status-validasi="{{ $statusValidasi }}"
-                        data-dokumentasi-html="{{ htmlspecialchars($dokumentasiHtml, ENT_QUOTES, 'UTF-8') }}"
-                    >
-                        <td>{{ $i + 1 }}</td>
-                        <td style="white-space:nowrap;font-size:12.5px;">{{ \Carbon\Carbon::parse($b->tanggal_bimbingan)->translatedFormat('d M Y') }}</td>
-                        <td><span class="badge-ke">{{ $b->pertemuan_ke }}</span></td>
-                        <td style="max-width:160px;font-size:12px;">{{ Str::limit($judulTA, 40) }}</td>
-                        <td style="max-width:180px;font-size:12.5px;">{{ $b->topik_bimbingan }}</td>
-                        <td onclick="event.stopPropagation()">
-                            @if(count($dokList) > 0)
-                                <img src="{{ asset('uploads/bimbingan/' . $dokList[0]) }}" class="thumb" alt="Dokumentasi" onclick="lihatFoto('{{ asset('uploads/bimbingan/' . $dokList[0]) }}')">
-                            @else
-                                <span style="color:#9CA3AF;font-size:12px;">—</span>
-                            @endif
-                        </td>
-                        <td>
-                            <span class="badge-validasi" style="background:{{ $svBg }};color:{{ $svText }};border:1px solid {{ $svBorder }};">{{ $statusValidasi }}</span>
-                        </td>
-                        <td>
-                            @if(!empty($b->catatan_dosen))
-                                <span class="catatan-text">{{ $b->catatan_dosen }}</span>
-                            @else
-                                <span class="empty-dash">—</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr class="empty-row">
-                        <td colspan="8">
-                            <div style="font-size:32px;margin-bottom:8px;">📋</div>
-                            Belum ada riwayat bimbingan
-                        </td>
-                    </tr>
-                    @endforelse
+                            }
+                            @endphp
+                            <tr class="clickable-row"
+                                onclick="bukaModalValidasi(this)"
+                                data-topik="{{ strtolower($b->topik_bimbingan) }}"
+                                data-status="{{ $b->status }}"
+                                data-id="{{ $b->id }}"
+                                data-nama="{{ $mahasiswa->nama ?? '-' }}"
+                                data-nim="{{ $mahasiswa->nim_nid ?? '-' }}"
+                                data-ke="{{ $b->pertemuan_ke }}"
+                                data-tanggal="{{ \Carbon\Carbon::parse($b->tanggal_bimbingan)->translatedFormat('d M Y') }}"
+                                data-judul="{{ $judulTA }}"
+                                data-topik-full="{{ $b->topik_bimbingan }}"
+                                data-catatan="{{ $b->catatan_dosen ?? '' }}"
+                                data-status-validasi="{{ $statusValidasi }}"
+                                data-dokumentasi-html="{{ htmlspecialchars($dokumentasiHtml, ENT_QUOTES, 'UTF-8') }}">
+                                <td>{{ $i + 1 }}</td>
+                                <td style="white-space:nowrap;font-size:12.5px;">{{ \Carbon\Carbon::parse($b->tanggal_bimbingan)->translatedFormat('d M Y') }}</td>
+                                <td><span class="badge-ke">{{ $b->pertemuan_ke }}</span></td>
+                                <td style="max-width:160px;font-size:12px;">{{ Str::limit($judulTA, 40) }}</td>
+                                <td style="max-width:180px;font-size:12.5px;">{{ $b->topik_bimbingan }}</td>
+                                <td onclick="event.stopPropagation()">
+                                    @if(count($dokList) > 0)
+                                    <img src="{{ asset('uploads/bimbingan/' . $dokList[0]) }}" class="thumb" alt="Dokumentasi" onclick="lihatFoto('{{ asset('uploads/bimbingan/' . $dokList[0]) }}')">
+                                    @else
+                                    <span style="color:#9CA3AF;font-size:12px;">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="badge-validasi" style="background:{{ $svBg }};color:{{ $svText }};border:1px solid {{ $svBorder }};">{{ $statusValidasi }}</span>
+                                </td>
+                                <td>
+                                    @if(!empty($b->catatan_dosen))
+                                    <span class="catatan-text">{{ $b->catatan_dosen }}</span>
+                                    @else
+                                    <span class="empty-dash">—</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @empty
+                            <tr class="empty-row">
+                                <td colspan="8">
+                                    <div style="font-size:32px;margin-bottom:8px;">📋</div>
+                                    Belum ada riwayat bimbingan
+                                </td>
+                            </tr>
+                            @endforelse
                 </tbody>
             </table>
         </div>
@@ -1458,19 +1458,19 @@
         document.getElementById('mvTopik').textContent = '"' + row.dataset.topikFull + '"';
         document.getElementById('mvDokumentasi').innerHTML = decodeHTMLEntities(row.dataset.dokumentasiHtml);
 
-        const statusAwal     = row.dataset.statusValidasi;
+        const statusAwal = row.dataset.statusValidasi;
         const sudahDivalidasi = (statusAwal === 'Valid' || statusAwal === 'Tidak Valid');
-        const bimbinganId    = row.dataset.id;
-        const catatanAwal    = row.dataset.catatan || '';
-        const section        = document.getElementById('validasiSection');
+        const bimbinganId = row.dataset.id;
+        const catatanAwal = row.dataset.catatan || '';
+        const section = document.getElementById('validasiSection');
 
         if (sudahDivalidasi) {
             // ── READ-ONLY: sudah divalidasi, tampilkan info saja ──
-            const isValid     = statusAwal === 'Valid';
-            const bgColor     = isValid ? '#F0FDF4' : '#FEF2F2';
+            const isValid = statusAwal === 'Valid';
+            const bgColor = isValid ? '#F0FDF4' : '#FEF2F2';
             const borderColor = isValid ? '#BBF7D0' : '#FECACA';
-            const textColor   = isValid ? '#15803D' : '#991B1B';
-            const icon        = isValid ? '✓' : '✕';
+            const textColor = isValid ? '#15803D' : '#991B1B';
+            const icon = isValid ? '✓' : '✕';
 
             let catatanHtml = '';
             if (!isValid && catatanAwal) {

@@ -14,6 +14,19 @@ class HasilPenilaianMahasiswaController extends Controller
         $user = session('user');
         $nim  = $user->nim_nid;
 
+        // ── Tandai notif nilai sudah dibaca (HARUS sama persis dengan logic di AppServiceProvider) ──
+        $totalNilaiPenguji = DB::table('penilaian_seminar')
+            ->where('nim_nid', $nim)
+            ->whereNotNull('kelayakan')
+            ->count();
+
+        $totalNilaiPembimbing = DB::table('penilaian_seminar_pembimbing')
+            ->where('nim_nid', $nim)
+            ->where('status', 'submitted')
+            ->count();
+
+        session(['notif_nilai_terakhir_' . $nim => $totalNilaiPenguji + $totalNilaiPembimbing]);
+
         $proposal = DB::table('proposal')
             ->where('nim_nid', $nim)
             ->latest()
@@ -77,10 +90,10 @@ class HasilPenilaianMahasiswaController extends Controller
             ->first();
 
         // ── Nama Dosen Pembimbing ──
-        $dospem1 = DB::table('usulan_pembimbing')
+        $dospem1 = DB::table('dosen_pembimbing')
             ->where('proposal_id', $proposal->id)
             ->where('urutan', 1)->first();
-        $dospem2 = DB::table('usulan_pembimbing')
+        $dospem2 = DB::table('dosen_pembimbing')
             ->where('proposal_id', $proposal->id)
             ->where('urutan', 2)->first();
 

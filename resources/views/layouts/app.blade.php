@@ -932,7 +932,12 @@
 
             @php
             $notifJudulAdmin = DB::table('pengajuan_judul')->where('status','menunggu verifikasi')->exists();
-            $notifSeminarAdmin = DB::table('pengajuan_seminars')->where('status_administrasi','Menunggu Verifikasi')->exists();
+
+            // ── FIX BADGE ADMINISTRASI SEMINAR: nyala kalau ada pengajuan baru SETELAH admin terakhir buka halamannya ──
+            $lastVisitSeminarAdmin = session('admin_seminar_last_visit');
+            $notifSeminarAdmin = $lastVisitSeminarAdmin
+                ? DB::table('pengajuan_seminars')->where('created_at', '>', $lastVisitSeminarAdmin)->exists()
+                : DB::table('pengajuan_seminars')->where('status_administrasi', 'Menunggu Verifikasi')->exists();
 
             // ── BADGE ADMIN PROPOSAL (logika per sublink) ──
             $badgeDospemAdmin = DB::table('proposal')

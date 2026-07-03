@@ -718,7 +718,7 @@
                 <div class="card-icon-wrap"><img src="{{ asset('images/seminar.jpeg') }}" alt="Daftar Seminar"></div>
                 <div class="card-text"><h6>Daftar Seminar</h6><p>Ajukan Pendaftaran Seminar</p></div>
             </a>
-            <a href="#" class="menu-card-item">
+            <a href="{{ route('mahasiswa.hasil.penilaian') }}" class="menu-card-item">
                 @if(($notifNilaiMahasiswa ?? 0) > 0)<span class="card-badge-notif"></span>@endif
                 <div class="card-icon-wrap"><img src="{{ asset('images/nilai.jpeg') }}" alt="Nilai"></div>
                 <div class="card-text"><h6>Nilai</h6><p>Lihat Hasil Penilaian TA dan Seminar</p></div>

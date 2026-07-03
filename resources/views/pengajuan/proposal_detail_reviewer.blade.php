@@ -259,7 +259,7 @@
    ============================================================ */
 .detail-card {
     background: #fff;
-    border: 1.5px solid #E5DFD0;
+    border: 2px solid #adb5bd;
     border-radius: 14px;
     padding: 18px 20px;
 }
@@ -377,7 +377,7 @@
    ============================================================ */
 .tinjauan-catatan-box {
     background: #fff;
-    border: 1.5px solid #E5DFD0;
+    border: 2px solid #adb5bd;
     border-radius: 14px;
     padding: 18px 20px;
     display: flex;
@@ -416,7 +416,7 @@
     display: flex;
     align-items: center;
     background: #F7F5F0;
-    border: 1.5px solid #E5DFD0;
+    border: 2px solid #adb5bd;
     border-radius: 10px;
     padding: 12px 16px;
     transition: 0.2s;
@@ -427,7 +427,7 @@
 }
 .file-tinjauan-empty {
     background: #F7F5F0;
-    border: 1.5px solid #E5DFD0;
+    border: 2px solid #adb5bd;
     border-radius: 10px;
     padding: 14px 16px;
     font-size: 0.85rem;
