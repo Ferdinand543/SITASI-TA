@@ -622,12 +622,7 @@
                             <input type="text" class="search-input" id="searchProposal"
                                 placeholder="Cari judul atau dosen..."
                                 oninput="filterProposal()">
-                            <select class="filter-select" id="filterStatusProposal" onchange="filterProposal()">
-                                <option value="">Semua Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="disetujui">Disetujui</option>
-                                <option value="ditolak">Ditolak</option>
-                            </select>
+                           
                             <button class="btn-reset" onclick="resetFilterProposal()">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -644,7 +639,6 @@
                                     <th style="width:110px;">Tanggal</th>
                                     <th>Judul</th>
                                     <th style="width:180px;">Dosen Pembimbing</th>
-                                    <th style="width:110px;">Status</th>
                                     <th>File / Link</th>
                                 </tr>
                             </thead>
@@ -673,7 +667,7 @@
                                     </td>
                                     <td style="font-size:12px;">{{ $rp->judul }}</td>
                                     <td style="font-size:12px;">{{ $namaDosenRP->nama ?? '—' }}</td>
-                                    <td><span class="status-badge {{ $statusClass }}">● {{ $statusLabel }}</span></td>
+                                    
                                     <td>
                                         <div style="display:flex;flex-direction:column;gap:4px;">
                                             @foreach($fileData['files'] ?? [] as $f)
@@ -700,7 +694,7 @@
                                 </tr>
                                 @empty
                                 <tr class="empty-row">
-                                    <td colspan="6">
+                                    <td colspan="5">
                                         <div style="font-size:32px;margin-bottom:8px;">📁</div>
                                         Belum ada riwayat upload dokumen
                                     </td>
@@ -897,20 +891,17 @@
     }
 
     // ── FILTER TABEL PROPOSAL (FIXED) ──
-    function filterProposal() {
-        const q      = document.getElementById('searchProposal').value.toLowerCase().trim();
-        const status = document.getElementById('filterStatusProposal').value;
+   function filterProposal() {
+        const q = document.getElementById('searchProposal').value.toLowerCase().trim();
         document.querySelectorAll('#tabelProposal tbody tr:not(.empty-row)').forEach(function(row) {
             const searchStr = ((row.dataset.judul || '') + ' ' + (row.dataset.dosen || ''));
             const matchQ = !q || searchStr.includes(q);
-            const matchS = !status || row.dataset.status === status;
-            row.style.display = (matchQ && matchS) ? '' : 'none';
+            row.style.display = matchQ ? '' : 'none';
         });
     }
 
     function resetFilterProposal() {
         document.getElementById('searchProposal').value        = '';
-        document.getElementById('filterStatusProposal').value  = '';
         filterProposal();
     }
 

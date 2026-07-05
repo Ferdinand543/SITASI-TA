@@ -400,9 +400,9 @@ $jmlTolak   = $sudahLolos ? 0 : collect($statusDokumenDB)->filter(fn($v) => $v =
                 </div>
 
                 <div class="catatan-card">
-                    <div class="catatan-title">Catatan Umum (Opsional)</div>
+                    <div class="catatan-title">Catatan (Opsional)</div>
                     <textarea name="catatan" class="catatan-textarea"
-                        placeholder="Catatan umum untuk mahasiswa..."
+                        placeholder="Catatan"
                         {{ $sudahLolos ? 'readonly' : '' }}>{{ old('catatan', $pengajuan->catatan_admin ?? '') }}</textarea>
                 </div>
 
