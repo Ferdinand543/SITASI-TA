@@ -48,7 +48,7 @@
     .stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
     .stat-card {
         background: var(--white); border-radius: var(--radius); padding: 20px 22px;
-        border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        border: 1.5px solid #CBD1DC; box-shadow: 0 2px 10px rgba(0,0,0,.05);
         min-width: 0;
     }
     .stat-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
@@ -123,7 +123,7 @@
     /* SIDEBAR */
     .sidebar-card {
         background: var(--white); border-radius: var(--radius); padding: 18px;
-        border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        border: 1.5px solid #CBD1DC; box-shadow: 0 2px 10px rgba(0,0,0,.05);
     }
     .sidebar-title { font-size: 13px; font-weight: 800; color: var(--neutral); margin-bottom: 14px; }
     .sidebar-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #F3F4F6; }
@@ -143,7 +143,7 @@
         display: inline-flex; align-items: center; gap: 6px;
         padding: 9px 16px; background: #fff; border: 1.5px solid var(--border);
         border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--neutral);
-        text-decoration: none; transition: all .2s; margin-top: 20px;
+        text-decoration: none; transition: all .2s; margin-bottom: 20px;
     }
     .btn-back:hover { border-color: var(--gold); color: var(--gold); }
 
@@ -158,6 +158,13 @@
         <div class="jms-hero-title">Jadwal Seminar Mahasiswa</div>
         <div class="jms-hero-sub">Pantau jadwal seminar mahasiswa yang menjadi tanggung jawab Anda sebagai dosen pembimbing maupun dosen penguji.</div>
     </div>
+
+    <a href="{{ route('jadwal.index') }}" class="btn-back">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
+        </svg>
+        Kembali
+    </a>
 
     <div class="jms-grid">
 
@@ -316,13 +323,6 @@
                     </table>
                 </div>
             </div>
-
-            <a href="{{ route('jadwal.index') }}" class="btn-back">
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
-                </svg>
-                Kembali
-            </a>
 
         </div>
 

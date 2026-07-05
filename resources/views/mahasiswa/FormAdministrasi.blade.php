@@ -386,7 +386,7 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
 
             {{-- 6. LAPORAN TUGAS AKHIR --}}
             <div class="sec-card">
-                <div class="sec-head"><div class="sec-num">6</div><div class="sec-title">Laporan Tugas Akhir 1</div></div>
+                <div class="sec-head"><div class="sec-num">6</div><div class="sec-title">Proposal Tugas Akhir 1</div></div>
                 <div class="form-row">
                 @php
                 $dokLaporan = [
@@ -453,7 +453,7 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
         <div>
             <div class="status-card">
                 <div class="status-title">Status Pendaftaran</div>
-                @php $steps = ['Informasi Mahasiswa','Informasi Akademik','Dokumen Akademik','Informasi Tugas Akhir','Dokumen Bimbingan','Laporan Tugas Akhir 1']; @endphp
+                @php $steps = ['Informasi Mahasiswa','Informasi Akademik','Dokumen Akademik','Informasi Tugas Akhir','Dokumen Bimbingan','Proposal Tugas Akhir 1']; @endphp
                 @foreach($steps as $i => $step)
                 <div class="status-item" id="step-item-{{ $i }}">
                     <div class="status-dot" id="step-dot-{{ $i }}">

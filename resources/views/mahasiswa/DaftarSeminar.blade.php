@@ -31,12 +31,12 @@
 
     .btn-ajukan {
         display: inline-flex; align-items: center; gap: 7px;
-        background: var(--gold); color: #fff; padding: 10px 22px;
+        background: #FFE083; color: #6C5700; padding: 10px 22px;
         border-radius: 99px; font-size: 13px; font-weight: 700;
         border: none; cursor: pointer; text-decoration: none;
         transition: background .2s, transform .15s;
     }
-    .btn-ajukan:hover { background: #b8911f; transform: translateY(-1px); color: #fff; }
+    .btn-ajukan:hover { background: #f5d040; color: #6C5700; transform: translateY(-1px); }
 
     .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 24px; }
     .stat-card { background: var(--white); border-radius: var(--radius); padding: 18px 20px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,.04); display: flex; align-items: flex-start; gap: 14px; }
@@ -102,13 +102,13 @@
     .jadwal-row svg { flex-shrink: 0; }
 
     .btn-daftar {
-        background: var(--neutral); color: #fff; padding: 9px 16px;
+        background: #FFE083; color: #6C5700; padding: 9px 16px;
         border-radius: 10px; font-size: 12px; font-weight: 700;
         border: none; cursor: pointer; text-decoration: none;
         white-space: nowrap; text-align: center; display: inline-block;
         transition: background .2s; line-height: 1.4;
     }
-    .btn-daftar:hover { background: #334155; color: #fff; }
+    .btn-daftar:hover { background: #f5d040; color: #6C5700; }
 
     .btn-lihat { font-size: 12px; font-weight: 700; color: var(--neutral); text-decoration: none; white-space: nowrap; }
     .btn-lihat:hover { color: var(--gold); }

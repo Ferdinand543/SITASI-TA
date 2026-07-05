@@ -262,11 +262,11 @@
     }
     .popup-actions { display: flex; gap: 10px; justify-content: center; }
     .btn-popup-ok {
-        padding: 10px 40px; background: var(--gold); color: #fff;
+        padding: 10px 40px; background: #FACC15; color: #735C00;
         border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
-        cursor: pointer; font-family: inherit; transition: background .2s;
+        cursor: pointer; font-family: inherit; transition: background .2s, color .2s;
     }
-    .btn-popup-ok:hover { background: #b8911f; }
+    .btn-popup-ok:hover { background: #d4a00e; color: #fff; }
     .btn-popup-batal {
         padding: 10px 24px; background: #F3F4F6; color: var(--muted);
         border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
@@ -274,11 +274,11 @@
     }
     .btn-popup-batal:hover { background: #E5E7EB; }
     .btn-popup-simpan {
-        padding: 10px 24px; background: var(--gold); color: #fff;
+        padding: 10px 24px; background: #FACC15; color: #735C00;
         border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
-        cursor: pointer; font-family: inherit; transition: background .2s;
+        cursor: pointer; font-family: inherit; transition: background .2s, color .2s;
     }
-    .btn-popup-simpan:hover { background: #b8911f; }
+    .btn-popup-simpan:hover { background: #d4a00e; color: #fff; }
     .btn-popup-hapus {
         padding: 10px 24px; background: var(--danger); color: #fff;
         border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
@@ -564,11 +564,14 @@
             return;
         }
 
+        // FIX CEKLIS: cek apakah semua item yang sedang tampil sudah terpilih semua
+        const semuaTerpilih = filtered.length > 0 && filtered.every(m => selected.has(m.id));
+
         list.innerHTML = `
             <table class="modal-table">
                 <thead>
                     <tr>
-                        <th style="width:36px;"></th>
+                        <th style="width:36px;"><input type="checkbox" class="checkbox-custom" id="checkAllModal" ${semuaTerpilih ? 'checked' : ''} onclick="toggleSelectAll(this.checked)"></th>
                         <th>NIM</th>
                         <th>Nama Mahasiswa</th>
                         <th>Judul Proposal</th>
@@ -593,6 +596,28 @@
         else selected.add(id);
         updateSelectedCount();
         renderModalList(document.getElementById('modalSearch').value);
+    }
+
+    // FIX CEKLIS (BARU): centang/uncentang semua mahasiswa yang sedang tampil di list (sesuai filter search saat ini)
+    function toggleSelectAll(checked) {
+        const sudahAdaIds = new Set(pesertaData.map(p => p.id));
+        const search = document.getElementById('modalSearch').value;
+        const filtered = allMahasiswa.filter(m => {
+            const notAdded    = !sudahAdaIds.has(m.id);
+            const matchSearch = !search ||
+                m.nama.toLowerCase().includes(search.toLowerCase()) ||
+                m.mahasiswa_id.toLowerCase().includes(search.toLowerCase());
+            return notAdded && matchSearch;
+        });
+
+        if (checked) {
+            filtered.forEach(m => selected.add(m.id));
+        } else {
+            filtered.forEach(m => selected.delete(m.id));
+        }
+
+        updateSelectedCount();
+        renderModalList(search);
     }
 
     function updateSelectedCount() {
@@ -825,7 +850,7 @@
 
     function popupBerhasilOk() {
         document.getElementById('popupBerhasil').classList.remove('active');
-        window.location.href = '{{ route("admin.seminar.index") }}';
+        window.location.href = '{{ route("jadwalseminar.index") }}';
     }
 
     document.getElementById('popupBerhasil').addEventListener('click', function (e) {

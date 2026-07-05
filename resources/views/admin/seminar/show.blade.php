@@ -71,6 +71,15 @@ $jmlTolak   = $sudahLolos ? 0 : collect($statusDokumenDB)->filter(fn($v) => $v =
     .hero-title { font-size: 24px; font-weight: 800; color: #7C5C00; margin-bottom: 4px; }
     .hero-sub   { font-size: 13px; color: #92400E; line-height: 1.6; max-width: 500px; }
 
+    .btn-kembali-seminar {
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 700;
+        background: var(--white); border: 1.5px solid var(--border);
+        color: var(--muted); text-decoration: none; transition: .2s; cursor: pointer;
+        margin-bottom: 20px;
+    }
+    .btn-kembali-seminar:hover { border-color: var(--gold); color: var(--gold); }
+
     .verif-grid { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
 
     .v-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
@@ -183,6 +192,11 @@ $jmlTolak   = $sudahLolos ? 0 : collect($statusDokumenDB)->filter(fn($v) => $v =
             <div class="hero-sub">Tinjau dan verifikasi data administrasi seminar mahasiswa.</div>
         </div>
     </div>
+
+    <a href="{{ route('admin.seminar.index') }}" class="btn-kembali-seminar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+        Kembali
+    </a>
 
     <form method="POST" action="{{ route('admin.seminar.verifikasi', $pengajuan->id) }}" id="formVerif">
         @csrf

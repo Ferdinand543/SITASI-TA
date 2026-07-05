@@ -157,8 +157,8 @@
         padding: 11px 32px; border-radius: 10px; font-size: 14px; font-weight: 700;
         cursor: pointer; font-family: inherit; border: none; transition: all .2s;
     }
-    .popup-btn.ok { background: var(--gold); color: #fff; min-width: 120px; }
-    .popup-btn.ok:hover { background: #b8911f; }
+    .popup-btn.ok { background: #FACC15; color: #735C00; min-width: 120px; }
+    .popup-btn.ok:hover { background: #d4a00e; color: #fff; }
 
     /* List bentrok dosen */
     .bentrok-list {

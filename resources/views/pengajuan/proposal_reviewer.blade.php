@@ -587,8 +587,8 @@
 .mnew-footer      { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
 .mnew-btn-kembali { padding: 10px 24px; border-radius: 10px; border: 1.5px solid #D1C6AB; background: #fff; color: var(--brown-dark); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
 .mnew-btn-kembali:hover { background: #FEF3C7; border-color: var(--gold); }
-.mnew-btn-kirim   { padding: 10px 28px; border-radius: 10px; border: none; background: var(--gold); color: #fff; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-.mnew-btn-kirim:hover { background: var(--brown-dark); }
+.mnew-btn-kirim   { padding: 10px 28px; border-radius: 10px; border: none; background: #FFE083; color: #6C5700; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+.mnew-btn-kirim:hover { background: #f5d040; color: #6C5700; }
 
 /* ── POPUP ── */
 .popup-overlay { display: none; position: fixed; inset: 0; background: rgba(17,28,45,0.45); z-index: 99999; align-items: center; justify-content: center; }

@@ -717,8 +717,8 @@
         padding: 10px 22px;
         border-radius: 10px;
         border: none;
-        background: var(--gold);
-        color: #fff;
+        background: #FFE083;
+        color: #6C5700;
         font-size: 13px;
         font-weight: 800;
         cursor: pointer;
@@ -730,7 +730,8 @@
     }
 
     .mv-btn-kirim:hover {
-        background: #B5901E;
+        background: #f5d040;
+        color: #6C5700;
     }
 
     /* ===== GRID SEMINAR + PIN ===== */
@@ -781,8 +782,8 @@
         width: 100%;
         padding: 12px;
         border-radius: 10px;
-        background: #FFE083;
-        color: #6C5700;
+        background: #FACC15;
+        color: #735C00;
         font-size: 13px;
         font-weight: 800;
         cursor: pointer;
@@ -792,12 +793,12 @@
         text-decoration: none;
         box-sizing: border-box;
         border: none;
-        transition: background .2s;
+        transition: background .2s, color .2s;
     }
 
     .btn-seminar:hover {
-        background: #f5d050;
-        color: #4a3b00;
+        background: #d4a00e;
+        color: #fff;
     }
 
     .btn-seminar-done {
@@ -1013,12 +1014,13 @@
         cursor: pointer;
         transition: .2s;
         border: none;
-        background: var(--gold);
-        color: #fff;
+        background: #FFE083;
+        color: #6C5700;
     }
 
     .mk-btn-konfirmasi:hover {
-        background: #B5901E;
+        background: #f5d040;
+        color: #6C5700;
     }
 
     /* ===== RESPONSIVE ===== */

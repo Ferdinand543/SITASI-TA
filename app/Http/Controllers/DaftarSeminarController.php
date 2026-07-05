@@ -624,6 +624,6 @@ class DaftarSeminarController extends Controller
         ]);
 
         return redirect()->route('seminar.daftar')
-            ->with('success', 'Pendaftaran seminar berhasil! Menunggu penjadwalan dari admin.');
+            ->with('success', 'Pendaftaran seminar berhasil! Menunggu penjadwalan.');
     }
 }

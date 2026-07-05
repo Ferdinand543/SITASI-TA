@@ -36,7 +36,7 @@
     .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; min-width: 0; }
     .stat-card {
         background: var(--white); border-radius: var(--radius); padding: 20px 22px;
-        border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        border: 1.5px solid #CBD1DC; box-shadow: 0 2px 10px rgba(0,0,0,.05);
         min-width: 0;
     }
     .stat-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
@@ -125,7 +125,7 @@
         display: inline-flex; align-items: center; gap: 6px;
         padding: 9px 16px; background: #fff; border: 1.5px solid var(--border);
         border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--neutral);
-        text-decoration: none; transition: all .2s; margin-bottom: 20px;
+        text-decoration: none; transition: all .2s; margin-bottom: 16px;
     }
     .btn-back:hover { border-color: var(--gold); color: var(--gold); }
 
@@ -168,12 +168,12 @@
         padding: 11px 32px; border-radius: 10px; font-size: 14px; font-weight: 700;
         cursor: pointer; font-family: inherit; border: none; transition: all .2s;
     }
-    .popup-btn.ok     { background: var(--gold); color: #fff; min-width: 120px; }
-    .popup-btn.ok:hover { background: #b8911f; }
+    .popup-btn.ok     { background: #FACC15; color: #735C00; min-width: 120px; }
+    .popup-btn.ok:hover { background: #d4a00e; color: #fff; }
     .popup-btn.batal  { background: #E5E7EB; color: #374151; }
     .popup-btn.batal:hover { background: #D1D5DB; }
-    .popup-btn.konfirm { background: var(--gold); color: #fff; }
-    .popup-btn.konfirm:hover { background: #b8911f; }
+    .popup-btn.konfirm { background: #FACC15; color: #735C00; }
+    .popup-btn.konfirm:hover { background: #d4a00e; color: #fff; }
 
     @media (max-width: 900px) { .stat-row { grid-template-columns: 1fr; } }
 </style>
@@ -193,6 +193,13 @@
         {{ session('success') }}
     </div>
     @endif
+
+    <a href="{{ route('jadwal.index') }}" class="btn-back">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
+        </svg>
+        Kembali
+    </a>
 
     <div class="stat-row">
         <div class="stat-card">
@@ -373,15 +380,6 @@
                 </tbody>
             </table>
         </div>
-    </div>
-
-    <div style="margin-top:20px;">
-        <a href="{{ route('jadwal.index') }}" class="btn-back">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
-            </svg>
-            Kembali
-        </a>
     </div>
 
 </div>

@@ -304,7 +304,7 @@
             </button>
             <button type="button" onclick="konfirmasiSubmit()"
                 style="padding:12px 32px;border-radius:12px;
-                    border:none;background:#735C00;color:#fff;
+                    border:none;background:#FACC15;color:#735C00;
                     font-size:0.9rem;font-weight:700;cursor:pointer;
                     font-family:'Hanken Grotesk',sans-serif;
                     display:flex;align-items:center;gap:8px;">
@@ -383,12 +383,12 @@ function konfirmasiSubmit() {
     Swal.fire({
         title: 'Submit Penilaian?',
         html: `Nilai akhir mahasiswa ini adalah <strong style="color:#735C00;font-size:1.2rem;">${nilai}</strong>.<br><br>
-               <span style="color:#6b7280;font-size:0.88rem;">Penilaian yang sudah disubmit masih dapat diedit selama periode seminar berlangsung.</span>`,
+            <span style="color:#6b7280;font-size:0.88rem;">Penilaian yang sudah disubmit masih dapat diedit selama periode seminar berlangsung.</span>`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#735C00',
+        confirmButtonColor: '#FACC15',
         cancelButtonColor: '#d1d5db',
-        confirmButtonText: '<span style="color:#fff;font-weight:700;">Ya, Submit</span>',
+        confirmButtonText: '<span style="color:#735C00;font-weight:700;">Ya, Submit</span>',
         cancelButtonText: 'Batal',
     }).then(result => {
         if (result.isConfirmed) {

@@ -650,7 +650,7 @@
             @endif
 
             {{-- ══════════════════════════
-                 DOSEN — TIDAK DIUBAH
+                 DOSEN — HANYA BADGE KELOLA JADWAL SEMINAR YANG DIUBAH
                  ══════════════════════════ --}}
             @if($role === 'dosen')
 
@@ -719,6 +719,36 @@
             $bimbinganDropdownOpen = request()->is('dosen/bimbingan*');
             $jadwalDropdownOpen = request()->is('jadwal') || request()->is('kelola-seminar*') || request()->is('jadwal-seminar-mahasiswa*');
             $pengujiDropdownOpen = request()->routeIs('dosen.penguji.index') || request()->routeIs('penguji.show') || request()->routeIs('penguji.tetapkan') || request()->routeIs('penguji.mahasiswa.index');
+
+            // ── FIX BADGE KELOLA DOSEN PENGUJI: nyala kalau ada mahasiswa yang lolos administrasi & sudah masuk tahap seminar, tapi belum punya penguji sama sekali ──
+            $notifPengujiKoor = $isKoor
+            ? DB::table('pengajuan_seminars')
+            ->where('status_administrasi', 'Lolos Administrasi')
+            ->where('status_seminar', '!=', 'Belum Daftar Seminar')
+            ->whereNotNull('status_seminar')
+            ->whereNotExists(function($q) {
+            $q->select(DB::raw(1))
+            ->from('dosen_penguji_seminar')
+            ->whereColumn('dosen_penguji_seminar.pengajuan_seminar_id', 'pengajuan_seminars.id');
+            })
+            ->exists()
+            : false;
+
+            // ── FIX BADGE (BARU): Kelola Jadwal Seminar untuk Dosen Koordinator ──
+            // Nyala kalau masih ada mahasiswa berstatus "Menunggu Jadwal" (yang sudah punya penguji,
+            // sama seperti kondisi $totalMenunggu di jadwalseminarcontroller.php).
+            // Mati otomatis kalau semua mahasiswa sudah "Sudah Dijadwalkan".
+            $notifKelolaSeminarKoor = $isKoor
+            ? DB::table('pengajuan_seminars as ps')
+            ->where('ps.is_draft', 0)
+            ->where('ps.status_seminar', 'Menunggu Jadwal')
+            ->whereExists(function($q) {
+            $q->select(DB::raw(1))
+            ->from('dosen_penguji_seminar as dps')
+            ->whereColumn('dps.pengajuan_seminar_id', 'ps.id');
+            })
+            ->exists()
+            : false;
             @endphp
 
             <div class="nav-label">Tugas Akhir</div>
@@ -862,6 +892,8 @@
                 <a href="{{ route('jadwalseminar.index') }}"
                     class="sidebar-link sidebar-sublink {{ request()->is('kelola-seminar*') ? 'active' : '' }}">
                     <i class="fa-solid fa-list-check"></i> Kelola Jadwal Seminar
+                    {{-- FIX BADGE: badge merah nyala kalau masih ada status "Menunggu Jadwal" --}}
+                    @if($notifKelolaSeminarKoor)<span class="link-badge-notif"></span>@endif
                 </a>
                 @else
                 <button class="sidebar-link sidebar-sublink sidebar-link-locked"
@@ -898,6 +930,7 @@
             <button class="sidebar-link {{ $pengujiDropdownOpen ? 'active' : '' }}"
                 onclick="toggleDropdown('dropdown-penguji','chevron-penguji')">
                 <i class="fa-solid fa-user-tie"></i> Kelola Dosen Penguji
+                @if($notifPengujiKoor)<span class="link-badge-notif"></span>@endif
                 <i class="fa-solid fa-chevron-right sidebar-chevron {{ $pengujiDropdownOpen ? 'open' : '' }}" id="chevron-penguji"></i>
             </button>
             <div class="sidebar-dropdown" id="dropdown-penguji"

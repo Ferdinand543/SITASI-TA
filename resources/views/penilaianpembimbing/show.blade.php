@@ -281,9 +281,9 @@ else                          { $grade = 'E';  $gradeBg = '#FEF2F2'; $gradeColor
             @if($bisaEdit)
             <a href="{{ route('penilaian.pembimbing.form', $proposal->id) }}"
                 style="display:flex;align-items:center;justify-content:center;gap:8px;
-                       padding:12px 20px;background:linear-gradient(135deg,#92741A,#735C00);
-                       color:#fff;border-radius:12px;font-size:0.88rem;font-weight:700;
-                       text-decoration:none;">
+                    padding:12px 20px;background:#FACC15;
+                    color:#735C00;border-radius:12px;font-size:0.88rem;font-weight:700;
+                    text-decoration:none;">
                 <i class="fa fa-pen"></i> Edit Penilaian
             </a>
             @else

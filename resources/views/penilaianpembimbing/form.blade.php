@@ -388,9 +388,9 @@ $totalMaksB = array_sum(array_column($komponenB, 'maks'));
         <i class="fa fa-floppy-disk" style="margin-right:6px;"></i> Simpan Draft
     </button>
     <button type="button" onclick="konfirmasiSubmit()"
-        style="padding:12px 28px;background:linear-gradient(135deg,#92741A,#735C00);
-               border:none;border-radius:12px;font-size:0.88rem;font-weight:700;
-               color:#fff;cursor:pointer;display:flex;align-items:center;gap:8px;">
+        style="padding:12px 28px;background:#FACC15;
+                border:none;border-radius:12px;font-size:0.88rem;font-weight:700;
+                color:#735C00;cursor:pointer;display:flex;align-items:center;gap:8px;">
         <i class="fa fa-paper-plane"></i> Submit Penilaian
     </button>
 </div>
@@ -446,7 +446,7 @@ $totalMaksB = array_sum(array_column($komponenB, 'maks'));
                 Batal
             </button>
             <button onclick="submitForm('submitted')"
-                style="padding:10px 24px;background:#735C00;border:none;border-radius:10px;font-weight:700;color:#fff;cursor:pointer;">
+                style="padding:10px 24px;background:#FACC15;border:none;border-radius:10px;font-weight:700;color:#735C00;cursor:pointer;">
                 Ya, Submit
             </button>
         </div>
