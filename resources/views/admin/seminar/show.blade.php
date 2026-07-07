@@ -169,7 +169,7 @@ $jmlTolak   = $sudahLolos ? 0 : collect($statusDokumenDB)->filter(fn($v) => $v =
     .btn-aksi-tolak:hover:not(:disabled) { background: #FEE2E2; }
     .btn-aksi:disabled { opacity: .5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-    .status-banner { border-radius: 10px; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .status-banner { border-radius: 10px; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; }
     .sb-lolos   { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
     .sb-tolak   { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
     .sb-pending { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }

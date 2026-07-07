@@ -544,8 +544,23 @@ function hitungProgress() {
 function tampilNamaFile(input, targetId, rowId) {
     const el = document.getElementById(targetId);
     if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+
+        if (file.size > maxSize) {
+            Swal.fire({
+                title: 'Ukuran File Terlalu Besar',
+                html: `File <strong>${file.name}</strong> berukuran ${(file.size / (1024*1024)).toFixed(2)} MB.<br>Maksimal ukuran file yang diperbolehkan adalah <strong>5 MB</strong>.`,
+                icon: 'error',
+                confirmButtonColor: '#FACC15',
+                confirmButtonText: 'Oke, Saya Ganti File',
+            });
+            input.value = '';
+            return;
+        }
+
         const label = el.querySelector('.file-label');
-        if (label) label.textContent = '✓ ' + input.files[0].name;
+        if (label) label.textContent = '✓ ' + file.name;
         el.style.display = 'flex';
         if (rowId) { const row = document.getElementById(rowId); if (row) { row.style.borderColor=''; row.style.background=''; const e=row.querySelector('.err-msg'); if(e)e.remove(); } }
         hitungProgress();

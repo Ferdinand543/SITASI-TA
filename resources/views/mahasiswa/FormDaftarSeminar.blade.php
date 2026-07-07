@@ -355,7 +355,22 @@
     function tampilFile(input) {
         if (input.files && input.files[0]) {
             const file = input.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
             const zone = document.getElementById('uploadZone');
+
+            if (file.size > maxSize) {
+                Swal.fire({
+                    title: 'Ukuran File Terlalu Besar',
+                    html: `File <strong>${file.name}</strong> berukuran ${(file.size / (1024*1024)).toFixed(2)} MB.<br>Maksimal ukuran file yang diperbolehkan adalah <strong>5 MB</strong>.`,
+                    icon: 'error',
+                    confirmButtonColor: '#FACC15',
+                    confirmButtonText: 'Oke, Saya Ganti File',
+                });
+                input.value = '';
+                zone.classList.remove('has-file');
+                return;
+            }
+
             const def  = document.getElementById('uploadDefault');
             const nama = document.getElementById('uploadFileName');
             const text = document.getElementById('fileNameText');

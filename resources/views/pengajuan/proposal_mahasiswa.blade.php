@@ -744,7 +744,8 @@
                         <div class="col-md-4">
                             <label class="modal-label">Tanggal</label>
                             <input type="date" name="tanggal_pengajuan" id="up_tanggal"
-                                class="modal-input" value="{{ date('Y-m-d') }}">
+                                class="modal-input" value="{{ date('Y-m-d') }}"
+                                readonly style="background:#f8fafc; color:#64748b;">
                         </div>
                     </div>
 
