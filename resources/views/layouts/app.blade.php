@@ -735,9 +735,6 @@
             : false;
 
             // ── FIX BADGE (BARU): Kelola Jadwal Seminar untuk Dosen Koordinator ──
-            // Nyala kalau masih ada mahasiswa berstatus "Menunggu Jadwal" (yang sudah punya penguji,
-            // sama seperti kondisi $totalMenunggu di jadwalseminarcontroller.php).
-            // Mati otomatis kalau semua mahasiswa sudah "Sudah Dijadwalkan".
             $notifKelolaSeminarKoor = $isKoor
             ? DB::table('pengajuan_seminars as ps')
             ->where('ps.is_draft', 0)
@@ -892,7 +889,6 @@
                 <a href="{{ route('jadwalseminar.index') }}"
                     class="sidebar-link sidebar-sublink {{ request()->is('kelola-seminar*') ? 'active' : '' }}">
                     <i class="fa-solid fa-list-check"></i> Kelola Jadwal Seminar
-                    {{-- FIX BADGE: badge merah nyala kalau masih ada status "Menunggu Jadwal" --}}
                     @if($notifKelolaSeminarKoor)<span class="link-badge-notif"></span>@endif
                 </a>
                 @else
@@ -966,13 +962,11 @@
             @php
             $notifJudulAdmin = DB::table('pengajuan_judul')->where('status','menunggu verifikasi')->exists();
 
-            // ── FIX BADGE ADMINISTRASI SEMINAR: nyala kalau ada pengajuan baru SETELAH admin terakhir buka halamannya ──
             $lastVisitSeminarAdmin = session('admin_seminar_last_visit');
             $notifSeminarAdmin = $lastVisitSeminarAdmin
                 ? DB::table('pengajuan_seminars')->where('created_at', '>', $lastVisitSeminarAdmin)->exists()
                 : DB::table('pengajuan_seminars')->where('status_administrasi', 'Menunggu Verifikasi')->exists();
 
-            // ── BADGE ADMIN PROPOSAL (logika per sublink) ──
             $badgeDospemAdmin = DB::table('proposal')
             ->whereNotExists(function($q) {
             $q->select(DB::raw(1))
@@ -997,12 +991,19 @@
             })
             ->exists();
 
-            // parent badge nyala kalau salah satu sublink nyala
             $notifProposalAdmin = $badgeDospemAdmin || $badgeReviewerAdmin || $badgeReviewProposalAdmin;
 
             $proposalAdminDropdownOpen = request()->routeIs('admin.proposal.*') || request()->is('reviewer/proposal*') || (request()->is('proposal*') && request()->query('tab') === 'reviewer');
             $bimbinganAdminDropdownOpen = request()->is('admin/bimbingan') || request()->is('admin/bimbingan/*');
             $jadwalAdminDropdownOpen = request()->routeIs('jadwal-akademik.*') || request()->is('kelola-seminar*') || request()->routeIs('admin.jadwal.seminar.mahasiswa');
+
+            // ── FIX HIGHLIGHT SUBLINK RIWAYAT BIMBINGAN ──
+            // Kalau lagi di halaman list (/admin/bimbingan doang) → cek query tab kayak biasa
+            // Kalau lagi di halaman detail per dosen/mahasiswa (/admin/bimbingan/xxx) → otomatis dianggap bagian "Mahasiswa Bimbingan"
+            $isBimbinganListPage = request()->is('admin/bimbingan');
+            $isMahasiswaBimbinganActive = $isBimbinganListPage
+                ? request()->query('tab') === 'mahasiswa'
+                : request()->is('admin/bimbingan/*');
             @endphp
 
             <a href="/admin/judul"
@@ -1046,11 +1047,11 @@
             <div class="sidebar-dropdown" id="dropdown-bimbingan-admin"
                 style="max-height:{{ $bimbinganAdminDropdownOpen ? '300px' : '0' }};">
                 <a href="/admin/bimbingan"
-                    class="sidebar-link sidebar-sublink {{ request()->is('admin/bimbingan*') && request()->query('tab')!=='mahasiswa' ? 'active' : '' }}">
+                    class="sidebar-link sidebar-sublink {{ $isBimbinganListPage && !$isMahasiswaBimbinganActive ? 'active' : '' }}">
                     <i class="fa-solid fa-file-lines"></i> Dokumen Pra-Bimbingan
                 </a>
                 <a href="/admin/bimbingan?tab=mahasiswa"
-                    class="sidebar-link sidebar-sublink {{ request()->is('admin/bimbingan*') && request()->query('tab')==='mahasiswa' ? 'active' : '' }}">
+                    class="sidebar-link sidebar-sublink {{ $isMahasiswaBimbinganActive ? 'active' : '' }}">
                     <i class="fa-solid fa-user-graduate"></i> Mahasiswa Bimbingan
                 </a>
             </div>

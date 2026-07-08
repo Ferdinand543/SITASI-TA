@@ -187,7 +187,7 @@ tbody tr.clickable-row:hover { background: #F0F4FF; }
 /* MODAL FOTO */
 .modal-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.5); z-index: 2000;
+    background: rgba(0,0,0,.5); z-index: 2300;
     align-items: center; justify-content: center; padding: 20px;
 }
 .modal-overlay.show { display: flex; }

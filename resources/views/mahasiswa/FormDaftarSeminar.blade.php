@@ -273,7 +273,7 @@
                     <div id="uploadDefault">
                         <div class="upload-icon">📄</div>
                         <div class="upload-text">Klik untuk upload atau drag & drop</div>
-                        <div class="upload-sub">File format PDF, Doc, Docx (Max. 5MB)</div>
+                        <div class="upload-sub">File format PDF, Doc, Docx (Max. 50MB)</div>
                     </div>
                     <div class="upload-file-name" id="uploadFileName">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="#15803D" width="16" height="16">
@@ -355,13 +355,13 @@
     function tampilFile(input) {
         if (input.files && input.files[0]) {
             const file = input.files[0];
-            const maxSize = 5 * 1024 * 1024; // 5MB
+            const maxSize = 50 * 1024 * 1024; // 50MB
             const zone = document.getElementById('uploadZone');
 
             if (file.size > maxSize) {
                 Swal.fire({
                     title: 'Ukuran File Terlalu Besar',
-                    html: `File <strong>${file.name}</strong> berukuran ${(file.size / (1024*1024)).toFixed(2)} MB.<br>Maksimal ukuran file yang diperbolehkan adalah <strong>5 MB</strong>.`,
+                    html: `File <strong>${file.name}</strong> berukuran ${(file.size / (1024*1024)).toFixed(2)} MB.<br>Maksimal ukuran file yang diperbolehkan adalah <strong>50 MB</strong>.`,
                     icon: 'error',
                     confirmButtonColor: '#FACC15',
                     confirmButtonText: 'Oke, Saya Ganti File',

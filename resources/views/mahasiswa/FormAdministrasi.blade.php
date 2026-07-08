@@ -278,9 +278,9 @@ $disabledField = $isPerbaikan ? 'disabled' : '';
                 <div class="sec-head"><div class="sec-num">3</div><div class="sec-title">Dokumen Akademik</div></div>
                 @php
                 $dokAkademik = [
-                    ['key'=>'khs', 'field'=>'file_khs', 'label'=>'Transkrip Nilai (KHS)',     'sub'=>'PDF. Maksimal 5MB.',                    'accept'=>'.pdf'],
-                    ['key'=>'krs', 'field'=>'file_krs', 'label'=>'Kartu Rencana Studi (KRS)', 'sub'=>'PDF. Maksimal 5MB.',                    'accept'=>'.pdf'],
-                    ['key'=>'spp', 'field'=>'file_spp', 'label'=>'Bukti Lunas SPP',           'sub'=>'JPG/PDF. Bukti transfer atau kwitansi.','accept'=>'.pdf,.jpg,.jpeg,.png'],
+                    ['key'=>'khs', 'field'=>'file_khs', 'label'=>'Transkrip Nilai (KHS)',     'sub'=>'PDF. Maksimal 50MB.', 'accept'=>'.pdf'],
+                    ['key'=>'krs', 'field'=>'file_krs', 'label'=>'Kartu Rencana Studi (KRS)', 'sub'=>'PDF. Maksimal 50MB.', 'accept'=>'.pdf'],
+                    ['key'=>'spp', 'field'=>'file_spp', 'label'=>'Bukti Lunas SPP',           'sub'=>'JPG/PDF. Bukti transfer atau kwitansi.', 'accept'=>'.pdf,.jpg,.jpeg,.png'],
                 ];
                 @endphp
                 @foreach($dokAkademik as $dok)
@@ -545,12 +545,12 @@ function tampilNamaFile(input, targetId, rowId) {
     const el = document.getElementById(targetId);
     if (input.files && input.files[0]) {
         const file = input.files[0];
-        const maxSize = 5 * 1024 * 1024; // 5MB
+        const maxSize = 50 * 1024 * 1024; // 50MB
 
         if (file.size > maxSize) {
             Swal.fire({
                 title: 'Ukuran File Terlalu Besar',
-                html: `File <strong>${file.name}</strong> berukuran ${(file.size / (1024*1024)).toFixed(2)} MB.<br>Maksimal ukuran file yang diperbolehkan adalah <strong>5 MB</strong>.`,
+                html: `File <strong>${file.name}</strong> berukuran ${(file.size / (1024*1024)).toFixed(2)} MB.<br>Maksimal ukuran file yang diperbolehkan adalah <strong>50 MB</strong>.`,
                 icon: 'error',
                 confirmButtonColor: '#FACC15',
                 confirmButtonText: 'Oke, Saya Ganti File',

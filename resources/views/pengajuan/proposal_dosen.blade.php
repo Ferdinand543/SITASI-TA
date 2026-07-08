@@ -229,7 +229,7 @@ $reviewerDataJs = $reviewerListDropdown->map(function($rv) {
 
     .modal-rv-box {
         background: #fff; border-radius: 20px;
-        width: 100%; max-width: 600px; margin: 0 16px;
+        width: 100%; max-width: 760px; margin: 0 16px;
         box-shadow: 0 16px 48px rgba(0,0,0,0.2);
         position: relative; display: flex; flex-direction: column;
         max-height: 90vh;
@@ -250,9 +250,9 @@ $reviewerDataJs = $reviewerListDropdown->map(function($rv) {
     .modal-rv-close:hover { background: #e2e8f0; }
 
     .modal-rv-mhs-card {
-        margin: 16px 28px;
+        margin: 12px 28px;
         background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px;
-        padding: 16px 20px;
+        padding: 14px 20px;
         display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px;
         flex-shrink: 0;
     }
@@ -277,7 +277,7 @@ $reviewerDataJs = $reviewerListDropdown->map(function($rv) {
     }
     .modal-rv-search:focus { border-color: #FACC15; }
 
-    .modal-rv-table-wrap { flex: 1; overflow-y: auto; padding: 0 28px; }
+    .modal-rv-table-wrap { flex: 1 1 auto; overflow-y: auto; padding: 0 28px; max-height: 300px; }
     .modal-rv-tbl { width: 100%; border-collapse: collapse; }
     .modal-rv-tbl thead tr { background: #f8f9fa; }
     .modal-rv-tbl th {
@@ -285,9 +285,15 @@ $reviewerDataJs = $reviewerListDropdown->map(function($rv) {
         text-align: left; text-transform: uppercase; letter-spacing: 0.04em;
         border-bottom: 1px solid #e5e7eb; white-space: nowrap;
     }
+    .modal-rv-tbl th:nth-child(1) { width: 60px; }
+    .modal-rv-tbl th:nth-child(2) { width: 110px; }
+    .modal-rv-tbl th:nth-child(3) { min-width: 260px; }
+    .modal-rv-tbl th:nth-child(4) { width: 180px; }
+
     .modal-rv-tbl td {
-        padding: 12px 12px; font-size: 0.84rem; color: #333;
+        padding: 14px 12px; font-size: 0.84rem; color: #333;
         border-bottom: 1px solid #f5f5f5; vertical-align: middle;
+        line-height: 1.4;
     }
     .modal-rv-tbl tbody tr:last-child td { border-bottom: none; }
     .modal-rv-tbl tbody tr:hover td { background: #fffde7; cursor: pointer; }

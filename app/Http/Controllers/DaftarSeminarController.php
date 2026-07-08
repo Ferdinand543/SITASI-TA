@@ -590,7 +590,7 @@ class DaftarSeminarController extends Controller
         $request->validate([
             'judul_ta'                => 'required|string|max:500',
             'rencana_tanggal_seminar' => 'required|date',
-            'file_proposal'           => 'required|file|mimes:pdf,doc,docx,xls,xlsx|max:20480',
+            'file_proposal' => 'required|file|mimes:pdf,doc,docx,xls,xlsx|max:51200',
         ]);
 
         $user      = session('user');
