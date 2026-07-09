@@ -114,8 +114,8 @@ class JadwalController extends Controller
                 'Pengajuan Judul',
                 'Verifikasi Judul',
                 'Upload Proposal',
-                'Penetapan Dosen Pembimbing',
                 'Review Proposal',
+                'Penetapan Dosen Pembimbing',
                 'Bimbingan Tugas Akhir',
             ];
 

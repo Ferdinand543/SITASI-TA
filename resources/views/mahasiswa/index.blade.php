@@ -399,8 +399,8 @@
     $hariLabel     = '';
 
     if ($deadlineDekat ?? null) {
-        $tgl  = \Carbon\Carbon::parse($deadlineDekat->tanggal);
-        $hari = now()->diffInDays($tgl, false);
+        $tgl  = \Carbon\Carbon::parse($deadlineDekat->tanggal)->startOfDay();
+        $hari = floor(now()->startOfDay()->diffInDays($tgl, false));
 
         if ($hari < 0) {
             $deadlineColor = 'success';
@@ -571,8 +571,8 @@
                 $stepList = [
                     'pengajuan_judul'       => 'Pengajuan<br>Judul',
                     'upload_proposal'       => 'Upload Proposal<br>& Usulan Pembimbing',
-                    'verifikasi_pembimbing' => 'Verifikasi<br>Pembimbing',
                     'review_proposal'       => 'Review<br>Proposal',
+                    'verifikasi_pembimbing' => 'Verifikasi<br>Pembimbing',
                     'proses_bimbingan'      => 'Proses<br>Bimbingan',
                     'seminar_proposal'      => 'Seminar<br>Proposal',
                 ];
@@ -633,13 +633,23 @@
         <div class="jadwal-grid">
             @foreach($jadwalList as $jadwal)
             @php
-                $tglJadwal   = \Carbon\Carbon::parse($jadwal->tanggal);
-                $sudahLewat  = $tglJadwal->isPast() && $tglJadwal->toDateString() !== now()->toDateString();
-                $hari        = now()->diffInDays($tglJadwal, false);
-                $katLower    = strtolower($jadwal->kategori ?? '');
+                $tglJadwal     = \Carbon\Carbon::parse($jadwal->tanggal)->startOfDay();
+                $tglAcuanLewat = $jadwal->tanggal_selesai
+                    ? \Carbon\Carbon::parse($jadwal->tanggal_selesai)->startOfDay()
+                    : $tglJadwal;
+                $sudahLewat    = $tglAcuanLewat->isPast() && $tglAcuanLewat->toDateString() !== now()->toDateString();
+                $hari          = floor(now()->startOfDay()->diffInDays($tglAcuanLewat, false));
+                $katLower      = strtolower($jadwal->kategori ?? '');
 
-                $statusBadgeClass = $sudahLewat ? 'status-selesai-badge' : ($hari <= 7 ? 'status-aktif' : 'status-mendatang');
-                $statusLabel      = $sudahLewat ? 'Sudah lewat' : ($hari == 0 ? 'Hari ini' : ($hari <= 7 ? 'Segera' : 'Mendatang'));
+                $belumMulai = now()->startOfDay()->lt($tglJadwal);
+
+                $statusBadgeClass = $sudahLewat
+                    ? 'status-selesai-badge'
+                    : ($belumMulai ? 'status-mendatang' : 'status-aktif');
+
+                $statusLabel = $sudahLewat
+                    ? 'Sudah lewat'
+                    : ($belumMulai ? 'Mendatang' : ($hari == 0 ? 'Hari ini' : 'Segera'));
 
                 if ($jadwal->status === 'Selesai') {
                     $statusBadgeClass = 'status-selesai-badge';
