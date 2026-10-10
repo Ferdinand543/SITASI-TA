@@ -329,9 +329,8 @@
 
 <body>
 
-    {{-- ===================== --}}
+    
     {{--   MODAL ERROR/SUCCESS --}}
-    {{-- ===================== --}}
 
     @if(session('error') || $errors->any())
     <div class="modal-overlay active" id="modalError">

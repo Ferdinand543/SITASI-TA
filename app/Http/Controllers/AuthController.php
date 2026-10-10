@@ -112,9 +112,9 @@ class AuthController extends Controller
         return back()->with('success', 'Password berhasil diubah');
     }
 
-    // =====================================================
+    
     // FORGOT PASSWORD — KIRIM EMAIL
-    // =====================================================
+    
     public function sendResetLink(Request $request)
     {
         $request->validate(['email' => 'required|email'], [
