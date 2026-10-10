@@ -9,9 +9,9 @@ class PengajuanController extends Controller
 {
     public function index()
     {
-        // =========================
+       
         // CEK LOGIN
-        // =========================
+       
         if (!session('user')) {
             return redirect('/login')
                 ->with('error', 'Silakan login dulu!');
@@ -19,17 +19,17 @@ class PengajuanController extends Controller
 
         $user = session('user');
 
-        // =========================
+        
         // CEK APAKAH KOORDINATOR
-        // =========================
+        
         $koordinator = DB::table('dosen_roles')
             ->where('nim_nid', $user->nim_nid)
             ->where('role_dosen', 'koordinator')
             ->exists();
 
-        // =========================
+        
         // JIKA BUKAN KOORDINATOR
-        // =========================
+        
         if (!$koordinator) {
 
             if ($user->role == 'mahasiswa') {
@@ -41,9 +41,9 @@ class PengajuanController extends Controller
                 ->with('error', 'Akses ditolak!');
         }
 
-        // =========================
+     
         // AMBIL DATA PENGAJUAN
-        // =========================
+        
         $pengajuans = DB::table('pengajuan_judul')
             ->join('users', 'pengajuan_judul.nim_nid', '=', 'users.nim_nid')
             ->select(
@@ -65,9 +65,9 @@ class PengajuanController extends Controller
 
     public function verifikasi($id)
     {
-        // =========================
+        
         // CEK LOGIN
-        // =========================
+       
         if (!session('user')) {
             return redirect('/login')
                 ->with('error', 'Silakan login dulu!');
@@ -75,9 +75,9 @@ class PengajuanController extends Controller
 
         $user = session('user');
 
-        // =========================
+        
         // CEK KOORDINATOR
-        // =========================
+        
         $koordinator = DB::table('dosen_roles')
             ->where('nim_nid', $user->nim_nid)
             ->where('role_dosen', 'koordinator')
@@ -88,9 +88,9 @@ class PengajuanController extends Controller
                 ->with('error', 'Akses ditolak!');
         }
 
-        // =========================
+        
         // AMBIL DATA PENGAJUAN
-        // =========================
+        
         $pengajuan = DB::table('pengajuan_judul')
             ->join('users', 'pengajuan_judul.nim_nid', '=', 'users.nim_nid')
             ->select(
@@ -105,9 +105,9 @@ class PengajuanController extends Controller
 
     public function prosesVerifikasi(Request $request, $id)
     {
-        // =========================
+        
         // CEK LOGIN
-        // =========================
+        
         if (!session('user')) {
             return redirect('/login')
                 ->with('error', 'Silakan login dulu!');
@@ -115,9 +115,9 @@ class PengajuanController extends Controller
 
         $user = session('user');
 
-        // =========================
+        
         // CEK KOORDINATOR
-        // =========================
+        
         $koordinator = DB::table('dosen_roles')
             ->where('nim_nid', $user->nim_nid)
             ->where('role_dosen', 'koordinator')
@@ -128,9 +128,9 @@ class PengajuanController extends Controller
                 ->with('error', 'Akses ditolak!');
         }
 
-        // =========================
+        
         // VALIDASI
-        // =========================
+        
         $request->validate([
             'judul_disetujui' => 'nullable',
             'catatan_1'       => 'nullable|string|max:500',
@@ -138,18 +138,18 @@ class PengajuanController extends Controller
             'catatan_3'       => 'nullable|string|max:500',
         ]);
 
-        // =========================
+        
         // AMBIL DATA
-        // =========================
+        
         $data = DB::table('pengajuan_judul')
             ->where('id', $id)
             ->first();
 
         $judulDipilih = null;
 
-        // =========================
+      
         // PILIH JUDUL
-        // =========================
+        
         if ($request->judul_disetujui == 1) {
             $judulDipilih = $data->judul_1;
         }
@@ -162,16 +162,16 @@ class PengajuanController extends Controller
             $judulDipilih = $data->judul_3;
         }
 
-        // =========================
+        
         // STATUS
-        // =========================
+        
         $status = $judulDipilih
             ? 'disetujui'
             : 'ditolak';
 
-        // =========================
+       
         // UPDATE DATA
-        // =========================
+        
         DB::table('pengajuan_judul')
             ->where('id', $id)
             ->update([
@@ -183,9 +183,9 @@ class PengajuanController extends Controller
                 'updated_at'      => now()
             ]);
 
-        // =========================
+        
         // PESAN
-        // =========================
+        
         $pesan = $judulDipilih
             ? 'Judul berhasil disetujui'
             : 'Semua judul berhasil ditolak';
